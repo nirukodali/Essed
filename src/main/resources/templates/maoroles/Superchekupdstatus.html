@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<!--<title>crpMao</title>-->
+<!--	<link rel="stylesheet" href="./styles/reportstylesheet.css" />-->
+<head th:insert="header"></head>
+<div th:insert="headerImage"></div>
+<div th:insert="navBarTop"></div>
+<div th:insert="headerMessage"></div>
+<!--<script-->
+<!--	src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>-->
+<!--<link rel="stylesheet"-->
+<!--	href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">-->
+<!--<script-->
+<!--	src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.slim.min.js"></script>-->
+<!--<script-->
+<!--	src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>-->
+<!--<script-->
+<!--	src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>-->
+<!--<script-->
+<!--	src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>-->
+<script>
+	function CallPrint(strid) {
+		var prtContent = document.getElementById(strid);
+		var mywindow = window
+				.open(
+						'',
+						'',
+						'left=0,top=0,width=950,height=600,toolbar=1,scrollbars=1,status=1,addressbar=0');
+		var is_chrome = Boolean(mywindow.chrome);
+		mywindow.document.write(prtContent.innerHTML);
+		mywindow.document.close(); // necessary for IE >= 10 and necessary before onload for chrome
+
+		if (is_chrome) {
+			mywindow.onload = function() { // wait until all resources loaded 
+				mywindow.focus(); // necessary for IE >= 10
+				mywindow.print(); // change window to mywindow
+				mywindow.close(); // change window to mywindow
+			};
+		} else {
+			mywindow.document.close(); // necessary for IE >= 10
+			mywindow.focus(); // necessary for IE >= 10
+			mywindow.print();
+			mywindow.close();
+		}
+
+		return true;
+	}
+</script>
+<script language="javascript">
+	var tableToExcel = (function() {
+		var uri = 'data:application/vnd.ms-excel;base64,', template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table align="center">{table}</table></body></html>', base64 = function(
+				s) {
+			return window.btoa(unescape(encodeURIComponent(s)))
+		}, format = function(s, c) {
+			return s.replace(/{(\w+)}/g, function(m, p) {
+				return c[p];
+			})
+		}
+		return function(table, name) {
+			if (!table.nodeType)
+				table = document.getElementById(table)
+			var ctx = {
+				worksheet : name || 'Worksheet',
+				table : table.innerHTML
+			}
+			window.location.href = uri + base64(format(template, ctx))
+		}
+	})()
+</script>
+
+</head>
+<script>
+	$(document).ready(function() {
+				//alert("get crop year");
+				$("#loadingsign").hide();
+				$.ajax({
+					type : "get",
+					url : "./util/getAllSeason",
+					cache : false,
+					timeout : 600000,
+					success : function(resp) {
+						//alert(JSON.stringify(resp));
+						for (var j = 0; j < resp.length; j++) {
+							var bean = resp[j];
+							$("#cropyear").append(
+									'<option value="' + bean.col1 + '">'
+										+ bean.col2 + '</option>');
+						}
+					}
+				});
+			});
+	
+	function getData() {
+		$("#databody").empty();
+		var cropyear = $("#cropyear").val();
+		if(cropyear == "" || cropyear == null){
+			alert("Please Select Cropyear");
+			return false;
+		}
+		$("#loadingsign").show();
+		var wbdcode = $("#inputwbdcode").val();
+		var wbmcode = $("#inputwbmcode").val();
+		var cropYear = $("#cropyear").val();
+		
+		var data = {};
+		
+		data['wbdcode'] = wbdcode;
+		data['wbmcode'] = wbmcode;
+		data['cropyear'] = cropYear;
+		
+		
+		$.ajax({
+			type : "post",
+			url : "./utilMao/supchkupdstatus",
+			contentType : 'application/json',
+			data : JSON.stringify(data),
+			cache : false,
+			timeout : 600000,
+			success : function(resp) {
+				if(resp.length==0){
+								alert('No Records Found')
+							}
+				$("#loadingsign").hide();
+				$("#databody").empty();
+				var sno = 0; var remarks='', vaasuprem='', maoremarks='',mroremarks='';
+				for (var j = 0; j < resp.length; j++) {
+					sno = sno + 1;
+					var bean = resp[j];
+					 if(bean.remarks == 'A'){
+						 remarks='<span style="color:black;" >'+bean.remarks+'</span>';
+						 
+					 } else if(bean.remarks == 'R'){
+						 remarks='<span style="color:red;" >'+bean.remarks+'</span>' ;
+					 }
+					 else{
+						 remarks='<span>'+bean.remarks+'</span>' ; 
+					 }	
+					 
+					 if(bean.vaa_sup_rem == 'M'){
+						 vaasuprem='<b><font color="blue" >Forwarded</font></b>';
+						 
+					 } else{
+						 vaasuprem='<b><font color="red" >Pending</font></b>';
+					 }
+					 
+					 if(bean.mao_remarks == 'D'){
+						 maoremarks='<b><font color="red" >Rejected</font></b>';
+						 
+					 } else if (bean.mao_remarks == 'A'){
+						 maoremarks='<b><font color="green">Accepted</font></b>';
+					 }
+					 else{
+						 maoremarks='<b><font color="orange">Pending</font></b>';	 
+					 }
+					 
+					 if(bean.mro_remarks == 'D'){
+						 mroremarks='<b><font color="red" >Rejected</font></b>';
+						 
+					 } else if (bean.mro_remarks == 'A'){
+						 mroremarks='<b><font color="green">Accepted</font></b>';
+					 }
+					 else{
+						 mroremarks='<b><font color="orange">Pending</font></b>';	 
+					 }
+					 
+					$("#databody").append('<tr style="fontsize:200px; font-weight:0;">'
+									+ '<td align="center">' + sno + '</td>'
+//									+ '<td align="left">'+ bean.wbdname + '</td>'
+	//								+ '<td align="left">'+ bean.wbmname + '</td>' 
+									+ '<td align="left">'+ bean.wbvname + '</td>'
+									+ '<td align="left">'+ bean.bookingid + '</td>'
+									+ '<td align="left">'+ bean.occup_name + '</td>'
+									+ '<td align="left">'+ bean.occup_fname + '</td>'
+									+ '<td align="left">'+ bean.cropname + '</td>'
+									+ '<td align="left">'+ bean.varietyname + '</td>'
+									+ '<td align="left">'+ bean.cr_sow_date + '</td>'
+									+ '<td align="center">'+ bean.kh_no + '</td>'
+									+ '<td align="center">'+ bean.cr_sno + '</td>'
+									+ '<td align="center">'+ bean.supercheck_userid + '</td>'
+									
+									+ '<td align="center">'+ remarks + '</td>'
+									+ '<td align="left" style="background-color: #829356; border: 1px solid black;color:white">'+ bean.reason + '</td>'
+									+ '<td align="center">'+ vaasuprem + '</td>'
+									+ '<td align="center">'+ maoremarks + '</td>'
+									+ '<td align="center">'+ mroremarks + '</td>'
+									+ '</tr>');
+				}
+			}
+		});
+	}
+	function goBack(){
+		window.location.href="./home";
+		}
+   </script>
+    
+<style>
+    #ObjEntryTable {
+     border-collapse: separate;
+	border-spacing: 0 0.5em;
+
+    }
+      
+        .scrollable-container {
+            white-space: nowrap; /* Prevent text from wrapping */
+            overflow-x: auto; /* Enable horizontal scrollbar */
+            border: 1px solid #ddd; /* Optional border for visual clarity */
+        }
+        
+    </style>
+<body>
+
+	<div class="heading" colspan="20" style="text-align: center;font-size:25px;"><b>Supervisory Records Updation Status</b></div>
+	<p th:text="${msg}"></p>
+
+<input type="hidden" id="inputwbdcode" th:value="${#session.getAttribute('wbdcode')}" />
+<input type="hidden" id="inputwbmcode" th:value="${#session.getAttribute('wbmcode')}" />
+<input type="hidden" id="inputuserid" th:value="${#session.getAttribute('userid')}" />
+	<div id="loadingsign">
+		<div class="d-flex justify-content-center">
+			<div class="spinner-border" role="status">
+				<span class="sr-only">Loading...</span>
+			</div>
+		</div>
+	</div>
+	 <div class="scrollable-container">
+	<div align="center">
+		<form>
+			<table id="ObjEntryTable" style="font-size: inherit !important; border-radius: 10px;">
+				<tr style="padding-left:450px;">
+					<td  align="right" width="30%"><b>Crop Year <font
+							color="red">*</font></b></td>
+
+					<td align="left"><select id="cropyear" name="cropyear"
+						style="width: 200px" >
+							<option value="">-------Select-------</option>
+					</select></td>
+				</tr>
+				
+				
+			</table>
+			<div colspan="3" align="center"
+				style="padding-top: 10px; padding-bottom: 10px;">
+				<button type="button" id="btnSubmit" class="btn btn-success"
+					value="Submit" onclick="return getData();">Submit</button>
+			</div>
+		</form>
+	</div>
+	<div>
+		<form id="unlockreport" name="unlockreport" method="post">
+			<div align="center" id="divPrint" class="table table-hover table table-striped">
+				<table id="tableStkId" align="center" style="text-align: center;width:100%;">
+					<thead>
+						<th> <b> S.No. </b> </th>
+<!--                        <th> <b> District Name  </b> </th>-->
+<!--                        <th> <b> Mandal  Name    </b> </th>                        -->
+                        <th> <b>Village Name   </b> </th>                      
+                        <th> <b>Booking Id </b> </th>
+                        <th> <b>Occupant Name </b> </th>
+                        <th> <b>Occupant Father</b> </th>
+                        <th> <b> Crop Name   </b> </th>
+                        <th> <b>Variety Name  </b> </th> 
+                        <th> <b> Sown Date </b> </th>
+                        <th> <b> Khata No  </b> </th>
+                        <th> <b>Survey NO / LP No </b> </th>  
+                        <th> <b>Supervisory Officer Id  </b> </th>  
+                        <th> <b>Observations  </b> </th>
+                        <th> <b> Reason for Entry Found Incorrect  </b> </th>
+                        <th> <b> VAA/VHA/VSA Remarks  </b> </th>
+                        <th> <b>MAO Remarks </b> </th>
+                        <th> <b> MRO Remarks  </b> </th>
+					</thead>
+					<tbody id="databody">
+					</tbody>
+				</table>
+			</div>
+		</form>
+		<div align="center" style="color: black; margin-top: 20px;">
+			<input class="btn btn-success"
+				name="ctl00$ContentPlaceHolder1$btnPrint" type="button"
+				id="ctl00_ContentPlaceHolder1_btnPrint"
+				onClick="javascript:CallPrint('divPrint')" value="Print"> <input
+				class="btn btn-success" type="button"
+				onclick="tableToExcel('tableStkId', 'Abstract')" value="Excel">
+	<input  class="btn btn-success" type="button" value="Back" onclick="goBack()" />
+		</div>
+	</div>
+	</div>
+	</div>
+</body>
+
+</html>

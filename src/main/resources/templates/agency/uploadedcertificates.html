@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="header">
+<div th:insert="headerImage"></div>
+<div th:insert="navBarTop"></div>
+<div th:insert="headerMessage"></div>
+
+</script>
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+<style>
+table thead {
+	background-color: #006400; /* or any other neutral color */
+	color: white; /* or any other neutral color */
+}
+</style>
+</head>
+
+
+<body>
+	<br>
+	<div class="heading" style="text-align: center; font-size: 25px;">Uploaded
+		Agency Certificates</div>
+	<br>
+	<div class="container">
+		<div class="row justify-content-center">
+			<form th:action="@{/getCertificates}" method="post">
+				<div align="center">
+					<table align="center" style="width: 100%;">
+						<tr>
+							<td class="tdnum" colspan="2"><b>Crop Year <font
+									color="red">* </font></b></td>
+							<td><select name="cropyear" id="cropyear"
+								style="width: 200px">
+									<option value='' th:selected="0">------Select Crop
+										Year--------</option>
+									<option th:each="cropyr: ${cropyears}"
+										th:value="${cropyr.seasonvalue}" th:text="${cropyr.cropyear}"></option>
+							</select></td>
+						</tr>
+
+
+						<tr>
+							<td align="center" colspan="3"><input type="submit"
+								value="Submit" onclick="submitForm()" class="btn btn-success mt-3"></td>
+						</tr>
+					</table>
+				</div>
+			</form>
+		</div>
+	</div>
+
+
+
+	<p id="displayText"></p>
+
+	<div align="center">
+		<form id="unlockreport" name="unlockreport" method="post">
+			<div align="center" id="divPrint"
+				class="table table-hover table table-striped">
+				<table id="customers" style="width: 80%">
+					<thead>
+						<tr>
+							<th style="text-align: center;"><b> Sl.No </b></th>
+							<th style="text-align: center;"><b> Certificates</b></th>
+
+
+						</tr>
+					</thead>
+					
+					
+					 <tbody>
+    <tr th:each="certificat, iterStat : ${certificates}">
+        <td style="text-align: center;">
+            <!-- Serial number -->
+            <span th:text="${iterStat.index + 1}"></span>
+        </td>
+        <td style="text-align: center;">
+            <div>
+                <!-- PNG Image -->
+                <div th:if="${#strings.startsWith(#strings.replace(certificat, '\n', ''), 'iVBORw0KGgo')}">
+                    <img th:src="'data:image/png;base64,' + ${certificat}" 
+                         width="900" height="400" style="display: block; margin: auto;" />
+                </div>
+
+                <!-- JPG/JPEG Image -->
+                <div th:if="${#strings.startsWith(#strings.replace(certificat, '\n', ''), '/9j/')}">
+                    <img th:src="'data:image/jpeg;base64,' + ${certificat}" 
+                         width="900" height="400" style="display: block; margin: auto;" />
+                </div>
+
+                <!-- PDF -->
+                <div th:if="${#strings.startsWith(#strings.replace(certificat, '\n', ''), 'JVBERi0')}">
+                    <iframe th:src="'data:application/pdf;base64,' + ${certificat}" 
+                            width="900" height="400" style="display: block; margin: auto;">
+                    </iframe>
+                </div>
+
+                <!-- DOCX -->
+                <div th:if="${#strings.startsWith(#strings.replace(certificat, '\n', ''), 'UEsDBBQAAAAIA')}">
+                    <a th:href="'data:application/vnd.openxmlformats-officedocument.wordprocessingml.document;base64,' + ${certificat}" 
+                       download="document.docx">Download DOCX</a>
+                </div>
+
+                <!-- Text Files (plain text) -->
+                <div th:if="${#strings.startsWith(#strings.replace(certificat, '\n', ''), 'dGV4dC8=')}">
+                    <pre th:text="${certificat}"></pre>
+                </div>
+
+                <!-- Default Case for unsupported types -->
+                <div th:if="!${#strings.startsWith(certificat, 'iVBORw0KGgo') 
+                           or #strings.startsWith(certificat, '/9j/') 
+                           or #strings.startsWith(certificat, 'JVBERi0') 
+                           or #strings.startsWith(certificat, 'UEsDBBQAAAAIA') 
+                           or #strings.startsWith(certificat, 'dGV4dC8=')}">
+                    <span>Unsupported file type: 
+                        <span th:text="${#strings.substring(certificat, 0, 20)}"></span>
+                    </span>
+                </div>
+            </div>
+        </td>
+    </tr>
+</tbody>
+
+                    
+                   
+                    
+					
+				</table>
+			</div>
+
+
+		</form>
+	</div>
+
+	<div>
+		<span th:text="${bind}"
+			class="text-danger text-danger d-flex w-100 justify-content-center"></span>
+	</div>
+
+	<script>
+		function submitForm() {
+			var cropyear = $('#cropyear').val();
+			if (cropyear == '') {
+				alert('Please select an option from the crop year.');
+				return false;
+			}
+
+			$('#myform').submit();
+		}
+	</script>
+
+</body>
+
+</html>

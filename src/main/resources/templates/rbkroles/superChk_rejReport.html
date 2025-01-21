@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<title>Supervisory Officers Remarks </title>
+
+	<script>
+		function CallPrint(strid) {
+			var prtContent = document.getElementById(strid);
+			var mywindow = window.open('', '', 'left=0,top=0,width=950,height=600,toolbar=1,scrollbars=1,status=1,addressbar=0');
+			var is_chrome = Boolean(mywindow.chrome);
+			mywindow.document.write(prtContent.innerHTML);
+			mywindow.document.close(); // necessary for IE >= 10 and necessary before onload for chrome
+
+			if (is_chrome) {
+				mywindow.onload = function () { // wait until all resources loaded 
+					mywindow.focus(); // necessary for IE >= 10
+					mywindow.print(); // change window to mywindow
+					mywindow.close(); // change window to mywindow
+				};
+			} else {
+				mywindow.document.close(); // necessary for IE >= 10
+				mywindow.focus(); // necessary for IE >= 10
+				mywindow.print();
+				mywindow.close();
+			}
+
+			return true;
+		}
+
+	
+		var tableToExcel = (function () {
+			var uri = 'data:application/vnd.ms-excel;base64,'
+				, template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table align="center">{table}</table></body></html>'
+				, base64 = function (s) {
+					return window.btoa(unescape(encodeURIComponent(s)))
+				}
+				, format = function (s, c) {
+					return s.replace(/{(\w+)}/g, function (m, p) {
+						return c[p];
+					})
+				}
+			return function (table, name) {
+				if (!table.nodeType)
+					table = document.getElementById(table)
+				var ctx = {worksheet: name || 'Worksheet', table: table.innerHTML}
+				window.location.href = uri + base64(format(template, ctx))
+			}
+		})()
+	
+
+		function validateForm() {
+			var cropyear = document.getElementById("crYear").value;
+
+			// Check if both fields are selected
+			if (cropyear == 0) {
+				alert("Please select Crop Year.");
+				return false; // Prevent form submission
+			}
+			else {
+				return true;
+			}
+
+			// If both fields are selected, allow form submission
+			return true;
+		}
+
+	</script>
+</head>
+
+<body>
+	<div th:insert="header"></div>
+<div th:insert="headerImage"></div>
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+
+	<div class="container">
+		<form id="unlockreport" name="unlockreport" method="post" th:action="@{./Repsuperchkrej}">
+			<br>
+			<div class="ecropCardRbk2 ">
+				
+			<h5 style="background-color:#dfffe1;color: white;font-weight:bolder;font-size:large;margin-left:30%;text-align: center;width:70%"  >
+					Supervisory Officers Remarks</h5>	
+			
+			<div class="mb-3" style="margin-left:35%;margin-top:5%;" >
+				<label style="width:40%;" for="name">Crop Year:</label>
+				<select id="crYear" name="crYear" class="form-select" style="width:50%;" aria-label="Crop Year">
+					<option value="0">---Select---</option>
+					<option th:each="emp : ${activeseason}" th:value="${emp.seasonvalue}" th:text="${emp.cropyear}">
+					</option>
+				</select>
+			</div>
+			<div align="center" style="margin-left:20%;">
+				<button type="submit" class="btn btn-primary " onclick="return validateForm()">Submit</button>
+<!-- 				<button type="button" class="btn btn-primary btn-block">Back</button> -->
+			</div>
+			</div>
+
+			<div align="center" id="divPrint"
+				style="overflow-x: scroll; overflow-y: scroll;max-width: 100%;max-height: 100lvh;margin-top:5%">
+				<table id="tableStkId" align="center" class="table table-striped border border-secondary">
+					<thead>
+						<tr>
+							<th> <b> S.No. </b> </th>
+							<th> <b> District Name </b> </th>
+							<th> <b> Mandal Name </b> </th>
+							<th> <b>Village Name </b> </th>
+							<th> <b>Booking Id </b> </th>
+							<th> <b>Occupant Name /</br>e-Kyc Name</b> </th>
+							<th> <b>Occupant Father</b> </th>
+							<th> <b> Crop Name </b> </th>
+							<th> <b>Variety Name </b> </th>
+							<th> <b>Booked </br>Extent </b> </th>
+							<th> <b>Irrigation</br>Source </b> </th>
+							<th> <b> Sown Date </b> </th>
+							<th> <b> Khata No </b> </th>
+							<th> <b>Survey NO/LP No </b> </th>
+							<th><b>Supervisor </b></th>
+							<th> <b>Observations </b> </th>
+							<th> <b> Reason for Entry Found Incorrect </b> </th>
+						</tr>
+					</thead>
+					<tbody id="databody">
+						<tr th:each="bean,row: ${list}">
+							<td th:text="${row.index+1}" />
+							<td th:text="${bean.Wbdname}" />
+							<td th:text="${bean.Wbmname}" />
+							<td th:text="${bean.Wbvname}" />
+							<td th:text="${bean.Bookingid}" />
+							<td th:text="${bean.Occupname}" />
+							<td th:text="${bean.Occupfname}" />
+							<td th:text="${bean.Cropname}" />
+							<td th:text="${bean.Varietyname}" />
+							<td th:text="${bean.Bookedext}" />
+							<td th:text="${bean.Wsrcdesc}" />
+							<td th:text="${bean.Cr_sow_date}" />
+							<td th:text="${bean.Kh_no}" />
+							<td th:text="${bean.Cr_sno}" />
+							<td th:text="${bean.Supercheck_userid}" />
+
+							<!--   <td style="background-color: #e8f4f0; border: 1px solid black" th:text="${bean.Remarks}" />-->
+							<td style="background-color: #e8f4f0; border: 1px solid black;color: red;"
+								th:if="${bean.Remarks == 'R'}" th:text="${'Entry Found Incorrect'}" />
+							<td style="background-color: #e8f4f0; border: 1px solid black;color:black;"
+								th:text="${'Entry Found Correct'}" th:if="${bean.Remarks == 'A'}" />
+							<td th:text="${bean.Reason}" />
+							<td th:text="${res}" />
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div th:if="${NoRecordsFound}" align="center">
+				<b style="font-size:18px;">---- No Records found-----</b>
+			</div>
+
+		</form>
+		<div align="center" style="color:black">
+			<input class="btn btn-primary" name="ctl00$ContentPlaceHolder1$btnPrint" type="button"
+				id="ctl00_ContentPlaceHolder1_btnPrint" onClick="javascript:CallPrint('divPrint')" value="Print">
+			<input class="btn btn-primary" type="button" onclick="tableToExcel('tableStkId', 'Abstract')" value="Excel">
+			<!--  <input  class="btn btn-primary" type="button" value="Back" onclick="goBack()" /> -->
+
+		</div>
+	</div>
+	</body>
+
+</html>

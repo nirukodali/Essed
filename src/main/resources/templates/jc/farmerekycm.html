@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:insert="header">
+    <meta charset="UTF-8">
+    <title>Crop Wise Mandal Report on VAA/VRO Authentication and Farmer eKyc</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Custom styles -->
+    <!-- <link rel="stylesheet" type="text/css" href="css/style.css"> -->
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+</head>
+
+<body>
+    <div th:insert="header"></div>
+    <div th:insert="headerImage"></div>
+    <div th:insert="navBarTop"></div>
+    <div th:insert="headerMessage"></div>
+
+    <div class="container">
+        <div>
+            <div>
+                <div>
+                    <form th:action="@{/crop-report}" method="POST" id="cropForm">
+                        <div align="center">
+                            <b class="heading" style="font-size: 25px; text-align: center;">
+                                Crop Wise Report on VAA/VRO Authentication and Farmer e-KYC
+                            </b>
+                            <br />
+                        </div>
+                        <div align="center" id="divPrintArea">
+                        <br>
+                            <table>
+                                <tr>
+                                    <td colspan="2" style="width:30%" align="left">
+                                        <b>Crop Year <font color="red">*</font>:</b>
+                                    </td>
+                                    <td>
+                                        <select name="cropyear" id="cropyear" style="width: 200px">
+                                            <option value='' th:selected="0">------Select --------</option>
+                                            <option th:each="cropyr: ${cropyears}" th:value="${cropyr.seasonvalue}" th:text="${cropyr.cropyear}"></option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2"><b>Crop Name :</b></td>
+                                    <td>
+                                        <select name="cropname" id="cropname" style="width: 200px" onchange="submitForm()">
+                                            <option value='0' th:selected="0">------Select --------</option>
+                                            <option th:each="cropnme: ${cropnames}" th:value="${cropnme.cropid}" th:text="${cropnme.cropname}"></option>
+                                        </select>
+                                    </td>
+                                </tr>
+                            </table>
+                            <br>
+                           
+                            <div>
+                                <div class="heading" style="font-size:15px; text-align: right;">
+                                    <b>Report Time: <b th:text="${theDate}"></b></b>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div>
+        <div id="divPrintTable" class="text-center">
+            <table id="tableExl" class="table table-striped table-hover mx-auto" style="width:100%;">
+                <thead class="thead-secondary" style="background-color: #006600; color: white;">
+                    <tr>
+                        <th><b>Sl.No</b></th>
+                        <th><b>Mandal Name</b></th>
+                        <th><b>No. of Farmers</b></th>
+                        <th><b>Total Bookings</b></th>
+                        <th><b>Total Extent (acres)</b></th>
+                        <th><b>VAA Authentication Completed: Bookings</b></th>
+                        <th><b>VAA Authentication Completed: Acres</b></th>
+                        <th><b>VRO Authentication Completed: Bookings</b></th>
+                        <th><b>VRO Authentication Completed: Acres</b></th>
+                        <th><b>e-KYC Done Bookings</b></th>
+                        <th><b>e-KYC Done Farmers</b></th>
+                        <th><b>e-KYC Done Acres</b></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="crpreport, iterStat : ${cropreport}">
+                        <td style="text-align:center;" th:text="${iterStat.count}"></td>
+                        <td style="text-align:left;" th:text="${crpreport.wbmname}" class="text-left"></td>
+                        <td style="text-align:right;" th:text="${crpreport.totfarmercount}" class="text-right"></td>
+                        <td style="text-align:right;" th:text="${crpreport.totalbookings}" class="text-right"></td>
+                        <td style="text-align:right;" th:text="${#numbers.formatDecimal(crpreport.totextent, 1, 2)}"></td>
+                        <td style="text-align:right;" th:text="${crpreport.vaaauthcount}" class="text-right"></td>
+                        <td style="text-align:right;" th:text="${#numbers.formatDecimal(crpreport.vaaauthextent, 1, 2)}"></td>
+                        <td style="text-align:right;" th:text="${crpreport.vroauthcount}" class="text-right"></td>
+                        <td style="text-align:right;" th:text="${#numbers.formatDecimal(crpreport.vroauthextent, 1, 2)}"></td>
+                        <td style="text-align:right;" th:text="${crpreport.totekycbookings}" class="text-right"></td>
+                        <td style="text-align:right;" th:text="${crpreport.ekycfarmercount}" class="text-right"></td>
+                        <td style="text-align:right;" th:text="${#numbers.formatDecimal(crpreport.ekycbookedext, 1, 2)}"></td>
+                    </tr>
+                </tbody>
+                
+                <tfoot>
+                    <tr style="font-weight:bold">
+                        <td colspan="2">Total</td>
+                        <td id="totalFarmerCount" class="text-right"></td>
+                        <td id="totalBookings" class="text-right"></td>
+                        <td id="totalExtent" class="text-right"></td>
+                        <td id="totalVAAAuthBookings" class="text-right"></td>
+                        <td id="totalVAAAuthExtent" class="text-right"></td>
+                        <td id="totalVROAuthBookings" class="text-right"></td>
+                        <td id="totalVROAuthExtent" class="text-right"></td>
+                        <td id="totalEkycBookings" class="text-right"></td>
+                        <td id="totalEkycFarmers" class="text-right"></td>
+                        <td id="totalEkycExtent" class="text-right"></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+
+    <div class="text-center mt-4">
+        <button class="btn btn-success" onclick="CallPrint('divPrintArea')">Print</button>
+        <button class="btn btn-success" onclick="tableToExcel('tableExl', 'Crop_Report')">Excel</button>
+        <input class="btn btn-success" type="button" value="Back" onclick="goBack()" />
+    </div>
+
+    <script>
+        function CallPrint(strid) {
+            var prtContent = document.getElementById(strid);
+            var mywindow = window.open('', '', 'left=0,top=0,width=950,height=600,toolbar=1,scrollbars=1,status=1');
+            mywindow.document.write('<html><head><title>Print</title></head><body>');
+            mywindow.document.write(prtContent.innerHTML);
+            mywindow.document.write('</body></html>');
+            mywindow.document.close();
+            mywindow.focus();
+            mywindow.onload = function () {
+                mywindow.print();
+                mywindow.close();
+            };
+            return true;
+        }
+
+        var tableToExcel = (function () {
+            var uri = 'data:application/vnd.ms-excel;base64,',
+                template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>',
+                base64 = function (s) { return window.btoa(unescape(encodeURIComponent(s))) },
+                format = function (s, c) { return s.replace(/{(\w+)}/g, function (m, p) { return c[p]; }) };
+            return function (table, name) {
+                if (!table.nodeType) table = document.getElementById(table);
+                var ctx = { worksheet: name || 'Worksheet', table: table.innerHTML };
+                window.location.href = uri + base64(format(template, ctx));
+            }
+        })();
+
+        function submitForm() {
+            document.getElementById('cropForm').submit();
+        }
+
+        function goBack() {
+            window.location.href="./home";
+        }
+
+        $(document).ready(function() {
+            calculateTotal();
+        });
+
+        function calculateTotal() {
+            var totalFarmerCount = 0;
+            var totalBookings = 0;
+            var totalExtent = 0;
+            var totalVAAAuthBookings = 0;
+            var totalVAAAuthExtent = 0;
+            var totalVROAuthBookings = 0;
+            var totalVROAuthExtent = 0;
+            var totalEkycBookings = 0;
+            var totalEkycFarmers = 0;
+            var totalEkycExtent = 0;
+
+            $('#tableExl tbody tr').each(function () {
+                var columns = $(this).find('td');
+                totalFarmerCount += parseInt(columns.eq(2).text().trim()) || 0;
+                totalBookings += parseInt(columns.eq(3).text().trim()) || 0;
+                totalExtent += parseFloat(columns.eq(4).text().trim()) || 0;
+                totalVAAAuthBookings += parseInt(columns.eq(5).text().trim()) || 0;
+                totalVAAAuthExtent += parseFloat(columns.eq(6).text().trim()) || 0;
+                totalVROAuthBookings += parseInt(columns.eq(7).text().trim()) || 0;
+                totalVROAuthExtent += parseFloat(columns.eq(8).text().trim()) || 0;
+                totalEkycBookings += parseInt(columns.eq(9).text().trim()) || 0;
+                totalEkycFarmers += parseInt(columns.eq(10).text().trim()) || 0;
+                totalEkycExtent += parseFloat(columns.eq(11).text().trim()) || 0;
+            });
+
+            $('#totalFarmerCount').text(totalFarmerCount);
+            $('#totalBookings').text(totalBookings);
+            $('#totalExtent').text(totalExtent.toFixed(2));
+            $('#totalVAAAuthBookings').text(totalVAAAuthBookings);
+            $('#totalVAAAuthExtent').text(totalVAAAuthExtent.toFixed(2));
+            $('#totalVROAuthBookings').text(totalVROAuthBookings);
+            $('#totalVROAuthExtent').text(totalVROAuthExtent.toFixed(2));
+            $('#totalEkycBookings').text(totalEkycBookings);
+            $('#totalEkycFarmers').text(totalEkycFarmers);
+            $('#totalEkycExtent').text(totalEkycExtent.toFixed(2));
+        }
+    </script>
+</body>
+</html>

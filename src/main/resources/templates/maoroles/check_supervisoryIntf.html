@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+
+	<title>Check Supervisory</title>
+	<style>
+		table {
+			border: 0px;
+			border-style: 0px;
+			border-collapse: collapse;
+			width: 100%;
+		}
+
+		th {
+			position: sticky;
+			top: 0px;
+			background-color: grey;
+			color: black;
+		}
+
+		.table_wrapper {
+			overflow-y: scroll;
+			overflow-x: scroll;
+		}
+
+		.btnCss,
+		.rejbtnCss {
+			background-color: #4caf50;
+			border: none;
+			color: black;
+			padding: 10px 60px;
+			text-align: center;
+			text-decoration: none;
+			display: inline-block;
+			font-size: 16px;
+			margin: 10px 5px;
+			cursor: pointer;
+		}
+
+		.rejbtnCss {
+			background-color: #fc7676;
+		}
+
+		.table td.fit,
+		.table th.fit {
+			white-space: nowrap;
+			width: 1%;
+		}
+
+		table,
+		th,
+		td {
+			border: 0px solid grey;
+			border-collapse: collapse;
+			padding: 15px;
+			text-align: center;
+		}
+
+		table tr:nth-child(odd) {
+			background-color: #f1f1f1;
+		}
+
+		table tr:nth-child(even) {
+			background-color: #b6d0e2;
+		}
+
+		.centered-container {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			height: 10vh;
+		}
+
+		.pagination-button {
+			background-color: #007bff;
+			color: #fff;
+			border: none;
+			padding: 10px 20px;
+			margin: 0 5px;
+			cursor: pointer;
+			border-radius: 5px;
+		}
+
+		#prevPage,
+		#nextPage {
+			background-color: #6c757d;
+		}
+
+		#prevPage:hover,
+		#nextPage:hover {
+			background-color: #5a6268;
+		}
+	</style>
+</head>
+
+<body style="background-color: #e8e8e8">
+	<div th:insert="headerImage"></div>
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+	<div th:insert="header"></div>
+
+	<form id="mroVerifyForm" name="mroVerifyForm" method="post">
+		<div class="table_wrapper">
+			<table id="tableStkId" class="table table-bordered table-responsive table-striped">
+				<thead>
+					<tr>
+						<th colspan="17" class="heading">
+							<font size="5pt">Supervisory Check- Observations- Report</font>
+						</th>
+					</tr>
+					<tr>
+						<th>S.No.</th>
+						<th>Mandal</th>
+						<th>Village</th>
+						<th>Booking ID</th>
+						<th>Khata No</th>
+						<th>Survey No/LP No</th>
+						<th>Cultivator Name</th>
+						<th>Cultivator Father Name</th>
+						<th>Cultivator Extent</th>
+						<th>Crop Sown</th>
+						<th>Variety</th>
+						<th>Area Sown</th>
+						<th>Source Of Irrigation</th>
+						<th>Exception Category</th>
+						<th>Mobile No</th>
+						<th>Entry Found Correct</th>
+						<th>Entry Found Incorrect</th>
+						<th>Reason for Entry Found Incorrect</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="item, j : ${resultList}">
+						<td th:text="${j.index + 1}"></td>
+						<td th:text="${item.wbmname}"></td>
+						<td th:text="${item.wbvname}"></td>
+						<td th:text="${item.bookingid}"></td>
+						<td th:text="${item.kh_no}"></td>
+						<td th:text="${item.cr_sno}"></td>
+						<td th:text="${item.oc_name}"></td>
+						<td th:text="${item.oc_fname}"></td>
+						<td th:text="${item.occupant_extent}"></td>
+						<td th:text="${item.cropname}"></td>
+						<td th:text="${item.variety}"></td>
+						<td th:text="${item.cr_mix_unmix_ext}"></td>
+						<td th:text="${item.wsrcdesc}"></td>
+						<td th:text="${item.exception_type}"></td>
+						<td th:text="${item.mobileno}"></td>
+						<td class="tdtext">
+							<a href="#" th:onclick="'return onSupChk(this, \'A\');'"
+								th:data-bookingid="${item.bookingid}" th:data-cr-crop="${item.cr_crop}"
+								th:data-surveyno="${item.cr_sno}"
+								th:data-sowdate="${#dates.format(item.cr_sow_date, 'yyyy-MM-dd')}"
+								th:data-khno="${item.kh_no}" th:data-varietycode="${item.variety}"
+								th:data-rowindex="${j.index}" th:data-villagecode="${item.cr_vcode}"
+								th:data-wbdist="${item.cr_dist_code}" th:data-wmand="${item.cr_mand_code}"
+								th:data-mname="${item.wbmname}" th:data-exception-type="${item.exception_type}"
+								th:data-vname="${item.wbvname}" th:data-oc-name="${item.oc_name}"
+								th:data-oc-fname="${item.oc_fname}" th:data-cr-no="${item.cr_no}">
+								<button class="btn btn-success">Entry Found Correct</button>
+							</a>
+						</td>
+						<td>
+							<a href="#" th:onclick="'return onSupChk(this, \'R\');'"
+								th:data-bookingid="${item.bookingid}" th:data-cr-crop="${item.cr_crop}"
+								th:data-surveyno="${item.cr_sno}"
+								th:data-sowdate="${#dates.format(item.cr_sow_date, 'yyyy-MM-dd')}"
+								th:data-khno="${item.kh_no}" th:data-varietycode="${item.variety}"
+								th:data-rowindex="${j.index}" th:data-villagecode="${item.cr_vcode}"
+								th:data-wbdist="${item.cr_dist_code}" th:data-wmand="${item.cr_mand_code}"
+								th:data-mname="${item.wbmname}" th:data-exception-type="${item.exception_type}"
+								th:data-vname="${item.wbvname}" th:data-oc-name="${item.oc_name}"
+								th:data-oc-fname="${item.oc_fname}" th:data-cr-no="${item.cr_no}">
+								<button class="btn btn-danger">Entry Found Incorrect</button>
+							</a>
+						</td>
+						<td>
+							<div class="reason-selector">
+								<select id="reasonId" class="reasonId" name="reasonId" multiple="multiple" size="4">
+									<option value="" disabled selected>--Select Reason--</option>
+								</select>
+							</div>
+						</td>
+						<input type="hidden" id="bkid" name="bkid" th:value="${item.bookingid}">
+						<input type="hidden" id="crCrop" name="crCrop" th:value="${item.cr_crop}">
+						<input type="hidden" id="crNo" name="crNo" th:value="${item.cr_no}">
+						<input type="hidden" id="crSowndt" name="crSowndt"
+							th:value="${#dates.format(item.cr_sow_date, 'yyyy-MM-dd')}">
+						<input type="hidden" id="khata_no" th:value="${item.kh_no}" />
+						<input type="hidden" id="survey_no" th:value="${item.cr_sno}" />
+						<input type="hidden" id="varietyCode" th:value="${item.variety}" />
+						<input type="hidden" id="villageCode" th:value="${item.cr_vcode}" />
+						<input type="hidden" id="occpName" th:value="${item.oc_name}" />
+						<input type="hidden" id="occpFatName" th:value="${item.oc_fname}" />
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</form>
+
+	<input type="hidden" id="param" name="param" th:value="${resultList.size()}">
+	<input type="hidden" id="cropyear" name="cropyear" th:value="${cropYear}">
+	<input type="hidden" id="season" name="season" th:value="${season}">
+
+
+	<div class="centered-container">
+		<button type="button" class="btn btn-primary" style="margin-left: 10px;"
+			onclick="printTable('tableStkId')">Print</button>
+		<button type="button" class="btn btn-info" style="margin-left: 10px;"
+			onclick="exportToExcel('tableStkId')">Export to Excel</button>
+		<button type="button" class="btn btn-secondary" style="margin-left: 10px;"
+			onclick="location.reload()">Refresh</button>
+	</div>
+	<div id="pagination" class="centered-container">
+		<button id="prevPage" class="pagination-button btn btn-secondary">Previous</button>
+		<div id="pageButtons"></div>
+		<button id="nextPage" class="pagination-button btn btn-secondary">Next</button>
+	</div>
+
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.2/xlsx.full.min.js"></script>
+	<script>
+		$(document).ready(function () {
+			// Constants
+			const rowLimit = 15; // Number of rows per page
+			const tableBody = $('#tableStkId tbody');
+			const pagination = $('#pagination');
+			let currentPage = 1; // Variable to store current page
+
+			// Get total number of data rows
+			const totalRows = $('tr', tableBody).length;
+
+			// Calculate total number of pages
+			const totalPages = Math.ceil(totalRows / rowLimit);
+
+			// Show initial page
+			showPage(currentPage);
+
+			// Your pagination click event handler
+			pagination.on('click', '.pagination-button', function () {
+				const buttonId = $(this).attr('id');
+
+				// Update currentPage based on button clicked
+				if (buttonId === 'prevPage') {
+					if (currentPage > 1) {
+						currentPage--;
+					}
+				} else if (buttonId === 'nextPage') {
+					if (currentPage < totalPages) {
+						currentPage++;
+					}
+				} else {
+					currentPage = parseInt(buttonId);
+				}
+
+				showPage(currentPage);
+			});
+
+			// Function to show a specific page
+			function showPage(pageNum) {
+				// Calculate start and end index of rows for the current page
+				const startIndex = (pageNum - 1) * rowLimit;
+				const endIndex = Math.min(startIndex + rowLimit, totalRows);
+
+				// Hide all rows
+				$('tr', tableBody).hide();
+
+				// Show rows for the current page
+				$('tr', tableBody).slice(startIndex, endIndex).show();
+
+				// Update active class for pagination buttons
+				pagination.find('.pagination-button').removeClass('active');
+				pagination.find(`#${pageNum}`).addClass('active');
+
+				// Update visible pagination buttons
+				updateVisiblePageButtons(pageNum);
+			}
+
+			// Function to update visible pagination buttons
+			function updateVisiblePageButtons(currentPage) {
+				// Remove existing page buttons
+				$('#pageButtons').empty();
+
+				// Calculate start and end page numbers for visible buttons
+				let startPage = Math.max(1, currentPage - 2);
+				let endPage = Math.min(totalPages, startPage + 4);
+
+				// Adjust start and end page numbers if necessary
+				if (endPage - startPage < 4) {
+					startPage = Math.max(1, endPage - 4);
+				}
+
+				// Add page buttons
+				for (let i = startPage; i <= endPage; i++) {
+					$('#pageButtons').append(`<button id="${i}" class="pagination-button btn btn-secondary">${i}</button>`);
+				}
+			}
+
+			// Generate initial pagination buttons
+			updateVisiblePageButtons(currentPage);
+		});
+
+		// Function to reload the current page
+		function reloadCurrentPage() {
+			const currentPage = parseInt($('.active', '#pagination').text());
+			showPage(currentPage); // Reload the current page
+		}
+
+		function printTable(tableId) {
+			var printContents = document.getElementById(tableId).outerHTML;
+			var originalContents = document.body.innerHTML;
+
+			document.body.innerHTML = printContents;
+
+			window.print();
+
+			document.body.innerHTML = originalContents;
+		}
+
+		// Function to export table data to Excel format
+		function exportToExcel(tableId) {
+			var table = document.getElementById(tableId);
+			var html = table.outerHTML;
+
+			// Replace URLs and images
+			html = html.replace(/href="/g, 'href="');
+			html = html.replace(/src="/g, 'src="');
+
+			// Create a blob with HTML content
+			var blob = new Blob([html], {type: "application/vnd.ms-excel"});
+			var url = window.URL.createObjectURL(blob);
+
+			// Create a link element and click it to trigger download
+			var a = document.createElement("a");
+			a.href = url;
+			a.download = "table_data.xls";
+			document.body.appendChild(a);
+			a.click();
+
+			// Clean up
+			window.URL.revokeObjectURL(url);
+			document.body.removeChild(a);
+		}
+
+		// Function to refresh the page
+		function refreshPage() {
+			location.reload();
+		}
+
+
+
+
+
+		function submitWithReason(bookingID, cropcode, crsowdate, khno, varietycode,
+			rowindex, villagecode, wbdist, wmand, mname,
+			exceptiontype, vname, ocname, ofname, crno, surveyno, apprsts, selectedReasons) {
+
+			var cropYear = $('#cropyear').val();
+			var season = $('#season').val();
+
+
+			var data = {
+				bookingid: bookingID,
+				cr_crop: cropcode,
+				cr_sow_date: formatDate(crsowdate), // Format date properly
+				kh_no: khno,
+				variety: varietycode,
+				rowindex: rowindex,
+				cr_vcode: villagecode,
+				cr_dist_code: wbdist,
+				cr_mand_code: wmand,
+				wbmname: mname,
+				exception_type: exceptiontype,
+				wbvname: vname,
+				oc_name: ocname,
+				oc_fname: ofname,
+				cr_no: crno,
+				cr_sno: surveyno,
+				apprsts: apprsts,
+				selectedReasons: selectedReasons.join(", "), // Convert array to string
+				cropYear: cropYear,
+				season: season
+
+			};
+
+			$.ajax({
+				type: "POST",
+				url: "./rest/api/checkSupervisory/insertDataAndShowMessage",
+				contentType: "application/json", // Set content type to JSON
+				data: JSON.stringify(data), // Convert data to JSON format
+				success: function (response) {
+					alert(response);
+					reloadCurrentPage(); // Reload the current page
+				},
+				error: function (xhr, status, error) {
+					var errorMessage = "An error occurred while submitting the form: " + error;
+					console.error(errorMessage);
+					alert(errorMessage);
+				}
+			});
+		}
+
+		function submitForm(bookingID, cropcode, crsowdate, khno, varietycode,
+			rowindex, villagecode, wbdist, wmand, mname,
+			exceptiontype, vname, ocname, ofname, crno, surveyno, apprsts, reasoncode, selectedReasons) {
+			//alert("bookingID" + bookingID)
+			//alert("apprsts" + apprsts)
+			//alert("cropcode" + cropcode)
+			var cropYear = $('#cropyear').val();
+			var season = $('#season').val();
+
+
+			var data = {
+				bookingid: bookingID,
+				cr_crop: cropcode,
+				cr_sow_date: formatDate(crsowdate), // Format date properly
+				kh_no: khno,
+				variety: varietycode,
+				rowindex: rowindex,
+				cr_vcode: villagecode,
+				cr_dist_code: wbdist,
+				cr_mand_code: wmand,
+				wbmname: mname,
+				exception_type: exceptiontype,
+				wbvname: vname,
+				oc_name: ocname,
+				oc_fname: ofname,
+				cr_no: crno,
+				cr_sno: surveyno,
+				apprsts: apprsts,
+				selectedReasons: selectedReasons,
+				cropYear: cropYear,
+				season: season
+
+			};
+
+			$.ajax({
+				type: "POST",
+				url: "./rest/api/checkSupervisory/insertDataAndShowMessage",
+				contentType: "application/json", // Set content type to JSON
+				data: JSON.stringify(data), // Convert data to JSON format
+				success: function (response) {
+					alert(response);
+					reloadCurrentPage(); // Reload the current page
+				},
+				error: function (xhr, status, error) {
+					var errorMessage = "An error occurred while submitting the form: " + error;
+					console.error(errorMessage);
+					alert(errorMessage);
+				}
+			});
+		}
+
+
+		function formatDate(dateStr) {
+			// Assuming dateStr is in format yyyy-MM-dd
+			var parts = dateStr.split("-");
+			return new Date(parts[0], parts[1] - 1, parts[2]);
+		}
+
+
+		$(document).ready(function () {
+			$('input[type="radio"]').on('click', function () {
+				if ($(this).val() === 'R') {
+					$(this).closest('tr').find('.reasonId').show();
+				} else {
+					$(this).closest('tr').find('.reasonId').hide();
+				}
+			});
+
+			console.log("Document ready function is called."); // Log a message to the console to see if it's being called
+			fetchReasonData(); // Call the fetchReasonData function
+		});
+
+		// Track selected reasons
+		var selectedReasons = [];
+
+		function fetchReasonData() {
+			$.ajax({
+				url: './rest/api/checkSupervisory/getcodeAndreason',
+				method: 'GET',
+				dataType: 'json',
+				success: function (response) {
+					var data = response;
+					$('.reasonId').each(function () {
+						var $dropdown = $(this);
+						$dropdown.empty(); // Clear existing options
+						$dropdown.append($('<option>').val('').text('--Select Reason--')); // Add default option
+						$.each(data, function (index, obj) {
+							$dropdown.append($('<option>').val(obj.code).text(obj.reason)); // Append option with reason and code
+						});
+					});
+				},
+				error: function (xhr, status, error) {
+					console.error('Error fetching reason data:', error);
+					// Optionally handle error here, e.g., show an error message
+					alert('Error fetching reason data. Please try again later.');
+				},
+			});
+		}
+
+		function onSupChk(element, apprsts) {
+			var bookingID = $(element).data("bookingid");
+			var cropcode = $(element).data("cr-crop");
+			var crsowdate = $(element).data("sowdate");
+			var khno = $(element).data("khno");
+			var varietycode = $(element).data("varietycode");
+			var rowindex = $(element).data("rowindex");
+			var villagecode = $(element).data("villagecode");
+			var wbdist = $(element).data("wbdist");
+			var wmand = $(element).data("wmand");
+			var mname = $(element).data("mname");
+			var exceptiontype = $(element).data("exception-type");
+			var vname = $(element).data("vname");
+			var ocname = $(element).data("oc-name");
+			var ofname = $(element).data("oc-fname");
+			var crno = $(element).data("cr-no");
+			var surveyno = $(element).data("surveyno");
+
+
+			//alert("onSupChkcrno---" + exceptiontype)
+
+			if (apprsts === 'A') {
+				if (confirm("The details are verified by me and are found correct") === true) {
+					submitForm(bookingID, cropcode, crsowdate, khno, varietycode,
+						rowindex, villagecode, wbdist, wmand, mname,
+						exceptiontype, vname, ocname, ofname, crno, surveyno, apprsts, '');
+				}
+			} else if (apprsts === 'R') {
+				if (confirm("The details are verified by me and are found Incorrect") === true) {
+					var selectedReasons = $(element).closest('tr').find('.reasonId').val();
+					if (selectedReasons == null) {
+						console.log("selectedReasons:", selectedReasons);
+						alert("Please select at least one and maximum four reasons. Use Control+ Click for Multiple Selection.");
+						return false;
+					}
+					if (selectedReasons && selectedReasons.length > 0 && selectedReasons.length <= 4) {
+						submitWithReason(bookingID, cropcode, crsowdate, khno, varietycode,
+							rowindex, villagecode, wbdist, wmand, mname,
+							exceptiontype, vname, ocname, ofname, crno, surveyno, apprsts, selectedReasons);
+					} else {
+						alert("Please select at least one and maximum four reasons.Use Control+ Click for Multiple Selection.");
+						return false;
+					}
+				}
+			}
+		}
+	</script>
+</body>
+
+</html>

@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<!--	<title>crpMao</title>-->
+	<!--	<link rel="stylesheet" href="./styles/reportstylesheet.css" />-->
+
+	<head th:insert="header"></head>
+	<div th:insert="headerImage"></div>
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+<!--	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>-->
+<!--	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">-->
+<!--	<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.slim.min.js"></script>-->
+<!--	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>-->
+<!--	<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>-->
+<!--	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>-->
+	<script>
+
+		function CallPrint(strid) {
+			var prtContent = document.getElementById(strid);
+			var mywindow = window.open('', '', 'left=0,top=0,width=950,height=600,toolbar=1,scrollbars=1,status=1,addressbar=0');
+			var is_chrome = Boolean(mywindow.chrome);
+			mywindow.document.write(prtContent.innerHTML);
+			mywindow.document.close(); // necessary for IE >= 10 and necessary before onload for chrome
+
+			if (is_chrome) {
+				mywindow.onload = function () { // wait until all resources loaded 
+					mywindow.focus(); // necessary for IE >= 10
+					mywindow.print(); // change window to mywindow
+					mywindow.close(); // change window to mywindow
+				};
+			} else {
+				mywindow.document.close(); // necessary for IE >= 10
+				mywindow.focus(); // necessary for IE >= 10
+				mywindow.print();
+				mywindow.close();
+			}
+
+			return true;
+		}
+
+	</script>
+	<script language="javascript">
+		var tableToExcel = (function () {
+			var uri = 'data:application/vnd.ms-excel;base64,'
+				, template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table align="center">{table}</table></body></html>'
+				, base64 = function (s) {
+					return window.btoa(unescape(encodeURIComponent(s)))
+				}
+				, format = function (s, c) {
+					return s.replace(/{(\w+)}/g, function (m, p) {
+						return c[p];
+					})
+				}
+			return function (table, name) {
+				if (!table.nodeType)
+					table = document.getElementById(table)
+				var ctx = {worksheet: name || 'Worksheet', table: table.innerHTML}
+				window.location.href = uri + base64(format(template, ctx))
+			}
+		})()
+	</script>
+
+</head>
+<script>
+	
+	
+	$(document).ready(function () {
+		//alert("get crop year");
+		$("#loadingsign").hide();
+		$.ajax({
+			type: "get",
+			url: "./utilMao/getAllSeason",
+			cache: false,
+			timeout: 600000,
+			success: function (resp) {
+				//alert(JSON.stringify(resp));
+				for (var j = 0; j < resp.length; j++) {
+					var bean = resp[j];
+					$("#cropyear").append('<option value="' + bean.col1 + '">' + bean.col2 + '</option>');
+				}
+			}
+		});
+	});
+	$(document).ready(function () {
+			$("#loadingsign").hide();
+			$("#databody").empty();
+
+			//alert("get crop year");
+			$.ajax({
+				type: "get",
+				url: "./util/getAllwbdcode",
+				cache: false,
+				timeout: 600000,
+				success: function (resp) {
+					//alert(JSON.stringify(resp));
+					for (var j = 0; j < resp.length; j++) {
+						var bean = resp[j];
+						$("#district").append('<option value="' + bean.col1 + '">' + bean.col2 + '</option>');
+					}
+				}
+			});
+		});
+
+		function getMandals() {
+			var district = $("#district").val();
+            $("#inputmcode").empty().append('<option value="">----Select----</option>'); // Clear and reset options
+
+			var wbmcode = $("#inputmcode").val();
+
+			$.ajax({
+				type: "get",
+				url: "./util/getAllwbmandals?wbdcode=" + district,
+				cache: false,
+				timeout: 600000,
+				success: function (resp) {
+					//alert("success=>" + JSON.stringify(resp));
+					for (var j = 0; j < resp.length; j++) {
+						var bean = resp[j];
+						$("#inputmcode").append('<option value="' + bean.col1 + '">' + bean.col2 + '</option>');
+					}
+				}
+			});
+		}
+	function getVillage() {
+			//alert("gdgd");
+			$("#vcode").empty();
+		var inputdcode = $("#district").val()
+		var inputmcode = $("#inputmcode").val()
+		var vcode = $("#vcode").val()
+		
+		$.ajax({
+			type: "get",
+			url: "./util/getAllWBVillages?dcode=" + inputdcode + "&mcode=" + inputmcode ,
+			cache: false,
+			timeout: 600000,
+			success: function (resp) {
+//				alert("sucess=>"+JSON.stringify(resp));
+				for (var j = 0; j < resp.length; j++) {
+					var bean = resp[j];
+					$("#vcode").append('<option value="' + bean.col1 + '">' + bean.col2 + '</option>');
+				}
+			}
+		});
+		}
+		function getCrop() {
+			//alert("getcrop");
+			var cropid = $("#cropid").val();
+			$.ajax({
+				type: "get",
+				url: "./util/getAllCrop",
+				cache: false,
+				timeout: 600000,
+				success: function (resp) {
+					//alert(JSON.stringify(resp));
+					for (var j = 0; j < resp.length; j++) {
+						var bean = resp[j];
+						$("#cropid").append('<option value="' + bean.col1 + '">' + bean.col2 + '</option>');
+					}
+				}
+			});
+
+		}
+	 
+		function getData() {
+			
+			var cropyear = $("#cropyear").val();
+			if(cropyear == "" || cropyear == null){
+				alert("Please Select Cropyear");
+				return false;
+			}
+			var disrict = $("#district").val();
+			if(disrict == "" || disrict == null){
+				alert("Please Select disrict");
+				return false;
+			}
+			//alert(disrict)
+			
+			var mandal = $("#inputmcode").val();
+			if(mandal == "" || mandal == null){
+				alert("Please Select mandal");
+				return false;
+			}
+			var village = $("#vcode").val();
+			if(village == "" || village == null){
+				alert("Please Select Village");
+				return false;
+			}
+			
+			var cropname = $("#cropid").val();
+			if(cropname == "" || cropname == null){
+				alert("Please Select cropName");
+				return false;
+			}
+			
+			
+			
+//			var wbedname = $("#wbedname").val();
+	//		var wbemname = $("#wbemname").val();
+			
+			var chkbox = document.getElementById("chkbox");
+			var withPhoto = false;
+			if (chkbox.checked) {
+					withPhoto = true;
+			    } else {
+			    	withPhoto = false;
+			    }
+			
+
+			$("#loadingsign").show();
+			var wbdcode = $("#district").val();
+			var dcode = $("#district").val();
+			var mcode = $("#inputmcode").val();
+			var vcode = $("#vcode").val();
+			var cropYear = $("#cropyear").val();
+			var cropid = $("#cropid").val();
+			var chkbox = $("#chkbox").val();
+
+			var data = {};
+			data['wbdcode'] = dcode;
+			data['wbmcode'] = mcode;
+			data['vcode'] = vcode;
+			
+			data['cropyear'] = cropYear;
+			data['crop'] = cropid;
+			data['wbdcode'] = wbdcode;
+			
+			
+
+			$.ajax({
+				type: "post",
+				url: "./util/crpddap",
+				contentType: 'application/json',
+				data: JSON.stringify(data),
+				cache: false,
+				timeout: 600000,
+				success: function (resp) {
+					if(resp.length==0){
+								alert('No Records Found')
+							}
+					$("#loadingsign").hide();
+					$("#databody").empty();
+					//alert(JSON.stringify(resp));
+					
+					var sno = 0;
+					var image = '';
+					for (var j = 0; j < resp.length; j++) {
+						sno = sno + 1;
+						var bean = resp[j];
+						var ph = bean.photo;
+						var photoValue = '';
+						 
+						if(bean.owner_tenant == 'O'){ ownertenent='Pattadar';
+						} else{ ownertenent='Cultivator'; }
+						if(bean.seed_production ==='1'){
+							seedproduction='Yes'
+						}
+						else{
+							seedproduction='No'
+							}
+						
+						if(withPhoto){
+							photoValue = '<img src="data:image/jpeg;base64,' + bean.photo + '" >';
+						}else{
+							photoValue = '';
+						}
+						
+						$("#databody").append('<tr style="fontsize:200px; ">'
+							+ '<td>' + sno + '</td>'
+							+ '<td>' + bean.bookingid + '</td>'
+					//		+ '<td> '+wbedname+' </td>'
+							+ '<td> ' +bean.vname+ ' </td>'
+							+ '<td>' + bean.oc_name + '</td>'
+							+ '<td>' + bean.cr_farmeruid + '</td>'
+							+ '<td>' + bean.oc_fname + '</td>'
+							+ '<td>' + ownertenent + '</td>'
+							+ '<td>' + bean.kh_no + '</td>'
+							+ '<td>' + bean.cr_sno + '</td>'
+							+ '<td>' + bean.cropname + '</td>'
+							+ '<td>' + bean.varietyname + '</td>'
+							+ '<td>' + bean.cr_mix_unmix_ext + '</td>'
+							+ '<td>' + bean.cr_sow_date + '</td>'
+							+ '<td>' + bean.cropnature + '</td>'
+							+ '<td>' + bean.watersource + '</td>'
+							+ '<td>' + bean.irrmethoddesc + '</td>'
+							+ '<td>' + seedproduction + '</td>'
+							+ '<td>' + bean.farmingtype + '</td>'
+							+ '<td>'+photoValue+'</td>'
+
+							+ '</tr>');
+					}
+				}
+			});
+		}
+</script>
+<style>
+	#ObjEntryTable {
+		border-collapse: separate;
+		border-spacing: 0 0.5em;
+	}
+</style>
+
+<body>
+	
+	<div class="heading" colspan="20" style="text-align:center;"><b> Report On Crop Booking Details</b> </div>
+	<p th:text="${msg}"></p>
+	
+<!--	<input type="hidden" id="wbedname" name="wbedname" th:value="${#session.getAttribute('wbedname')}" />-->
+<!--	<input type="hidden" id="wbemname" name="wbemname" th:value="${#session.getAttribute('wbemname')}" />-->
+	
+<!--	<input type="hidden" id="inputwbdcode" name="inputwbdcode" th:value="${#session.getAttribute('wbdcode')}" />-->
+<!--	<input type="hidden" id="inputwbmcode" name="inputwbmcode"th:value="${#session.getAttribute('wbmcode')}" />-->
+<!--	<input type="hidden" id="dcodee" name="dcodee"th:value="${#session.getAttribute('dcode')}" />-->
+<!--	<input type="hidden" id="mcodee" name="mcodee"th:value="${#session.getAttribute('mcode')}" />-->
+	<input type="hidden" id="inputuserid"  name="inputuserid"th:value="${#session.getAttribute('userid')}" />
+	<div id="loadingsign">
+	<div class="d-flex justify-content-center" >
+  <div class="spinner-border" role="status">
+    <span class="sr-only">Loading...</span>
+  </div>
+</div>
+</div>
+	<div align="center">
+		<form>
+			<table id="ObjEntryTable" style="font-size: inherit ! important; border-radius:10px;">
+				<tr>
+					<td colspan="3"></td>
+				</tr>
+				<tr>
+					<td align="right" width="30%"><b>Crop Year <font color="red">*</font></b></td>
+
+					<td align="left">
+						<select id="cropyear" name="cropyear" style="width: 200px" >
+							<option value="">-------Select-------</option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td align="right" width="30%"><b>District<font color="red">*</font></b></td>
+
+					<td align="left">
+						<select id="district" name="district" style="width: 200px" onchange="getMandals()">
+							<option value="">-------Select-------</option>
+						</select>
+					</td>
+				</tr>
+					<tr>
+					<td align="right" width="30%"><b>Mandal<font color="red">*</font></b></td>
+
+					<td align="left">
+						<select id="inputmcode" name="mandal" style="width: 200px" onchange="getVillage()">
+							<option value="">-------Select-------</option>
+						</select>
+					</td>
+				</tr>
+
+
+				<tr>
+					<td align="right" width="30%"> <b> Village<font color="red">*</font> </b></td>
+					<td align="left">
+						<Select id="vcode" name="vcode" style="width: 200px" onchange="getCrop()">
+							<option value="">----Select----</option>
+						</select>
+					</td>
+
+				</tr>
+				<tr style="margin-top:1000px !important;">
+					<td align="right" width="30%"><b>Crop Name <font color="red">*</font></b></td>
+
+					<td align="left">
+						<select id="cropid" name="cropid" style="width: 200px">
+							<option value="">-------Select-------</option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td align="right" width="30%"> <b>With Photo </b> </td>
+					<td align="left"> <input type="checkbox" id="chkbox" name="chkbox" /> </td>
+				</tr>
+				<tr>
+
+					<td align="right" width="30%"> <b>Farmer Type </b> </td>
+					<td align="left">
+						<select id="display" name="display" style="width: 200px">
+							<option value="0">----Select ALL----</option>
+							<option value="3">To Be Authenticated</option>
+						</select>
+					</td>
+				</tr>
+
+			</table>
+			<div colspan="3" align="center" style="padding-top:10px;padding-bottom:10px;">
+				<button type="button" id="btnSubmit" class="btn btn-primary" value="Submit"
+					onclick="return getData();">Submit</button>
+			</div>
+		</form>
+	</div>
+	<div>
+		<form id="unlockreport" name="unlockreport" method="post">
+			<div align="center" id="divPrint" class="table table-hover table table-striped">
+				<table id="tableStkId" align="center" style=" text-align: center;">
+					<thead>
+						<tr>
+							<th> <b> Sl.No </b> </th>
+							<th> <b> Booking-id </b> </th>
+<!--							<th> <b> Mandal </b> </th>-->
+							<th> <b> Village </b> </th>
+							<th> <b> Farmer Name </b> </th>
+							<th> <b> Aadhaar Number </b> </th>
+							<th> <b>Father Name </b> </th>
+							<th> <b> Pattadar / Cultivator </b> </th>
+							<th> <b> Khatha Number</b> </th>
+							<th> <b>Survey Number </b> </th>
+							<th> <b>Crop Name </b> </th>
+							<th> <b>Variety </b> </th>
+							<th> <b>Area Sown </b> </th>
+							<th> <b>Date of Sowing </b> </th>
+							<th> <b>Crop Nature </b> </th>
+							<th> <b>Water Source </b> </th>
+							<th> <b>Method of Irrigation </b> </th>
+							<th> <b>Seed Production </b> </th>
+							<th> <b>Farming Type</b> </th>
+							<th> <b> Photo</b> </th>
+						</tr>
+					</thead>
+					<tbody id="databody">
+					</tbody>
+				</table>
+			</div>
+		</form>
+		<div align="center" style="color:black;margin-top: 20px;">
+			<input class="btn btn-primary" name="ctl00$ContentPlaceHolder1$btnPrint" type="button"
+				id="ctl00_ContentPlaceHolder1_btnPrint" onClick="javascript:CallPrint('divPrint')" value="Print">
+			<input class="btn btn-primary" type="button" onclick="tableToExcel('tableStkId', 'Abstract')" value="Excel">
+			
+		</div>
+	</div>
+	</div>
+</body>
+
+</html>

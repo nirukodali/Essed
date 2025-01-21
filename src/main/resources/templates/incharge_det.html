@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="header"></head>
+
+<body>
+	<div th:insert="headerImage"></div>
+
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+
+	<div class="container">
+		<div class="container-fluid header-design-login">
+			<div class="row justify-content-center align-items-center" style="height: 10vh;">
+				<div class="webland-container">
+					<form th:object="${InchAdd}" th:action="@{/incharge_det}" method="get">
+						<h5> Incharges/ Additional Changes List</h5>
+						<h5 style="color: red;">Note: User Id's for the following Incharges will be updated in place of
+							Regular on final aproval of DAO</h5>
+						<br>
+						<table>
+							<thead>
+								<tr>
+									<th>S.no</th>
+									<th>RSK Name</th>
+									<th>Employee Name</th>
+									<th>Mobile</th>
+									<th>RSK Code</th>
+									<th>RSK User ID</th>
+									<th>Employee Code</th>
+									<th>Requested For</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr th:each="item, rowStat : ${InchAdd}">
+									<td th:text="${rowStat.index + 1}" data-label="S.no"></td>
+									<td th:text="${item.vname}" data-label="RSK Name "></td>
+									<td th:text="${item.emp_name}" data-label="Employee Name"></td>
+									<td th:text="${item.mobile}" data-label="Mobile"></td>
+									<td th:text="${item.rbkcode}" data-label="RSK Code"></td>
+									<td th:text="${item.rbkuserid}" data-label="RSK User ID"></td>
+									<td th:text="${item.empcode}" data-label="Employee Code"></td>
+									<td th:text="${item.inchargests}" data-label="Requested For"></td>
+								</tr>
+							</tbody>
+						</table>
+						<br>
+						<div class="row">
+							<div class="col-md-12">
+								<div style="margin: 0 auto; width: 155px; color: #000;">
+									<a href="rbkmapping" class="btn btn-primary btn-block">Click Back</a>
+									</a>
+								</div>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+</body>
+
+</html>

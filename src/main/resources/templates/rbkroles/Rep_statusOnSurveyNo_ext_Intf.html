@@ -1,0 +1,246 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="header">
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	
+	<title>Report On Booked Status</title>
+	
+	
+
+<script>
+		function CallPrint(strid) {
+			var prtContent = document.getElementById(strid);
+			var mywindow = window.open('', '', 'left=0,top=0,width=950,height=600,toolbar=1,scrollbars=1,status=1,addressbar=0');
+			var is_chrome = Boolean(mywindow.chrome);
+			mywindow.document.write(prtContent.innerHTML);
+			mywindow.document.close(); // necessary for IE >= 10 and necessary before onload for chrome
+
+			if (is_chrome) {
+				mywindow.onload = function () { // wait until all resources loaded 
+					mywindow.focus(); // necessary for IE >= 10
+					mywindow.print(); // change window to mywindow
+					mywindow.close(); // change window to mywindow
+				};
+			} else {
+				mywindow.document.close(); // necessary for IE >= 10
+				mywindow.focus(); // necessary for IE >= 10
+				mywindow.print();
+				mywindow.close();
+			}
+
+			return true;
+		}
+
+	
+		var tableToExcel = (function () {
+			var uri = 'data:application/vnd.ms-excel;base64,'
+				, template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table align="center">{table}</table></body></html>'
+				, base64 = function (s) {
+					return window.btoa(unescape(encodeURIComponent(s)))
+				}
+				, format = function (s, c) {
+					return s.replace(/{(\w+)}/g, function (m, p) {
+						return c[p];
+					})
+				}
+			return function (table, name) {
+				if (!table.nodeType)
+					table = document.getElementById(table)
+				var ctx = {worksheet: name || 'Worksheet', table: table.innerHTML}
+				window.location.href = uri + base64(format(template, ctx))
+			}
+		})()
+	
+		function validateForm() {
+			var cropyear = document.getElementById("crYear").value;
+			var vcode = document.getElementById("vcode").value;
+
+			// Check if both fields are selected
+			if (cropyear == 0 && vcode == 0) {
+				alert("Please select  Crop Year and Village.");
+				return false; // Prevent form submission
+			}
+			else if (cropyear == 0) {
+				alert("Please Select Crop Year");
+				return false;
+			}
+			else if (vcode == 0) {
+				alert("Please Select Village");
+				return false;
+			}
+			else {
+				return true;
+			}
+
+			// If both fields are selected, allow form submission
+			return true;
+		}
+
+	</script>
+	
+
+	
+
+</head>
+
+<body>
+<div th:insert="headerImage"></div>
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+	<div class="container">
+			<form id="myform" name="myform" method="post" th:action="@{./RepStatusOnSurveyNoExt}"
+				>
+				<br>
+				<div class="ecropCardRbk2">
+					
+<h5 style="background-color:#dfffe1;color: white;font-weight:bolder;font-size:large;margin-left:20%;text-align: center;"  >
+					Report on Booking Status</h5>	
+					<div class="mb-3"  style="width:60%;margin-left:32%;margin-top:5%;">
+						<label for="name" style="width:40%;">Crop Year:</label>
+						<select id="crYear" name="crYear" class="form-select" aria-label="Crop Year" style="width:50%;";>
+							<option value="0">---Select---</option>
+							<option th:each="emp : ${activeseason}" th:value="${emp.seasonvalue}"
+								th:text="${emp.cropyear}">
+							</option>
+						</select>
+					</div>
+					<div class="mb-3" style="width:60%;margin-left:32%;">
+						<label for="name" style="width:40%;"> Village:</label>
+
+						<select id="vcode" name="vcode" class="form-select" aria-label="Select Village"style="width:50%;"
+							onchange="return perdetails();">
+							<option value="0">---Select---</option>
+
+							<option th:each="village : ${villname}" th:value="${village.vcode}"
+								th:text="${village.wbvname}">Village Name</option>
+						</select>
+					</div>
+
+					<div>
+						<input type="hidden" id="vscode" th:value="${#session.getAttribute('village')}" />
+					</div>
+
+
+					<div align="center">
+						<button type="submit" class="btn btn-primary " style="margin-left: 25%;"
+							onclick="return validateForm()">Submit</button>
+
+<!--						<button type="button" class="btn btn-primary btn-block" onclick="back()">Back</button>-->
+<!-- 					   <button  class="btn btn-primary"  id="backButton">Go Back</button> -->
+
+					</div>
+				</div>
+			</form>
+			<!--<h5 style="font-size:20px" colspan="20" class="heading" align="center">Report on Booking Status (Current-->
+			<!--				Season)</h5>-->
+
+			<div align="center" id="divPrint"
+				style="overflow-x: scroll; overflow-y: scroll;max-width: 100%;max-height: 100lvh;margin-top:5%;">
+				<table id="tableStkId"  align="center" class="table table-striped border border-secondary">
+					<thead style="position: sticky;top: 0%;">
+						<tr>
+							<th rowspan="2"> <b> S.No </b> </th>
+							<th colspan="6" style="padding-left:20%;"> <b> Downloaded Details </b> </th>
+							<th colspan="8" style="padding-left:20%;"> <b> Booked Details </b>
+							</th>
+							<th colspan="8" style="padding-left:20%;"> <b> Uploaded Details </b>
+							</th>
+						</tr>
+						<tr>
+							<th > <b> Pattadar Name </b> </th>
+							<th > <b> Cultivator Name </b> </th>
+							<th > <b> SurveyNo </b> </th>
+							<th > <b>KathaNo </b> </th>
+							<th > <b> Total Extent </b> </th>
+							<th > <b> Occupant Extent </b> </th>
+							<th > <b> Pattadar Name </b> </th>
+							<th > <b> Cultivator Name </b> </th>
+							<th > <b> SurveyNo </b> </th>
+							<th > <b>KathaNo </b> </th>
+							<th > <b> Total Extent </b> </th>
+							<th > <b> Occupent Extent </b> </th>
+							<th > <b> Owner Tenant </b> </th>
+							<th > <b> Data Source </b> </th>
+							<th > <b> Pattadar Name </b> </th>
+							<th > <b> Cultivator Name </b> </th>
+							<th > <b> SurveyNo </b> </th>
+							<th > <b>KathaNo </b> </th>
+							<th > <b> Total Extent </b> </th>
+							<th > <b> Occupent Extent </b> </th>
+							<th > <b> Owner Tenant </b> </th>
+							<th > <b> Data Source </b> </th>
+
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="bean,row: ${list}">
+							<td th:text="${row.index+1}" />
+							<td th:text="${bean.Farmername}" />
+							<td th:text="${bean.Occupname}" />
+							<td th:text="${bean.Cr_sno}" />
+							<td th:text="${bean.Kh_no}" />
+							<td th:text="${bean.Tot_extent}" />
+							<td th:text="${bean.Occup_extent}" />
+							<td th:text="${bean.Cr_booking_oc_name}" />
+							<td th:text="${bean.Cr_booking_occupname}" />
+							<td th:text="${bean.Cr_booking_cr_sno}" />
+							<td th:text="${bean.Cr_booking_kh_no}" />
+							<td th:text="${bean.Cr_booking_tot_extent}" />
+							<td th:text="${bean.Cr_booking_occupant_extent}" />
+							<td th:text="${bean.Cr_booking_owner_tenant}" />
+<!--							<td th:text="${bean.Cr_booking_data_src}=='W' ? 'Webland' : ${bean.Cr_booking_data_src}" />-->
+							<td style="text-align:left;" th:text="${bean.Cr_booking_data_src == 'W' ? 'Webland' : (bean.Cr_booking_data_src == 'C' ? 'CCRC' : (bean.Cr_booking_data_src == 'U' ? 'USUS' : (bean.Cr_booking_data_src == 'N' ? 'Nonwebland' : bean.Cr_booking_data_src)))}"></td>
+							<!-- <td th:text="${bean.Cr_booking_data_src}" />-->
+							<td th:text="${bean.Cr_details_oc_name}" />
+							<td th:text="${bean.Cr_details_occupname}" />
+							<td th:text="${bean.Cr_details_cr_sno}" />
+							<td th:text="${bean.Cr_details_kh_no}" />
+							<td th:text="${bean.Cr_details_tot_extent}" />
+							<td th:text="${bean.Cr_details_occupant_extent}" />
+							<td th:text="${bean.Cr_details_owner_tenant}" />
+							<!-- <td th:text="${pojo.dataSrc == 'w' ? 'webland' : pojo.dataSrc}"></td>-->
+							<td th:text="${bean.Cr_details_data_src}=='W' ? 'Webland' : ${bean.Cr_details_data_src}" />
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div th:if="${NoRecordsFound}" align="center" style="margin: 3%;">
+				<b style="font-size:18px;">---- No Records found-----</b>
+			</div>
+
+			<div align="center" style="color:black;margin-top:5%;">
+				<input class="btn btn-primary" name="ctl00$ContentPlaceHolder1$btnPrint" type="button"
+					id="ctl00_ContentPlaceHolder1_btnPrint" onClick="javascript:CallPrint('divPrint')" value="Print">
+				<input class="btn btn-primary" type="button" onclick="tableToExcel('tableStkId', 'Abstract')"
+					value="Excel">
+<!--				  <input  id="backButton"  class="btn btn-primary" type="button" value="Back" onclick="goBack()" /> -->
+
+			</div>
+		</div>
+	</div>
+		
+</body>
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

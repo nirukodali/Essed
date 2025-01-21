@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>Crop Ins Grev</title>
+
+	<head th:insert="header"></head>
+	<div th:insert="headerImage"></div>
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+<!--	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>-->
+	<script>
+		function CallPrint(strid) {
+			var prtContent = document.getElementById(strid);
+			var mywindow = window.open('', '', 'left=0,top=0,width=950,height=600,toolbar=1,scrollbars=1,status=1,addressbar=0');
+			var is_chrome = Boolean(mywindow.chrome);
+			var title = document.getElementById('printTitle').innerText;
+			var reportTime = document.getElementById('theDate').innerText;
+			var headingContent = document.getElementById('heading').innerText;
+
+			mywindow.document.write('<html><head><title>Print</title>');
+			mywindow.document.write('<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">');
+			mywindow.document.write('<style>');
+			mywindow.document.write('@page { size: landscape; }');
+			mywindow.document.write('table { width: 100%; }');
+			mywindow.document.write('th, td { font-size: 10px; }');
+			mywindow.document.write('h5 { text-align: center; }');
+			mywindow.document.write('</style>');
+			mywindow.document.write('</head><body>');
+			mywindow.document.write('<div style="text-align: center; margin-bottom: 20px;">');
+			mywindow.document.write('<h1>' + title + '</h1>');
+			mywindow.document.write('<p><b>Report Time:</b> ' + reportTime + '</p>');
+			mywindow.document.write('<h5>' + headingContent + '</h5>');
+			mywindow.document.write('</div>');
+			mywindow.document.write(prtContent.innerHTML);
+			mywindow.document.write('</body></html>');
+			mywindow.document.close();
+			if (is_chrome) {
+				mywindow.onload = function () {
+					mywindow.focus();
+					mywindow.print();
+					mywindow.close();
+				};
+			} else {
+				mywindow.onload = function () {
+					mywindow.focus();
+					mywindow.print();
+					mywindow.close();
+				};
+			}
+			return true;
+		}
+	</script>
+
+	<script language="javascript">
+		var tableToExcel = (function () {
+			var uri = 'data:application/vnd.ms-excel;base64,',
+				template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table align="center">{table}</table></body></html>',
+				base64 = function (s) {
+					return window.btoa(unescape(encodeURIComponent(s)));
+				},
+				format = function (s, c) {
+					return s.replace(/{(\w+)}/g, function (m, p) {
+						return c[p];
+					});
+				},
+				sanitizeText = function (text) {
+					return text.replace(/[\u00A0-\u9999<>\&]/g, function (i) {
+						return '&#' + i.charCodeAt(0) + ';';
+					}).replace(/\s+/g, ' ').trim();
+				};
+			return function (table, name) {
+				if (!table.nodeType)
+					table = document.getElementById(table);
+
+				var title = sanitizeText(document.getElementById('printTitle').innerText);
+				var reportTime = sanitizeText(document.querySelector('span#theDate').innerText);
+				var headingContent = sanitizeText(document.querySelector('h5#heading').innerText);
+
+				var additionalHeading = `
+					            <tr><th colspan="17" style="text-align: center; font-size: 20px; font-weight: bold;">${title}</th></tr>
+					            <tr><th colspan="17" style="text-align: center; font-size: 15px; font-weight: bold;">Report Time: ${reportTime}</th></tr>
+					            <tr><th colspan="17" style="text-align: center; font-size: 15px; font-weight: bold;">${headingContent}</th></tr>
+					        `;
+				var tableHTML = additionalHeading + table.innerHTML;
+				var ctx = {worksheet: name || 'Worksheet', table: tableHTML};
+				window.location.href = uri + base64(format(template, ctx));
+			}
+		})();
+
+	</script>
+	<style>
+		#tableStkId thead {
+			
+			position: -webkit-sticky;
+			position: sticky;
+			top: 0;
+			z-index: 2;
+		}
+
+		#tableStkId th,
+		#tableStkId td {
+			padding: 8px;
+			text-align: center;
+		}
+	</style>
+	<style>
+		#ObjEntryTable {
+			border-collapse: separate;
+			border-spacing: 0 0.5em;
+		}
+	</style>
+</head>
+<script>
+	function handleNullValue(value) {
+		return (value !== null && value !== undefined && value !== '') ? value : "--";
+	}
+
+	$("#loadingsign").show();
+	$(document).ready(function () {
+		var currentDate = new Date();
+		var formattedDate = currentDate.toLocaleString();
+		$("#theDate").text(formattedDate); $("#loadingsign").hide();
+		var dcode = $("#dcodee").val();
+		var inputwbedname = $("#inputwbedname").val().replace(/Â/g, ' ').trim();
+		$.ajax({
+			type: "get",
+			url: "./util/dataCropGr?dcode=" + dcode,
+			cache: false,
+			timeout: 600000,
+			success: function (resp) {
+				$("#loadingsign").hide();
+				$("#databody").empty();
+				$("#heading").empty();
+				if (resp.length === 0) {
+					$("#databody").append(
+						'<tr><td colspan="100"><b>No results found</b></td></tr>');
+					$("#heading").append('<tr style="font-size:22px;">'
+						+ '<td style="font-weight: 100">District: <b>' + inputwbedname + '&nbsp;&nbsp;&nbsp;</b></td>'
+						+ '</tr>');
+					return;
+				}
+				$("#heading").append('<tr style="font-size:22px;">'
+					+ '<td style="font-weight: 100">District: <b>' + inputwbedname + '&nbsp;&nbsp;&nbsp;</b></td>'
+					+ '</tr>');
+				var sno = 0;
+				for (var j = 0; j < resp.length; j++) {
+					sno = sno + 1;
+					var bean = resp[j];
+					var old_varietyname = handleNullValue(bean.old_varietyname);
+
+					$("#databody").append(
+						'<tr style="fontsize:200px; font-weight: 0;">'
+						+ '<td align="center">' + sno + '</td>'
+						+ '<td style="text-align:left">' + handleNullValue(bean.wbmname) + '</td>'
+						+ '<td style="text-align:left">' + handleNullValue(bean.wbvname) + '</td>'
+						+ '<td align="center">' + handleNullValue(bean.claimid) + '</td>'
+						+ '<td align="center">' + handleNullValue(bean.claim_type) + '</td>'
+						+ '<td style="text-align:left">' + handleNullValue(bean.gri_type) + '</td>'
+						+ '<td style="text-align:left">' + handleNullValue(bean.old_cropname) + '</td>'
+						+ '<td style="text-align:left">' + handleNullValue(bean.new_cropname) + '</td>'
+						+ '<td style="text-align:left">' + handleNullValue(bean.old_varietyname) + '</td>'
+						+ '<td style="text-align:left">' + handleNullValue(bean.new_varietyname) + '</td>'
+						+ '<td align="center">' + handleNullValue(bean.old_extent) + '</td>'
+						+ '<td align="center">' + handleNullValue(bean.new_extent) + '</td>'
+						+ '<td style="text-align:left">' + handleNullValue(bean.old_name) + '</td>'
+						+ '<td style="text-align:left">' + handleNullValue(bean.new_name) + '</td>'
+						+ '<td align="center">' + handleNullValue(bean.old_uid) + '</td>'
+						+ '<td align="center">' + handleNullValue(bean.newuid) + '</td>'
+						+ '<td style="text-align:left">' + handleNullValue(bean.remarks) + '</td>'
+						+ '</tr>');
+				}
+
+			}
+		});
+	});
+	function goBack(){
+window.location.href="./home"}
+</script>
+
+<body>
+	<div class="heading" colspan="20" style="text-align:center;font-size:25px;">
+		<b id="printTitle"> Report On Crop Insurance Grievance Details(Kharif 2022) ::
+			KHARIF 2022</b>
+	</div>
+	<p th:text="${msg}"></p>
+	<input type="hidden" id="inputwbedname" th:value="${#session.getAttribute('wbedname')}" />
+	<input type="hidden" id="dcodee" th:value="${#session.getAttribute('dcode')}" />
+	<div id="loadingsign">
+		<div class="d-flex justify-content-center">
+			<div class="spinner-border" role="status">
+				<span class="sr-only">Loading...</span>
+			</div>
+		</div>
+	</div>
+	<div
+		style="position: relative; width: 100%; height: 50px; display: flex; align-items: center; justify-content: center;">
+		<h5 id="heading" style="margin: 0;"></h5>
+		<div style="margin-left: 10px;">
+			<b>Report Time:</b> <span id="theDate"></span>
+		</div>
+	</div>
+	<form id="unlockreport" name="unlockreport" method="post">
+		<div align="center" id="divPrint" class="table table-hover table table-striped"
+			style="overflow-x: scroll; overflow-y: scroll; max-width: 100%; max-height: 76vh;">
+			<table id="tableStkId" align="center" style=" text-align: center;">
+				<thead>
+					<tr>
+						<th><b> S.No. </b></th>
+						<th><b> Mandal </b></th>
+						<th><b> Village</b></th>
+						<th><b> Claim Id</b></th>
+						<th><b> Claim Type</b></th>
+						<th><b> Grievance Type</b></th>
+						<th><b> Old Crop Name</b></th>
+						<th><b> New Crop Name</b></th>
+						<th><b> Old Variety Name</b></th>
+						<th><b> New Variety Name</b></th>
+						<th><b> Old Extent</b></th>
+						<th><b> New Extent</b></th>
+						<th><b> Old Name</b></th>
+						<th><b> New Name</b></th>
+						<th><b> Old UID</b></th>
+						<th><b> New UID</b></th>
+						<th><b> Remarks</b></th>
+					</tr>
+				</thead>
+				<tbody id="databody">
+				</tbody>
+			</table>
+		</div>
+	</form>
+	<div align="center" style="color: black; margin-top: 20px;">
+		<input class="btn btn-success" name="ctl00$ContentPlaceHolder1$btnPrint" type="button"
+			id="ctl00_ContentPlaceHolder1_btnPrint" onClick="javascript:CallPrint('divPrint')" value="Print"> 
+			<input class="btn btn-success" type="button" onclick="tableToExcel('tableStkId', 'Abstract')" value="Excel">
+			<input class="btn btn-success" type="button" onclick="goBack()" value="Back">
+
+	</div>
+</body>
+
+</html>

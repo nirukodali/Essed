@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="ISO-8859-1">
+	<title></title>
+	<!--<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>-->
+	<script>
+// Include the JavaScript functions here
+	</script>
+</head>
+
+<body>
+
+	<div class="panel panel-primary" style="max-width: 100%;overflow-x: scroll;overflow-y: auto;">
+		<div class="panel-heading"
+			style="text-align: center; background-color: honeydew; padding: 8px; margin: 0 auto; display: table;">
+			<b>Statement Showing the Crop Damage Particulars Due to Flood/Heavy Rains in Oct 2024</b>
+		</div>
+		<div class="panel-body">
+
+			<input type="hidden" th:value="${type}" id="type" name="type">
+			<table id="ownerGrid" class="table table-bordered table-striped dataTable">
+				<thead class="color-palette" style="background-color: #9494b8;">
+					<tr>
+						<th style="color: white; width: 5%; background-color: #9494b8;"> <input type="checkbox"
+								id="masterCheckbox" onclick="toggleAllCheckboxesForEdit(this)" /></th>
+						<th style="color: white; width: 7%; background-color: #9494b8;"><b>District Name</b><br><b
+								style="margin-left:50%;">1</b></th>
+						<th style="color: white; width: 7%; background-color: #9494b8;"><b>Mandal Name</b><br><b
+								style="margin-left:50%;">2</b></th>
+						<th style="color: white; width: 19%; background-color: #9494b8;"><b>Village Name</b><br><b
+								style="margin-left:50%;">3</b></th>
+						<th style="color: white; width: 8%; background-color: #9494b8;"><b>e-Crop booking ID</b><br><b
+								style="margin-left:50%;">4</b></th>
+						<th style="color: white; width: 8%; background-color: #9494b8;" align="cener">
+							<b>Aadhaar</b><br><b style="margin-left:50%;">5</b>
+						</th>
+						<th style="color: white; width: 25%; background-color: #9494b8;"><b>Farmer Name</b><br><b
+								style="margin-left:50%;">6</b></th>
+						<th style="color: white; width: 25%; background-color: #9494b8;"><b>Father/husband
+								Name</b><br><b style="margin-left:50%;">7</b></th>
+						<th style="color: white; width: 8%; background-color: #9494b8;"><b>Crop</b><br><b
+								style="margin-left:50%;">8</b></th>
+						<th style="color: white; width: 5%; background-color: #9494b8;"><b>Tenant/ Owner</b><br><b
+								style="margin-left:50%;">9</b></th>
+						<th style="color: white; width: 19%; background-color: #9494b8;"><b>Khata No</b><br><b
+								style="margin-left:50%;">10</b></th>
+						<th style="color: white; width: 25%; background-color: #9494b8;"><b>Survey No</b><br><b
+								style="margin-left:50%;">11</b></th>
+						<th style="color: white; width: 10%; background-color: #9494b8;"><b>Crop extent</b><br><b
+								style="margin-left:50%;">12</b></th>
+						<th style="color: white; width: 8%; background-color: #9494b8;"><b>Irrigated/Rainfed</b><br><b
+								style="margin-left:50%;">13</b></th>
+						<th style="color: white; width: 8%; background-color: #9494b8;"><b>Area damaged > 33%(in
+								Acres)</b><br><b style="margin-left:50%;">14</b></th>
+						<th style="color: white; width: 8%; background-color: #9494b8;"><b>Social status</b><br><b
+								style="margin-left:50%;">15</b></th>
+						<th style="color: white; width: 8%; background-color: #9494b8;">Sand Casting/Soil
+							Erosion<b></b><br><b style="margin-left:50%;">16</b></th>
+						<th style="color: white; width: min-content; background-color: #9494b8;">Sce extent<b></b><br><b
+								style="margin-left:50%;">17</b></th>
+						<!-- 						<th style="color: white; width: 8%; background-color: #9494b8;"><b>Bank account</b><br><b -->
+						<!-- 								style="margin-left:50%;">18</b></th> -->
+						<!-- 						<th style="color: white; width: 8%; background-color: #9494b8;"><b>Bank name</b><br><b -->
+						<!-- 								style="margin-left:50%;">19</b></th> -->
+						<!-- 						<th style="color: white; width: 8%; background-color: #9494b8;"><b>Bank branch</b><br><b -->
+						<!-- 								style="margin-left:50%;">20</b></th> -->
+						<!-- 						<th style="color: white; width: 8%; background-color: #9494b8;"><b>Type of account</b><br><b -->
+						<!-- 								style="margin-left:50%;">21</b></th> -->
+						<!-- 						<th style="color: white; width: 8%; background-color: #9494b8;"><b>IFSC code</b><br><b -->
+						<!-- 								style="margin-left:50%;">22</b></th> -->
+						<!--                    <th style="color: white; width: 8%; background-color: #9494b8;"><b>Farmer Name in English</b></th>-->
+						<!--                    <th style="color: white; width: 8%; background-color: #9494b8;"><b>Father/husband Name in English</b></th>-->
+					</tr>
+				</thead>
+				<tbody>
+
+					<tr th:each="cultivator, iterStat : ${ownersList}" th:attr="data-index=${iterStat.index}">
+						<input type="hidden" th:id="'wbdcode' + ${iterStat.index}"
+							th:value="${cultivator.cr_dist_code}">
+						<input type="hidden" th:id="'wbmcode' + ${iterStat.index}"
+							th:value="${cultivator.cr_mand_code}">
+						<input type="hidden" th:id="'wbvcode' + ${iterStat.index}" th:value="${cultivator.cr_vcode}">
+						<input type="hidden" th:id="'crop_damage_id' + ${iterStat.index}"
+							th:value="${cultivator.crop_damage_id}">
+						<td><input type="checkbox" th:id="'checkbox' + ${iterStat.index}"
+								th:onchange="'toggleFieldsForEdit(' + ${iterStat.index} + ')'" /></td>
+						<td style="width: 10%;" th:text="${dname}">
+						</td>
+						<td style="width: 10%;" th:text="${mname}">
+						</td>
+						<td style="width: 10%;" th:text="${vname}">
+						</td>
+						<td><span th:text="${cultivator.bookingid}"></span>
+							<input type="hidden" th:id="'booking'+${iterStat.index}" th:value="${cultivator.bookingid}">
+						</td>
+						<td><span th:text="${cultivator.cr_farmeruid}"></span>
+							<input type="hidden" th:id="'aadhaar'+${iterStat.index}"
+								th:value="${cultivator.cr_farmeruid}">
+							<input type="hidden" th:id="'variety'+${iterStat.index}" th:value="${cultivator.variety}">
+							<input type="hidden" th:id="'cr_no'+${iterStat.index}" th:value="${cultivator.cr_no}">
+							<input type="hidden" th:id="'cr_sow_date'+${iterStat.index}"
+								th:value="${cultivator.cr_sow_date}">
+						</td>
+						<td style="width: 25%;"><span th:text="${cultivator.occupname}"></span>
+							<input type="hidden" th:id="'ocname'+${iterStat.index}" th:value="${cultivator.occupname}">
+						</td>
+						<td style="width: 15%;"><span th:text="${cultivator.occupfname}"></span>
+							<input type="hidden" th:id="'ocfname'+${iterStat.index}"
+								th:value="${cultivator.occupfname}">
+						</td>
+						<td>
+							<input type="hidden" th:id="'crop_old'+${iterStat.index}" th:value="${cultivator.cr_crop}">
+							<select th:id="'crop' + ${iterStat.index}" required="required" disabled="disabled">
+								<option th:value="${cultivator.cr_crop}" th:text="${cultivator.cropname}"></option>
+								<option value="">--Select--</option>
+								<th:block th:each="cropdet : ${cropdet}">
+									<option th:if="${cultivator.cr_crop} != ${cropdet.cr_crop}"
+										th:value="${cropdet.cr_crop}" th:text="${cropdet.cropname}"></option>
+								</th:block>
+							</select>
+						</td>
+						<td style="width: 3%;"><span th:if="${cultivator.owner_tenant == 'O'}" th:text="O"></span>
+							<span th:if="${cultivator.owner_tenant != 'O'}" th:text="T"></span>
+							<input type="hidden" th:id="'owner'+${iterStat.index}"
+								th:value="${cultivator.owner_tenant}">
+						</td>
+						<td style="width: 10%;"><span th:text="${cultivator.kh_no}"></span>
+							<input type="hidden" th:id="'khata'+${iterStat.index}" th:value="${cultivator.kh_no}">
+						</td>
+						<td style="width: 15%;"><span th:text="${cultivator.cr_sno}"></span>
+							<input type="hidden" th:id="'survey'+${iterStat.index}" th:value="${cultivator.cr_sno}">
+						</td>
+						<td style="width: 3%;"><span th:text="${cultivator.occupant_extent}"></span>
+							<input type="hidden" th:id="'extent'+${iterStat.index}"
+								th:value="${cultivator.occupant_extent}">
+						</td>
+						<td style="width: 3%;"> <input type="hidden" th:id="'irrmethod_old'+${iterStat.index}"
+								th:value="${cultivator.cr_w_draw}">
+
+							<select th:id="'irr' + ${iterStat.index}" required="required" disabled="disabled">
+								<option th:value="${cultivator.cr_w_draw}" th:text="${cultivator.variety}"></option>
+								<option value="">--Select--</option>
+								<th:block th:each="irrdet : ${irrdet}">
+									<option th:if="${cultivator.cr_w_draw} != ${irrdet.wsrcid}"
+										th:value="${irrdet.wsrcid}" th:text="${irrdet.wsrcdesc}"></option>
+								</th:block>
+							</select>
+						</td>
+						<td style="width: 10%;"><input type="text" th:id="'damage'+${iterStat.index}"
+								th:value="${cultivator.damaged_ext_abv_33}" disabled="disabled" required maxlength="8"
+								onkeypress="return ( event.charCode == 8 || event.charCode == 0) || event.charCode == 46 ? null : event.charCode >= 48 && event.charCode <= 57 ">
+
+							<input type="hidden" th:value="${cultivator.damaged_ext_abv_33}"
+								th:id="'damage_old' + ${iterStat.index}">
+						</td>
+						<td>
+							<input type="hidden" th:value="${cultivator.caste}" th:id="'caste_old' + ${iterStat.index}">
+							<select th:id="'caste' + ${iterStat.index}" required="required" disabled="disabled"
+								th:value="${cultivator.cr_no}">
+								<option th:value="${cultivator.caste}" th:text="${cultivator.cr_no}"></option>
+								<option value="">--Select--</option>
+								<th:block th:each="caste : ${caste}">
+									<option th:if="${cultivator.caste} != ${caste.castecode}"
+										th:value="${caste.castecode}" th:text="${caste.caste}"></option>
+								</th:block>
+							</select>
+						</td>
+						<td><input type="hidden" th:id="'sandtype_old' + ${iterStat.index}"
+								th:value="${cultivator.sce_det}">
+							<select th:id="'sandtype' + ${iterStat.index}" required="required" disabled="disabled"
+								th:onchange="'enablingSoilExtent(' + ${iterStat.index} + ', this.value)'">
+								<option th:value="${cultivator.sce_det}" th:if="${cultivator.sce_det == 'C'}">Sand
+									Casting</option>
+								<option th:value="${cultivator.sce_det}" th:if="${cultivator.sce_det == 'E'}">Soil
+									Erosion</option>
+								<option value="N">--Select--</option>
+								<option th:if="${cultivator.sce_det != 'C'}" value="C">Sand Casting</option>
+								<option th:if="${cultivator.sce_det != 'E'}" value="E">Soil Erosion</option>
+							</select>
+						</td>
+
+						<td style="width: min-content;"><input type="text" th:id="'sandextent'+${iterStat.index}"
+								th:value="${cultivator.sce_ext}" disabled="disabled" th:required maxlength="8"
+								onkeypress="return ( event.charCode == 8 || event.charCode == 0) || event.charCode == 46 ? null : event.charCode >= 48 && event.charCode <= 57 ">
+							<input type="hidden" th:id="'sandextent_old' + ${iterStat.index}"
+								th:value="${cultivator.sce_ext}">
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div><br><br>
+
+	<input type="button" class="btn btn-success" value="Save" style="text-align: center;margin-left: 50%;"
+		onclick=" return saveEditDamaged()">
+
+
+	<script>
+		function toggleAllCheckboxesForEdit(masterCheckbox) {
+			const checkboxes = document.querySelectorAll('input[type="checkbox"][id^="checkbox"]:not([id^="checkbox_bkg"])');
+			checkboxes.forEach(function (checkbox) {
+				checkbox.checked = masterCheckbox.checked;
+				toggleFieldsForEdit(checkbox.id.replace('checkbox', ''));
+			});
+		}
+
+		function toggleFieldsForEdit(index) {
+			console.log('toggleFields called with index:', index); // Debugging log
+			let isChecked = $('#checkbox' + index).is(':checked');
+			$('#damage' + index).prop('disabled', !isChecked);
+			$('#crop' + index).prop('disabled', !isChecked);
+			$('#bankaccount' + index).prop('disabled', !isChecked);
+			$('#bankname' + index).prop('disabled', !isChecked);
+			$('#bankbranch' + index).prop('disabled', !isChecked);
+			$('#banktype' + index).prop('disabled', !isChecked);
+			$('#ownername' + index).prop('disabled', !isChecked);
+			$('#caste' + index).prop('disabled', !isChecked);
+			$('#sandtype' + index).prop('disabled', !isChecked);
+			$('#irr' + index).prop('disabled', !isChecked);
+
+			$('#ownerfathername' + index).prop('disabled', !isChecked);
+		}
+
+
+
+
+		function enablingSoilExtent(index, value) {
+			let isChecked = $('#checkbox' + index).is(':checked');
+			if (value !== 'N') {
+				$('#sandextent' + index).prop('disabled', !isChecked);
+			}
+			else {
+				$('#sandextent' + index).val('0.00')
+				$('#sandextent' + index).prop('disabled', isChecked);
+			}
+		}
+
+		function saveEditDamaged() {
+			const table = document.getElementById("ownerGrid");
+			const rows = table.getElementsByTagName("tbody")[0].getElementsByTagName("tr");
+			const selectedData = [];
+			var count = 0;
+
+			for (let i = 0; i < rows.length; i++) {
+				const row = rows[i];
+				const checkbox = row.querySelector('input[type="checkbox"]');
+				if ((checkbox && checkbox.checked)) {
+					count++;
+				}
+
+			}
+
+
+
+
+			if (count === 0) {
+				alert('Please Select Atleast One Record');
+				return false;
+			}
+
+			for (let i = 0; i < rows.length; i++) {
+				const row = rows[i];
+				const checkbox = row.querySelector('input[type="checkbox"]');
+				if (checkbox && checkbox.checked) {
+					const damage = document.getElementById('damage' + i).value.trim();
+					const caste = document.getElementById('caste' + i).value.trim();
+					const crop = document.getElementById('crop' + i).value.trim();
+					const sandtype = document.getElementById('sandtype' + i).value.trim();
+					const sandextent = document.getElementById('sandextent' + i).value.trim();
+					const irr = document.getElementById('irr' + i).value.trim();
+					const extent = parseFloat(document.getElementById('extent' + i).value.trim());
+					if (caste === '' || (sandtype !== 'N' && sandextent === '') || irr == '' || crop === '') {
+						alert('Please Fill All The Details');
+						return false;
+					}
+					if (damage === '') {
+						damage = parseFloat(0.00);
+					}
+					if (sandextent === '') {
+						sandextent = parseFloat(0.00);
+					}
+					if (eval(damage) > eval(extent) || eval(sandextent) > eval(extent)) {
+						alert('Entered Extent Is Greater The Crop Extent')
+						return false;
+					}
+					if (eval(damage) < 0 || sandextent < 0) {
+						alert('Extent Cannot Be Negative');
+						return false;
+					}
+
+					const rowData = {
+						districtName: document.getElementById('wbdcode' + i).value,
+						mandalName: document.getElementById('wbmcode' + i).value,
+						cr_vcode: document.getElementById('wbvcode' + i).value,
+						aadhaar: document.getElementById('aadhaar' + i).value,
+						bookingId: document.getElementById('booking' + i).value,
+						crop_damage_id: document.getElementById('crop_damage_id' + i).value,
+						//---------old---------------
+						damage_old: document.getElementById('damage_old' + i).value,
+						caste_old: document.getElementById('caste_old' + i).value,
+						sandtype_old: document.getElementById('sandtype_old' + i).value,
+						sandextent_old: document.getElementById('sandextent_old' + i).value,
+						irrmethod_old: document.getElementById('irrmethod_old' + i).value,
+						crop_old: document.getElementById('crop_old' + i).value,
+						damagedArea: damage,
+						crop: crop,
+						caste: caste,
+						sand: sandtype,
+						sandextent: sandextent,
+						irrigatedOrRainfed: irr,
+					};
+
+					selectedData.push(rowData);
+				}
+			}
+
+			$.ajax({
+				url: './saveDamagedDataEdit',
+				method: 'POST',
+				contentType: 'application/json',
+				data: JSON.stringify(selectedData),
+				success: function (response) {
+					alert('Data saved successfully');
+					window.location.reload();
+				},
+				error: function (error) {
+					alert('Error saving data');
+				}
+			});
+		}
+	</script>
+</body>
+
+</html>

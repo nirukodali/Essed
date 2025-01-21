@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="header"></head>
+
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+
+<body>
+
+	<div th:insert="headerImage"></div>
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+	<div class="form-container">
+		<form name="f1">
+			<table border="1" align="center">
+				<tr>
+					<td class="tdnum" width="50%">Seed Variety:</td>
+					<td><span th:text="${varietyName}"></span></td>
+				</tr>
+				<tr>
+					<td class="tdnum" width="50%">Season:</td>
+					<td><span th:text="${seasonCode}"></span></td>
+				</tr>
+				<tr>
+					<td class="tdnum" width="50%">Crop Year:</td>
+					<td><span th:text="${cropYear}"></span></td>
+				</tr>
+				<tr>
+					<td class="tdnum" width="50%">District Name:</td>
+					<td><span th:text="${distName}"></span></td>
+				</tr>
+				<tr>
+					<th colspan="2" align="center">***** Old Prices *****</th>
+				</tr>
+				<tr>
+					<td class="tdnum" width="50%">From Date:</td>
+					<td><span th:id="oldFromdate" th:text="${fromDate}" th:value="${fromDate}"></span></td>
+				</tr>
+				<tr>
+					<td class="tdnum" width="50%">To Date:</td>
+					<td><span th:id="oldTodate" th:text="${toDate}" th:value="${toDate}"></span></td>
+				</tr>
+				<tr>
+					<td class="tdnum" width="50%">Quantity Per Bag Units:</td>
+					<td><span th:text="${quantityPerBag}"></span></td>
+				</tr>
+				<tr>
+					<td class="tdnum" width="50%">Product Price Per (kgs):</td>
+					<td><span th:text="${productPrice}"></span></td>
+				</tr>
+				<tr>
+					<td class="tdnum" width="50%">Subsidy Percent:</td>
+					<td><span th:text="0"></span></td>
+				</tr>
+				<tr>
+					<th colspan="2" align="center">***** New Prices *****</th>
+				</tr>
+				<tr>
+					<td class="tdnum">From Date:</td>
+					<td><input type="text" id="fromdate" name="fromdate" th:vale="${fromdate}"></td>
+				</tr>
+				<tr>
+					<td class="tdnum">To Date:</td>
+					<td><input type="text" id="todate" name="todate" th:vale="${todate}"></td>
+				</tr>
+				<tr>
+					<td class="tdnum">Product Price Per (kgs):</td>
+					<td><input type="text" id="productprice" name="productprice" th:value="${productprice}"></td>
+				</tr>
+				<tr>
+					<td class="tdnum">Subsidy Percent:</td>
+					<td><input type="text" id="subsidypercent" name="subsidypercent" th:value="${subsidypercent}"></td>
+				</tr>
+				<tr>
+					<td class="tdnum">Subsidy Amount:</td>
+					<td><input type="text" id="subsidyAmount" name="subsidyAmount" th:value="${subsidyAmount}"></td>
+				</tr>
+				<tr>
+					<td class="tdnum">Non-Subsidy Amount: </td>
+					<td><span id="nonsubsidy_amt" th:value="${nonsubsidy_amt}"></span></td>
+				</tr>
+
+				<td><input type="hidden" id="dCode" name="dCode" th:value="${distCode}"></td>
+				<td><input type="hidden" id="seedCode" name="seedCode" th:value="${varietyCode}"></td>
+				<td><input type="hidden" id="season" name="season" th:value="${seasonCode}"></td>
+				<td><input type="hidden" id="year" name="year" th:value="${cropYear}"></td>
+				<td><input type="hidden" id="qtyPerBag" name="qtyPerBag" th:value="${quantityPerBag}"></td>
+
+				<tr>
+					<td colspan="2" style="text-align: center;">
+						<button th:id="submitBtn" type="button">Submit</button>
+					</td>
+				</tr>
+
+			</table>
+
+		</form>
+	</div>
+
+
+	<script>
+		$(document).ready(function () {
+			var fromDateValue = $('#fromdate').val();
+			var toDateValue = $('#todate').val();
+			if (fromDateValue) {
+				var from_date = new Date(fromDateValue);
+			} else {
+				var from_date = new Date(); 
+			}
+
+			$('#fromdate').datepicker({
+				dateFormat: 'dd-mm-yy',
+				changeMonth: true,
+				yearRange: '-10:+2',
+				changeYear: true,
+				minDate: new Date() 
+			});
+			
+			$('#todate').datepicker({
+				dateFormat: 'dd-mm-yy',
+				changeMonth: true,
+				yearRange: '-10:+2',
+				changeYear: true,
+				minDate: from_date 
+			});
+
+			$("input").change(function () {
+				var from_time = $('#fromdate').val();
+				var to_time = $('#todate').val();
+				var product_price = $('#productprice').val();
+				var SubsidyPercent = $('#subsidypercent').val();
+				var subsidy_amout = $('#subsidyAmount').val();
+
+				document.getElementById("nonsubsidy_amt").innerHTML = product_price - subsidy_amout;
+
+				if (product_price >= 10001) {
+					alert("10,000 rupees only");
+					document.getElementById("f1").reset();
+					product_price = 0;
+				}
+			});
+		});
+	</script>
+	<script>
+		$(document).ready(function () {
+			$('#submitBtn').click(function () {
+
+				var varietyCode = $('#seedCode').val();
+				var dcode = $('#dCode').val();
+				var season = $('#season').val();
+				var cropYear = $('#year').val();
+				var fDate = $('#fromdate').val();
+				var tDate = $('#todate').val();
+				var productPrice = $('#productprice').val();
+				var subsidyAmount = $('#subsidyAmount').val();
+				var qtyPerBag = $('#qtyPerBag').val();
+				var subsidyPercent = $('#subsidypercent').val();
+
+				if (isNaN(productPrice) || isNaN(subsidyPercent) || isNaN(subsidyAmount)) {
+					alert('Please enter valid numeric values.');
+					return;
+				}
+
+				var data = {
+					varietycode: varietyCode,
+					distCode: dcode,
+					seasonCode: season,
+					cropyear: cropYear,
+					fromDate: fDate,
+					toDate: tDate,
+					prdPrice: productPrice,
+					subSidyAmount: subsidyAmount,
+					quantityPerBag: qtyPerBag,
+					subSidyPercent: subsidyPercent
+				};
+				$.ajax({
+					type: 'POST',
+					url: './pricePeriodUpdate',
+					contentType: 'application/json',
+					data: JSON.stringify(data),
+					success: function (response) {
+						alert(response);
+						window.location.href = "./pricePeriodNew";
+					},
+					error: function (xhr, status, error) {
+						alert('An error occurred. Please try again.');
+						console.log(xhr.responseText);
+					}
+				});
+			});
+		});
+	</script>
+</body>
+
+</html>

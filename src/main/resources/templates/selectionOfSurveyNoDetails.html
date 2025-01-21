@@ -1,0 +1,363 @@
+<!-- <!DOCTYPE html> -->
+<!-- <html lang="en" xmlns:th="http://www.thymeleaf.org"> -->
+
+<!-- <head> -->
+<!-- <meta charset="UTF-8" /> -->
+<!-- <meta name="viewport" content="width=device-width, initial-scale=1"> -->
+<!-- <link -->
+<!-- 	href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" -->
+<!-- 	rel="stylesheet"> -->
+<!-- <script -->
+<!-- 	src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script> -->
+<!-- <link rel="stylesheet" type="text/css" href="css/style.css"> -->
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="header"></head>
+<title>Selection of survey no's for crop booking</title>
+<body>
+	<div th:insert="headerImage"></div>
+
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+
+
+	<script>
+		$(document).ready(
+				function() {
+
+					$('#checkSingle').change(
+							function() {
+								if (this.checked) {
+									$(".checkSingle").each(
+											function() {
+												$(this).closest("tr").css(
+														"background-color",
+														'#7FB3D5');
+												this.checked = true;
+
+											})
+								} else {
+									$(".checkSingle").each(function() {
+										this.checked = false;
+									})
+								}
+							})
+
+					$(".checkSingle").click(function() {
+						if ($(this).is(":checked")) {
+							var isAllChecked = 0;
+							$(".checkSingle").each(function() {
+								if (!this.checked)
+									isAllChecked = 1;
+							})
+							if (isAllChecked == 0) {
+								$("#selectAll").prop("checked", true);
+							}
+						} else {
+							$("#selectAll").prop("checked", false);
+						}
+					});
+				});
+
+		function checkVal() {
+			var selopt = document.getElementsByName("selectedBkIds");
+			var flag = false;
+			for (var i = 0; i < selopt.length; i++) {
+				if (selopt[i].checked) {
+					flag = true;
+				}
+			}
+			if (flag) {
+				var checkboxes = document
+						.querySelectorAll('input[type="checkbox"][name="selectedBkIds"]')
+				var totCheckBoxCnt = checkboxes.length;
+				for (var i = 0; i < totCheckBoxCnt; i++) {
+
+					if ((document.getElementById("checkBoxId" + i).checked) === true) {
+					}
+				}
+				if (confirm("PLease Ensure That All the Details are Entered Correctly.") === true) {
+					return submitClosure();
+				}
+				return true;
+			} else {
+				alert("please select atleast one record to submit");
+				return false;
+			}
+
+		}
+
+		function submitClosure() {
+
+			var dataSrcLst = "";
+			var wsnoLst = "";
+			var snoLst = "";
+			var khNoLst = "";
+			var villcodesList = "";
+			var recidLst = "";
+			var sjoinLst = "";
+			var regNoLst = "";
+			var cultiviblelandLst = "";
+			var uncultiviblelandLst = "";
+			var ocExtentLst = "";
+			var totExtentLst = "";
+			var uidLst = "";
+
+			var checkboxes = document
+					.querySelectorAll('input[type="checkbox"][name="selectedBkIds"]')
+			var totCheckBoxCnt = checkboxes.length;
+			for (var i = 0; i < totCheckBoxCnt; i++) {
+				if ((document.getElementById("checkBoxId" + i).checked) === true) {
+
+					dataSrcLst = dataSrcLst
+							+ document.getElementById("dataSrc" + i).value
+							+ ",";
+					wsnoLst = wsnoLst
+							+ document.getElementById("wsno" + i).value + ",";
+					snoLst = snoLst + document.getElementById("sno" + i).value
+							+ ",";
+					khNoLst = khNoLst
+							+ document.getElementById("khNo" + i).value + ",";
+					villcodesList = villcodesList
+							+ document.getElementById("crVcode" + i).value
+							+ ",";
+					recidLst = recidLst
+							+ document.getElementById("bkId" + i).value + ",";
+					regNoLst = regNoLst
+							+ document.getElementById("regno" + i).value + ",";
+					cultiviblelandLst = cultiviblelandLst
+							+ document.getElementById("cultivableLand" + i).value
+							+ ",";
+					uncultiviblelandLst = uncultiviblelandLst
+							+ document.getElementById("uncultvableLand" + i).value
+							+ ",";
+					ocExtentLst = ocExtentLst
+							+ document.getElementById("ocExtent" + i).value
+							+ ",";
+					totExtentLst = totExtentLst
+							+ document.getElementById("totExtent" + i).value
+							+ ",";
+					uidLst = uidLst + document.getElementById("uid" + i).value
+							+ ",";
+					sjoinLst = sjoinLst
+							+ document.getElementById("sjoint" + i).value + ",";
+				}
+			}
+			document.getElementById("dataSrcList").value = dataSrcLst;
+			document.getElementById("wholeSurveyNoList").value = wsnoLst;
+			document.getElementById("SurveyNoList").value = snoLst;
+			document.getElementById("KhathNoList").value = khNoLst;
+			document.getElementById("bkIdLst").value = recidLst;
+			document.getElementById("villcodeLst").value = villcodesList;
+			document.getElementById("regNoLst").value = regNoLst;
+			document.getElementById("cultivableLandsLst").value = cultiviblelandLst;
+			document.getElementById("uncultivableLandsLst").value = uncultiviblelandLst;
+			document.getElementById("ocExtentLst").value = ocExtentLst;
+			document.getElementById("totExtentLst").value = totExtentLst;
+			document.getElementById("uidLst").value = uidLst;
+			document.getElementById("sjoinLst").value = sjoinLst;
+
+		}
+	</script>
+	<style>
+.selectedRow {
+	background-color: lightblue;
+}
+</style>
+</head>
+<body>
+	<!-- 	<div th:replace="home :: content"></div> -->
+	<div class="container-fluid header-design-login">
+		<div class="row justify-content-center align-items-center"
+			style="height: 10vh;">
+			<div class="webland-container">
+				<h5>Selection Of Survey No's for Crop Boooking</h5>
+				<form th:action="@{/saveSrnoinCrbooking}" method="post">
+					<div
+						th:if="${pattadharDetails != null and not #lists.isEmpty(pattadharDetails)}">
+						<table>
+
+							<thead>
+
+
+								<tr>
+
+									<th><input type="checkbox" id="selectAll" /></th>
+									<th>Sno</th>
+									<th>village</th>
+									<th>Whole Survey No</th>
+									<th>Survey No</th>
+									<th>Data source</th>
+									<th>Khata No</th>
+									<th>Pattadhar Name</th>
+									<th>Pattadhar Father Name</th>
+									<th>Occupant Name</th>
+									<th>Occupant Father Name</th>
+									<th>Total Extent</th>
+									<th>Occupant Extent</th>
+									<th>Pattadhar Aadhaar No</th>
+
+								</tr>
+							</thead>
+
+							<tr th:each="pattadhar, rowStat : ${pattadharDetails}">
+								<td><input type="checkbox" class="checkSingle"
+									name="selectedBkIds" th:id="'checkBoxId'+ ${rowStat.index}"
+									th:value="${pattadhar.recId}" /></td>
+								<td th:text="${rowStat.index + 1}"></td>
+								<td th:text="${pattadhar.village}"></td>
+<!--								<td th:text="${pattadhar.wsno}"></td>-->
+	<td><input type="text" th:id="dataSrcList" name="dataSrcList" /></td>
+								<td th:text="${pattadhar.sno}"></td>
+								<td th:text="${pattadhar.dsrc}"></td>
+								<td th:text="${pattadhar.khNo}"></td>
+								<td th:text="${pattadhar.pName}"></td>
+								<td th:text="${pattadhar.pfName}"></td>
+								<td th:text="${pattadhar.ocName}"></td>
+								<td th:text="${pattadhar.ocfName}"></td>
+
+
+								<td th:text="${pattadhar.totExtent}"></td>
+								<td th:text="${pattadhar.ocExtent}"></td>
+								<td th:text="${pattadhar.uid}"></td>
+
+
+								<input type="hidden" name="totExtent"
+									th:id="'totExtent'+ ${rowStat.index}"
+									th:value="${pattadhar.totExtent}" />
+								<td><input type="hidden" th:id="'bkId' + ${rowStat.index}"
+									name="bkId${rowStat.index}" th:value="${pattadhar.recId}" /></td>
+								<input type="hidden" name="wsno"
+									th:id="'wsno'+ ${rowStat.index}" th:value="${pattadhar.wsno}" />
+								<input type="hidden" name="sno" th:id="'sno'+ ${rowStat.index}"
+									th:value="${pattadhar.sno}" />
+								<input type="hidden" name="khNo"
+									th:id="'khNo'+ ${rowStat.index}" th:value="${pattadhar.khNo}" />
+								<input type="hidden" name="crVcode"
+									th:id="'crVcode'+${rowStat.index}"
+									th:value="${pattadhar.crVcode}" />
+								<input type="hidden" name="dataSrc"
+									th:id="'dataSrc'+${rowStat.index}" th:value="${pattadhar.dsrc}" />
+								<input type="hidden" name="regno"
+									th:id="'regno'+${rowStat.index}" th:value="${pattadhar.regno}" />
+								<input type="hidden" name="cultivableLand"
+									th:id="'cultivableLand'+${rowStat.index}"
+									th:value="${pattadhar.cultivableLand}" />
+								<input type="hidden" name="uncultvableLand"
+									th:id="'uncultvableLand'+${rowStat.index}"
+									th:value="${pattadhar.uncultvableLand}" />
+								<input type="hidden" name="mbno" th:id="'mbno'+${rowStat.index}"
+									th:value="${pattadhar.mbno}" />
+								<input type="hidden" id="dcode" name="dcode"
+									th:value="${pattadhar.dcode}" />
+								<input type="hidden" name="totExtent"
+									th:id="'totExtent'+${rowStat.index}"
+									th:value="${pattadhar.totExtent}" />
+								<input type="hidden" name="ocExtent"
+									th:id="'ocExtent'+${rowStat.index}"
+									th:value="${pattadhar.ocExtent}" />
+								<input type="hidden" name="uid" th:id="'uid'+${rowStat.index}"
+									th:value="${pattadhar.uid}" />
+								<input type="hidden" name="sjoint"
+									th:id="'sjoint'+${rowStat.index}"
+									th:value="${pattadhar.sjoint}" />
+							</tr>
+
+
+
+						</table>
+						<input type="hidden" id="reqvcode" name="reqvcode"
+							th:value="${vcode}" /> <input type="hidden" id="mcode"
+							name="mcode" th:value="${sesmcode}" /> <input type="hidden"
+							id="dcode" name="dcode" th:value="${sesdcode}" /> <input
+							type="hidden" id="pcropyear" name="pcropyear"
+							th:value="${cropyear}" /> <input type="hidden" id="pseason"
+							name="pseason" th:value="${season}" /> <input type="submit"
+							class="btn btn-primary btn-block" value="submit"
+							th:onClick="return checkVal();">
+						<button type="button" class="btn btn-primary btn-block"
+							th:onclick="window.location.href='/selectionOfSurveyNo'">Back</button>
+					</div>
+					<div
+						th:if="${pattadharDetails == null or #lists.isEmpty(pattadharDetails)}">
+						<!-- Content to display when pattadharDetails is null or empty -->
+						<p>No records found</p>
+					</div>
+
+				 <input
+						type="hidden" th:id="wholeSurveyNoList" name="wholeSurveyNoList" />
+					<input type="hidden" th:id="SurveyNoList" name="SurveyNoList" /> <input
+						type="hidden" th:id="KhathNoList" name="KhathNoList" /> <input
+						type="hidden" th:id="bkIdLst" name="bkIdLst" /> <input
+						type="hidden" th:id="UidList" name="UidList" /> <input
+						type="hidden" th:id="regNoLst" name="regNoLst" /> <input
+						type="hidden" th:id="mbnoLst" name="mbnoLst" /> <input
+						type="hidden" th:id="KhathNoList" name="KhathNoList" /> <input
+						type="hidden" th:id="villcodeLst" name="villcodeLst" /> <input
+						type="hidden" th:id="cultivableLandsLst" name="cultivableLandsLst" />
+					<input type="hidden" th:id="uncultivableLandsLst"
+						name="uncultivableLandsLst" /> <input type="hidden"
+						th:id="ocExtentLst" name="ocExtentLst" /> <input type="hidden"
+						th:id="totExtentLst" name="totExtentLst" /> <input type="hidden"
+						th:id="sjoinLst" name="sjoinLst" /> <input type="hidden"
+						th:id="uidLst" name="uidLst" /> <input type="hidden" id="pwbdcode"
+						name="pwbdcode" th:value="${pwbdcode}" /> <input type="hidden"
+						id="pwbmcode" name="pwbmcode" th:value="${pwbmcode}" />
+
+
+				</form>
+				<script>
+					document.getElementById('selectAll').addEventListener(
+							'change',
+							function() {
+								var checkboxes = document
+										.getElementsByName('selectedBkIds');
+								for (var i = 0; i < checkboxes.length; i++) {
+									checkboxes[i].checked = this.checked;
+									updateRowColor(checkboxes[i]);
+								}
+							});
+
+					var individualCheckboxes = document
+							.getElementsByName('selectedBkIds');
+					for (var i = 0; i < individualCheckboxes.length; i++) {
+						individualCheckboxes[i].addEventListener('change',
+								function() {
+									updateRowColor(this);
+									updateSelectAllCheckbox();
+								});
+					}
+
+					function updateRowColor(checkbox) {
+						var row = checkbox.closest('tr');
+						if (checkbox.checked) {
+							row.classList.add('selectedRow');
+						} else {
+							row.classList.remove('selectedRow');
+						}
+					}
+
+					function updateSelectAllCheckbox() {
+						var headerCheckbox = document
+								.getElementById('selectAll');
+						var allChecked = true;
+						for (var j = 0; j < individualCheckboxes.length; j++) {
+							if (!individualCheckboxes[j].checked) {
+								allChecked = false;
+								break;
+							}
+						}
+						headerCheckbox.checked = allChecked;
+					}
+				</script>
+
+
+
+			</div>
+		</div>
+	</div>
+</body>
+
+</html>

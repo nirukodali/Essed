@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Report On Farmer Crop Booked Details </title>
+
+	<script>
+		function CallPrint(strid) {
+			var prtContent = document.getElementById(strid);
+			var mywindow = window.open('', '', 'left=0,top=0,width=950,height=600,toolbar=1,scrollbars=1,status=1,addressbar=0');
+			var is_chrome = Boolean(mywindow.chrome);
+			mywindow.document.write(prtContent.innerHTML);
+			mywindow.document.close(); // necessary for IE >= 10 and necessary before onload for chrome
+
+			if (is_chrome) {
+				mywindow.onload = function () { // wait until all resources loaded 
+					mywindow.focus(); // necessary for IE >= 10
+					mywindow.print(); // change window to mywindow
+					mywindow.close(); // change window to mywindow
+				};
+			} else {
+				mywindow.document.close(); // necessary for IE >= 10
+				mywindow.focus(); // necessary for IE >= 10
+				mywindow.print();
+				mywindow.close();
+			}
+
+			return true;
+		}
+
+	</script>
+	<script language="javascript">
+		var tableToExcel = (function () {
+			var uri = 'data:application/vnd.ms-excel;base64,'
+				, template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table align="center">{table}</table></body></html>'
+				, base64 = function (s) {
+					return window.btoa(unescape(encodeURIComponent(s)))
+				}
+				, format = function (s, c) {
+					return s.replace(/{(\w+)}/g, function (m, p) {
+						return c[p];
+					})
+				}
+			return function (table, name) {
+				if (!table.nodeType)
+					table = document.getElementById(table)
+				var ctx = {worksheet: name || 'Worksheet', table: table.innerHTML}
+				window.location.href = uri + base64(format(template, ctx))
+			}
+		})()
+	</script>
+	<script>
+
+		function validateForm() {
+			var cropyear = document.getElementById("crYear").value;
+			var crpcode = document.getElementById("crpid").value;
+			var vcode = document.getElementById("vcode").value;
+			var displayid = document.getElementById("display").value;
+
+			// Check if both fields are selected
+			if (cropyear == 0 && crpcode == 0 && vcode == 0 && displayid == 0) {
+				alert("Please select Crop Year,Cropname,Village,Farmertype ");
+				return false; // Prevent form submission
+			} else if (cropyear == 0) {
+				alert("Please Select Crop Year");
+				return false;
+			}  else if (vcode == 0) {
+				alert("Please Select Village");
+				return false;
+			} 
+		}	
+	</script>
+	<style>
+	 thead {
+   
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.heading1{
+	background-color: #dfffe1;
+    font-family: arial;
+    font-size: 10px;
+    line-height: 1.5;
+    text-align: center;
+    width: 100%;
+    font-weight: bold;}
+
+
+	</style>
+</head>
+
+<body>
+	<div th:insert="header"></div>
+<div th:insert="headerImage"></div>
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+	<div class="container">
+		<form id="myform" name="myform" method="post" th:action="@{/RepCropbkingdetVA}" style="margin-bottom: 0%;height:40%;">
+			<br>
+			<div class="ecropCardRbk2">
+				
+
+
+<h5 style="background-color:#006400;color: white;font-weight:bolder;font-size:large;margin-left:14%;text-align: center;"  >
+					Report On Farmer Crop Booked Details</h5>	
+
+
+
+				<div class="mb-3" style="width:50%;margin-left:35%;">
+					<label for="name">Crop Year:</label>
+					<select id="crYear" name="crYear" class="form-select" style="width: 50%;" aria-label="Crop Year">
+						<option value="0">----Select----</option>
+						<option th:each="emp : ${activeseason}" th:value="${emp.seasonvalue}" th:text="${emp.cropyear}">
+						</option>
+					</select>
+				</div>
+
+				
+
+				<div class="mb-3" style="width: 50%;margin-left:40%;">
+					<label for="name"> Village:</label>
+
+					<select id="vcode" name="vcode" class="form-select" style="width: 50%;"  aria-label="Select Village">
+						<option value="0">----Select----</option>
+
+						<option th:each="village : ${villname}" th:value="${village.vcode}"
+							th:text="${village.wbvname}">
+							Village Name</option>
+					</select>
+				</div>
+				
+				<div class="mb-3" style="width: 50%;margin-left:42%;">
+					<label for="name"> Crop:</label>
+
+					<select id="crpid" name="crpid" class="form-select" style="width: 50%;" aria-label="Select Village">
+						<option value="0">-----Select-----</option>
+
+						<option th:each="cropname : ${cropnames}" th:value="${cropname.cropid}"
+							th:text="${cropname.cropname}"></option>
+					</select>
+				</div>
+
+				<div class="mb-3" style="width: 50%;margin-left:32%;">
+					<label for="name"> Farmer Type:</label>
+
+					<select id="display" name="display" class="form-select" style="width: 50%;" aria-label="Select Village">
+						<option value="0" th:text="'----Select----'">----Select----</option>
+						<!--					<option value="1" th:text="'Insurance Authenticated'">Insurance Authenticated</option>-->
+						<!--					<option value="2" th:text="'Insurance Not Authenticated'">Insurance Not Authenticated</option>-->
+						<!--	               <option value="4" th:text="'Insurance Claim Pending And Authenticated'">Insurance Claim Pending And-->
+						<!--						Authenticated</option>-->
+						<option value="3" th:text="'To Be Authenticated'">To Be Authenticated</option>
+					</select>
+
+
+				</div>
+				<div align="center" style="margin-top:8%;margin-left:25%;">
+					<button type="submit" class="btn btn-success"
+						onclick="return validateForm()">Submit</button>
+<!--					<button type="button" class="btn btn-primary btn-block">Back</button>-->
+				</div>
+			</div>
+			<!--			<h5 style="font-size:20px" colspan="20" class="heading" align="center">Report On Farmer Crop Booked Details-->
+			<!--			</h5>-->
+
+			<div align="center" id="divPrint"
+				style="overflow-x: scroll; overflow-y: scroll;max-width: 100%;max-height:100lvh;">
+				<table id="tableStkId" align="center" class="table table-striped border border-secondary" 
+					>
+					<thead >
+							<tr>
+					<h5 style="font-size:20px;margin-top:3%;" colspan="20" class="heading1" align="center">
+			CropYear: <span th:text=${cropyear}></span>&numsp;&numsp;     Season: <span th:text="${season} == 'K' ? 'Kharif' : (${season} == 'R' ? 'Rabi' : (${season} == 'S' ? 'Summer' : ' '))"></span>&numsp;&numsp;  
+			  Village:<span th:text=${vname}></span>&numsp;&numsp;  Cropname: <span th:text=${cropname}></span>&numsp;&numsp; 
+<!-- 	<span th:text=${display1}></span>	 -->
+
+   <!-- Conditional statement to display message based on farmer type -->
+   Farmer Type: <span th:switch="${display1}">
+    <p th:case="1">Insurance Authenticated</p>
+    <p th:case="2">Insurance Not Authenticated</p>
+    <p th:case="3">To Be Authenticated</p>
+    <p th:case="4">Insurance Claim Pending And Authenticated</p>
+    <p th:case="*" th:text="' '"></p>
+</span>		
+						</h5>				
+			</tr>		
+						<tr>
+<!--							<b><p style="background-color: #0275d8;color: white;" colspan="5">Mandal Name : <span th:text="${mandal}"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; RBK Name : <span th:text="${rbk}"></span></p></b>-->
+							<th > <b> S.No </b> </th>
+							<th > <b> Booking-id </b> </th>
+							<!--<th> <b> Uploaded Date </b> </th>-->
+<!--							<th > <b> Mandal </b> </th>-->
+							<th> <b> Village </b> </th>
+<!--							<th> <b> RBK Name </b> </th>-->
+							<th> <b> Farmer Name </b> </th>
+							<th> <b> Aadhaar Number </b> </th>
+							<th> <b>Father Name </b> </th>
+							<!-- <th> <b> Pattadar / Cultivator </b> </th>-->
+							<!--  <th> <b>Crop Irrigation Type </b> </th>
+                          <th> <b>Taraha</b> </th>
+                          <th> <b>Category </b> </th>-->
+							<th> <b> Khatha No</b> </th>
+							<th> <b>Survey No/LP No </b> </th>
+							<th> <b>Crop Name </b> </th>
+							<th> <b>Variety Name </b> </th>
+							<th> <b>Area Sown </b> </th>
+							<th> <b>Date of Sowing </b> </th>
+							<th> <b>Crop Nature </b> </th>
+							<th> <b>Water Source </b> </th>
+							<th> <b>Method of Irrigation </b> </th>
+							<th> <b>Farming Type </b> </th>
+						<th> <b>Updated By </b> </th>
+						</tr>
+					</thead>
+					<tbody id="databody">
+						<tr th:each="bean,row: ${list}">
+							<td th:text="${row.index+1}" />
+							<td th:text="${bean.Bookingid}" />
+<!--							<td th:text="${bean.Cr_mand_code}" />-->
+							<td th:text="${bean.lgdvname}" />
+<!--							<td th:text="${bean.Rbkname}" />-->
+							<td th:text="${bean.Oc_name}" />
+							<td th:text="${bean.Cr_farmeruid}" />
+							<td th:text="${bean.Oc_fname}" />
+							<td th:text="${bean.Kh_no}" />
+							<td th:text="${bean.Cr_sno}" />
+							<td th:text="${bean.Cropname}" />
+							<td th:text="${bean.Varietyname}" />
+							<td th:text="${bean.Cr_mix_unmix_ext}" />
+							<td th:text="${bean.Cr_sow_date}" />
+							<td th:text="${bean.Cropnature}" />
+							<td th:text="${bean.Watersource}" />
+							<td th:text="${bean.Irrmethoddesc}" />
+							<!--<td th:text="${bean.Mobileno}" />-->
+							<td th:text="${bean.Farmingtype}" />
+							<td th:text="${bean.Updatedby}" />
+<!--							-->
+							<!--<td th:if="${NoRecordsFound}" align = "center" th:text="-----No Records Found-----"/>-->
+						</tr>
+					</tbody>
+				</table>
+				<div th:if="${NoRecordsFound}" align="center">
+					<b style="font-size:18px;">---- No Records found-----</b>
+				</div>
+			</div>
+			<div align="center" style="color:black">
+				<input class="btn btn-success" name="ctl00$ContentPlaceHolder1$btnPrint" type="button"
+					id="ctl00_ContentPlaceHolder1_btnPrint" onClick="javascript:CallPrint('divPrint')" value="Print">
+				<input class="btn btn-success" type="button" onclick="tableToExcel('tableStkId', 'Abstract')"
+					value="Excel">
+				<!--  <input  class="btn btn-primary" type="button" value="Back" onclick="goBack()" /> -->
+			</div>
+		</form>
+	</div>
+	</div>
+</body>
+
+</html>

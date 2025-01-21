@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Update Seed Entitlements</title>
+	<link rel="stylesheet" href="/styles/reportstylesheet.css">
+	<style>
+		tr {
+			margin-bottom: 20px;
+		}
+
+		td {
+			padding-bottom: 10px;
+		}
+
+		#dcode,
+		#groupcode,
+		#svcode {
+			margin-bottom: 10px;
+		}
+	</style>
+</head>
+
+<body>
+	<div th:insert="header"></div>
+	<div th:insert="headerImage"></div>
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+
+	<div align="center">
+		<form name="f1" method="POST" th:action="@{/submitSeedEntitlement}" onsubmit="return validateForm()">
+			<div align="center">
+				<table>
+					<tr>
+						<th class="heading" colspan="2"
+							style="background-color: #006400; color: white; text-align: center;">
+							<h4>Update Seed Entitlements</h4> 
+						</th> <br>
+					</tr>
+					<tr>
+						<td class="tdnum"><b>District <font color="red">*</font></b></td>
+						<td>
+							<select name="dcode" id="dcode" style="width: 200px" onchange="fetchSeedVarieties()">
+								<option value="">--Select--</option>
+								<option th:each="district : ${district}" th:value="${district.dcode}"
+									th:text="${district.dname}"></option>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td class="tdnum"><b>Seed Group <font color="red">*</font></b></td>
+						<td>
+							<select name="groupcode" id="groupcode" style="width: 200px"
+								onchange="fetchSeedVarieties()">
+								<option value="">--Select--</option>
+								<option th:each="seedGroup : ${seedGroup}" th:value="${seedGroup.groupcode}"
+									th:text="${seedGroup.groupname}"></option>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td class="tdnum"><b>Seed Variety <font color="red">*</font></b></td>
+						<td>
+							<select name="svcode" id="svcode" style="width: 200px">
+								<option value="">--Select--</option>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="2" align="center">
+							<button type="submit">Submit</button>
+						</td>
+					</tr>
+				</table>
+			</div>
+		</form>
+	</div>
+	<div th:if="${successMessage}" id="successMessage"
+		style="color: green; font-weight: bold; margin-bottom: 20px; 
+            display: flex; justify-content: center; align-items: center; 
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 20px; border-radius: 5px; width: auto; z-index: 1000;">
+		<p th:text="${successMessage}"></p>
+	</div>
+
+	<div th:if="${error}" id="errorMessage"
+		style="color: red; font-weight: bold; margin-bottom: 20px; 
+            display: flex; justify-content: center; align-items: center; 
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 20px; border-radius: 5px; width: auto; z-index: 1000;">
+		<p th:text="${error}"></p>
+	</div>
+
+	<div align="center" th:if="${productPrices != null}">
+		<table border="1" width="90%">
+			<tr style="background-color: #006400; color: white; text-align: center;">
+				<th>District Name</th>
+				<th>Seed Name</th>
+				<th>Season</th>
+				<th>Crop Year</th>
+				<th>Product Price</th>
+				<th>Subsidy Amount</th>
+				<th>Non Subsidy Amount</th>
+				<th>Subsidy Percent</th>
+				<th>From Date</th>
+				<th>To Date</th>
+				<th>Quantity Per Bag</th>
+				<th>Entitlement</th>
+
+			</tr>
+			<tr th:each="productPrice : ${productPrices}" style="text-align: center;">
+				<td th:text="${productPrice.dname}"></td>
+				<td th:text="${productPrice.seedname}"></td>
+				<td>
+					<span th:switch="${productPrice.season}">
+						<span th:case="'R'">Rabi</span>
+						<span th:case="'K'">Kharif</span>
+						<span th:case="'S'">Summer</span>
+						<span th:case="*">Unknown Season</span>
+					</span>
+				</td>
+				<td th:text="${productPrice.cropyear}"></td>
+				<td th:text="${productPrice.product_price}"></td>
+				<td th:text="${productPrice.subsidy_amt}"></td>
+				<td th:text="${productPrice.nonSubsidy_amt}"></td>
+				<td th:text="${productPrice.subsidy_percent}"></td>
+				<td th:text="${productPrice.fromdate}"></td>
+				<td th:text="${productPrice.todate}"></td>
+				<td th:text="${productPrice.quantityperbag}"></td>
+				<td hidden="${productPrice.varietycode}"></td>
+				<td hidden="${productPrice.dcode}"></td>
+				<td>
+					<a href="#"
+						th:href="@{/edit(varietycode=${productPrice.varietycode}, cropyear=${productPrice.cropyear}, season=${productPrice.season}, dcode=${productPrice.dcode})}">
+						<button type="button">Edit</button>
+					</a>
+				</td>
+			</tr>
+		</table>
+	</div>
+
+	<script>
+		function validateForm() {
+			var district = document.getElementById("dcode");
+			var groupcode = document.getElementById("groupcode");
+			var svcode = document.getElementById("svcode");
+			if (district.value === "") {
+				alert("Please select a District.");
+				district.focus();
+				return false;
+			}
+			if (groupcode.value === "") {
+				alert("Please select a Seed Group.");
+				groupcode.focus();
+				return false;
+			}
+			if (svcode.value === "") {
+				alert("Please select a Seed Variety.");
+				svcode.focus();
+				return false;
+			}
+			return true;
+		}
+	</script>
+	<script>
+		function fetchSeedVarieties() {
+			var groupcode = document.getElementById("groupcode").value;
+			var dcode = document.getElementById("dcode").value;
+
+			if (groupcode && dcode) {
+				fetch(`/getSeedVarieties?groupcode=${groupcode}&dcode=${dcode}`)
+					.then(response => response.json())
+					.then(data => {
+						var seedVarietySelect = document.getElementById("svcode");
+						seedVarietySelect.innerHTML = '<option value="">--Select--</option>';
+						data.forEach(function (item) {
+							var option = document.createElement("option");
+							option.value = item.varietycode;
+							option.textContent = item.seed;
+							seedVarietySelect.appendChild(option);
+						});
+					});
+			}
+		}
+		window.onload = function () {
+			var successMessage = document.getElementById('successMessage');
+			if (successMessage) {
+				setTimeout(function () {
+					successMessage.style.display = 'none';
+				}, 5000);
+			}
+			var errorMessage = document.getElementById('errorMessage');
+			if (errorMessage) {
+				setTimeout(function () {
+					errorMessage.style.display = 'none';
+				}, 5000);
+			}
+		};
+	</script>
+</body>
+
+</html>

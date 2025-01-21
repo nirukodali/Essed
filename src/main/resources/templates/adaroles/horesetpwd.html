@@ -1,0 +1,208 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="header">
+
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	
+	<title>Login Page</title>
+		<!--
+		.style1 {
+			color: #FFFFFF
+		}
+		-->
+	<script>
+		var http = getXMLHTTPRequest();
+		function trim(str) {
+			return str.replace(/^\s*|\s*$/g, "");
+		}
+
+	</script>
+	
+
+
+</head>
+
+
+<body>
+
+	<div th:insert="headerImage"></div>
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+
+
+
+	<table border="0" align="center">
+
+		<th class="heading" colspan="2"> Reset Password </th>
+
+		<tr>
+			<td>
+				<form id="f1" name="f1"  method="POST"  th:action="@{/posthoresetpwd}" >
+					<table border="1">
+						<html:hidden property="rndm" value='<%=rdm%>' />
+
+
+						<tr>
+
+							<td class="tdnum" width="50%"><b>User Name</b>
+								<font size="3" color="#FF0000">*</font>
+							</td>
+							<td><input type="text" name="username"></td>
+						</tr>
+
+						<tr>
+							<td class="tdnum"><b>New Password</b>
+								<font size="3" color="#FF0000">*</font>
+							</td>
+							<td><input type="password" name="newpassword" id="newpassword" onchange="passwordChanged()">
+								<span id="strength"></span>
+							</td>
+						</tr>
+						<tr>
+							<td class="tdnum"><b>Retype New
+									Password</b>
+								<font size="3" color="#FF0000">*</font>
+							</td>
+							<td><input type="password" name="retypenewpassword" onchange="passwordChanged1()"
+									id="password1">
+									<span id="strength1"></span>
+							</td>
+						</tr>
+						<tr>
+							<td colspan=2>
+								<div align="center">
+
+									<input type="button" value="Submit" name="B1" onclick="chk();">
+									<input type="button" value="Go Back" onclick="back()">
+
+								</div>
+							</td>
+						</tr>
+					</table>
+				</form>
+			</td>
+		</tr>
+	</table>
+	
+</body>
+
+<script type="text/javascript">
+function changePass() {
+	var pass = document.f1.oldpwd.value;
+	var pass1 = GM(GM((pass)));
+	alert(pass1+"--------");
+	document.f1.oldpwd.value = pass1;
+}
+function changePass1() {
+	var repass = document.f1.newpassword.value;
+	var repass1 = GM(GM(repass));
+	alert(pass1+"--------");
+	document.f1.newpassword.value = repass1;
+	// alert(document.f1.newpassword.value);
+
+}
+function changePass2() {
+	var repass = document.f1.retypenewpassword.value;
+	var repass1 = GM(GM((repass)));
+	alert(pass1+"--------");
+	document.f1.retypenewpassword.value = repass1;
+}
+function chk() {
+//	alert("is call");
+	errorText = "";
+	var f1 = document.getElementById('f1');  // Get the form element
+	
+	  // Check if the form element is found
+    if (!f1) {
+     //  alert("Form 'f1' not found in the DOM!");
+        return false;
+    }
+
+    // Check if the form element is found
+	if (document.f1.newpassword.value == "") {
+		errorText = errorText + "\n New Password ";
+	}
+	if (document.f1.retypenewpassword.value == "") {
+		errorText = errorText + "\n Retype New Password";
+	}
+	if(document.f1.newpassword.value  != document.f1.retypenewpassword.value ){
+		errorText=" New Password and  Retype New Password does not matched, Please enter corrrect password";
+		alert(errorText)
+		 document.f1.newpassword.value = ""; 
+		 document.f1.retypenewpassword.value = ""; 
+		return false;
+	}
+	if (errorText == "") {
+		//alert("2132546456");
+		  f1.submit();  // Submit the form		
+		  return true;
+	} else {
+		errorText = "You have left the following fields Blank:\n" + errorText + "\n\nPlease fill these fields in and re-submit the form\n\nThank You.";
+		alert(errorText);
+		return false
+	}
+	
+	
+}
+
+		function passwordChanged() {
+			var strength = document.getElementById('strength');
+			var strongRegex = new RegExp("^(?=.{8,})(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*\\W).*$", "g");
+			var mediumRegex = new RegExp("^(?=.{7,})(((?=.*[A-Z])(?=.*[a-z]))|((?=.*[A-Z])(?=.*[0-9]))|((?=.*[a-z])(?=.*[0-9]))).*$", "g");
+			var enoughRegex = new RegExp("(?=.{6,}).*", "g");
+			var pwd = document.getElementById("newpassword").value;
+			if (pwd.length == 0) {
+				strength.innerHTML = 'Minimum 8 Characters with Combination of Number,Special Character,Capital Letter and Small Letter ';
+				document.f1.newpassword.value = "";
+			} else if (false == enoughRegex.test(pwd.value)) {
+				strength.innerHTML = 'More Characters';
+				document.f1.newpassword.value = "";
+				alert("Minimum 8 Characters with Combination of Number,Special Character,Capital Letter and Small Letter");
+			} else if (strongRegex.test(pwd)) {
+				strength.innerHTML = '<span style="color:green">Strong!</span>';
+				//document.f1.pwdtext.value=pwd;
+				changePass1();
+			} else if (mediumRegex.test(pwd)) {
+				strength.innerHTML = '<span style="color:orange">Medium!</span>';
+				//    document.f1.newpassword.value = "";
+				alert("Minimum 8 Characters with Combination of Number,Special Character,Capital Letter and Small Letter");
+			} else {
+				strength.innerHTML = '<span style="color:red">Weak!</span>';
+				//  document.f1.newpassword.value = "";
+				alert("Minimum 8 Characters with Combination of Number,Special Character,Capital Letter and Small Letter");
+			}
+		}
+function back(){
+		window.location.href='./home';
+	}
+		function passwordChanged1() {
+			var strength1 = document.getElementById('strength1');
+			var strongRegex = new RegExp("^(?=.{8,})(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*\\W).*$", "g");
+			var mediumRegex = new RegExp("^(?=.{7,})(((?=.*[A-Z])(?=.*[a-z]))|((?=.*[A-Z])(?=.*[0-9]))|((?=.*[a-z])(?=.*[0-9]))).*$", "g");
+			var enoughRegex = new RegExp("(?=.{6,}).*", "g");
+			var repwd = document.getElementById("password1").value;
+			if (repwd.length == 0) {
+				strength1.innerHTML = 'Minimum 8 Characters with Combination of Number,Special Character,Capital Letter and Small Letter';
+				document.f1.retypenewpassword.value = "";
+			} else if (false == enoughRegex.test(repwd.value)) {
+				strength1.innerHTML = 'More Characters';
+				alert("Minimum 8 Characters with Combination of Number,Special Character,Capital Letter and Small Letter");
+				document.f1.retypenewpassword.value = "";
+			} else if (strongRegex.test(repwd)) {
+				strength1.innerHTML = '<span style="color:green">Strong!</span>';
+				changePass2();
+			} else if (mediumRegex.test(repwd)) {
+				strength1.innerHTML = '<span style="color:orange">Medium!</span>';
+				document.f1.retypenewpassword.value = "";
+				alert("Minimum 8 Characters with Combination of Number,Special Character,Capital Letter and Small Letter");
+			} else {
+				strength1.innerHTML = '<span style="color:red">Weak!</span>';
+				document.f1.retypenewpassword.value = "";
+				alert("Minimum 8 Characters with Combination of Number,Special Character,Capital Letter and Small Letter");
+			}
+		}
+	</script>
+
+</html>

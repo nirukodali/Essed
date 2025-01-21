@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="ISO-8859-1">
+<title></title>
+<!--<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>-->
+<script>
+function CallPrint(strid) {
+        var prtContent = document.getElementById(strid);
+        var mywindow = window.open('', '', 'left=0,top=0,width=950,height=600,toolbar=1,scrollbars=1,status=1,addressbar=0');
+        var is_chrome = Boolean(mywindow.chrome);
+        mywindow.document.write(prtContent.innerHTML);
+        mywindow.document.close(); // necessary for IE >= 10 and necessary before onload for chrome
+
+        if (is_chrome) {
+            mywindow.onload = function() { // wait until all resources loaded 
+                mywindow.focus(); // necessary for IE >= 10
+                mywindow.print(); // change window to mywindow
+                mywindow.close(); // change window to mywindow
+            };
+        } else {
+            mywindow.document.close(); // necessary for IE >= 10
+            mywindow.focus(); // necessary for IE >= 10
+            mywindow.print();
+            mywindow.close();
+        }
+
+        return true;
+    }
+
+
+    var tableToExcel = (function() {
+        var uri = 'data:application/vnd.ms-excel;base64,', 
+            template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table align="center">{table}</table></body></html>', 
+            base64 = function(s) { return window.btoa(unescape(encodeURIComponent(s))) }, 
+            format = function(s, c) { return s.replace(/{(\w+)}/g, function(m, p) { return c[p]; }) }
+        return function(table, name) {
+            if (!table.nodeType) table = document.getElementById(table)
+            var ctx = { worksheet: name || 'Worksheet', table: table.innerHTML }
+            window.location.href = uri + base64(format(template, ctx))
+        }
+    })()
+</script>
+</head>
+<body>
+
+  <div class="panel panel-primary" id="divPrint">
+		<div th:if="${codee == 1}" class="panel-heading"
+			style="text-align: center; background-color: honeydew; padding: 8px; margin: 0 auto; display: table;margin-left: 35%;">
+			<b>Crop Damage Enumeration e-Kyc Details(Due to Flood/Heavy Rains in October, 2024 )</b>
+		</div>
+		<div th:if="${codee == 0}" class="panel-heading"
+			style="text-align: center; background-color: honeydew; padding: 8px; margin: 0 auto; display: table;margin-left: 40%;">
+			<b>Crop Damage Enumeration List(Due to Flood/Heavy Rains in October, 2024 )</b>
+		</div>
+		  <div class="panel-body" id="tableStkId">
+
+        <input type="hidden" th:value="${type}" id="type" name="type">
+        <table id="ownerGrid" class="table table-bordered table-striped dataTable" >
+            <thead class="color-palette" style="background-color: #9494b8;">
+                <tr>
+<!--                    <th style="color: white; width: 7%; background-color: #9494b8;"><b>District Name</b></th>-->
+                    <th style="color: white; width: 7%; background-color: #006400;"><b>S.No</b></th>
+                    <th style="color: white; width: 19%; background-color: #006400;"><b>Village Name</b></th>
+                   
+                    <th style="color: white; width: 8%; background-color: #006400;"><b>e-Crop booking ID</b></th>
+                     <th style="color: white; width: 19%; background-color: #006400;"><b>Khata No</b></th>
+                    <th style="color: white; width: 25%; background-color: #006400;"><b>Survey No</b></th>
+                     <th style="color: white; width: 25%; background-color: #006400;"><b>Farmer Name</b></th>
+                    <th style="color: white; width: 25%; background-color: #006400;"><b>Father/husband Name</b></th>
+                    <th style="color: white; width: 8%; background-color: #006400;"><b>Aadhaar</b></th>                   
+                    <th style="color: white; width: 8%; background-color: #006400;"><b>Crop</b></th>
+                    <th style="color: white; width: 8%; background-color: #006400;" th:if="${codee == 0}"><b>Irrigation Source</b></th>
+                    <th style="color: white; width: 8%; background-color: #006400;" th:if="${codee == 0}"><b>Sce Details</b></th>
+                    <th style="color: white; width: 8%; background-color: #006400;" th:if="${codee == 0}"><b>Sce Extent</b></th>
+                    <th style="color: white; width: 5%; background-color: #006400;" th:if="${codee == 0}"><b>Tenant/ Owner</b></th>                    
+                    <th style="color: white; width: 10%; background-color: #006400;" th:if="${codee == 0}"><b>Crop extent</b></th>
+<!--                    <th style="color: white; width: 8%; background-color: #006400;"><b>Irrigated/Rainfed</b></th>-->
+                    <th style="color: white; width: 8%; background-color: #006400;" th:if="${codee == 0}"><b>Area damaged > 33% (in Acres) </b></th>
+                    <th style="color: white; width: 8%; background-color: #006400;" th:if="${codee == 1}"><b>Ekyc Status </b></th>
+<!--                    <th style="color: white; width: 8%; background-color: #006400;"><b>Bank account</b></th>-->
+<!--                    <th style="color: white; width: 8%; background-color: #9494b8;"><b>Bank name</b></th>-->
+<!--                    <th style="color: white; width: 8%; background-color: #9494b8;"><b>Bank branch</b></th>-->
+<!--                    <th style="color: white; width: 8%; background-color: #9494b8;"><b>Type of bank</b></th>-->
+<!--                    <th style="color: white; width: 8%; background-color: #9494b8;"><b>IFSC code</b></th>-->
+<!--                    <th style="color: white; width: 8%; background-color: #9494b8;"><b>Farmer Name in English</b></th>-->
+<!--                    <th style="color: white; width: 8%; background-color: #9494b8;"><b>Father/husband in English</b></th>-->
+                </tr>
+            </thead>
+            <tbody>
+				
+                <tr th:each="cultivator, iterStat : ${allDetailsList}" th:attr="data-index=${iterStat.index}">
+<!--                    <td style="width: 10%;" th:text="${dname}">-->
+<!--					</td>-->
+<!--                    <td style="width: 10%;" th:text="${mname}">-->
+<!--					</td>-->
+<!--                    <td style="width: 10%;" th:text="${vname}">-->
+<!--					</td>-->
+ <td align="center" th:text="${iterStat.index + 1}">1</td>
+
+ <td style="width: 3%;"><span th:text="${cultivator.vname}"></span>
+
+                    <td><span th:text="${cultivator.bookingid}"></span>
+                     <td style="width: 10%;"><span th:text="${cultivator.kh_no}"></span>
+					</td>
+                    <td style="width: 15%;"><span th:text="${cultivator.cr_sno}"></span>
+                    <td style="width: 25%;"><span th:text="${cultivator.occupname}"></span>
+					</td>
+                    <td style="width: 15%;"><span th:text="${cultivator.occupfname}"></span>
+					</td>
+                    <td><span th:text="${cultivator.cr_farmeruid}"></span>
+					</td>
+                    
+                    <td style="width: 15%;"><span th:text="${cultivator.cropname}"></span>
+					</td>
+					<td style="width: 3%;" th:if="${codee == 0}"><span th:if="${cultivator.cr_w_draw == '1'}" th:text="Rainfed"></span>
+                        <span th:if="${cultivator.cr_w_draw != '1'}" th:text="Irrigated"></span>
+                    </td>
+					   <td th:if="${codee == 0}">
+						   <span th:if="${cultivator.sce_det == 'C'}" >Sand Casting</span>
+						   <span th:if="${cultivator.sce_det == 'E'}" >Soil Erosion</span>
+						   <span th:if="${cultivator.sce_det == 'N'}" >NA</span>
+					</td>
+					   <td th:if="${codee == 0}"><span th:text="${cultivator.sce_ext}"></span>
+					</td>
+                   <td style="width: 3%;" th:if="${codee == 0}">
+    <span th:if="${cultivator.owner_tenant == 'O'}">Owner</span>
+    <span th:if="${cultivator.owner_tenant != 'O'}">Tenant</span>
+</td>
+                    
+                    <td style="width: 3%;" th:if="${codee == 0}"><span th:text="${cultivator.occupant_extent}"></span>
+					</td>
+                    
+                    <td style="width: 10%;" th:text="${cultivator.damaged_ext_abv_33}" th:if="${codee == 0}"></td>
+                    <td style="width: 10%;" th:if="${codee == 1}">
+						 <span th:if="${cultivator.ekyc == 'N'}" >Pending</span>
+						 <span th:if="${cultivator.ekyc == 'Y'}" >Completed</span>
+					</td>
+<!--                    <td style="width: 10%;" th:text="${cultivator.bnk_acno}"></td>-->
+<!--                    <td style="width: 10%;" th:text="${cultivator.bnk_code"></td>-->
+<!--                    <td style="width: 10%;" th:text="${cultivator.bnk_brnch_cod"></td>-->
+<!--                    <td style="width: 10%;" th:text="${cultivator.bnk_actype"></td>-->
+<!--                    <td style="width: 10%;" th:text="${cultivator.prsnt_bnk_brnch_ifsc_cod"></td>-->
+<!--                    <td style="width: 10%;" th:text="${cultivator.occupnameeng}"></td>-->
+<!--                    <td style="width: 10%;" th:text="${cultivator.occupfnameeng}"></td>-->
+                </tr>
+            </tbody>
+        </table>
+    </div>
+	</div>
+	 <div align="center" style="color: black; margin-top: 20px;">
+                <input class="btn btn-success" name="ctl00$ContentPlaceHolder1$btnPrint" type="button"
+                    id="ctl00_ContentPlaceHolder1_btnPrint" onClick="javascript:CallPrint('divPrint')" value="Print">
+                <input class="btn btn-success" type="button" onclick="tableToExcel('tableStkId', 'Abstract')" value="Excel">
+            </div>
+</body>
+</html>

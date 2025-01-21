@@ -1,0 +1,262 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+<!--	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">-->
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+<!--	<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>-->
+	<title>Correction of Records by VAA</title>
+
+	<style>
+		.webland-container-new {
+			background-color: #fff;
+			border-radius: 8px;
+			box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+			padding: 40px;
+			max-width: 400px;
+			margin: 0 auto;
+			text-align: center;
+			margin-bottom: 5px;
+		}
+
+
+		h5 {
+			color: rgb(0, 0, 0);
+			margin-bottom: 5px;
+		}
+
+		label {
+			font-weight: bold;
+			display: block;
+			margin-bottom: 5px;
+		}
+
+		select,
+		input {
+			width: 50%;
+			padding: 10px;
+			margin-bottom: 15px;
+			box-sizing: border-box;
+			border: 1px solid #ced4da;
+			border-radius: 4px;
+			background-color: #fff;
+		}
+
+		.btn-block-inline {
+			width: calc(30% - 10px);
+			margin-right: 10px;
+		}
+
+		.mb-3 {
+			margin-bottom: 5px;
+		}
+	</style>
+
+	<script th:inline="javascript">
+		function onload() {
+			show_hide_textfield();
+// 			attachInputListeners();
+		}
+
+		function show_hide_textfield() {
+			var searchParam = document.getElementById('searchParam').value;
+			hideAllSections();
+
+			if (searchParam === "1") {
+				document.getElementById('surveySection').style.display = 'block';
+			} else if (searchParam === "2") {
+				document.getElementById('khataSection').style.display = 'block';
+			} else if (searchParam === "3") {
+				document.getElementById('uidSection').style.display = 'block';
+			}
+		}
+
+		function hideAllSections() {
+			var sections = ['surveySection', 'khataSection', 'uidSection'];
+			sections.forEach(function (section) {
+				var element = document.getElementById(section);
+				if (element) {
+					element.style.display = 'none';
+				}
+			});
+		}
+
+		function clearForm() {
+			document.getElementById("editCrBookingForm").reset();
+			hideAllSections();
+		}
+
+
+		function getpage() {
+			var formAction = "./submitForm";
+
+				document.editCrBookingForm.method = "post";
+				document.editCrBookingForm.action = formAction;
+				document.editCrBookingForm.submit();
+		}
+		
+		setTimeout(function () {
+			$('#popupMessage').hide();
+		}, 4000000);
+
+	</script>
+</head>
+
+<body onload="onload()">
+	<div th:insert="header"></div>
+	<div th:insert="headerImage"></div>
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+
+	<div class="container-fluid header-design-login">
+		<div class="row justify-content-center align-items-center">
+			<div class="webland-container-new">
+				<form name="editCrBookingForm" id="editCrBookingForm" method="post" th:action="@{/submitForm}"
+					onsubmit="return fetchData()">
+
+					<input type="hidden" id="formData" name="formData">
+					<div id="popupMessage" th:if="${msg!=null}" class="alert alert-success">
+					<p th:text="${msg}"></p>
+					</div>
+
+					<h5>Corrections of Records by VAA</h5>
+					<br>
+					<div class="mb-3">
+						<label for="name">Crop Year&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+						<select id="cropyear" name="cropyear" class="form-select" required>
+							<option value="" disabled selected>Select Crop Year</option>
+							<option th:each="season : ${activeSeasons}" th:value="${season.seasonvalue}"
+								th:text="${season.cropyear}"></option>
+						</select>
+					</div>
+					<div class="mb-3">
+						<label for="name">Select Village</label>
+						<select id="vcode" name="vcode" class="form-select" aria-label="Select Village" style="width: 50%;">
+							<option value="0">-Select Village-</option>
+							<option th:each="village : ${villname}" th:value="${village.vcode}"
+								th:text="${village.wbvname}">Village Name</option>
+						</select>
+					</div>
+					<div class="mb-3">
+						<label for="name">Search By&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+						<select id="searchParam" name="searchParam" class="form-select" aria-label="Select Incharge"
+							onchange="show_hide_textfield()"  style="width: 50%;">
+							<option value="" th:disabled="true" th:selected="true">-Select-</option>
+							<option value="1">Survey No/LP No</option>
+							<option value="2">Khata No</option>
+							<option value="3">Aadhar No</option>
+						</select>
+					</div>
+
+					<div id="khataSection" class="mb-3" style="display: none;">
+						<label for="name">Enter Kh No<font color="red">*</font></label>
+						<input type="text" name="khno_bkid" id="khno_bkid" style="width: 200px">
+					</div>
+
+					<div id="surveySection" class="mb-3" style="display: none;">
+						<label for="name">Enter Sy/LP No<font color="red">*</font></label>
+						<input type="text" name="surveyno" id="surveyno" style="width: 200px;">
+					</div>
+
+					<div id="uidSection" class="mb-3" style="display: none;">
+						<label for="name">Enter UID No<font color="red">*</font></label>
+						<input type="text" name="uid" id="uid" style="width: 200px;">
+					</div>
+
+					<div class="mb-3">
+						<label for="name">Reject Reasons</label>
+						<select id="rejcode" name="code" class="form-select" aria-label="Select Village">
+							<option value="0">-Select Reject Reasons-</option>
+							<option th:each="Reason : ${reasons}" th:value="${Reason.code}" th:text="${Reason.reason}">
+								Reject Reasons
+							</option>
+						</select>
+					</div>
+
+
+					
+					<button type="submit" class="btn btn-success btn-block btn-block-inline" onclick="getpage()">Search</button>
+					<button type="button" class="btn btn-success btn-block btn-block-inline"
+						th:onclick="window.location.href='./home'">Back</button>
+						<button type="button" class="btn btn-secondary btn-block btn-block-inline"
+						onclick="clearForm()">Reset</button>
+						<br><br>
+						<span th:text="${status}" th:value="${status}"></span>
+				</form>
+				<br>
+				<br>
+			</div>
+		</div>
+	</div>
+
+	<script th:inline="javascript">
+		// Additional JavaScript for client-side validation
+
+		function fetchData() {
+			// Create an object to store form data
+			var formData = {
+				cropyear: $('#cropyear').val(),
+				vcode: $('#vcode').val(),
+				searchParam: $('#searchParam').val(),
+				khno_bkid: $('#khno_bkid').val(),
+				surveyno: $('#surveyno').val(),
+				uid: $('#uid').val(),
+				rejcode: $('#rejcode').val()
+				// Add more fields as needed
+			};
+
+			// Log form data for debugging
+			console.log("Form Data:", formData);
+
+			// Validate input
+			if (!validateInput(formData)) {
+				alert("Please enter valid data before submitting the form.");
+				return false;
+			}
+
+			// Set the serialized form data to the hidden input
+			$('#formData').val(JSON.stringify(formData));
+
+			// Submit the form programmatically
+			submitForm();
+
+			// Prevent the default form submission behavior
+			return false;
+		}
+
+		function validateInput() {
+			var searchParam = $('#searchParam').val();
+
+			if (searchParam === "1") { // Survey No
+				var surveyNo = $('#surveyno').val();
+				// You can add the validation logic for Survey No here
+				if (!surveyNo.match(/^\d{3}(-\d{2})?[a-zA-Z]?$/)) {
+					alert("Invalid Survey No. It should be three digits, optionally followed by - two digits and a letter.");
+					return false;
+				}
+				else if (searchParam === "2") { // Khata No
+					var khataNo = $('#khno_bkid').val();
+
+					// Use a regular expression to check if khataNo is a number and has 1 to 6 digits
+					if (!/^\d{1,6}$/.test(khataNo)) {
+						alert("Khata Number should be a numeric value with 1 to 6 digits.");
+						return false;
+					}
+				}
+			} else if (searchParam === "3") { // Aadhar No
+				var aadharNo = $('#uid').val();
+				if (!/^\d{12}$/.test(aadharNo)) {
+					alert("Aadhar No should be a twelve-digit number.");
+					return false;
+				}
+			}
+
+			return true;  // Validation passed
+		}
+	</script>
+</body>
+
+</html>

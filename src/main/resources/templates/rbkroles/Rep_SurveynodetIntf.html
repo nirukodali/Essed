@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<title>Survey No Select Status / ROFR Details / Unsurveyed Unsettled Survey Nos/List of Pattadars, Enjoyers and
+		Cultivators Updated </title>
+
+	<script>
+		function CallPrint(strid) {
+			var prtContent = document.getElementById(strid);
+			var mywindow = window.open('', '', 'left=0,top=0,width=950,height=600,toolbar=1,scrollbars=1,status=1,addressbar=0');
+			var is_chrome = Boolean(mywindow.chrome);
+			mywindow.document.write(prtContent.innerHTML);
+			mywindow.document.close(); // necessary for IE >= 10 and necessary before onload for chrome
+
+			if (is_chrome) {
+				mywindow.onload = function () { // wait until all resources loaded 
+					mywindow.focus(); // necessary for IE >= 10
+					mywindow.print(); // change window to mywindow
+					mywindow.close(); // change window to mywindow
+				};
+			} else {
+				mywindow.document.close(); // necessary for IE >= 10
+				mywindow.focus(); // necessary for IE >= 10
+				mywindow.print();
+				mywindow.close();
+			}
+
+			return true;
+		}
+
+	
+		var tableToExcel = (function () {
+			var uri = 'data:application/vnd.ms-excel;base64,'
+				, template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table align="center">{table}</table></body></html>'
+				, base64 = function (s) {
+					return window.btoa(unescape(encodeURIComponent(s)))
+				}
+				, format = function (s, c) {
+					return s.replace(/{(\w+)}/g, function (m, p) {
+						return c[p];
+					})
+				}
+			return function (table, name) {
+				if (!table.nodeType)
+					table = document.getElementById(table)
+				var ctx = {worksheet: name || 'Worksheet', table: table.innerHTML}
+				window.location.href = uri + base64(format(template, ctx))
+			}
+		})()
+	
+		function validateForm() {
+
+			var cropyear = document.getElementById("crYear").value;
+			var vcode = document.getElementById("vcode").value;
+			var choiceid = document.getElementById("choiceId").value;
+			// Check if both fields are selected
+			if (cropyear == 0 && vcode == 0 && choiceid == 0) {
+				alert("Please select Crop Year, Village and Report Option");
+				return false; // Prevent form submission
+			}
+
+			else if (cropyear == 0) {
+				alert("Please Select Crop Year");
+				return false;
+			}
+			else if (vcode == 0) {
+				alert("Please Select Village");
+				return false;
+			} else if (choiceid == 0) {
+				alert("Please Select Report Option");
+				return false;
+			}
+			else {
+				return true;
+			}
+
+
+		}	
+	</script>
+	
+	<style>
+	
+	 thead {
+   
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background-color: white;    
+}
+.heading1{
+	background-color: #dfffe1;
+    font-family: arial;
+    font-size: 10px;
+    line-height: 1.5;
+    text-align: center;
+    width:auto;
+    font-weight: bold;}
+
+	</style>
+	
+</head>
+
+<body>
+	<div th:insert="header"></div>
+<div th:insert="headerImage"></div>
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+
+	<div class="container">
+		<form id="myform" name="myform" method="post" th:action="@{/RepsurveynodetIntf}">
+			<br>
+			<div class="ecropCardRbk2">
+				
+<h5 style="background-color:#006400;color: white;font-weight:bolder;font-size:large;margin-left:14%;text-align: center;"  >
+					Survey No Select Status / ROFR Details / Unsurveyed Unsettled Survey Nos/List of Pattadars, Enjoyers
+					and Cultivators Updated</h5>	
+				<div class="mb-3" style="width:60%;margin-left:32%;margin-top:5%;">
+					<label for="name">Crop Year:</label>
+					<select id="crYear" name="crYear" class="form-select" aria-label="Crop Year">
+						<option value="0">---Select---</option>
+						<option th:each="emp : ${activeseason}" th:value="${emp.seasonvalue}" th:text="${emp.cropyear}">
+						</option>
+					</select>
+				</div>
+				<div class="mb-3" style="width: 60%;margin-left:35%;">
+					<label for="name"> Village:</label>
+
+					<select id="vcode" name="vcode" class="form-select" aria-label="Select Village">
+						<option value="0">---Select---</option>
+
+						<option th:each="village : ${villname}" th:value="${village.vcode}"
+							th:text="${village.wbvname}">
+							Village Name</option>
+					</select>
+				</div>
+
+				<div class="mb-3" style="width:50%;margin-left:25%;">
+					<label for="name">Report Option:</label>
+
+					<select id="choiceId" name="choiceId" class="form-select" aria-label="Select Village" style="width:50%" >
+						<option value="0">---Select---</option>
+						<option value="1" th:text="'Web Land Survey Nos Selection Completed'">Web Land Survey Nos Selection Completed</option>
+						<option value="2" th:text="'Web Land Survey Nos Selection  Yet To Complete'">Web Land Survey Nos
+							Selection Yet To Complete</option>
+						<option value="3" th:text="'ROFR'">ROFR</option>
+						<option value="4" th:text="'Un-Surveyed Un-Setteled Data'">Un-Surveyed Un-Setteled Data</option>
+						<option value="5" th:text="'List of Pattadars/Enjoyers/Cultivators Updated'">List of
+							Pattadars/Enjoyers/Cultivators Updated</option>
+					</select>
+				</div>
+
+				<div align="center" style="margin-left:20%;">
+					<button type="submit" class="btn btn-success "
+						onclick="return validateForm()">Search</button>
+
+					<!-- <button type="button" class="btn btn-primary btn-block">Back</button>-->
+				</div>
+			</div>
+
+			<div align="center" id="divPrint"
+				style="overflow-x: scroll; overflow-y: scroll;max-width: 100%;max-height: 100lvh;margin-top:5%;">
+				<table id="tableStkId" align="center" class="table table-striped border border-secondary">
+					<thead>
+						<h5 style="font-size:20px" colspan="20" class="heading1" align="center">
+			CropYear: <span th:text=${cropyear}></span>&numsp;&numsp;     Season: <span th:text="${season} == 'K' ? 'Kharif' : (${season} == 'R' ? 'Rabi' : (${season} == 'S' ? 'Summer' : ' '))"></span>&numsp;&numsp;  
+			  Village:<span th:text=${vname}></span>&numsp;&numsp; 
+			 Selected Report Option: <span th:switch="${choiceId}">
+    <p th:case="1">Web Land Survey Nos Selection Completed</p>
+    <p th:case="2">Web Land Survey Nos Selection  Yet To Complete</p>
+    <p th:case="3">ROFR</p>
+    <p th:case="4">Un-Surveyed Un-Setteled Data</p>
+    <p th:case="5">List of Pattadars/Enjoyers/Cultivators Updated</p>
+    <p th:case="*" th:text="' '"></p>
+</span>				
+	</h5>		
+			  
+			  
+			   
+						<tr>
+							<th> <b> S.No. </b> </th>
+							<th> <b>Village </b> </th>
+							<th> <b> Khata No </b> </th>
+							<th> <b> Survey No/LP No </b> </th>
+							<th> <b> Pattadar Name </b> </th>
+							<th> <b>Pattadar Father </br>Name </b> </th>
+							<th> <b>Occupant Name </b> </th>
+							<th> <b> Occupant Father</br> Name </b> </th>
+							<th> <b>Total Extent </b> </th>
+							<th> <b>Occupant Extent </b> </th>
+							<th> <b> Aadhaar No </b> </th>
+							<th> <b> Cultivator Type </b> </th>
+						</tr>
+					</thead>
+					<tbody id="databody">
+						<tr th:each="bean,row: ${list}">
+							<td th:text="${row.index+1}" />
+							<td th:text="${bean.Wbvname}" />
+							<!--   <td th:text="${bean.Cultivator_type}" />-->
+							<!--   <td th:text="${bean.}" /> villname  -->
+							<td th:text="${bean.Kh_no}" />
+							<td th:text="${bean.Cr_sno}" />
+							<td th:text="${bean.Farmername}" />
+							<td th:text="${bean.Fathername}" />
+							<td th:text="${bean.Occupname}" />
+							<td th:text="${bean.Occupfname}" />
+							<td th:text="${bean.Tot_extent}" />
+							<td th:text="${bean.Occup_extent}" />
+							<td th:text="${bean.Cr_farmeruid}" />
+							<td th:text="${bean.Cultivator_type}" />
+						</tr>
+					</tbody>
+				</table>
+				
+				
+				<div th:if="${NoRecordsFound}" align="center" style="margin: 3%;">
+				<b style="font-size:18px;">---- No Records found-----</b>
+			</div>	
+				
+			</div>	
+		<div align="center" style="color:black">
+			<input class="btn btn-success" name="ctl00$ContentPlaceHolder1$btnPrint" type="button"
+				id="ctl00_ContentPlaceHolder1_btnPrint" onClick="javascript:CallPrint('divPrint')" value="Print">
+			<input class="btn btn-success" type="button" onclick="tableToExcel('tableStkId', 'Abstract')" value="Excel">
+			<!--  <input  class="btn btn-primary" type="button" value="Back" onclick="goBack()" /> -->
+
+		</div>
+		</form>
+	</div>
+
+</body>
+</html>

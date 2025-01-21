@@ -1,0 +1,195 @@
+<!-- <!DOCTYPE html> -->
+<!-- <html lang="en" xmlns:th="http://www.thymeleaf.org"> -->
+
+<!-- <head> -->
+<!-- <meta charset="UTF-8" /> -->
+
+<!-- 	<meta name="viewport" content="width=device-width, initial-scale=1"> -->
+
+<!-- 	<script src="js/jquery.js"></script> -->
+
+<!-- 	<script src="js/jquery-ui.js"></script> -->
+
+<!-- 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"> -->
+
+<!-- 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script> -->
+
+<!-- 	<link rel="stylesheet" type="text/css" href="css/style.css"> -->
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="header"></head>
+
+<body>
+	<div th:insert="headerImage"></div>
+
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+
+ <title>Allocation Of Survey Numbers To VAA/VHA/VSA</title>
+
+<script > 
+  
+
+	function show_hide_textfield() {
+
+	var searchParam = document.getElementById("searchParam").value;
+
+		//    alert($('#tr_surveyno'));
+		$('#tr_surveyno').hide();
+		$('#tr_tosurveyno').hide();
+		$('#tr_fkhno').hide();
+		$('#tr_tokhno').hide();
+		$('#surveyno').val("");
+		$('#fromKhnoId').val("");
+		$('#toKhnoId').val("");
+		$('#tosurveyno').val("");
+
+		if (searchParam == "1") {
+			$('#tr_surveyno').show();
+			$('#tr_tosurveyno').show();
+
+		} else if (searchParam == "2") {
+
+			$('#tr_fkhno').show();
+			$('#tr_tokhno').show();
+		}
+	}
+	
+	
+	  $(function () {
+          onload();
+      });
+
+      function onload() {
+          show_hide_textfield();
+      }
+      function validateForm() {
+          var cropYear = document.getElementById("crYear").value;
+    
+          var vcode = document.getElementById("vcode").value;
+         
+          var searchParam = document.getElementById("searchParam").value;
+
+          if (cropYear ==0) {
+              alert("Please select a Crop Year.");
+              return false;
+          }
+
+          if (vcode == 0) {
+              alert("Please select a Village.");
+              return false;
+          }
+
+          if (searchParam == 1) {
+              var surveyNo = document.getElementById("surveyno").value;
+              var toSurveyNo = document.getElementById("tosurveyno").value;
+
+              if (surveyNo.trim() == "") {
+                  alert("Please enter From Whole Survey No.");
+                  return false;
+              }
+
+             
+          } else if (searchParam ==2) {
+              var fromKhno = document.getElementById("fromKhno").value;
+              var toKhno = document.getElementById("toKhno").value;
+
+              if (fromKhno.trim() === "") {
+                  alert("Please enter From Khata No.");
+                  return false;
+              }
+
+     
+          }
+
+          return true;
+      }
+      setTimeout(function () {
+    	     $('#popupMessage').hide();
+    	 }, 4000);
+</script> 
+</head>
+<body>
+
+<!--	<div th:replace="home :: content"></div>-->
+	
+	<div class="container-fluid header-design-login">
+		<div class="row justify-content-center align-items-center"
+			style="height: 10vh;">
+			<div class="webland-container">
+			<div id="popupMessage" th:if="${msg != null}" class="alert alert-success" >
+        <!-- Display the flash attribute 'msg' -->
+        <p th:text="${msg}"></p>
+          </div>
+				<form th:action="@{/getSurveyNoDetails}" method="post" onsubmit="return validateForm()">
+
+					<h5>Selection Of Survey No's For Crop Booking</h5>
+					
+					<br>
+					<div class="mb-3">
+						<label for="name">Crop Year:<font color="red">*</font></label>
+						 <select id="crYear" name="crYear" class="form-select" aria-label="Crop Year">
+							<option value="0">-select crop year-</option>
+							<option th:each="emp : ${activeseason}"
+								th:value="${emp.seasonvalue}" th:text="${emp.cropyear}">
+								</option>
+
+						</select>
+					</div>
+					<div class="mb-3">
+						<label for="name">Village <font color="red">*</font></label> <select id="vcode" name="vcode"
+							class="form-select" aria-label="Select Village"
+							th:onchange="getVillageByRbk(this.value,'village')">
+							<option value="0">-Select Village-</option>
+							<option th:each="emp : ${rbk}" th:value="${emp.vcode}"
+								th:text="${emp.wbvname}">Village Name</option>
+
+						</select>
+					</div>
+
+					<div class="mb-3">
+						<label for="name">Search By</label> <select id="searchParam"
+							name="searchParam" class="form-select" aria-label="Select param"
+							th:onchange="show_hide_textfield()">
+							<option value="1">Whole Survey No</option>
+							<option value="2">Khata No</option>
+
+						</select>
+					</div>
+
+
+
+					<div id="tr_surveyno" class="mb-3">
+						<label for="code">From Whole Survey No<font color="red">*</font></label> 
+						<input type="text" id="surveyno" name="surveyno" >
+					</div>
+					
+					<div id="tr_tosurveyno" class="mb-3">
+						<label for="name">To Whole Survey No(Optional) </label> 
+						<input type="text" id="tosurveyno" name="tosurveyno" >
+					</div>
+					
+					<div id="tr_fkhno" class="mb-3">
+						<label for="code">From Khata <font color="red">*</font> </label> <input type="number"
+							id="fromKhno" name="fromKhno" >
+					</div>
+					
+					<div id="tr_tokhno" class="mb-3">
+						<label for="name">To Khata (Optional)</label>
+						 <input type="number" id="toKhno" name="toKhno" >
+					</div>
+             <button type="submit" class="btn btn-primary btn-block">SEARCH</button>
+                     <button type="button" class="btn btn-primary btn-block"
+
+						th:onclick="window.location.href='/home'">Back</button>
+
+				</form>
+				
+			</div>
+		</div>
+	</div>
+</body>
+
+</html>

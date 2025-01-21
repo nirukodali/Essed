@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>Crop Booking Details</title>
+
+	<head th:insert="header"></head>
+	<div th:insert="headerImage"></div>
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+<!--	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>-->
+<!--	<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>-->
+
+	<script>
+		function CallPrint(strid) {
+			var prtContent = document.getElementById(strid);
+			var mywindow = window.open('', '', 'left=0,top=0,width=950,height=600,toolbar=1,scrollbars=1,status=1,addressbar=0');
+			var is_chrome = Boolean(mywindow.chrome);
+			var title = document.getElementById('printTitle').innerText;
+			var reportTime = document.getElementById('theDate').innerText;
+			var headingContent = document.getElementById('heading').innerText;
+
+			mywindow.document.write('<html><head><title>Print</title>');
+			mywindow.document.write('<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">');
+			mywindow.document.write('<style>');
+			mywindow.document.write('table { width: 100%; border-collapse: collapse; }');
+			mywindow.document.write('h5 { text-align: center; }');
+			mywindow.document.write('.table { overflow-x: scroll; overflow-y: scroll; max-width: 100%; max-height: 50.5vh; }');
+			mywindow.document.write('</style>');
+			mywindow.document.write('</head><body>');
+			mywindow.document.write('<div style="text-align: center; margin-bottom: 20px;">');
+			mywindow.document.write('<h1>' + title + '</h1>');
+			mywindow.document.write('<p><b>Report Time:</b> ' + reportTime + '</p>');
+			mywindow.document.write('<h5>' + headingContent + '</h5>');
+			mywindow.document.write('</div>');
+			mywindow.document.write('<table class="table table-hover table-striped">');
+			mywindow.document.write(prtContent.innerHTML);
+			mywindow.document.write('</table>');
+			mywindow.document.write('</body></html>');
+			mywindow.document.close();
+
+			if (is_chrome) {
+				mywindow.onload = function () {
+					mywindow.focus();
+					mywindow.print();
+					mywindow.close();
+				};
+			} else {
+				mywindow.onload = function () {
+					mywindow.focus();
+					mywindow.print();
+					mywindow.close();
+				};
+			}
+
+			return true;
+		}
+	</script>
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+	<script>
+		var tableToExcel = (function () {
+			var template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table align="center">{table}</table></body></html>';
+
+			function sanitizeText(text) {
+				return text.replace(/[\u00A0-\u9999<>\&]/g, function (i) {
+					return '&#' + i.charCodeAt(0) + ';';
+				}).replace(/\s+/g, ' ').trim();
+			}
+
+			return function (table, name) {
+				if (!table.nodeType)
+					table = document.getElementById(table);
+
+				var title = sanitizeText(document.getElementById('printTitle').innerText);
+				var reportTime = sanitizeText(document.getElementById('theDate').innerText);
+				var headingContent = sanitizeText(document.getElementById('heading').innerText);
+
+				var additionalHeading = `
+		                <tr><th colspan="10" style="text-align: center; font-size: 20px; font-weight: bold;">${title}</th></tr>
+		                <tr><th colspan="10" style="text-align: center; font-size: 15px; font-weight: bold;">Report Time: ${reportTime}</th></tr>
+		                <tr><th colspan="10" style="text-align: center; font-size: 15px; font-weight: bold;">${headingContent}</th></tr>
+		            `;
+				var tableHTML = additionalHeading + table.innerHTML;
+				var ctx = {worksheet: name || 'Worksheet', table: tableHTML};
+				var html = template.replace(/{(\w+)}/g, function (m, p) {return ctx[p];});
+
+				var blob = new Blob([html], {type: 'application/vnd.ms-excel'});
+				saveAs(blob, name + '.xls');
+			}
+		})();
+	</script>
+	<style>
+		#tableStkId thead {
+			
+			position: -webkit-sticky;
+			position: sticky;
+			top: 0;
+			z-index: 2;
+		}
+
+		#tableStkId th,
+		#tableStkId td {
+			padding: 8px;
+			text-align: center;
+		}
+	</style>
+	<style>
+		#ObjEntryTable {
+			border-collapse: separate;
+			border-spacing: 0 0.5em;
+		}
+	</style>
+</head>
+<script>
+	function getAllMandals() {
+		var dcode = $("#dcodee").val();
+		$.ajax({
+			type: "get",
+			url: "./util/getAllMandals?dcode=" + dcode,
+			cache: false,
+			timeout: 600000,
+			success: function (resp) {
+				$("#mcode").empty();
+				$("#mcode").append('<option value="">---Select ---</option>');
+				for (var j = 0; j < resp.length; j++) {
+					var bean = resp[j];
+					$("#mcode").append(
+						'<option value="' + bean.col1 + '">' + bean.col2
+						+ '</option>');
+				}
+			}
+		});
+	}
+	$(document).ready(function () {
+		var currentDate = new Date();
+		var formattedDate = currentDate.toLocaleString();
+		$("#theDate").text(formattedDate);
+		$("#loadingsign").hide();
+		$.ajax({
+			type: "get",
+			url: "./util/getAllSeason",
+			cache: false,
+			timeout: 600000,
+			success: function (resp) {
+				for (var j = 0; j < resp.length; j++) {
+					var bean = resp[j];
+					$("#cropyear").append(
+						'<option value="' + bean.col1 + '">'
+						+ bean.col2 + '</option>');
+				}
+			}
+		});
+	});
+	function getData() {
+		var cropyear = $("#cropyear").val();
+		if (!cropyear) {
+			alert("Please select a Crop Year.");
+			return false;
+		}
+		var mandal = $("#mcode").val();
+		if (!mandal) {
+			alert("Please select a Mandal");
+			return false;
+		}
+		$("#loadingsign").show();
+		var dcode = $("#dcodee").val();
+		var wbdcode = $("#wbdcodee").val();
+		var cropYear = $("#cropyear").val();
+		var mcode = $("#mcode").val();
+		var data = {};
+		data['dcode'] = dcode;
+		data['wbdcode'] = wbdcode;
+		data['cropyear'] = cropYear;
+		data['mcode'] = mcode;
+		var [season, year] = cropyear.split('@');
+		var inputwbedname = $("#inputwbedname").val().replace(/Â/g, ' ').trim();
+		$.ajax({
+			type: "post",
+			url: "./util/getdaoCropBookingDetails",
+			contentType: 'application/json',
+			data: JSON.stringify(data),
+			cache: false,
+			timeout: 600000,
+			success: function (resp, textStatus, xhr) {
+				$("#loadingsign").hide();
+				$("#databody").empty();
+				$("#heading").empty();
+				$("#heading").append('<tr style="font-size:22px;">'
+					+ '<td style="font-weight: 100">District: <b>' + inputwbedname + '&nbsp;&nbsp;&nbsp;</b></td>'
+					+ '<td style="font-weight: 100">Year: <b>' + year + '</b>&nbsp;&nbsp;&nbsp;</td>'
+					+ '<td style="font-weight: 100">Season: <b>' +
+					(season === 'k' || season === 'K' ? 'Kharif' : season === 'r' || season === 'R' ? 'Rabi' :
+						season === 's' || season === 'S' ? 'Summer' : season) + '&nbsp &nbsp &nbsp</b></td>' + + '</tr>');
+				if (xhr.status === 204) {
+					$("#databody").html("<tr><td colspan='18'>No Results Found</td></tr>");
+				} else if (xhr.status === 200) {
+					var sno = 0;
+					for (var j = 0; j < resp.length; j++) {
+						sno = sno + 1;
+						var bean = resp[j];
+
+						$("#databody").append('<tr style="fontsize:200px; font-weight: 0;">'
+							+ '<td align="center">' + sno + '</td>'
+							+ '<td style="text-align:left">' + bean.wbmname + '</td>'
+							+ '<td style="text-align:left">' + bean.wbvname + '</td>'
+							+ '<td style="text-align:left">' + bean.oc_name + '</td>'
+							+ '<td style="text-align:left">' + bean.oc_fname + '</td>'
+							+ '<td style="text-align:center">' + bean.kh_no + '</td>'
+							+ '<td style="text-align:center">' + bean.cr_sno + '</td>'
+							+ '<td style="text-align:left">' + bean.cropname + '</td>'
+							+ '<td style="text-align:center">' + bean.tot_extent + '</td>'
+							+ '<td style="text-align:center">' + bean.mobileno + '</td>'
+							+ '</tr>');
+					}
+				}
+			}
+		});
+	}
+	function goBack(){
+		window.location.href="./home"
+			}
+</script>
+
+<body>
+	<div class="heading" colspan="20" style="text-align:center;font-size:25px;">
+		<h3 id="printTitle"> Report on Crop Booking Details</h3>
+	</div>
+	<p th:text="${msg}"></p>
+	<input type="hidden" id="inputwbedname" th:value="${#session.getAttribute('wbedname')}" />
+	<input type="hidden" id="dcodee" th:value="${#session.getAttribute('dcode')}" />
+	<input type="hidden" id="wbdcodee" th:value="${#session.getAttribute('wbdcode')}" />
+	<input type="hidden" id="inputuserid" th:value="${#session.getAttribute('userid')}" />
+	<div id="loadingsign">
+		<div class="d-flex justify-content-center">
+			<div class="spinner-border" role="status">
+				<span class="sr-only">Loading...</span>
+			</div>
+		</div>
+	</div>
+	<div class="scrollable-container">
+		<div align="center">
+			<form>
+				<table id="ObjEntryTable" style="font-size: inherit !important; border-radius: 10px;">
+					<tr style="padding-left:450px;">
+						<td align="right" width="30%"><b>Crop Year <font color="red">*</font></b></td>
+
+						<td align="left"><select id="cropyear" name="cropyear" style="width: 200px"
+								onchange="getAllMandals();">
+								<option value="">-------Select-------</option>
+							</select></td>
+					</tr>
+					<tr>
+						<td align="right" width="30%"><b>Mandal <font color="red">*</font>
+							</b></td>
+						<td align="left"><Select id="mcode" name="mcode" style="width: 200px">
+								<option value="">---Select ---</option>
+							</select></td>
+
+					</tr>
+					<tr>
+						<td align="right" width="30%"><b>Farmer Type<font color="red">*</font>
+							</b></td>
+						<td align="left"><Select id="ftype" name="ftype" style="width: 200px">
+						        <option value="">---Select ---</option>
+								<option value="0"> ALL</option>
+							</select></td>
+
+					</tr>
+
+				</table>
+				<div colspan="3" align="center" style="padding-top: 10px; padding-bottom: 10px;">
+					<button type="button" id="btnSubmit" class="btn btn-success" value="Submit"
+						onclick="return getData();">Submit</button>
+				</div>
+			</form>
+		</div>
+		<div
+			style="position: relative; width: 100%; height: 50px; display: flex; align-items: center; justify-content: center;">
+			<h5 id="heading" style="margin: 0;"></h5>
+			<div style="margin-left: 10px;">
+				<b>Report Time:</b> <span id="theDate"></span>
+			</div>
+		</div>
+		<form id="unlockreport" name="unlockreport" method="post">
+			<div align="center" id="divPrint" class="table table-hover table table-striped"
+				>
+				<table id="tableStkId" align="center" style=" text-align: center;width:80%">
+					<thead>
+						<tr>
+							<th> <b> S.No. </b> </th>
+							<th> <b>Mandal </b> </th>
+							<th> <b>Village </b> </th>
+							<th> <b>Farmer Name </b> </th>
+							<th> <b>Father Name </b> </th>
+							<th> <b> Khata Number</b> </th>
+							<th> <b>Survey NUmber</b> </th>
+							<th> <b> Crop Name </b> </th>
+							<th> <b>Area Sown</b> </th>
+							<th> <b> Mobile</b> </th>
+						</tr>
+					</thead>
+					<tbody id="databody">
+					</tbody>
+				</table>
+			</div>
+		</form>
+		<div align="center" style="color: black; margin-top: 20px;">
+			<input class="btn btn-success" name="ctl00$ContentPlaceHolder1$btnPrint" type="button"
+				id="ctl00_ContentPlaceHolder1_btnPrint" onClick="javascript:CallPrint('divPrint')" value="Print"> <input
+				class="btn btn-success" type="button" onclick="tableToExcel('tableStkId', 'Abstract')" value="Excel">
+<input class="btn btn-success" type="button" onclick="goBack()" value="Back">
+		</div>
+	</div>
+</body>
+
+</html>

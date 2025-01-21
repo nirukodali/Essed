@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="header"></head>
+
+<body>
+<div th:insert="headerImage"></div>
+
+<div th:insert="navBarTop"></div>
+<div th:insert="headerMessage"></div>
+
+<div class="container">
+    <section class="content" style="padding-top: 1px;">
+        <div class="row topformcontent">
+            <div class="col-md-12">
+                <div class="box box-solid box-patent" style="margin-top: 5px;margin-bottom: 10px;">
+                    <div class="box-header">
+                        <div class="col-md-12"
+                             style="background-color:#d64161;height:35px;font-weight: bold;font-size: 18px;padding-top:5px;">
+                            Strict Note: Edit Crop Booking Details Must Be The Last Option To
+                            Do After Editing Corrections in Others,Pattadar,Cultivator, CCRC Details if any.
+                        </div>
+                        <div class="col-md-12" style="color:black;font-weight: bold;padding-top:5px;">
+                            VAA Edit Crop Booking Details
+                        </div>
+                    </div>
+                    <div class="box-body" style="padding: 10px 10px 3px 10px; height: auto;">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="col-md-5">
+                                    <label>Crop Year</label>
+                                </div>
+                                <div class="col-md-7">
+                                    <div class="form-group" style="margin-bottom: 5px;">
+                                        <div class="input-group">
+                                            <select class="form-control" id="cropYear" required="required">
+                                                <option th:each="cropyear : ${crYearList}"
+                                                        th:value="${cropyear.seasonvalue}"
+                                                        th:text="${cropyear.seasonvalue}" selected>
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="col-md-5">
+                                    <label>Village</label>
+                                </div>
+                                <div class="col-md-7">
+                                    <div class="form-group" style="margin-bottom: 5px;">
+                                        <div class="input-group">
+                                            <select id="vcode" name="vcode" style="width:200px">
+                                                <option value="" select>--Select Village--</option>
+                                                <option th:each="villageProj : ${crVillageList}"
+                                                        th:value="${villageProj.vcode}"
+                                                        th:text="${villageProj.wbvname}">Village
+                                                    Name
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="col-md-5">
+                                    <label>Select Correction Type</label>
+                                </div>
+                                <div class="col-md-12" style="width:90%;">
+                                    <div class="form-group" style="margin-bottom: 5px;">
+                                        <div class="input-group">
+                                            <select id="correctionType" name="correctionType" class="form-control">
+                                                <option value="1">ఇతరులు(Name Change)</option> 
+                                                <!-- <option value="2">Correction of Pattadar Wrong Aadhaar No Seeded in Webland</option>-->
+                                                 <option value="17">Correction of Invalid Aadhaar No </option>
+                                                <option value="3">Correction For CCRC Cultivator Details</option>
+                                                <option value="4">Correction For CROP Details</option>
+                                                <option value="15">Aadhaar Mismatch At Ekyc</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="col-md-5">
+                                    <label>Search By</label>
+                                </div>
+                                <div class="col-md-7">
+                                    <div class="form-group" style="margin-bottom: 5px;">
+                                        <div class="input-group">
+                                            <select id="searchType" name="searchType" class="form-control"
+                                                    onchange="searchValueLabelText()">
+                                                <option value="1" select>Survey No</option>
+                                                <option value="2">Khata No</option>
+                                                <option value="3">Aadhar No</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="col-md-5">
+                                    <label id="searchValueLabelId">Survey No</label>
+                                </div>
+                                <div class="col-md-7">
+                                    <div class="form-group" style="margin-bottom: 5px;">
+                                        <input type="text" name="searchValue" id="searchValue"
+                                               class="form-control"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3" style="padding-top: 2%;">
+                                <div class="col-md-5">
+                                </div>
+                                <div class="col-md-7">
+                                    <div class="form-group" style="margin-bottom: 5px;">
+                                        <div class="input-group">
+                                            <div style="margin: 0 auto; width: 155px; color: #000;">
+                                                <button type="button" class="btn btn-primary" id="searchId"
+                                                        onclick="searchEditCrBookingDetails()"
+                                                        title="Search Opposition Details">Search
+                                                </button>
+                                                <button type="button" class="btn btn-warning" id="resetId"
+                                                        title="To reset all the details">Reset
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+</div>
+
+<form action="/cultivator" method="GET">
+    <input type="hidden" th:value="${session.wbdcode}" th:id="wbdcode"/>
+    <input type="hidden" th:value="${session.wbmcode}" th:id="wbmcode"/>
+    <input type="hidden" th:value="${session.wbvcode}" th:id="wbvcode"/>
+    <input type="hidden" th:value="${session.userid}" th:id="userid"/>
+</form>
+<div class="panel-heading"style="text-align: center;background-color: honeydew;padding: 8px; margin: 0 auto;font-weight: bold;display: none;" id="tableTitleTextId">
+</div>
+<div class="container" id="contentDivId"></div>
+
+</body>
+
+</html>

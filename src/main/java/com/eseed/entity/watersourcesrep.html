@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crop Groups</title>
+<!--    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">-->
+<!--    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.dataTables.min.css">-->
+<!--    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>-->
+<!--    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>-->
+<!--    <script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>-->
+   
+    <script>
+        $(document).ready(function (){
+            $('#example').DataTable({
+                'responsive': true,
+                'searching': true // Enable searching
+            });
+
+            // Handle click on "Expand All" button
+            $('#btn-show-all-children').on('click', function(){
+                $('#example tbody tr').each(function(){
+                    var row = $(this).closest('tr');
+                    if (row.hasClass('parent')) {
+                        row.nextUntil('tr.parent').toggle();
+                    }
+                });
+            });
+
+            // Handle click on "Collapse All" button
+            $('#btn-hide-all-children').on('click', function(){
+                $('#example tbody tr.parent').each(function(){
+                    $(this).nextUntil('tr.parent').hide();
+                });
+            });
+        });
+    </script>
+
+    <style>
+        table.dataTable thead th {
+            text-align: center;
+        }
+
+        table.dataTable tbody td {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h3><a target="_blank" href="https://www.gyrocode.com/articles/jquery-datatables-how-to-expand-collapse-all-child-rows/">Data: </a> <small>Response</small></h3>
+
+    <button id="btn-show-all-children" type="button">Expand All</button>
+    <button id="btn-hide-all-children" type="button">Collapse All</button>
+    <hr>
+
+    <div class="table-responsive">
+        <table id="example" class="display" cellspacing="0" width="100%">
+            <thead>
+                <tr>       
+                    <th class="text-center"> <b> S.No. </b> </th>
+                    <th class="text-center"> <b> Irrigation Sources  </b> </th>
+                </tr>
+            </thead>
+            <tfoot>
+                <tr>       
+                    <th class="text-center"> <b> S.No. </b> </th>
+                    <th class="text-center"> <b> Irrigation Sources  </b> </th>
+                </tr>
+            </tfoot>
+            <tbody>
+                <tr th:each="watersource, iterStat : ${watersources}">
+                    <td class="text-center" th:text="${iterStat.count}"></td>
+                    <td th:text="${watersource.wsrcdesc}"></td>
+                </tr>
+                <tr>
+                    <td colspan="2" align="center">
+                        <input type="button" value="Go Back" onclick="back()">
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

@@ -1,0 +1,100 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:insert="header">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Scripts -->
+<!--    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>-->
+<!--    <script src="./js/jquery/jquery.cookie.js"></script>-->
+<!--    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">-->
+<!--    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>-->
+<!--    <script src="https://www.google.com/recaptcha/api.js" async defer></script>-->
+<!--    <link rel="stylesheet" type="text/css" href="css/style.css">-->
+    <title>Add Crop Name</title>
+    
+    <style>
+       .error { color: red; }
+    </style>
+</head>
+
+<body>
+<!--    <div th:insert="headerImage"></div>-->
+<!--    <div th:insert="navBarTop"></div>-->
+<!--    <div th:insert="headerMessage"></div>-->
+    
+    <form name="myform" method="post" th:action="@{/processCropnames}" th:object="${cropnames}">
+        <div align="center">
+            <table style="width:35%" colspan="2" align="center">
+                <tr>
+                    <td colspan="2" style="font-size:20px;background-color:lightgrey;color:#0956a4" align="center">
+                        <b>Add Crop Name</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="form-group">
+                        <label for="cropnature">Crop Nature:</label>
+                        <select name="cropnature" id="cropnature" class="form-control" th:field="*{cropnature}">
+                            <option value="">--Select--</option>
+                            <option value="A">Agriculture</option>
+                            <option value="H">Horticulture</option>
+                        </select>
+                        <span th:if="${#fields.hasErrors('cropnature')}" th:errors="*{cropnature}" class="error"></span>
+                    </td>
+                    <td class="form-group">
+                        <label for="croptype">Crop Type:</label>
+                        <select name="croptype" id="croptype" class="form-control" th:field="*{croptype}">
+                            <option value="">--Select--</option>
+                            <option value="M">Major</option>
+                            <option value="N">Minor</option>
+                        </select>
+                        <span th:if="${#fields.hasErrors('croptype')}" th:errors="*{croptype}" class="error"></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="form-group">
+                        <label for="cropclass">Crop Class:</label>
+                        <select name="cropclass" id="cropclass" class="form-control" th:field="*{cropclass}">
+                            <option value="">--Select--</option>
+                            <option value="G">General</option>
+                            <option value="P">Perennial</option>
+                        </select>
+                        <span th:if="${#fields.hasErrors('cropclass')}" th:errors="*{cropclass}" class="error"></span>
+                    </td>
+                    <td class="form-group">
+                        <label for="grpcode">Crop Group:</label>
+                        <select name="grpcode" id="grpcode" class="form-control" th:field="*{grpcode}">
+                            <option value="0" selected="selected">Select Crop Group</option>
+                            <option th:each="cropgroup: ${cropgroups}" th:value="${cropgroup.cropgrpid}" th:text="${cropgroup.grpname}"></option>
+                        </select>
+                        <span th:if="${#fields.hasErrors('grpcode')}" th:errors="*{grpcode}" class="error"></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <div class="form-group">
+                            <label for="cropname">Crop Name (in Telugu) <font color="red">*</font></label>
+                            <input  size="20" maxlength="50" name="cropname" id="cropname" type="text" th:field="*{cropname}" class="form-control" />
+                            <span th:if="${#fields.hasErrors('cropname')}" th:errors="*{cropname}" class="error"></span>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <div class="form-group">
+                            <label for="cropnameeng">Crop Name (in English) <font color="red">*</font></label>
+                            <input size="20" maxlength="50" name="cropnameeng" id="cropnameeng" type="text" th:field="*{cropnameeng}" class="form-control" />
+                            <span th:if="${#fields.hasErrors('cropnameeng')}" th:errors="*{cropnameeng}" class="error"></span>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" align="center">
+                        <input type="submit" class="btn btn-primary" value="SUBMIT" onclick="checkValues()" />
+                        <input type="button" class="btn btn-secondary" value="Go Back" onclick="back();" />
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </form>
+</body>
+</html>

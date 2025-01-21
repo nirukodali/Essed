@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="ISO-8859-1">
+<title>Dept Wise Crop Damage Enumeration</title>
+</head>
+<body>
+
+  <div class="panel panel-primary">
+    <div class="panel-heading" style="text-align: center; background-color: honeydew; padding: 8px; margin: 0 auto; display: table;margin-left: 47.5%;">
+      <b>Dept Wise Crop Damage Enumeration List (Due to Flood/Heavy Rains in October, 2024)</b>
+    </div>
+    <div class="panel-body">
+
+      <input type="hidden" th:value="${type}" id="type" name="type">
+      <table id="ownerGrid" class="table table-bordered table-striped dataTable">
+        <thead class="color-palette" style="background-color: #9494b8;">
+          <tr>
+            <th style="color: white; width: 5%; background-color: #006400;"> 
+              <input type="checkbox" id="masterCheckbox" onclick="toggleAllCheckboxes(this)" />
+            </th>
+            <th style="color: white; width: 7%; background-color: #006400;"><b>S.No</b></th>
+            <th style="color: white; width: 19%; background-color: #006400;"><b>Village Name</b></th>
+            <th style="color: white; width: 8%; background-color: #006400;"><b>e-Crop booking ID</b></th>
+            <th style="color: white; width: 19%; background-color: #006400;"><b>Khata No</b></th>
+            <th style="color: white; width: 25%; background-color: #006400;"><b>Survey No</b></th>
+            <th style="color: white; width: 25%; background-color: #006400;"><b>Farmer Name</b></th>
+            <th style="color: white; width: 25%; background-color: #006400;"><b>Father/husband Name</b></th>
+            <th style="color: white; width: 8%; background-color: #006400;"><b>Aadhaar</b></th>                   
+            <th style="color: white; width: 8%; background-color: #006400;"><b>Crop</b></th>
+            <th style="color: white; width: 5%; background-color: #006400;"><b>Tenant/Owner</b></th>                    
+            <th style="color: white; width: 10%; background-color: #006400;"><b>Crop extent</b></th>
+            <th style="color: white; width: 8%; background-color: #006400;"><b>Area damaged > 33% (in Acres)</b></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="cultivator, iterStat : ${allDetailsList}" th:attr="data-index=${iterStat.index}">
+            <td>
+              <input type="checkbox" th:id="'checkbox' + ${iterStat.index}" th:value="${cultivator.bookingid}" class="record-checkbox" />
+            </td>
+            <td align="center" th:text="${iterStat.index + 1}">1</td>
+            <td style="width: 3%;"><span th:text="${cultivator.vname}"></span></td>
+           
+            <td><span th:text="${cultivator.bookingid}"></span></td>
+            <td style="width: 10%;"><span th:text="${cultivator.kh_no}"></span></td>
+            <td style="width: 15%;"><span th:text="${cultivator.cr_sno}"></span></td>
+            <td style="width: 25%;"><span th:text="${cultivator.occupname}"></span></td>
+            <td style="width: 15%;"><span th:text="${cultivator.occupfname}"></span></td>
+            <td><span th:text="${cultivator.cr_farmeruid}"></span></td>
+            <td style="width: 15%;"><span th:text="${cultivator.cropname}"></span></td>
+            <td style="width: 3%;">
+              <span th:if="${cultivator.owner_tenant == 'O'}">Owner</span>
+              <span th:if="${cultivator.owner_tenant == 'T'}">Tenant</span>
+            </td>
+            <td style="width: 3%;"><span th:text="${cultivator.occupant_extent}"></span></td>
+            <td style="width: 10%;" th:text="${cultivator.damaged_ext_abv_33}"></td>
+             <input type="hidden" th:id="'wbvcode' + ${iterStat.index}" th:value="${cultivator.cr_vcode}">
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="text-center" style="margin-top: 20px;">
+        <input type="button" class="btn btn-success d-inline-block" value="Accept" style="margin-right: 10px;" onclick="saveDamaged('accept')">
+<!--        <input type="button" class="btn btn-danger d-inline-block" value="Reject" onclick="saveDamaged('reject')">-->
+      </div>
+    </div>
+  </div>
+
+  <script>
+  function saveDamaged(action) {
+  var selectedRecords = [];
+  
+ 
+    
+   
+  $('.record-checkbox:checked').each(function() {
+    var row = $(this).closest('tr'); // Get the closest row
+    
+  
+var index = $(this).attr('id').replace('checkbox', '');
+        var cr_vcode = $('#wbvcode' + index).val();
+alert(cr_vcode)
+    var rowData = {
+      //bookingid: $(this).val(),
+      
+      vname: row.find('td:eq(2) span').text(), 
+      bookingid: row.find('td:eq(3) span').text(),
+      kh_no: row.find('td:eq(4) span').text(),
+      cr_sno: row.find('td:eq(5) span').text(),
+      occupname: row.find('td:eq(6) span').text(),
+      occupfname: row.find('td:eq(7) span').text(),
+      cr_farmeruid: row.find('td:eq(8) span').text(),
+      cropname: row.find('td:eq(9) span').text(),
+      owner_tenant: row.find('td:eq(10) span').text(),
+      occupant_extent: row.find('td:eq(11) span').text(),
+      damaged_ext_abv_33: row.find('td:eq(12) span').text(),
+       cr_vcode: cr_vcode
+     
+    };
+
+    selectedRecords.push(rowData);
+  });
+
+  if (selectedRecords.length === 0) {
+    alert('Please select at least one record');
+    return;
+  }
+
+  $.ajax({
+    type: "POST",
+    url: './processCropDamageDSO', // Your controller endpoint
+    contentType: "application/json",  // Set content type to JSON
+    data: JSON.stringify({
+      "selectedRecords": selectedRecords,
+      "action": action // Accept or Reject action
+    }),
+    success: function(response) {
+      if (action === 'accept') {
+        alert('Selected records accepted successfully');
+      } else if (action === 'reject') {
+        alert('Selected records rejected successfully');
+      }
+      location.reload();
+      
+    },
+    error: function(xhr, status, error) {
+      console.error("Error occurred: " + error);
+      alert("Something went wrong. Please try again.");
+    }
+  });
+}
+
+
+  </script>
+
+</body>
+</html>

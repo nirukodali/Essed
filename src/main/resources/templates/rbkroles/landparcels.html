@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:insert="header">
+    <meta charset="UTF-8">
+    <title>Enable Objectionable Land Parcels For Booking</title>
+    
+</head>
+<body>
+	<!-- <div th:insert="headerImage"></div>   -->
+   <div th:insert="headerImage"></div>
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+    <div class="container-fluid header-design-login">
+        <div class="row justify-content-center align-items-center" style="height: 8vh;">
+            <div class="webland-container" >
+                <div class="card ecropCard cardbg">
+                    <div class="card-title">
+                        <h5 style="text-align: center;">Request For Enable Objectionable Land Parcels For Booking</h5>
+                    </div>
+                    <div>
+                        <h5 style="text-align: center; color: red; font-size: x-large;" th:text="${msg}"></h5>
+                    </div>
+                   <div th:if="${savelist != null}">
+					    <p th:text=" ${savelist}" style="text-align: center; color: blue; font-size: x-large;"></p>
+					</div>
+                    <div class="card-body" style="padding: 10px;">
+                        <form onsubmit="return validate()" th:object="${pattadar}" th:action="@{/getlandparcels}" method="post">
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label">Select Season:</label>
+                                <div class="col-sm-8">
+                                    <select name="crpgrp" id="crpgrp" style="width: 200px">
+                                        <option value="0" th:selected="0">------Select Season--------</option>
+                                        <option th:each="activeseason: ${activeseasons}" th:value="${activeseason.seasonvalue}" th:text="${activeseason.cropyear}"></option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label">Select Village:</label>
+                                <div class="col-sm-8">
+                                    <select name="village" id="village" style="width: 200px">
+                                        <option value="0" th:selected="0">Select Village</option>
+                                        <option th:each="village:${villages}" th:value="${village.vcode}" th:text="${village.vsname}"></option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label">Select KhataNo:</label>
+                                <div class="col-sm-8">
+                                    <select name="khatanos" id="khatanos" style="width: 200px">
+                                        <option value="0" th:selected="0">Select KhataNo</option>
+                                        <option th:each="khatano : ${khatanos}" th:value="${khatano.khatNo}" th:text="${khatano.khatNo}"></option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label">Category Name:</label>
+                                <div class="col-sm-8">
+                                    <p id="categoryDisplay"></p>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label">Select SurveyNo:</label>
+                                <div class="col-sm-8">
+                                    <select name="surveyno" id="surveyno" style="width: 200px">
+                                        <option value="0">Select SurveyNo</option>
+                                        <option th:each="surveyno : ${surveynos}" th:value="${surveyno.SurveyNo}" th:text="${surveyno.SurveyNo}"></option>
+                                    </select>
+                                </div>
+                               <input type="hidden" id="recid" name="recid">
+                            </div>
+							<div class="form-group row">
+								<label class="col-sm-4 col-form-label">Occupant Extent:</label>
+								<div class="col-sm-8">
+									<span id="occupantExtent">Select a SurveyNo to see the
+										extent</span>
+								</div>
+							</div>
+							<div class="form-group row">
+                                <label class="col-sm-4 col-form-label">Requested Extent:</label>
+                                <div class="col-sm-8">
+                                    <input name="suggestedext" id="suggestedext" style="margin-top: 2%; margin-bottom: 2%; width: 40%;" maxlength="12">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div style="margin: 0 auto; width: 75px; color: #000;">
+                                        <button type="submit" class="button" id="submit">Submit</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid ">
+						<div class="row justify-content-center align-items-center">
+							<div class="webland-container"
+								style="padding-top: 220px; margin-top: 14% ">
+								<div class="card ecropCard cardbg " style=" width:800px ">
+								<div class="card-body table-wrapper"
+										style="padding: 10px; overflow-y: scroll; max-height: 300px ;width:800px "
+										id="divPrint">
+										<div style="overflow-y: auto;">
+											<table class="table mapped " id="absseasondistwise">
+												<thead style="position: sticky">
+													<tr>
+														<th>S.No</th>
+														<th>Village</th>
+														<th>Khata No</th>
+														<th>Survey No/LP No</th>
+														<th>Requested Extent</th>
+														<th>Occupent Extent</th>
+														<th>Status</th>
+														<th>Delete</th>
+													</tr>
+												</thead>
+												<tbody>
+													<tr th:each="data,rowstat: ${objectionadetails}">
+														<td th:text="${rowstat.index+1}"></td>
+													  	<td th:text="${data.wbvname}"></td>
+														<td th:text="${data.kh_no}"></td>
+														<td th:text="${data.cr_sno}"></td>
+														<td th:text="${data.sug_ext}"></td>
+														<td th:text="${data.occup_extent}"></td>
+														<td th:text="${maoStatuses[rowstat.index]}"></td> 
+														 <td style="display: none;" th:text="${data.wbvcode}"></td>
+														<td>
+															<button class="button no-print"
+													                th:data-srno="${data.cr_sno}"
+													                th:data-vcode="${data.wbvcode}"
+													                th:data-khno="${data.kh_no}"
+													                th:if="${maoStatuses[rowstat.index]} == 'Pending'"
+													                data-toggle="form"
+													                data-target="#display"
+													                onclick="deleteRow(this)">Delete</button>
+														</td>
+													</tr>
+												</tbody>
+											</table>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+   
+    <script>
+        $(document).ready(function() {
+            $.ajax({
+                url: './landparcelsVill',
+                type: 'GET',
+                success: function(data) {
+                    data.forEach(function(village) {
+                        $('#village').append($('<option>', {
+                            value: village.vscode,
+                            text: village.vsname
+                        }));
+                    });
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error fetching villages:', error);
+                }
+            });
+            
+            
+       
+
+            $('#village').on('change', function() {
+                var vcode = $(this).val();
+                var crpgrp = $('#crpgrp').val();
+                var href = "./landparcels/" + vcode + "?crpgrp=" + crpgrp;
+				//alert(crpgrp);
+                /* alert(href); */
+
+                $.get(href, function(response) {
+                	
+                	  $('#khatanos').empty().append('<option value="1">Select KhataNo</option>');
+
+                    if (Array.isArray(response) && response.length > 0) {
+                        $.each(response, function(i, khatano) {
+                            $('<option>', {
+                                value: khatano.khatNo,
+                                text: khatano.khatNo
+                            }).appendTo('#khatanos');
+                        });
+                    } else {
+                        $('#khatanos').append('<option value="1">No KhataNo available</option>');
+                        console.error('Invalid or empty response:', response);
+                    }
+                }).fail(function(jqXHR, textStatus, errorThrown) {
+                    $('#khatanos').empty().append('<option value="1">Failed to fetch KhataNo</option>');
+                    console.error('AJAX request failed:', textStatus, errorThrown);
+                });
+            });
+
+          
+
+         
+            $('#khatanos').on('change', function() {
+                var khatano = $(this).val();
+                var vcode = $('#village').val();
+                var crpgrp = $('#crpgrp').val();
+               // alert("crpgrp" +crpgrp)
+                var href = "./landparcels/surveyno/" + khatano + "/" + vcode + "?crpgrp=" + crpgrp;
+
+                $.get(href, function(surveynos) {
+                    var $surveynoSelect = $('#surveyno');
+                    $surveynoSelect.empty().append('<option value="0">Select SurveyNo</option>');
+
+                    if (surveynos.length > 0) {
+                        $.each(surveynos, function(i, surveyno) {
+                            $('<option>', {
+                                value: surveyno.surveyNo,
+                                text: surveyno.surveyNo,
+                                'data-recid': surveyno.rec_id,
+                                'data-occupant-extent': surveyno.occup_extent
+                            }).appendTo($surveynoSelect);
+                        });
+                    }
+                });
+            });
+
+            $('#surveyno').on('change', function() {
+                var recId = $(this).find(':selected').data('recid');
+                var occupantExtent = $(this).find(':selected').data('occupant-extent');
+				/* alert("ghjjjjjj---------------------------------"+occupantExtent); */
+                if (recId) {
+                    $('#recid').val(recId); 
+                } else {
+                    $('#recid').val(''); 
+                }
+                if (occupantExtent) {
+                    $('#occupantExtent').text(occupantExtent);
+                } else {
+                    $('#occupantExtent').text('No extent available');
+                }
+            });
+            
+    		    $('#khatanos').on('change', function() {
+    		        var khatano = $(this).val();
+    		      // alert(khatano);
+    		        var href = "./landparcels/khatano/" + khatano;
+    		        $.get(href, function(response) {
+    		            if (Array.isArray(response)) { 
+    		                var categoryNames = response.map(function(category) {
+    		                    return category.category; 
+    		                }).join(', ');
+
+    		                $('#categoryDisplay').text( categoryNames);
+    		            } else {
+    		                $('#categoryDisplay').text("No valid categories found.");
+    		            }
+    		        });
+    		    });
+    		
+            function validate() {
+                var cropyear = $("#crpgrp").val();
+              
+                var village = $("#village").val();
+                var khatano = $("#khano").val();
+
+                if (cropyear == 0 || village == 0 || khatano == 0) {
+                    alert("Please select all details.");
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+
+            $("form").submit(function() {
+                return validate();
+            });
+        });
+        
+        
+    	function deleteRow(button) {
+			if (confirm("Are your sure you want to delete.")) {
+				
+				var survey = $(button).data('srno');
+				var khatano = $(button).data('khno');
+				var vcode = $(button).data('vcode');
+				//alert("survey no" +survey);
+				//alert("khata no" +khatano);
+				//alert("vcode" +vcode);
+					$.ajax({
+						url : '/updatesugestext?survey=' + survey + '&khatano='+khatano+ '&vcode='+vcode,
+						type : 'POST',
+						cache : false,
+						success : function(response) {
+							$('#success').html(response);
+
+							var row = button.parentNode.parentNode;
+
+							row.parentNode.removeChild(row);
+
+						},
+						error : function(error) {
+							console.error(error);
+						}
+					});
+				
+			} else {
+				return false;
+
+			}
+		}
+		
+    </script>
+    <script src="./js/jquery-3.6.0.min.js"></script>
+</body>
+</html>

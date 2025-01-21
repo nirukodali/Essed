@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+
+
+	<title>Crop Details</title>
+
+	<head th:insert="header"></head>
+
+
+	<style>
+		/* Custom styles for the selected crop details */
+		.webland-container {
+			background-color: #f8f9fa;
+			/* Light gray background */
+			padding: 20px;
+			border-radius: 10px;
+			box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+			margin: auto;
+			/* Center the container horizontally */
+			margin-top: 5vh;
+			/* Adjust the top margin as needed */
+			max-width: 400px;
+			/* Set a maximum width for the container */
+		}
+
+		.selected-village {
+			font-weight: bold;
+			color: darkgreen;
+		}
+
+		.total-records {
+			font-weight: bold;
+			color: #007bff;
+			/* Blue color */
+		}
+	</style>
+</head>
+
+<body>
+	
+
+	<div th:insert="headerImage"></div>
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+
+
+	<div class="container-fluid header-design-login">
+		<div class="row justify-content-center align-items-center" style="height: 10vh;">
+			<div class="webland-container text-center">
+				<h5 style="color:black">Selected Crop Details</h5>
+				<br />
+				<div>
+					<p class="selected-village">Selected Village: <span th:text="${lgdvname}"></span></p>
+					<p class="already-available-records">Already Available Records: <span
+							th:text="${alreadyAvailableRecords}"></span></p>
+
+					<p class="total-records">New No. Records: <span th:text="${newRecordcount}"></span></p>
+
+					<button type="button" class="btn btn-info go-back-button" onclick="goBack()">Go Back</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="text/javascript" th:src="@{/js/jquery.js}"></script>
+	<script>
+		$(function () {
+			var alreadyAvailableRecords = parseInt('[[${alreadyAvailableRecords}]]');
+			var newRecords = parseInt('[[${newRecordcount}]]');
+			var message = '[[${message}]]';
+
+			if (alreadyAvailableRecords > 0) {
+				showAlert('Records already available in the database.', 'success', alreadyAvailableRecords);
+
+				$('.total-records').hide();
+
+				$('.already-available-records').show();
+
+
+			} else if (newRecords > 0) {
+				showAlert('ROFR Records inserted successfully.', 'success', newRecords);
+
+				$('.total-records').show();
+
+				$('.already-available-records').hide();
+
+
+			} else if (newRecords <= 0) {
+				showAlert(' No Data Availbale For Above Village ', 'danger');
+
+				$('.total-records').hide();
+
+				$('.already-available-records').hide();
+
+			}
+		});
+
+		function showAlert(message, type, newRecords) {
+			var alertDiv = $('<div class="alert">').addClass('alert alert-' + type).text(message);
+			var alertContainer = $('.webland-container');
+
+			alertDiv.append('<button onclick="hideAlert()" class="btn btn-sm btn-secondary">OK</button>');
+			alertContainer.append(alertDiv);
+		}
+
+		function hideAlert() {
+			$('.alert').fadeOut('slow', function () {
+				$(this).remove();
+			});
+		}
+
+		function goBack() {
+			window.location.href = './rofrLandRecordEntry';
+		}
+	</script>
+</body>
+
+</html>

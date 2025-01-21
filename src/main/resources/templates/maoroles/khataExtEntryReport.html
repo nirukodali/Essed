@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:insert="header"></head>
+<style>
+	thead{
+		position: sticky;
+		top: 0%;
+	}
+</style>
+
+    <!-- Include SheetJS for Excel export -->
+
+<body>
+    <div th:insert="headerImage"></div>
+    <div th:insert="navBarTop"></div>
+    <div th:insert="headerMessage"></div>
+
+    <div style="text-align: center;">
+        <form th:action="@{/khataExtSearchreport}" method="get">
+            <label for="cropyear">Crop Year:</label>
+            <select id="cropyear" name="cropyear">
+                <option value="" disabled selected>Select a crop year</option>
+                <th:block th:each="year : ${cropYears}">
+                    <option th:value="${year}" th:text="${year}"></option>
+                </th:block>
+            </select>
+            <span
+				th:if="${session.role} ==44" >
+              <label for="mandal">Mandal:</label>
+            <select id="mandal" name="mandal">
+                <option value="" disabled selected>Select  Mandal</option>
+                <th:block th:each="mandal : ${mandals}">
+                    <option th:value="${mandal.mcode}" th:text="${mandal.mname}"></option>  
+                </th:block>
+            </select>
+            </span>
+
+<!--            <label for="village">Village:</label>-->
+<!--            <select id="village" name="village">-->
+<!--                <option value="" disabled selected>Select a village</option>-->
+<!--                <th:block th:each="village : ${vill}">-->
+<!--                    <option th:value="${village.vcode}" th:text="${village.wbvname}"></option>  -->
+<!--                </th:block>-->
+<!--            </select>-->
+<button type="button" id="searchButton" class="btn btn-primary" value="Submit">Submit</button>
+
+        </form>
+
+        <br><br>
+
+        <div id="resultContainer">
+            <table id="resultTable" border="1" style="margin: 0 auto;">
+                <thead>
+                    <tr>
+						<th>Sno</th>
+						
+						<th>Village</th>
+                        <th>Farmer Name</th>
+                        <th> FatherName</th>
+                        <th>Farmer UID</th>                        
+                        <th>LP No</th>
+                        <th>Kh No</th>
+                        <th>Total LPM Extent</th>
+                         <th>Farmer Extent</th>
+                    </tr>
+                </thead>
+                <tbody id="tbody">
+                    <!-- Data will be populated here -->
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="8" style="text-align: center;"><strong>Total:</strong></td>
+                        
+<!--                        <td id="totalTotExtent"></td>-->
+                        <td id="totalOccupExtent" style="font-weight: bold;"></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+       
+
+
+        <!-- Display Owners List -->
+        <div th:if="${ownersList != null}">
+            <h2>Owners List</h2>
+            <ul>
+                <th:block th:each="owner : ${ownersList}">
+                    <li th:text="${owner.occupname}"></li>
+                </th:block>
+            </ul>
+        </div>
+         <br>
+        <div style="text-align: center;">
+    <button id="printButton" class="btn btn-secondary">Print</button>
+    <button id="exportExcelButton" class="btn btn-success">Excel</button>
+</div>
+    </div>
+
+   <script>
+    $(document).ready(function() {
+        $('#searchButton').click(function() {
+            var cropYear = $('#cropyear').val();
+            var mandal = $('#mandal').val();
+
+
+            $.ajax({
+                url: './getkhataDetReport',
+                method: 'GET',
+                data: {
+                    cropyear: cropYear,
+                    mandal: mandal
+                },
+                success: function(response) {
+                    var tableBody = $('#resultTable tbody');
+                    
+                 //   var totalTotExtent = 0;
+                    var totalOccupExtent = 0;
+                    tableBody.empty(); // Clear previous results
+
+                    if (response && response.length > 0) {
+                        $.each(response, function(index, owner) {
+                            tableBody.append(
+                                '<tr>' +
+                                '<td >' + (index + 1) + '</td>' +
+                                
+                                '<td>' + owner.wbevname + '</td>' +
+                                '<td>' + owner.occupname + '</td>' +
+                                '<td>' + owner.occupfname + '</td>' +
+                                '<td>' + owner.cr_farmeruid + '</td>' +
+                                
+                                '<td>' + owner.cr_sno + '</td>' +
+                                '<td>' + owner.kh_no + '</td>' +
+                                '<td>' + owner.tot_extent + '</td>' +
+                                '<td>' + owner.occup_extent + '</td>' +
+                                '</tr>'
+                            );
+
+                            // Accumulate the totals
+                   //         totalTotExtent += parseFloat(owner.tot_extent) || 0;
+                            totalOccupExtent += parseFloat(owner.occup_extent) || 0;
+                        });
+
+                        // Update totals in the footer
+                  //      $('#totalTotExtent').text(totalTotExtent.toFixed(2));
+                        $('#totalOccupExtent').text(totalOccupExtent.toFixed(2));
+                    } else {
+                        tableBody.append('<tr><td colspan="9">No data found</td></tr>');
+                        // Reset totals if no data found
+                   //     $('#totalTotExtent').text('0.00');
+                        $('#totalOccupExtent').text('0.00');
+                    }
+                },
+                error: function() {
+                    alert('Error fetching data');
+                }
+            });
+        });
+
+        // Print functionality
+        $('#printButton').click(function() {
+            window.print();
+        });
+
+        // Export to Excel functionality
+        $('#exportExcelButton').click(function() {
+            var table = document.getElementById('resultTable');
+            var workbook = XLSX.utils.table_to_book(table, { sheet: "Sheet JS" });
+            XLSX.writeFile(workbook, 'KhataData.xlsx');
+        });
+    });
+</script>
+
+</body>
+</html>

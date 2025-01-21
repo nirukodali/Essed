@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<!--<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>-->
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+	<title>rskmapping</title>
+</head>
+<script>
+	
+	
+	
+	
+
+	
+	</script>
+	
+<body>
+	<div th:fragment="content">
+		<div class="container-fluid header-design-login">
+			<div class="row justify-content-center align-items-center" style="height: 10vh;">
+				<div class="webland-container">
+					<form th:object="${regDetails}" id="empFrom" th:action="@{/rbkmapping}" method="get">
+						<table class="table">
+							<thead>
+								<tr>
+									<th>S.no</th>
+									<th>RSK</th>
+									<th>Employee Name</th>
+									<th>Employee Code</th>
+									<th>RSK User ID</th>
+									<th>Employee Status</th>
+									<th>Mobile</th>
+									<th>Email Id</th>
+									<th>Masked Aadhaar</th>
+									<th th:if="${showDeactivate}">De-Activate</th>
+									
+								</tr>
+							</thead>
+							<tbody>
+								<tr th:each="item, rowStat : ${regDetails}">
+								    <td th:text="${rowStat.index + 1}" data-label="S.no"></td>
+								    <td th:text="${item.vname}" data-label="RSK"></td>
+								    <td th:text="${item.emp_name}" data-label="Employee Name"></td>
+								    <td th:text="${item.emp_code}" th:value="${item.emp_code}" data-label="Employee Code"></td>
+									<input th:value="${item.emp_code}"  th:id="'empcode_' + ${rowStat.index}" type="hidden">
+									<input th:value="${item.rbkuserid}"  th:id="'rbkcode_' + ${rowStat.index}" type="hidden">
+									<input th:value="${item.incharge_sts}"  th:id="'empsts_' + ${rowStat.index}" type="hidden">
+									<input th:value="${item.aadhaar}"  th:id="'aadhaar_id' + ${rowStat.index}" type="hidden">
+								    <td th:text="${item.rbkuserid}" th:value="${item.rbkuserid}" data-label="RSK User ID" ></td>
+									<td th:text="${item.incharge_sts == 'R' ? 'Regular' : (item.incharge_sts == 'I' ? 'Incharge' : '')}"
+   												 th:value="${item.incharge_sts}" data-label="Employee Status"></td>
+								    <td th:text="${item.mobile}" data-label="Mobile"></td>
+								    <td th:text="${item.email}" data-label="Email Id"></td>
+								    <td th:text="${item.aadhaar_id}" data-label="Masked Aadhaar"></td>
+									
+									  <td th:if="${showDeactivate}">
+									  	<input type="button" value="Deactivate"th:id="Deactivated"
+									  	th:onclick="'rbkmapDec(' + ${rowStat.index} + ')'">
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+</body>
+
+</html>

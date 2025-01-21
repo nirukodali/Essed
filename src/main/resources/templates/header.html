@@ -1,0 +1,72 @@
+
+ <head th:fragment="header"> 
+    <meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+ 	<!--<script src="./js/jquery-3.7.0.js"></script> 
+	<script src="./js/jquery-3.6.0.min.js"></script>-->
+ <script src="./js/jquery-3.7.1.js"></script> 
+	
+	<script src="./js/popper.min.js"></script>
+	<script src="./js/alertify.min.js"></script>
+	<script src="./js/nprogress.min.js"></script>
+	<script src="./js/sweetalert2.all.min.js"></script>
+	<script src="./js/bootstrap.bundle.min.js"></script>
+	<script src="./js/jquery.dataTables.min.js"></script>
+	<script src="./js/dataTables.bootstrap5.min.js"></script>
+	
+<!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">-->
+
+	<script src="./js/custom/ecropCultivator.js"></script>
+	
+	<script src="./js/pdfmake2.min.js"></script>
+	
+	<script src="./js/vfs_fonts2.js"></script>
+	<script src="./js/qrcode2.min.js"></script>
+	
+	<!--   csrf -->
+	
+	<meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+
+	<link rel="stylesheet"  type="text/css" href="./css/nprogress.min.css" />
+	<link rel="stylesheet"  type="text/css" href="./css/all.min.css" />
+	<link rel="stylesheet"  type="text/css" href="./css/font-awesome.css" />
+	<link rel="stylesheet"  type="text/css" href="./css/font-awesome.4.7.0.min.css" />
+	<link rel="stylesheet"  type="text/css" href="./css/sweetalert2.min.css" />
+	<link rel="stylesheet"  type="text/css" href="./css/bootstrap.min.css">
+	<link rel="stylesheet"  type="text/css" href="./css/dataTables.bootstrap5.min.css">
+	<link rel="stylesheet"  type="text/css" href="./css/alertify.min.css" />
+	<link rel="stylesheet"  type="text/css" href="./css/font-awesome.min.css" />
+	<link rel="stylesheet"  type="text/css" href="./css/font-awesome1.min.css" />
+	
+	
+	
+	</script>
+	
+	
+  <script type="text/javascript">
+  
+  $(document).ready(function() {
+	    // Set CSRF token in AJAX requests
+	    var token = $("meta[name='_csrf']").attr("content");
+	    var header = $("meta[name='_csrf_header']").attr("content");
+	    
+	    $(document).ajaxSend(function(e, xhr, options) {
+	        xhr.setRequestHeader(header, token);
+	    });
+	});
+  
+  </script>
+
+	<link rel="stylesheet" type="text/css" href="./css/style.css" /> 
+
+
+ </head>
+
+
+
+
+
+
+

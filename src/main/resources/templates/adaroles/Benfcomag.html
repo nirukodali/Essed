@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="header">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<!-- <title>eKarshak</title> -->
+<!--	<link rel="stylesheet" href="./styles/reportstylesheet.css" />-->
+<head th:insert="header"></head>
+<div th:insert="headerImage"></div>
+<div th:insert="navBarTop"></div>
+<div th:insert="headerMessage"></div>
+
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+<script>
+	function CallPrint(strid) {
+		var prtContent = document.getElementById(strid);
+		var mywindow = window
+				.open(
+						'',
+						'',
+						'left=0,top=0,width=950,height=600,toolbar=1,scrollbars=1,status=1,addressbar=0');
+		var is_chrome = Boolean(mywindow.chrome);
+		mywindow.document.write(prtContent.innerHTML);
+		mywindow.document.close(); // necessary for IE >= 10 and necessary before onload for chrome
+
+		if (is_chrome) {
+			mywindow.onload = function() { // wait until all resources loaded 
+				mywindow.focus(); // necessary for IE >= 10
+				mywindow.print(); // change window to mywindow
+				mywindow.close(); // change window to mywindow
+			};
+		} else {
+			mywindow.document.close(); // necessary for IE >= 10
+			mywindow.focus(); // necessary for IE >= 10
+			mywindow.print();
+			mywindow.close();
+		}
+
+		return true;
+	}
+</script>
+<script language="javascript">
+	var tableToExcel = (function() {
+		var uri = 'data:application/vnd.ms-excel;base64,', template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table align="center">{table}</table></body></html>', base64 = function(
+				s) {
+			return window.btoa(unescape(encodeURIComponent(s)))
+		}, format = function(s, c) {
+			return s.replace(/{(\w+)}/g, function(m, p) {
+				return c[p];
+			})
+		}
+		return function(table, name) {
+			if (!table.nodeType)
+				table = document.getElementById(table)
+			var ctx = {
+				worksheet : name || 'Worksheet',
+				table : table.innerHTML
+			}
+			window.location.href = uri + base64(format(template, ctx))
+		}
+	})()
+</script>
+
+</head>
+<style>
+#loading {
+	position: fixed;
+	top: 60%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	padding: 20px;
+	border-radius: 5px;
+}
+</style>
+
+
+<script>
+
+$(document).ready(function() {
+    $.ajax({
+        type: "get",
+        url: "./util/getAllSeason",
+        cache: false,
+        timeout: 600000,
+        success: function(resp) {
+            for (var j = 0; j < resp.length; j++) {
+                var bean = resp[j];//alert(bean.col1);alert(bean.col2);
+                $("#cropyear").append(
+                		
+                    '<option value="' + bean.col1 + '">' + bean.col2 + '</option>'
+                );
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error("AJAX Error:", status, error);
+        }
+    });
+});	
+
+	function mandal() {
+		var inputdcode = $("#inputdcode").val();
+		$("#inputmcode").empty();
+		$.ajax({
+			type : "get",
+			url : "./util/getAllmandal?dcode=" + inputdcode,
+			cache : false,
+			timeout : 600000,
+			success : function(resp) {
+				for (var j = 0; j < resp.length; j++) {
+					var bean = resp[j];
+					$("#inputmcode").append(
+							'<option value="' + bean.col1 + '">' + bean.col2
+									+ '</option>');
+				}
+			}
+		});
+	}
+
+// 	function getVillage() {
+// 		var dcode = $("#inputdcode").val();
+// 		var mcode = $("#inputmcode").val();
+// 		$("#inputvcode").empty();
+// 		$.ajax({
+// 			type : "get",
+// 			url : "./util/getAllVillages?dcode=" + dcode + "&mcode=" + mcode,
+// 			cache : false,
+// 			timeout : 600000,
+// 			success : function(resp) {
+// 				//alert("success=>" + JSON.stringify(resp));
+// 				for (var j = 0; j < resp.length; j++) {
+// 					var bean = resp[j];
+// 					$("#inputvcode").append(
+// 							'<option value="' + bean.col1 + '">' + bean.col2
+// 									+ '</option>');
+// 				}
+// 			}
+// 		});
+// 	}
+
+	
+	$(document).ready(
+			function() {
+				$.ajax({
+					type : "get",
+					url : "./util/getprodcode",
+					cache : false,
+					timeout : 600000,
+					success : function(resp) {
+						for (var j = 0; j < resp.length; j++) {
+							var bean = resp[j];
+							$("#prdcode").append(
+									'<option value="' + bean.col1 + '">'
+											+ bean.col2 + '</option>');
+						}
+					}
+				});
+			});
+
+	function subprdcode() {
+		var prdcode = $("#prdcode").val();
+		$("#subcode").empty();
+		$.ajax({
+			type : "get",
+			url : "./util/getcodesubproduct?prdcode=" + prdcode,
+			cache : false,
+			timeout : 600000,
+			success : function(resp) {
+				for (var j = 0; j < resp.length; j++) {
+					var bean = resp[j];
+					$("#subcode").append(
+							'<option value="' + bean.col1 + '">' + bean.col2
+									+ '</option>');
+				}
+			}
+		});
+	}
+
+	function varietycodee() {
+		var subcode = $("#subcode").val();
+		$("#varietycode").empty();
+		$.ajax({
+			type : "get",
+			url : "./util/getvarietycode?subcode=" + subcode,
+			cache : false,
+			timeout : 600000,
+			success : function(resp) {
+				for (var j = 0; j < resp.length; j++) {
+					var bean = resp[j];
+					$("#varietycode").append(
+							'<option value="' + bean.col1 + '">' + bean.col2
+									+ '</option>');
+				}
+			}
+		});
+	}
+	
+	$(document).ready(function () {
+        $("#inputdcode").change(function () {
+            const dcode = $(this).val();
+            
+            const cropYear = $('#cropyear').val();
+            //alert("dcode"+dcode)
+
+            if (cropYear) {
+                $.ajax({
+                    url: '/util/date',
+                    method: 'GET',
+                    data: { cropyear: cropYear, dcode: dcode },
+                    dataType: 'json',
+                    success: function (response) {
+                        if (response?.seasonstartdate?.length) {
+                            const startDate = response.seasonstartdate[0].startdate;
+                            configureDatePickers(startDate);
+                        } else {
+                            alert("No start dates available for the selected crop year.");
+                            resetDatePickers();
+                        }
+                    },
+                    error: function () {
+                        alert("Unable to fetch dates.");
+                    }
+                });
+            }
+        });
+
+        function configureDatePickers(startDate) {
+            const formattedDate = formatDate(startDate);
+            $("#fromdate").datepicker({
+                dateFormat: "dd-mm-yy",
+                minDate: formattedDate,
+                maxDate: new Date(),
+                onSelect: function (selectedDate) {
+                    $("#todate").datepicker("option", "minDate", selectedDate);
+                }
+            }).datepicker("setDate", formattedDate);
+
+            $("#todate").datepicker({
+                dateFormat: "dd-mm-yy",
+                minDate: formattedDate,
+                maxDate: new Date()
+            });
+        }
+
+        function resetDatePickers() {
+            $("#fromdate, #todate").datepicker("destroy").val("");
+        }
+
+        function formatDate(date) {
+            const [year, month, day] = date.split("-");
+            return `${day}-${month}-${year}`;
+        }
+    });
+	
+	
+	
+	
+	function getData() {
+	    $("#databody").empty();
+	    $('#loading').show();
+
+	    var seasoncropyear = $('#cropyear').val();
+	    var season = seasoncropyear.split("@")[0];
+	    var cropyear = seasoncropyear.split("@")[1];
+	    var dcode = $("#inputdcode").val();
+	    var mcode = $("#inputmcode").val();
+	    var prdcode = $("#prdcode").val();
+	    var subcode = $("#subcode").val();
+	    var varietycode = $("#varietycode").val();
+
+	    // Create a JSON object with the data
+	    var requestData = {
+	        cropyear: seasoncropyear,
+	        dcode: dcode,
+	        mcode: mcode,
+	        prdcode: prdcode,
+	        subcode: subcode,
+	        varietyCode: varietycode
+	    };
+
+	    $.ajax({
+	        type: "POST",
+	        url: "./util/getbenf2", // Ensure this matches your backend endpoint
+	        contentType: "application/json",
+	        data: JSON.stringify(requestData),
+	        cache: false,
+	        timeout: 600000,
+	        success: function(resp) {
+	            $('#loading').hide();
+	            var sno = 0;
+
+	            for (var j = 0; j < resp.length; j++) {
+	                sno = sno + 1;
+	                var bean = resp[j];
+	                $("#databody").append(
+	                    '<tr>' +
+	                    '<td>' + sno + '</td>' +
+	                    '<td>' + bean.dname + '</td>' +
+	                    '<td>' + bean.mname + '</td>' +
+	                    '<td>' + bean.vname + '</td>' +
+// 	                    '<td>' + bean.cropname + '</td>' +
+	                    '<td>' + bean.seedvariety + '</td>' +
+	                    '<td>' + bean.farmername + '</td>' +
+	                    '<td>' + bean.fathername + '</td>' +
+	                    '<td>' + bean.socialstatus + '</td>' +
+	                    '<td>' + bean.mobileno + '</td>' +
+	                    '<td style="text-align:center">' + bean.totextent + '</td>' +
+	                    '<td style="text-align:center" >' + bean.status + '</td>' +
+	                    '<td style="text-align:center" >' + bean.qty_recd + '</td>' +
+	                    '<td style="text-align:center" >' + bean.qty_kgs + '</td>' +
+	                    '</tr>'
+	                );
+	            }
+	        },
+	        error: function(xhr, status, error) {
+	            $('#loading').hide();
+	            alert("An error occurred: " + error);
+	        }
+	    });
+	}
+
+	function goBack() {
+		window.location.href = "./home";
+	}
+	
+	
+</script>
+
+<body>
+
+	<div class="heading" colspan="20" style="text-align: center;font-size:25px;">
+			<b>
+				 Beneficiary Details
+			</b>
+		</div>
+	
+	<p th:text="${msg}"></p>
+
+	<div id="loading" style="display: none;">Loading...</div>
+
+
+	<input type="hidden" id="inputwbdcode"
+		th:value="${#session.getAttribute('wbdcode')}" />
+	<div align="center">
+		<form>
+			<table id="ObjEntryTable">
+				 <tr>
+            <td align="right"><b>Crop Year:</b></td>
+            <td align="left">
+                <select name="cropyear" id="cropyear" style="width:200px">
+                    <option value="">---- Select ----</option>
+                </select>
+            </td>
+        </tr>
+				<tr>
+                    <td align="right"><b> District Name: </b></td>
+                    <td align="left"><select name="inputdcode" id="inputdcode" style="width:200px" onchange="return  mandal();">
+                            <option value="">---- Select ----</option>
+                            <option th:each="list : ${dist}" th:value="${list.dcode}"
+							th:text="${list.dname}"></option>
+                        </select>
+                    </td>
+                </tr>
+                
+				<tr>
+                    <td align="right"><b> Mandal Name :</b></td>
+                    <td align="left"><select name="inputmcode" id="inputmcode" style="width:200px" >
+                            <option value="">---- Select ----</option>
+                            <option th:each="list : ${dist}" th:value="${list.dcode}"
+							th:text="${list.dname}"></option>
+                        </select>
+                    </td>
+                </tr>
+                
+				<tr>
+                    <td align="right"><b> Crop Group: </b></td>
+                   <td align="left"> <select name="prdcode" id="prdcode" style="width:200px" onchange="return  subprdcode();">
+                            <option value="">---- Select ----</option>
+                        </select>
+                    </td>
+                </tr>
+                
+				<tr>
+                    <td align="right"><b> Crop Name :</b></td>
+                   <td align="left"> <select name="subcode" id="subcode" style="width:200px" onchange="return  varietycodee();">
+                            <option value="">---- Select ----</option>
+                        </select>
+                    </td>
+                </tr>
+                
+				<tr>
+                    <td align="right"><b> Variety Name:</b></td>
+                    <td align="left"> <select name="varietycode" id="varietycode" style="width:200px" onchange="return getSeasonStartDate();">
+                            <option value="">---- Select ----</option>
+                        </select>
+                    </td>
+                </tr>
+                
+                <tr>
+				<td align="right" class="tdnum"><b>From Date</b>  <font class="error">*</font></td>
+				<td align="left"><input type="text" id="fromdate" name="fromdate"  style="width:200px" readonly /></td>
+			</tr>
+			<tr>
+				<td align="right"  class="tdnum"><b>To Date</b><font class="error">*</font></td>
+				<td align="left"><input type="text" id="todate" name="todate" style="width:200px" readonly /></td>
+			</tr>
+                
+                <!-- <tr>
+                   <td align="right"><b>From Date:</b></td>
+                  <td align="left"><input type="text" id="ftime" name="ftime" readonly style="width: 200px" onchange="fdate()"></td>
+               </tr>
+              <tr>
+                <td align="right"><b>To Date:</b></td>
+                <td align="left"> <input type="text" id="ttime" name="ttime" readonly style="width: 200px"></td>
+              </tr> -->
+
+			</table>
+			<div colspan="3" align="center"
+				style="padding-top: 10px; padding-bottom: 10px;">
+				<button type="button" id="btnSubmit" class="btn btn-success"
+					value="Submit" onclick="return getData();">Submit</button>
+			</div>
+		</form>
+	</div>
+	<div>
+		<form method="post">
+			<div align="center" id="divPrint" class="table table-hover">
+				<table id="tableStkId" align="center"
+					class="table table-striped border border-secondary">
+					<thead>
+						 <tr >       
+                    <th> S.No. </th>
+                    <th>District</th>
+                    <th> Mandal </th>
+                    <th> Village Secretariat</th>                   
+<!--                     <th>Crop Name </th>                     -->
+                    <th>Seed Variety</th>
+                    <th> Farmer Name</th>
+                    <th> Father Name</th>                                   
+                    <th> Social Category </th>
+                    <th>Mobile No</th>
+                    <th>Status</th>
+                    <th> Quantity Issued<br/>(in Bags) </th> 
+                     <th> Quantity Issued<br/>(in Kgs) </th>
+                    <th> Total<br> Extent(in Acres)</th> 
+                </tr>
+					</thead>
+					<tbody id="databody">
+					</tbody>
+				</table>
+			</div>
+		</form>
+		<div align="center" style="color: black">
+			<input class="btn btn-success"
+				name="ctl00$ContentPlaceHolder1$btnPrint" type="button"
+				id="ctl00_ContentPlaceHolder1_btnPrint"
+				onClick="javascript:CallPrint('divPrint')" value="Print"> <input
+				class="btn btn-success" type="button"
+				onclick="tableToExcel('tableStkId', 'Abstract')" value="Excel">
+			<input class="btn btn-success" type="button" value="Back"
+				onclick="goBack()" />
+		</div>
+	</div>
+	</div>
+</body>
+
+</html>

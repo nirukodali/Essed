@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="header">
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Deceased Farmer Details</title>
+</head>
+
+<body>
+	<div th:insert="headerImage"></div>
+
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+
+	<br>
+	<form th:id="updation" th:action="@{/updateDeceased}" method="post" onsubmit="return validateForm()">
+		<div
+			style="background-color:green; margin-left: auto; margin-right: auto; width: 100%; text-align: center;font-size: 200%;color: white;">
+			Updation of Deceased Farmer Records
+		</div>
+
+		<div class="table-wrapper" style="overflow-y: scroll;margin:20px;margin-right: 0;background-color:whitesmoke;">
+			<div style="margin-bottom: 20px;">
+				<table id="myTable" style="border: 1px solid black;border-collapse: separate ;border-spacing: 0px;">
+					<thead style="background-color: darkgray; color: white;">
+						<tr>
+							<th style="border-right: 1px solid black;"><input id="main" type="checkbox"
+									onchange="toggleAllFields(this)"></th>
+							<th style="border-right: 1px solid black;">S.No. </th>
+							<th
+								style=" text-align: center;padding-left: 10px;padding-right: 10px;border-right: 1px solid black;">
+								Booking Id </th>
+							<th
+								style=" text-align: center;padding-left: 50px;padding-right: 50px;border-right: 1px solid black;">
+								Farming Type </th>
+							<th
+								style=" text-align: center;padding-left: 10px;padding-right: 10px;border-right: 1px solid black;">
+								Crop Name </th>
+							<th
+								style=" text-align: center;padding-left: 10px;padding-right: 10px;border-right: 1px solid black;">
+								Variety Name </th>
+							<th
+								style=" text-align: center;padding-left: 30px;padding-right: 30px;border-right: 1px solid black;">
+								Sown Date </th>
+							<th
+								style=" text-align: center;padding-left: 10px;padding-right: 10px; border-right: 1px solid black;">
+								Irrigation Source </th>
+							<th
+								style=" text-align: center;padding-left: 10px;padding-right: 10px;border-right: 1px solid black;">
+								Irrigation Method </th>
+							<th
+								style=" text-align: center;padding-left: 70px;padding-right: 70px;border-right: 1px solid black;">
+								Cultivator Name </th>
+							<th
+								style=" text-align: center;padding-left: 10px;padding-right: 10px;border-right: 1px solid black;">
+								Khata No </th>
+							<th
+								style=" text-align: center;padding-left: 10px;padding-right: 10px;border-right: 1px solid black;">
+								Survey No </th>
+							<th
+								style=" text-align: center;padding-left: 10px;padding-right: 10px;border-right: 1px solid black;">
+								Booked Extent </th>
+							<th
+								style=" text-align: center;padding-left: 30px;padding-right: 30px;border-right: 1px solid black;">
+								Farmer Aadhaar </th>
+							<th
+								style=" text-align: center;padding-left: 30px;padding-right: 30px;border-right: 1px solid black;">
+								Date Of Death </th>
+							<th
+								style=" text-align: center;padding-left: 70px;padding-right: 70px;border-right: 1px solid black;">
+								Legal Heir Name </th>
+							<th
+								style=" text-align: center;padding-left: 70px;padding-right: 70px;border-right: 1px solid black;">
+								Legal Heir Father Name </th>
+							<th
+								style=" text-align: center;padding-left: 70px;padding-right: 70px;border-right: 1px solid black;">
+								Legal Heir Aadhaar </th>
+							<th
+								style=" text-align: center;padding-left: 30px;padding-right: 30px;border-right: 1px solid black;">
+								Legal Heir Mobile </th>
+							<th
+								style=" text-align: center;padding-left: 100px;padding-right:100px;border-right: 1px solid black;">
+								Relation With Deceased Farmer </th>
+						</tr>
+					</thead>
+					<tbody>
+
+						<tr th:each="item : ${list}"
+							style="padding-top: 10px;border-bottom: 5px dotted black;border-spacing: 0px;">
+							<td style="border-right: 1px solid black;border-bottom: 1px solid black;">
+								<input type="checkbox" class="sub-checkbox" onchange="enableInputs(event)">
+								<input type="hidden" name="cr_no" th:value="${item.getCr_no()}">
+								<input type="hidden" name="selectedValue" id="selectedValue"
+									th:value="${selectedValue}" />
+								<input type="hidden" name="value" id="value" th:value="${value}" disabled />
+							</td>
+							<td th:text="${itemStat.index + 1}"
+								style="border-bottom: 1px solid black;border-right: 1px solid black;"></td>
+							<td
+								style="border-bottom: 1px solid black; text-align: center;border-right: 1px solid black;">
+								<input name="bookingid"
+									style=" text-align: center;font-size: small; width: 100%;height: 4lvh;"
+									th:value="${item.getBookingid()}" disabled>
+							</td>
+							<td
+								style=" text-align: center;border-bottom: 1px solid black;border-right: 1px solid black;">
+								<input name="cropschdesc"
+									style=" text-align: center;font-size: small; width: 100%;height: 4lvh; "
+									th:value="${item.getCropschdesc()}" disabled>
+							</td>
+							<td
+								style="border-bottom: 1px solid black; text-align: center;border-right: 1px solid black;">
+								<input name="crop"
+									style=" text-align: center;font-size: small; width: 100%;height: 4lvh; "
+									th:value="${item.getCr_crop()}" disabled>
+							</td>
+							<td
+								style="border-bottom: 1px solid black; text-align: center;border-right: 1px solid black;">
+								<input name="variety"
+									style=" text-align: center;font-size: small; width: 100%;height: 4lvh; "
+									th:value="${item.getVariety()}" disabled>
+							</td>
+							<td
+								style="border-bottom: 1px solid black; text-align: center;border-right: 1px solid black;">
+								<input name="sow_date"
+									style=" text-align: center;font-size: small; width: 100%;height: 4lvh; "
+									th:value="${item.getCr_sow_date()}" disabled>
+							</td>
+							<td
+								style=" text-align: center;border-bottom: 1px solid black;border-right: 1px solid black;">
+								<input name="source"
+									style=" text-align: center;font-size: small; width: 100%;height: 4lvh; "
+									th:value="${item.getIrgdesc()}" disabled>
+							</td>
+							<td
+								style="border-bottom: 1px solid black; text-align: center;border-right: 1px solid black;">
+								<input name="method"
+									style=" text-align: center;font-size: small; width: 100%;height: 4lvh; "
+									th:value="${item.getIrrmethod()}" disabled>
+							</td>
+							<td
+								style="border-bottom: 1px solid black; text-align: center;border-right: 1px solid black;">
+								<input name="name"
+									style=" text-align: center;font-size: small; width: 100%;height: 4lvh; "
+									th:value="${item.getOc_name()}" disabled>
+							</td>
+							<td
+								style="border-bottom: 1px solid black; text-align: center;border-right: 1px solid black;">
+								<input name="kh_no"
+									style=" text-align: center;font-size: small; width: 100%;height: 4lvh; "
+									th:value="${item.getKh_no()}" disabled>
+							</td>
+							<td
+								style="border-bottom: 1px solid black; text-align: center;border-right: 1px solid black;">
+								<input name="cr_sno"
+									style=" text-align: center;font-size: small; width: 100%;height: 4lvh; "
+									th:value="${item.getCr_sno()}" disabled>
+							</td>
+							<td
+								style="border-bottom: 1px solid black; text-align: center;border-right: 1px solid black;">
+								<input name="extent"
+									style=" text-align: center;font-size: small; width: 100%;height: 4lvh; "
+									th:value="${item.getCr_mix_unmix_ext()}" disabled>
+							</td>
+							<td
+								style="border-bottom: 1px solid black; text-align: center;border-right: 1px solid black;">
+								<input name="farmeruid"
+									style=" text-align: center;font-size: small; width: 100%;height: 4lvh; "
+									th:value="${item.getCr_farmeruid()}" disabled>
+							</td>
+							<td style="border-bottom: 1px solid black;border-right: 1px solid black;">
+								<input type="text" name="dateofDeath" class="input-field" id="dateofDeath" maxlength="10"
+									pattern="\d{4}-\d{2}-\d{2}" title="Please enter a date in the format yyyy-mm-dd"
+									style=" text-align: center;font-size: small; width: 100%;height: 4lvh; " disabled oninput="validateDate(this)"
+									required>
+							</td>
+							<td
+								style=" border-bottom: 1px solid black;text-align: center;border-right: 1px solid black;">
+								<input type="text" name="heirName" class="input-field" id="heirName"   oninput="validateHeirName(this)" 
+									style=" text-align: center;font-size: small; width: 100%;height: 4lvh; " maxlength="100" disabled
+									required>
+							</td>
+							<td
+								style="border-bottom: 1px solid black; text-align: center;border-right: 1px solid black;">
+								<input type="text" name="heirfName" class="input-field" id="heirfName"  oninput="validateHeirName(this)" 
+									style=" text-align: center;font-size: small; width: 100%;height: 4lvh; " maxlength="100" disabled
+									required>
+							</td>
+							<td style="border-bottom: 1px solid black;border-right: 1px solid black;">
+								<input type="text" name="aadhaar" class="input-field" id="aadhaar" maxlength="12" pattern="\d{12}"
+									title="please enter 12 digit mobile number"  onkeypress="return ( event.charCode == 8 || event.charCode == 0) || event.charCode == 46 ? null : event.charCode >= 48 && event.charCode <= 57 " 
+									style=" text-align: center;font-size: small; width: 100%;height: 4lvh;" disabled
+									required>
+							</td>
+
+							<td style="border-bottom: 1px solid black;border-right: 1px solid black;">
+								<input type="text" name="mobile" class="input-field" id="mobile" maxlength="10" pattern="[6-9]\d{9}"
+									title="Please enter valid Mobile Number"  oninput="validateMobile(this)"
+									 onkeypress="return ( event.charCode == 8 || event.charCode == 0) || event.charCode == 46 ? null : event.charCode >= 48 && event.charCode <= 57 " 
+									style=" text-align: center;font-size: small; width: 100%;height: 4lvh; " disabled
+									required>
+							</td>
+							<td name="selectedValue" style="border-bottom: 1px solid black;width: 100%; height: 4lvh;">
+								<select name="relationId" id="relationId" style="width: 100%;padding-left: 30%; height: 4lvh;" disabled required>
+									<option value="" disabled selected>---select---</option>
+									<option value="Father">Father</option>
+									<option value="Mother">Mother</option>
+									<option value="Wife">Wife</option>
+									<option value="Husband">Husband</option>
+									<option value="Son">Son</option>
+									<option value="Daughter">Daughter</option>
+									<option value="Brother">Brother</option>
+									<option value="Sister">Sister</option>
+									<option value="Grand son">Grand son</option>
+									<option value="Grand Daughter">Grand Daughter</option>
+									<option value="Son-in-law">Son-in-law</option>
+									<option value="Daughter-in-law">Daughter-in-law</option>
+									<option value="Paternal Uncle">Paternal Uncle</option>
+									<option value="Paternal Aunt">Paternal Aunt</option>
+									<option value="Maternal Uncle">Maternal Uncle</option>
+									<option value="Maternal Aunt">Maternal Aunt</option>
+									<option value="Nephew">Nephew</option>
+									<option value="Niece">Niece</option>
+
+								</select>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				<br>
+				<h2 style="text-align: center;"><span th:text="${empty}"></span></h2>
+			</div>
+		</div>
+		<div style="margin-top: 15px; display: flex; justify-content: center;" class="button-container">
+			<input style="margin-left: 10%;width: fit-content;height:fit-content;" type="submit"
+				class=" btn btn-primary" value="Submit"></input>
+			<input style="margin-left: 5%;width: fit-content;height: fit-content;" type="button"
+				class=" btn btn-primary" value="Go Back" onclick="goBack()"></input>
+
+
+		</div>
+	</form>
+</body>
+
+<script defer>
+	
+	function validateMobile(input) {
+    // Remove any characters that are not digits
+    input.value = input.value.replace(/\D/g, '');
+
+    // Ensure that the mobile number starts with a digit between 6 and 9 and has a total of 10 digits
+    input.value = input.value.replace(/\D/g, '');
+    if (/^[6-9]\d{9}$/.test(input.value)) {
+        // Valid format
+        input.setCustomValidity('');
+    } else {
+        input.setCustomValidity('Please enter a valid Mobile Number');
+    }
+}
+	
+	function validateDate(input) {
+    // Remove any characters that are not digits or dashes
+    input.value = input.value.replace(/[^0-9-]/g, '');
+
+    // Ensure that the date follows the format yyyy-mm-dd
+    input.value = input.value.replace(/[^0-9-]/g, '');
+    if (/^\d{4}-\d{2}-\d{2}$/.test(input.value)) {
+        // Valid format
+        input.setCustomValidity('');
+    } else {
+        input.setCustomValidity('Please enter a date in the format yyyy-mm-dd');
+    }
+}
+	
+	function validateHeirName(input) {
+    input.value = input.value.replace(/[^A-Za-z. ]/g, '');
+    
+}
+	function mod(num, divisor) {
+		return ((num % divisor) + divisor) % divisor;
+	}
+
+	function validateVerhoeff(num) {
+		var d = [
+			[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+			[1, 2, 3, 4, 0, 6, 7, 8, 9, 5],
+			[2, 3, 4, 0, 1, 7, 8, 9, 5, 6],
+			[3, 4, 0, 1, 2, 8, 9, 5, 6, 7],
+			[4, 0, 1, 2, 3, 9, 5, 6, 7, 8],
+			[5, 9, 8, 7, 6, 0, 4, 3, 2, 1],
+			[6, 5, 9, 8, 7, 1, 0, 4, 3, 2],
+			[7, 6, 5, 9, 8, 2, 1, 0, 4, 3],
+			[8, 7, 6, 5, 9, 3, 2, 1, 0, 4],
+			[9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
+		];
+
+		// permutation table p
+		var p = [
+			[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+			[1, 5, 7, 6, 2, 8, 3, 0, 9, 4],
+			[5, 8, 0, 3, 7, 9, 6, 1, 4, 2],
+			[8, 9, 1, 6, 0, 4, 3, 5, 2, 7],
+			[9, 4, 5, 3, 1, 2, 6, 8, 7, 0],
+			[4, 2, 8, 6, 5, 7, 3, 9, 0, 1],
+			[2, 7, 9, 3, 8, 0, 6, 4, 1, 5],
+			[7, 0, 4, 6, 9, 1, 3, 2, 5, 8]
+		];
+
+		var c = 0;
+		var myArray = [];
+		myArray = StringToReversedIntArray(num);
+		for (var i = 0; i < myArray.length; i++) {
+			//alert(c+'----->'+mod(i, 8)+'aray------>'+myArray[i]+'-------pmod>'+p[mod(i, 8)][myArray[i]]+'----------->d[]'+d[c][p[mod(i, 8)][myArray[i]]])
+			c = d[c][p[mod(i, 8)][myArray[i]]];
+		}
+		return (c == 0);
+	}
+	function StringToReversedIntArray(num) {
+		var myArray = [];
+
+		for (var i = 0; i < num.length; i++) {
+			myArray[i] = parseInt(num.substring(i, i + 1));
+		}
+		myArray = Reverse(myArray);
+		return myArray;
+
+	}
+	function Reverse(myArray) {
+		var reversed = [];
+
+		for (var i = 0; i < myArray.length; i++) {
+			reversed[i] = myArray[myArray.length - (i + 1)];
+		}
+		return reversed;
+	}
+
+	function enableInputs(event) {
+		var checkbox = event.target;
+		var row = checkbox.closest('tr');
+		var inputFields = row.querySelectorAll('input[type="text"], select');
+		inputFields.forEach(function (inputField) {
+			inputField.disabled = !checkbox.checked;
+		});
+	}
+
+	function toggleAllFields(main) {
+		var checkboxes = document.querySelectorAll('.sub-checkbox');
+		checkboxes.forEach(function (checkbox) {
+			checkbox.checked = main.checked;
+			enableInputs({target: checkbox}); // Call enableInputs manually
+		});
+	}
+
+	document.addEventListener('DOMContentLoaded', function () {
+		document.getElementById('main').addEventListener('change', function () {
+			toggleAllFields(this);
+		});
+
+		var checkboxes = document.querySelectorAll('.sub-checkbox');
+		checkboxes.forEach(function (checkbox) {
+			checkbox.addEventListener('change', function (event) {
+				enableInputs(event);
+			});
+		});
+	});
+
+	function validateForm() {
+		let checkboxes = document.querySelectorAll('.sub-checkbox:checked');
+		let records = document.querySelectorAll('.sub-checkbox');
+
+		if (records.length > 0 && checkboxes.length === 0) {
+
+			alert('Please check at least one checkbox');
+			return false;
+		}
+		if (records.length == 0 && checkboxes.length === 0) {
+
+			alert('No Data To Submit');
+			goBack();
+			window.history.back();
+		}
+		else {
+			let uidNo = null;
+
+			checkboxes.forEach(function (checkbox) {
+				if (checkbox.checked) {
+					uidNo = checkbox.closest('tr').querySelector('[name="aadhaar"]').value.trim();
+					alert(uidNo);
+				}
+			});
+			if (uidNo.length === 12) {
+				if (validateVerhoeff(uidNo)) {
+					alert('valid Aadhaar');
+					goBack();
+					window.history.back();
+				var formDataArray = [];
+				document.querySelectorAll('tbody tr').forEach(function (row) {
+					var checkbox = row.querySelector('.sub-checkbox');
+					///var inputField = row.querySelector('.input-field');
+					if (checkbox.checked) {
+						formDataArray.push({
+							bookingid: row.querySelector('[name="bookingid"]').value,
+							cropschdesc: row.querySelector('[name="cropschdesc"]').value,
+							cr_crop: row.querySelector('[name="crop"]').value,
+							variety: row.querySelector('[name="variety"]').value,
+							cr_sow_date: row.querySelector('[name="sow_date"]').value,
+							irgdesc: row.querySelector('[name="source"]').value,
+							irrmethod: row.querySelector('[name="method"]').value,
+							oc_name: row.querySelector('[name="name"]').value,
+							kh_no: row.querySelector('[name="kh_no"]').value,
+							cr_sno: row.querySelector('[name="cr_sno"]').value,
+							cr_mix_unmix_ext: row.querySelector('[name="extent"]').value,
+							farmeruid: row.querySelector('[name="farmeruid"]').value,
+							dateofDeath: row.querySelector('[name="dateofDeath"]').value,
+							heirName: row.querySelector('[name="heirName"]').value,
+							heirfName: row.querySelector('[name="heirfName"]').value,
+							aadhaar: row.querySelector('[name="aadhaar"]').value,
+							mobile: row.querySelector('[name="mobile"]').value,
+							relation: row.querySelector('[name="relationId"]').value,
+							cr_no: row.querySelector('[name="cr_no"]').value,
+							selectedValue: row.querySelector('[name="selectedValue"]').value,
+							value: row.querySelector('[name="value"]').value,
+
+
+						});
+					}
+				});
+				fetch('/updateDeceased', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify(formDataArray),
+				})
+					.then(response => response.json())
+					.then(data => {
+						console.log('Success:', data);
+					})
+					.catch(error => {
+						console.error('Error during fetch operation:', error);
+					});
+			
+
+				}
+				else if (!validateVerhoeff(uidNo)) {
+					alert('Enter valid AadhaarNo');
+					return false;
+				}
+			}
+			else {
+				alert('Enter 12 digit AadhaarNo');
+				return false;
+			}
+		}
+	}
+
+	function goBack() {
+		window.location.href = 'deceasedSearch';
+	}
+
+
+
+	
+</script>
+
+</html>

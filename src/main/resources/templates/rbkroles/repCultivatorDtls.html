@@ -1,0 +1,46 @@
+<div align="center" class="chkMatch" id="subDivId" style="display: block">
+	<table border="1" align="center" id="seedDistribRep" style="border-collapse: collapse;width:70%">
+		<tr>
+			<td style="font-size:24px;background-color:lightgrey;color:#0956a4" colspan="2" class="heading"
+				align="center"> <b> Name Matched Or Not </b> </td>
+		</tr>
+		<tr> &ensp;</tr>
+		<tr align="center" th:each="repCultiNames, cultivatorStat:${reprepCultivatorDtls}">
+			<td align="right">
+				<font style="font-size:25px "> e-పంట నందు నమోదు అయిన పేరు: <b
+						th:text="${repCultiNames.occupName}"></b> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			</td>
+			<td align="left">
+				<font style="font-size:22px ">e-Kyc పేరు: <b th:text="${repCultiNames.ekycName}"></b>
+			</td>
+		</tr>
+		<tr>
+			<td> &ensp; </td>
+			<td> &ensp; </td>
+		</tr>
+		<tr align="center">
+			<td colspan="2">
+				<h2>Does the Farmer Name as per crop booking and eKYC Farmer Name match ?
+					<!--                                    <button id="btnYesId"><a href="http://localhost:8084/ekarshaklive/ekycnamematch.jsp?id=<%=m_value%>">Yes</a></button>
+                            <button id="btnNoId"><a href="http://localhost:8084/ekarshaklive/ekycnamematch.jsp?id=<%=n_value%>">No</a></button></td>
+                                -->
+				</h2>
+			</td>
+		</tr>
+		<tr>
+
+
+			<!--	                <input id="sub" type="submit" value="Submit" onclick="nameMatch()" />-->
+
+			<!--            <td align="right" style="width:50%" id="btnYesId" ><a href="repEKYCnamematch.html?id=<%=m_value%>" class="anchorbutton" >Yes</a></td>-->
+			<td align="right" style="width:50%" id="btnYesId" onclick="nameMatch()"><a href="#"
+					class="anchorbutton primary-btn">Yes</a></td>
+
+			<td style="width:50%"> <a href="repCultivatorDtls" class="anchorbutton1" onclick="nameMisMatch()">No</a>
+			</td>
+
+		</tr>
+	</table>
+</div>
+
+<div id="repCultModalId" th:insert="rbkroles/repCultModalPage"></div>

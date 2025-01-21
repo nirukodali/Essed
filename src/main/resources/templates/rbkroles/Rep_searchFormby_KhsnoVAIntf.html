@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="header">
+<!--	<meta charset="UTF-8" />-->
+<!--	<meta name="viewport" content="width=device-width, initial-scale=1">-->
+<!--	<script src="js/jquery.js"></script>-->
+<!--	<script src="js/jquery-ui.js"></script>-->
+<!--	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">-->
+<!--	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>-->
+<!--	<link rel="stylesheet" type="text/css" href="css/style.css">-->
+	<title>Search Form By Khata and Survey No </title>
+	
+</head>
+
+<body>
+<div th:insert="headerImage"></div>
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+
+	<div class="container">
+		<form id="searchKhsnoForm" name="searchKhsnoForm" method="post" style="margin-bottom: 0%;height: 40%;"
+			th:action="@{./RepsearchFormbykhSNO}">
+			<br>
+			<div class="ecropCardRbk2">
+		<h5 style="background-color:#006400;color: white;font-weight:bolder;font-size:large;margin-left:20%;text-align: center;width:80%"  >
+					Search Details By Khata/Survey No</h5>					
+				
+				
+				<div class="mb-3" style="margin-left:35%;margin-top:7%" >
+					<label for="name" style="width: 30%;">Crop Year:</label>
+					<select id="crYear" name="crYear" class="form-select" aria-label="Crop Year" style="width: 50%;">
+						<option value="0">---Select---</option>
+						<option th:each="emp : ${activeseason}" th:value="${emp.seasonvalue}" th:text="${emp.cropyear}">
+						</option>
+					</select>
+				</div>
+				<div class="mb-3" style="margin-left:35%;"  >
+					<label for="name" style="width: 30%;"> Village:</label>
+
+					<select id="vcode" name="vcode" class="form-select" aria-label="Select Village"
+						onchange="return perdetails();" style="width: 50%;">
+						<option value="0">---Select---</option>
+
+						<option th:each="village : ${villname}" th:value="${village.vcode}"
+							th:text="${village.wbvname}">
+							Village Name</option>
+					</select>
+				</div>
+				<div class="mb-3" style="margin-left:35%;">
+					<label for="name" style="width: 30%;"> Search By:</label>
+
+					<select id="searchParam" name="searchParam" class="form-select" onchange="show_hide_textfield()" style="width: 50%;">
+						<option value="0" th:text="'----Select----'">----Select----</option>
+						<option value="1" th:text="'Survey No'">Survey No/LP No</option>
+						<option value="2" th:text="'Khata No'">Khata No</option>
+					</select>
+				</div>
+				<div id="tr_khno_bkid" class="mb-3" style="margin-left:35%;display: none;">
+					<label for="khno" style="width: 30%;">Enter Khata No: </label>
+					<input type="text" id="khno" name="khno" style="width: 50%;"><br><br>
+				</div>
+
+				<div id="tr_surveyno" class="mb-3" style="margin-left:35%;display: none;" >
+					<label for="surveyno" style="width: 30%;">Enter Survey No/LP No: </label>
+					<input type="text" id="surveyno" name="surveyno" style="width: 50%;"><br><br>
+				</div>
+				<div align="center" style="margin-left:25%;" >
+					<button type="submit" class="btn btn-success "
+						onclick="return validateForm()">Submit</button>
+					<!--				<button type="button" class="btn btn-primary btn-block">Back</button>-->
+				</div>
+			</div>
+			<!--			<h5 style="font-size:20px" colspan="20" class="heading" align="center">Search Details By Khata/Survey No-->
+			<!--				&nbsp;&nbsp; &nbsp;&nbsp;</h5>-->
+
+			<div align="center" id="divPrint"
+				style="overflow-x: scroll; overflow-y: scroll;max-width: 100%;max-height: 100lvh;margin-top: 2%;">
+				<table id="tableStkId" align="center" class="table table-striped border border-secondary">
+					<thead>
+			<h5 style="font-size:20px;background-color: #dfffe1;" colspan="20" class="heading1" align="center">
+			CropYear: <span th:text=${cropyear}></span>&numsp;&numsp;     Season: <span th:text="${season} == 'K' ? 'Kharif' : (${season} == 'R' ? 'Rabi' : (${season} == 'S' ? 'Summer' : ' '))"></span>&numsp;&numsp;  
+			  Village:<span th:text=${vname}></span>&numsp;&numsp;    Search By: <span th:switch=${searchParam}> <p th:case="1">Survey No</p> <p th:case="2">Khata No</p>	</span>  		
+	SurveyNo:  <span th:text=${surveyno}></span>&numsp;&numsp;  KhataNo: <span th:text=${khno}></span>&numsp;&numsp;</h5>			
+							
+						<tr>
+							<th> <b> S.No </b> </th>
+							<th> <b> Mandal </b> </th>
+							<th> <b> Village </b> </th>
+							<th> <b> Farmer Name </b> </th>
+							<th> <b>Father Name </b> </th>
+							<th> <b> Owner / Cultivator </b> </th>
+							<th> <b> Khatha Number</b> </th>
+							<th> <b>Survey No/LP No </b> </th>
+							<th> <b> Crop Name</b> </th>
+							<th> <b> Mobile</b> </th>
+						</tr>
+					</thead>
+					<tbody id="databody">
+						<tr th:each="bean,row: ${list}">
+							<td th:text="${row.index+1}" />
+							<td th:text="${bean.wbmname}" />
+							<td th:text="${bean.Wbvname}" />
+							<td th:text="${bean.Oc_name}" />
+							<td th:text="${bean.Oc_fname}" />
+							<td th:text="${bean.Owner_tenant}=='O'? 'Owner':'Cultivator' " />
+							<!-- <td th:text="${bean.Owner_tenant}" />-->
+							<td th:text="${bean.Kh_no}" />
+							<td th:text="${bean.Cr_sno}" />
+							<td th:text="${bean.Cropname}" />
+							<td th:text="${bean.Mobileno}" />
+						</tr>
+					</tbody>
+				</table>
+
+				<div th:if="${NoRecordsFound}" align="center">
+					<b style="font-size:18px;">---- No Records found-----</b>
+				</div>
+			</div>
+	</form>
+		</div>
+
+	<div align="center" style="color:black">
+		<input class="btn btn-success" name="ctl00$ContentPlaceHolder1$btnPrint" type="button"
+			id="ctl00_ContentPlaceHolder1_btnPrint" onClick="javascript:CallPrint('divPrint')" value="Print">
+		<input class="btn btn-success" type="button" onclick="tableToExcel('tableStkId', 'Abstract')" value="Excel">
+		<!--  <input  class="btn btn-primary" type="button" value="Back" onclick="goBack()" /> -->
+
+	</div>
+</body>
+<script>
+		function CallPrint(strid) {
+			var prtContent = document.getElementById(strid);
+			var mywindow = window.open('', '', 'left=0,top=0,width=950,height=600,toolbar=1,scrollbars=1,status=1,addressbar=0');
+			var is_chrome = Boolean(mywindow.chrome);
+			mywindow.document.write(prtContent.innerHTML);
+			mywindow.document.close(); // necessary for IE >= 10 and necessary before onload for chrome
+
+			if (is_chrome) {
+				mywindow.onload = function () { // wait until all resources loaded 
+					mywindow.focus(); // necessary for IE >= 10
+					mywindow.print(); // change window to mywindow
+					mywindow.close(); // change window to mywindow
+				};
+			} else {
+				mywindow.document.close(); // necessary for IE >= 10
+				mywindow.focus(); // necessary for IE >= 10
+				mywindow.print();
+				mywindow.close();
+			}
+
+			return true;
+		}
+
+	
+		var tableToExcel = (function () {
+			var uri = 'data:application/vnd.ms-excel;base64,'
+				, template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table align="center">{table}</table></body></html>'
+				, base64 = function (s) {
+					return window.btoa(unescape(encodeURIComponent(s)))
+				}
+				, format = function (s, c) {
+					return s.replace(/{(\w+)}/g, function (m, p) {
+						return c[p];
+					})
+				}
+			return function (table, name) {
+				if (!table.nodeType)
+					table = document.getElementById(table)
+				var ctx = {worksheet: name || 'Worksheet', table: table.innerHTML}
+				window.location.href = uri + base64(format(template, ctx))
+			}
+		})()
+	
+		$(function () {
+			onload();
+		});
+		function onload() {
+			show_hide_textfield();
+		}
+		function show_hide_textfield() {
+			var searchParam = document.searchKhsnoForm.searchParam.value;
+			document.getElementById("tr_khno_bkid").style.display = "none";
+			document.getElementById("tr_surveyno").style.display = "none";
+
+			if (searchParam == "1") {
+				document.getElementById("tr_khno_bkid").style.display = "none";
+				document.getElementById("tr_surveyno").style.display = "";
+			} else if (searchParam == "2") {
+				document.getElementById("tr_khno_bkid").style.display = "";
+				document.getElementById("tr_surveyno").style.display = "none";
+				document.getElementById("khno").innerHTML = "Enter Khata No.";
+			}
+
+		}
+	
+	
+		function validateForm() {
+			var cropyear = document.getElementById("crYear").value;
+			var vcode = document.getElementById("vcode").value;
+			var srchParam = document.getElementById("searchParam").value;
+			var khataNo = $('#khno').val();
+			var surveyNo = $('#surveyno').val();
+			// Check if both fields are selected			
+			if (cropyear == 0 && vcode == 0 && srchParam == 0) {
+				alert("Please select Crop Year, Village,Search By.");
+				return false; // Prevent form submission
+			}
+			else if (cropyear == 0) {
+				alert("Please Select Crop Year");
+				return false;
+			} else if (vcode == 0) {
+				alert("Please Select Village");
+				return false;
+			} else if (srchParam == 0) {
+				alert("Please Select Search By");
+				return false;
+			} else if (srchParam == 1) {
+				if (surveyNo === "") {
+					alert("Please Select surveyNo");
+					return false;
+
+				}
+			} else if (srchParam == 2) {
+
+				if (khataNo === "") {
+					alert("Please Select Khata No");
+					return false;
+				}
+			} else {
+				return true;
+			}
+			
+		}
+
+	</script>
+</html>

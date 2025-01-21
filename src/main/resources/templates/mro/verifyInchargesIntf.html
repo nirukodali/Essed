@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+	<title>Verify Incharges Interface</title>
+</head>
+<style>
+	.heading {
+		text-align: center;
+		margin-top: 20px;
+	}
+
+	.heading p {
+		color: green;
+		font-size: 24px;
+		font-weight: bold;
+	}
+
+	.table-container {
+		margin: 20px auto;
+		width: 90%;
+		/* Adjust width as needed */
+	}
+
+	.table-container table {
+		width: 100%;
+		table-layout: fixed;
+	}
+
+	th,
+	td {
+		text-align: center;
+	}
+
+	.btn-submit {
+		margin-top: 20px;
+		text-align: center;
+	}
+</style>
+
+<body>
+	<div th:insert="headerImage"></div>
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+	<div th:insert="header"></div>
+	
+	<div class="heading" colspan="9">
+		<p>Approve Incharge <span th:text="${label}"></span> Aadhaar Details</p>
+	</div>
+
+	<div class="table-container">
+		<form id="agencyAllocForm" name="agencyAllocForm" action="/apprInchargeSave" method="post">
+			<table class="table table-striped table-bordered">
+				<thead class="thead-dark">
+					<tr>
+						<!-- Checkbox in the header to select all checkboxes -->
+						<th><input type="checkbox" id="checkedAll" /></th>
+						<th>S.No.</th>
+						<th>Userid</th>
+						<th>Aadhaar No</th>
+						<th>Mobile No</th>
+					</tr>
+				</thead>
+				<tbody>
+					<!-- Loop through your data to display rows -->
+					<tr th:each="incharge, rowStat : ${incharges}">
+						<!-- Checkbox in each row -->
+						<td><input type="checkbox" class="checkRow" /></td>
+						<td th:text="${rowStat.index + 1}">1</td>
+						<td th:text="${incharge.userid}">User</td>
+						<td th:if="${#strings.length(incharge.tempuid) >= 1}" th:text="'XXXXXXXX' + ${#strings.substring(incharge.tempuid, 8, 12)}">Aadhaar</td>
+						 
+						<td th:text="${incharge.mobile_phone}">Mobile</td>
+						<!-- Hidden fields for additional data -->
+						<input type="hidden" th:id="'rbkusrs' + ${rowStat.index}" th:name="rbkusrs"
+							th:value="${incharge.userid}" />
+						<input type="hidden" th:id="'uuid' + ${rowStat.index}" th:name="uuid"
+							th:value="${incharge.tempuid}" />
+						<input type="hidden" th:id="'phoneNo' + ${rowStat.index}" th:name="phoneNo"
+							th:value="${incharge.mobile_phone}" />
+					</tr>
+				</tbody>
+			</table>
+
+			<!-- Hidden fields to store selected data -->
+			<input type="hidden" id="param" name="param" th:value="${incharges.size()}" />
+			<input type="hidden" id="rBkusers" name="rBkusers" />
+			<input type="hidden" id="userUids" name="userUids" />
+			<input type="hidden" id="phoneNumbers" name="phoneNumbers" />
+
+			<!-- Button to submit the form -->
+			<div class="btn-submit">
+				<button type="button" class="btn btn-primary" onclick="submitClosure()">Submit</button>
+			</div>
+		</form>
+
+		<!-- Include jQuery and Bootstrap JS -->
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="text/javascript" th:src="@{/js/jquery.js}"></script>
+		<script>
+			$(document).ready(function () {
+				// When the "Select All" checkbox in the table header is clicked
+				$("#checkedAll").change(function () {
+					// Set the state of all checkboxes in the table rows to match the header checkbox
+					$(".checkRow").prop("checked", this.checked);
+				});
+
+				// When a checkbox in a row is clicked
+				$(".checkRow").change(function () {
+					// Check if all checkboxes are checked
+					var allChecked = true;
+					$(".checkRow").each(function () {
+						if (!$(this).prop("checked")) {
+							allChecked = false;
+						}
+					});
+					// Update the state of the header checkbox based on the checkboxes in the rows
+					$("#checkedAll").prop("checked", allChecked);
+				});
+			});
+
+			// Function to submit the form
+			function submitClosure() {
+				var rbkusers = [];
+				var userUids = [];
+				var phoneNumbers = [];
+
+				// Iterate over checked checkboxes and collect data
+				$(".checkRow:checked").each(function () {
+					var $row = $(this).closest("tr");
+					rbkusers.push($row.find("[name='rbkusrs']").val());
+					userUids.push($row.find("[name='uuid']").val());
+					phoneNumbers.push($row.find("[name='phoneNo']").val());
+				});
+
+				// Convert arrays to comma-separated strings
+				var rbkusersStr = rbkusers.join(",");
+				var userUidsStr = userUids.join(",");
+				var phoneNumbersStr = phoneNumbers.join(",");
+
+				// Prepare data for submission
+				var formData = {
+					userid: rbkusersStr,
+					tempuid: userUidsStr,
+					mobile_phone: phoneNumbersStr
+				};
+
+				// AJAX request to submit the form data
+				$.ajax({
+					url: "./rest/api/apprInchargeSave",
+					type: "POST",
+					contentType: "application/json",
+					data: JSON.stringify(formData),
+					success: function (response) {
+						console.log("Response from server:", response);
+						alert(response); // Show the response message
+						// You can update the page content or redirect as needed
+						location.reload();
+					},
+					error: function (xhr, status, error) {
+						// Handle errors
+						console.error("An error occurred:", error);
+						alert("An error occurred while submitting the form: " + error);
+					}
+				});
+			}
+		</script>
+</body>
+
+</html>

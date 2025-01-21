@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>crpMao</title>
+<!--	<link rel="stylesheet" href="./styles/reportstylesheet.css" />-->
+<head th:insert="header"></head>
+<div th:insert="headerImage"></div>
+<div th:insert="navBarTop"></div>
+<div th:insert="headerMessage"></div>
+<!--<script-->
+<!--	src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>-->
+<!--<link rel="stylesheet"-->
+<!--	href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">-->
+<!--<script-->
+<!--	src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.slim.min.js"></script>-->
+<!--<script-->
+<!--	src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>-->
+<!--<script-->
+<!--	src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>-->
+<!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>-->
+
+<script>
+	function CallPrint(strid) {
+		var prtContent = document.getElementById(strid);
+		var mywindow = window
+				.open(
+						'',
+						'',
+						'left=0,top=0,width=950,height=600,toolbar=1,scrollbars=1,status=1,addressbar=0');
+		var is_chrome = Boolean(mywindow.chrome);
+		mywindow.document.write(prtContent.innerHTML);
+		mywindow.document.close(); // necessary for IE >= 10 and necessary before onload for chrome
+
+		if (is_chrome) {
+			mywindow.onload = function() { // wait until all resources loaded 
+				mywindow.focus(); // necessary for IE >= 10
+				mywindow.print(); // change window to mywindow
+				mywindow.close(); // change window to mywindow
+			};
+		} else {
+			mywindow.document.close(); // necessary for IE >= 10
+			mywindow.focus(); // necessary for IE >= 10
+			mywindow.print();
+			mywindow.close();
+		}
+
+		return true;
+	}
+</script>
+<script language="javascript">
+	var tableToExcel = (function() {
+		var uri = 'data:application/vnd.ms-excel;base64,', template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table align="center">{table}</table></body></html>', base64 = function(
+				s) {
+			return window.btoa(unescape(encodeURIComponent(s)))
+		}, format = function(s, c) {
+			return s.replace(/{(\w+)}/g, function(m, p) {
+				return c[p];
+			})
+		}
+		return function(table, name) {
+			if (!table.nodeType)
+				table = document.getElementById(table)
+			var ctx = {
+				worksheet : name || 'Worksheet',
+				table : table.innerHTML
+			}
+			window.location.href = uri + base64(format(template, ctx))
+		}
+	})()
+</script>
+
+</head>
+<script>
+	$(document).ready(function() {
+		$("#databody").empty();
+				$("#loadingsign").hide();
+				$("#loadingsign").show();
+				var wbdcode = $("#inputwbdcode").val();
+				var wbmcode = $("#inputwbmcode").val();
+				//var cropYear = $("#cropyear").val();
+				
+				var data = {};
+				
+				data['wbdcode'] = wbdcode;
+				data['wbmcode'] = wbmcode;
+				//data['cropyear'] = cropYear;
+				
+				
+				$.ajax({
+					type : "post",
+					url : "./utilMao/supvill",
+					contentType : 'application/json',
+					data : JSON.stringify(data),
+					cache : false,
+					timeout : 600000,
+					success : function(resp) {
+				if(resp.length==0){
+								alert('No Records Found')
+							}
+						$("#loadingsign").hide();
+						$("#databody").empty();
+						var sno = 0; 
+						
+ 					var dao_allotted_total = 0, dao_approved_total = 0, dao_rejected_total = 0, dao_updated_total = 0,
+							dho_allotted_total = 0, dho_approved_total = 0, dho_rejected_total = 0, dho_updated_total = 0,
+							rdo_allotted_total = 0, rdo_approved_total = 0, rdo_rejected_total = 0, rdo_updated_total = 0,
+							ada_allotted_total = 0, ada_approved_total = 0, ada_rejected_total = 0, ada_updated_total = 0,
+							tah_allotted_total = 0, tah_approved_total = 0, tah_rejected_total = 0, tah_updated_total = 0,
+							mao_allotted_total = 0, mao_approved_total = 0, mao_rejected_total = 0, mao_updated_total = 0,
+							ho_allotted_total = 0, ho_approved_total = 0, ho_rejected_total = 0, ho_updated_total = 0,
+							dc_allotted_total = 0, dc_approved_total = 0, dc_rejected_total = 0, dc_updated_total = 0,
+							jc_allotted_total = 0, jc_approved_total = 0, jc_rejected_total = 0, jc_updated_total = 0,
+							hod_allotted_total = 0, hod_approved_total = 0, hod_rejected_total = 0, hod_updated_total = 0;
+ 						 
+ 						 
+ 						 var percentagedao1 = 0, percentageada1 = 0, percentagemao1 = 0, percentagedho1 = 0,
+							percentageho1 = 0, percentagerdo1 = 0, percentagetah1 = 0, percentagejc1 = 0,
+							percentagedc1 = 0, percentagehod1 = 0;
+ 						 
+						for (var j = 0; j < resp.length; j++) {
+							sno = sno + 1;
+							var bean = resp[j];
+							
+							
+							var dao_allotted = parseInt(bean.dao_allotted, 10),
+								dao_approved = parseInt(bean.dao_approved, 10),
+								dao_rejected = parseInt(bean.dao_rejected, 10),
+								dao_updated = parseInt(bean.dao_updated, 10),
+
+								dho_allotted = parseInt(bean.dho_allotted, 10),
+								dho_approved = parseInt(bean.dho_approved, 10),
+								dho_rejected = parseInt(bean.dho_rejected, 10),
+								dho_updated = parseInt(bean.dho_updated, 10),
+
+								rdo_allotted = parseInt(bean.rdo_allotted, 10),
+								rdo_approved = parseInt(bean.rdo_approved, 10),
+								rdo_rejected = parseInt(bean.rdo_rejected, 10),
+								rdo_updated = parseInt(bean.rdo_updated, 10),
+
+								ada_allotted = parseInt(bean.ada_allotted, 10),
+								ada_approved = parseInt(bean.ada_approved, 10),
+								ada_rejected = parseInt(bean.ada_rejected, 10),
+								ada_updated = parseInt(bean.ada_updated, 10),
+
+								tah_allotted = parseInt(bean.tah_allotted, 10),
+								tah_approved = parseInt(bean.tah_approved, 10),
+								tah_rejected = parseInt(bean.tah_rejected, 10),
+								tah_updated = parseInt(bean.tah_updated, 10),
+
+								mao_allotted = parseInt(bean.mao_allotted, 10),
+								mao_approved = parseInt(bean.mao_approved, 10),
+								mao_rejected = parseInt(bean.mao_rejected, 10)
+								mao_updated = parseInt(bean.mao_updated, 10),
+
+								ho_allotted = parseInt(bean.ho_allotted, 10),
+								ho_approved = parseInt(bean.ho_approved, 10),
+								ho_rejected = parseInt(bean.ho_rejected, 10),
+								ho_updated = parseInt(bean.ho_updated, 10),
+
+								dc_allotted = parseInt(bean.dc_allotted, 10),
+								dc_approved = parseInt(bean.dc_approved, 10),
+								dc_rejected = parseInt(bean.dc_rejected, 10),
+								dc_updated = parseInt(bean.dc_updated, 10),
+
+								jc_allotted = parseInt(bean.jc_allotted, 10),
+								jc_approved = parseInt(bean.jc_approved, 10),
+								jc_rejected = parseInt(bean.jc_rejected, 10),
+								jc_updated = parseInt(bean.jc_updated, 10),
+
+								hod_allotted = parseInt(bean.hod_allotted, 10),
+								hod_approved = parseInt(bean.hod_approved, 10),
+								hod_rejected = parseInt(bean.hod_rejected, 10),
+								hod_updated = parseInt(bean.hod_updated, 10);
+
+								// Function to calculate percentage
+								function calculatePercentage1(part, total) {
+									return total > 0 ? ((part / total) * 100).toFixed(2) : 0;
+								}
+						var hod_percentage1 = calculatePercentage1(hod_allotted,hod);
+						var dao_percentage1 = calculatePercentage1(dao_allotted,dao);
+						var ada_percentage1 = calculatePercentage1(ada_allotted,ada);
+						var mao_percentage1 = calculatePercentage1(mao_allotted,mao);
+						var dho_percentage1 = calculatePercentage1(dho_allotted,dho);
+						var ho_percentage1 = calculatePercentage1(ho_allotted,ho);
+						var rdo_percentage1 = calculatePercentage1(rdo_allotted,rdo);
+						var tah_percentage1 = calculatePercentage1(tah_allotted,tah);
+						var dc_percentage1 = calculatePercentage1(dc_allotted,dc);
+						var jc_percentage1 = calculatePercentage1(jc_allotted,jc);
+						
+							
+							hod_allotted_total += hod_allotted;
+							hod_approved_total += hod_approved;
+							hod_rejected_total += hod_rejected;
+							hod_updated_total += hod_updated;
+							percentagehod1 += parseInt(hod_percentage1);
+
+							dao_allotted_total += dao_allotted;
+							dao_approved_total += dao_approved;
+							dao_rejected_total += dao_rejected;
+							dao_updated_total += dao_updated;
+							percentagedao1 += parseInt(dao_percentage1);
+							
+							ada_allotted_total += ada_allotted;
+							ada_approved_total += ada_approved;
+							ada_rejected_total += ada_rejected;
+							ada_updated_total += ada_updated;
+							percentageada1 += parseInt(ada_percentage1);
+
+							mao_allotted_total += mao_allotted;
+							mao_approved_total += mao_approved;
+							mao_rejected_total += mao_rejected;
+							mao_updated_total += mao_updated;
+							percentagemao1 += parseInt(mao_percentage1);
+							
+							dho_allotted_total += dho_allotted;
+							dho_approved_total += dho_approved;
+							dho_rejected_total += dho_rejected;
+							dho_updated_total += dho_updated;
+							percentagedho1 += parseInt(dho_percentage1);
+							
+							ho_allotted_total += ho_allotted;
+							ho_approved_total += ho_approved;
+							ho_rejected_total += ho_rejected;
+							ho_updated_total += ho_updated;
+							percentageho1 += parseInt(ho_percentage1);
+
+							
+							rdo_allotted_total += rdo_allotted;
+							rdo_approved_total += rdo_approved;
+							rdo_rejected_total += rdo_rejected;
+							rdo_updated_total += rdo_updated;
+							percentagerdo1 += parseInt(rdo_percentage1);
+							
+							tah_allotted_total += tah_allotted;
+							tah_approved_total += tah_approved;
+							tah_rejected_total += tah_rejected;
+							tah_updated_total += tah_updated;
+							percentagetah1 += parseInt(tah_percentage1);
+
+							
+							dc_allotted_total += dc_allotted;
+							dc_approved_total += dc_approved;
+							dc_rejected_total += dc_rejected;
+							dc_updated_total += dc_updated;
+							percentagedc1 += parseInt(dc_percentage1);
+
+							
+							jc_allotted_total += jc_allotted;
+							jc_approved_total += jc_approved;
+							jc_rejected_total += jc_rejected;
+							jc_updated_total += jc_updated;
+							percentagejc1 += parseInt(jc_percentage1);
+
+							
+							
+							
+							 
+								
+								
+								
+							var granddao = 0,grandada =0,grandmao = 0,granddho = 0,grandho = 0,grandrdo = 0,grandtah = 0,
+								grandjc = 0,granddc = 0,grandhod = 0;
+							
+							
+							var dao = parseInt(bean.dao_approved) + parseInt(bean.dao_rejected) + parseInt(bean.dao_updated);
+							var ada = parseInt(bean.ada_approved) + parseInt(bean.ada_rejected) + parseInt(bean.ada_updated);
+							var mao = parseInt(bean.mao_approved) + parseInt(bean.mao_rejected) + parseInt(bean.mao_updated);
+							var dho = parseInt(bean.dho_approved) + parseInt(bean.dho_rejected) + parseInt(bean.dho_updated);
+							var ho = parseInt(bean.ho_approved) + parseInt(bean.ho_rejected) + parseInt(bean.ho_updated);
+							var rdo = parseInt(bean.rdo_approved) + parseInt(bean.rdo_rejected) + parseInt(bean.rdo_updated);
+							var tah = parseInt(bean.tah_approved) + parseInt(bean.tah_rejected) + parseInt(bean.tah_updated);
+							var jc = parseInt(bean.jc_approved) + parseInt(bean.jc_rejected) + parseInt(bean.jc_updated);
+							var dc = parseInt(bean.dc_approved) + parseInt(bean.dc_rejected) + parseInt(bean.dc_updated);
+							var hod = parseInt(bean.hod_approved) + parseInt(bean.hod_rejected) + parseInt(bean.hod_updated);
+							
+							 granddao = (parseInt(granddao) + parseInt(dao)).toFixed(2);
+							 grandada = (parseInt(grandada) + parseInt(ada)).toFixed(2);
+							 grandmao = (parseInt(grandmao) + parseInt(mao)).toFixed(2);
+							 granddho = (parseInt(granddho) + parseInt(dho)).toFixed(2);
+							 grandho = (parseInt(grandho) + parseInt(ho)).toFixed(2);
+							 grandrdo = (parseInt(grandrdo) + parseInt(rdo)).toFixed(2);
+							 grandtah = (parseInt(grandtah) + parseInt(tah)).toFixed(2);
+							 grandjc = (parseInt(grandjc) + parseInt(jc)).toFixed(2);
+							 granddc = (parseInt(granddc) + parseInt(dc)).toFixed(2);
+							 grandhod = (parseInt(grandhod) + parseInt(hod)).toFixed(2);
+							
+							
+						let hod_allotted_value  = parseInt(bean.hod_allotted) || 0;
+ 						let hod_value  =parseInt(hod) || 0; 
+ 						let hod_percentage = hod_allotted_value ? ((hod_value / hod_allotted_value) * 100) : '0.00';
+ 						
+ 						let dao_allotted_value  = parseInt(bean.dao_allotted) || 0;
+ 						let dao_value  =parseInt(dao) || 0; 
+ 						let dao_percentage = dao_allotted_value ? ((dao_value / dao_allotted_value) * 100).toFixed(2) : '0.00';
+ 						
+ 						let ada_allotted_value  = parseInt(bean.ada_allotted) || 0;
+ 						let ada_value  =parseInt(ada) || 0; 
+ 						let ada_percentage = ada_allotted_value ? ((ada_value / ada_allotted_value) * 100).toFixed(2) : '0.00';
+ 						
+ 						let mao_allotted_value  = parseInt(bean.mao_allotted) || 0;
+ 						let mao_value  =parseInt(mao) || 0; 
+ 						let mao_percentage = mao_allotted_value ? ((mao_value / mao_allotted_value) * 100).toFixed(2) : '0.00';
+ 						
+ 						let dho_allotted_value  = parseInt(bean.dho_allotted) || 0;
+ 						let dho_value  =parseInt(dho) || 0; 
+ 						let dho_percentage = dho_allotted_value ? ((dho_value / dho_allotted_value) * 100).toFixed(2) : '0.00';
+ 						
+ 						
+ 						let ho_allotted_value  = parseInt(bean.ho_allotted) || 0;
+ 						let ho_value  =parseInt(ho) || 0; 
+ 						let ho_percentage = ho_allotted_value ? ((ho_value / ho_allotted_value) * 100).toFixed(2) : '0.00';
+ 						
+ 						let rdo_allotted_value  = parseInt(bean.rdo_allotted) || 0;
+ 						let rdo_value  =parseInt(rdo) || 0; 
+ 						let rdo_percentage = rdo_allotted_value ? ((rdo_value / rdo_allotted_value) * 100).toFixed(2) : '0.00';
+ 						
+ 						let tah_allotted_value  = parseInt(bean.tah_allotted) || 0;
+ 						let tah_value  =parseInt(tah) || 0; 
+ 						let tah_percentage = tah_allotted_value ? ((ho_value / tah_allotted_value) * 100).toFixed(2) : '0.00';
+ 						
+ 						let dc_allotted_value  = parseInt(bean.dc_allotted) || 0;
+ 						let dc_value  =parseInt(dc) || 0; 
+ 						let dc_percentage = dc_allotted_value ? ((dc_value / dc_allotted_value) * 100).toFixed(2) : '0.00';
+ 						
+ 						let jc_allotted_value  = parseInt(bean.jc_allotted) || 0;
+ 						let jc_value  =parseInt(jc) || 0; 
+ 						let jc_percentage = jc_allotted_value ? ((jc_value / jc_allotted_value) * 100).toFixed(2) : '0.00';
+ 						
+ 						
+ 						
+ 						
+							
+							$("#databody").append('<tr style="fontsize:200px; font-weight: 0;">'
+											+ '<td align="center">' + sno + '</td>'
+											+ '<td align="left">'+ bean.wbvname + '</td>'
+											+ '<td align="right">'+ bean.hod_allotted + '</td>' 
+											+ '<td align="right">'+ bean.hod_approved + '</td>'
+											+ '<td align="right">'+ bean.hod_rejected + '</td>'
+											+ '<td align="right">'+ bean.hod_updated + '</td>'
+											+ '<td align="right">'+ hod + '</td>'
+											+ '<td align="right">'+ hod_percentage + '%</td>'
+
+											
+											+ '<td align="right">'+ bean.dao_allotted + '</td>'
+											+ '<td align="right">'+ bean.dao_approved + '</td>'
+											+ '<td align="right">'+ bean.dao_rejected + '</td>'
+											+ '<td align="right">'+ bean.dao_updated + '</td>'
+											+ '<td align="right">'+ dao + '</td>'
+											+ '<td align="right">'+ dao_percentage + '%</td>'
+											
+											+ '<td align="right">'+ bean.ada_allotted + '</td>'
+											+ '<td align="right">'+ bean.ada_approved + '</td>'
+											+ '<td align="right">'+ bean.ada_rejected + '</td>'
+											+ '<td align="right">'+ bean.ada_updated + '</td>'
+											+ '<td align="right">'+ ada + '</td>'
+											+ '<td align="right">'+ ada_percentage + '%</td>'
+											
+											+ '<td align="right">'+ bean.mao_allotted + '</td>'
+											+ '<td align="right">'+ bean.mao_approved + '</td>'
+											+ '<td align="right">'+ bean.mao_rejected + '</td>'
+											+ '<td align="right">'+ bean.mao_updated + '</td>'
+											+ '<td align="right">'+ mao + '</td>'
+											+ '<td align="right">'+ mao_percentage + '%</td>'
+											
+											+ '<td align="right">'+ bean.dho_allotted + '</td>'
+											+ '<td align="right">'+ bean.dho_approved + '</td>'
+											+ '<td align="right">'+ bean.dho_rejected + '</td>'
+											+ '<td align="right">'+ bean.dho_updated + '</td>'
+											+ '<td align="right">'+ dho + '</td>'
+											+ '<td align="right">'+ dho_percentage + '%</td>'
+											
+											+ '<td align="right">'+ bean.ho_allotted + '</td>'
+											+ '<td align="right">'+ bean.ho_approved + '</td>'
+											+ '<td align="right">'+ bean.ho_rejected + '</td>'
+											+ '<td align="right">'+ bean.ho_updated + '</td>'
+											+ '<td align="right">'+ ho + '</td>'
+											+ '<td align="right">'+ ho_percentage + '%</td>'
+											
+											+ '<td align="right">'+ bean.rdo_allotted + '</td>'
+											+ '<td align="right">'+ bean.rdo_approved + '</td>'
+											+ '<td align="right">'+ bean.rdo_rejected + '</td>'
+											+ '<td align="right">'+ bean.rdo_updated + '</td>'
+											+ '<td align="right">'+ rdo + '</td>'
+											+ '<td align="right">'+ rdo_percentage + '%</td>'
+											
+											+ '<td align="right">'+ bean.tah_allotted + '</td>'
+											+ '<td align="right">'+ bean.tah_approved + '</td>'
+											+ '<td align="right">'+ bean.tah_rejected + '</td>'
+											+ '<td align="right">'+ bean.tah_updated + '</td>'
+											+ '<td align="right">'+ tah + '</td>'
+											+ '<td align="right">'+ tah_percentage + '%</td>'
+											
+											+ '<td align="right">'+ bean.dc_allotted + '</td>'
+											+ '<td align="right">'+ bean.dc_approved + '</td>'
+											+ '<td align="right">'+ bean.dc_rejected + '</td>'
+											+ '<td align="right">'+ bean.dc_updated + '</td>'
+											+ '<td align="right">'+ dc + '</td>'
+											+ '<td align="right">'+ dc_percentage + '%</td>'
+											
+											+ '<td align="right">'+ bean.jc_allotted + '</td>'
+											+ '<td align="right">'+ bean.jc_approved + '</td>'
+											+ '<td align="right">'+ bean.jc_rejected + '</td>'
+											+ '<td align="right">'+ bean.jc_updated + '</td>'
+											+ '<td align="right">'+ jc + '</td>'
+											+ '<td align="right">'+ jc_percentage + '%</td>'
+											+ '</tr>');
+						}
+						$("#databody").append('<tr style="fontsize:200px; font-weight: bold;">'
+								+ '<td colspan = "2"><b>TOTAL</b></td>'
+								+ '<td align="right">' + hod_allotted_total + '</td>'
+								+ '<td align="right">' + hod_approved_total + '</td>'
+								+ '<td align="right">' + hod_rejected_total + '</td>'
+								+ '<td align="right">' + hod_updated_total + '</td>'
+								+ '<td align="right">'+grandhod + '</td>'
+							+ '<td>' + (percentagehod1 / sno).toFixed(2) + '%' + '</td>'
+
+								
+								+ '<td align="right">' + dao_allotted_total + '</td>'
+								+ '<td align="right">' + dao_approved_total + '</td>'
+								+ '<td align="right">' + dao_rejected_total + '</td>'
+								+ '<td align="right">' + dao_updated_total + '</td>'
+								+ '<td align="right">'+granddao + '</td>'
+							+ '<td>' + (percentagedao1 / sno).toFixed(2) + '%' + '</td>'
+
+
+								
+								+ '<td align="right">' + ada_allotted_total + '</td>'
+								+ '<td align="right">' + ada_approved_total + '</td>'
+								+ '<td align="right">' + ada_rejected_total + '</td>'
+								+ '<td align="right">' + ada_updated_total + '</td>'
+								+ '<td align="right">'+grandada + '</td>'
+							+ '<td>' + (percentageada1 / sno).toFixed(2) + '%' + '</td>'
+
+								
+								+ '<td align="right">' + mao_allotted_total + '</td>'
+								+ '<td align="right">' + mao_approved_total + '</td>'
+								+ '<td align="right">' + mao_rejected_total + '</td>'
+								+ '<td align="right">' + mao_updated_total + '</td>'
+								+ '<td align="right">'+grandmao + '</td>'
+							+ '<td>' + (percentagemao1 / sno).toFixed(2) + '%' + '</td>'
+
+								
+								+ '<td align="right">' + dho_allotted_total + '</td>'
+								+ '<td align="right">' + dho_approved_total + '</td>'
+								+ '<td align="right">' + dho_rejected_total + '</td>'
+								+ '<td align="right">' + dho_updated_total + '</td>'
+								+ '<td align="right">'+granddho + '</td>'
+							+ '<td>' + (percentagedho1 / sno).toFixed(2) + '%' + '</td>'
+
+								
+								+ '<td align="right">' + ho_allotted_total + '</td>'
+								+ '<td align="right">' + ho_approved_total + '</td>'
+								+ '<td align="right">' + ho_rejected_total + '</td>'
+								+ '<td align="right">' + ho_updated_total + '</td>'
+								+ '<td align="right">'+grandho + '</td>'
+							+ '<td>' + (percentageho1 / sno).toFixed(2) + '%' + '</td>'
+
+								
+								+ '<td align="right">' + rdo_allotted_total + '</td>'
+								+ '<td align="right">' + rdo_approved_total + '</td>'
+								+ '<td align="right">' + rdo_rejected_total + '</td>'
+								+ '<td align="right">' + rdo_updated_total + '</td>'
+								+ '<td align="right">'+grandrdo + '</td>'
+							+ '<td>' + (percentagerdo1 / sno).toFixed(2) + '%' + '</td>'
+								
+								+ '<td align="right">' + tah_allotted_total + '</td>'
+								+ '<td align="right">' + tah_approved_total + '</td>'
+								+ '<td align="right">' + tah_rejected_total + '</td>'
+								+ '<td align="right">' + tah_updated_total + '</td>'
+								+ '<td align="right">'+grandtah + '</td>'
+							+ '<td>' + (percentagetah1 / sno).toFixed(2) + '%' + '</td>'
+
+								
+								+ '<td align="right">' + dc_allotted_total + '</td>'
+								+ '<td align="right">' + dc_approved_total + '</td>'
+								+ '<td align="right">' + dc_rejected_total + '</td>'
+								+ '<td align="right">' + dc_updated_total + '</td>'
+								+ '<td align="right">'+granddc + '</td>'
+							+ '<td>' + (percentagedc1 / sno).toFixed(2) + '%' + '</td>'
+
+								
+								+ '<td align="right">' + jc_allotted_total + '</td>'
+								+ '<td align="right">' + jc_approved_total + '</td>'
+								+ '<td align="right">' + jc_rejected_total + '</td>'
+								+ '<td align="right">' + jc_updated_total + '</td>'
+								+ '<td align="right">'+grandjc + '</td>'
+							+ '<td>' + (percentagejc1 / sno).toFixed(2) + '%' + '</td>'
+
+							+'</tr>')
+					}
+				});
+			
+
+	});
+	
+	function goBack(){
+		window.location.href="./home";
+		}
+	
+   </script>
+    
+<style>
+    #ObjEntryTable {
+     border-collapse: separate;
+	border-spacing: 0 0.5em;
+
+    }
+      
+        .scrollable-container {
+            white-space: nowrap; /* Prevent text from wrapping */
+            overflow-x: auto; /* Enable horizontal scrollbar */
+            border: 1px solid #ddd; /* Optional border for visual clarity */
+        }
+    </style>
+<body>
+
+	<div class="heading" colspan="20" style="text-align: center;font-size:25px"><b> Village-Wise Report On Progress in Supervisory Check- Agri-Horti& Revenue Departments</b></div>
+	<p th:text="${msg}"></p>
+
+<input type="hidden" id="inputwbdcode" th:value="${#session.getAttribute('wbdcode')}" />
+<input type="hidden" id="inputwbmcode" th:value="${#session.getAttribute('wbmcode')}" />
+<input type="hidden" id="inputuserid" th:value="${#session.getAttribute('userid')}" />
+	<div id="loadingsign">
+		<div class="d-flex justify-content-center">
+			<div class="spinner-border" role="status">
+				<span class="sr-only">Loading...</span>
+			</div>
+		</div>
+	</div>
+	 <div class="scrollable-container">
+	<div align="center">
+		<form>
+			<table id="ObjEntryTable" style="font-size: inherit !important; border-radius: 10px;">
+<!-- 				<tr style="padding-left:450px;"> -->
+<!-- 					<td  align="right" width="30%"><b>Crop Year <font -->
+<!-- 							color="red">*</font></b></td> -->
+
+<!-- 					<td align="left"><select id="cropyear" name="cropyear" -->
+<!-- 						style="width: 200px" > -->
+<!-- 							<option value="">-------Select-------</option> -->
+<!-- 					</select></td> -->
+<!-- 				</tr> -->
+				
+				
+			</table>
+<!-- 			<div colspan="3" align="center" -->
+<!-- 				style="padding-top: 10px; padding-bottom: 10px;"> -->
+<!-- 				<button type="button" id="btnSubmit" class="btn btn-success" -->
+<!-- 					value="Submit" onclick="return getData();">Submit</button> -->
+<!-- 			</div> -->
+		</form>
+	</div>
+	<div >
+		<form id="unlockreport" name="unlockreport" method="post">
+			<div align="center" id="divPrint" class="table table-hover table table-striped">
+				<table id="tableStkId" align="center" style="text-align: center;width:1000px">
+					<thead>
+					    <tr>
+                            <th colspan="2"></th>
+                            <th colspan="20" >AGRICULTURE</th>
+                            <th colspan="20"> HORTICULTURE</font></th>
+                            <th colspan="20">REVENUE</th>
+                            
+
+                        </tr>
+                       <tr>       
+                            <th colspan="2">Supervisory Officer</th>
+                            <th colspan="6" >HOD</th>  
+                            <th colspan="6" >DAO</th> 
+                            <th colspan="6" >ADA</th>
+                            <th colspan="6" >MAO</th>
+                            <th colspan="6" >DHO</th> 
+                            <th colspan="6" >HO</th>
+                            <th colspan="6" >RDO</th> 
+                            <th colspan="6" >TAH</th>           
+                            <th colspan="6" > DC </th>
+                            <th colspan="6" > JC </th>
+                        </tr>
+                        <tr>
+                            <th > <b> S.No. </b> </th>
+                            <th > <b> Village </b> </th>
+                            <th> <b> Allotted</b> </th>
+                            <th> <b> Accepted </th>
+                            <th> <b> Rejected </th>
+                            <th> <b> Updated </th>
+                            <th> <b> Total </th>
+                            <th> <b> % </th>
+                            
+                            <th> <b> Allotted</b> </th>
+                            <th> <b> Accepted </th>
+                            <th> <b> Rejected </th>
+                            <th> <b> Updated </th>
+                            <th> <b> Total </th>
+                            <th> <b> % </th>
+                            
+                            <th> <b> Allotted</b> </th>
+                            <th> <b> Accepted </th>
+                            <th> <b> Rejected </th>
+                            <th> <b> Updated </th>
+                            <th> <b> Total </th>
+                            <th> <b> % </th>
+                            
+                            <th> <b> Allotted</b> </th>
+                            <th> <b> Accepted </th>
+                            <th> <b> Rejected </th>
+                            <th> <b> Updated </th>
+                            <th> <b> Total </th>
+                            <th> <b> % </th>
+                            
+                            <th> <b> Allotted</b> </th>
+                            <th> <b> Accepted </th>
+                            <th> <b> Rejected </th>
+                            <th> <b> Updated </th>
+                            <th> <b> Total </th>
+                            <th> <b> % </th>
+							   
+                            <th> <b> Allotted</b> </th>
+                            <th> <b> Accepted </th>
+                            <th> <b> Rejected </th>
+                            <th> <b> Updated </th>
+                            <th> <b> Total </th>
+                            <th> <b> % </th>
+                             
+                            <th> <b> Allotted</b> </th>
+                            <th> <b> Accepted </th>
+                            <th> <b> Rejected </th>
+                            <th> <b> Updated </th>
+                            <th> <b> Total </th>
+                            <th> <b> % </th>
+                             
+                            <th> <b> Allotted</b> </th>
+                            <th> <b> Accepted </th>
+                            <th> <b> Rejected </th>
+                            <th> <b> Updated </th>
+                            <th> <b> Total </th>
+                            <th> <b> % </th>
+                             
+                            <th> <b> Allotted</b> </th>
+                            <th> <b> Accepted </th>
+                            <th> <b> Rejected </th>
+                            <th> <b> Updated </th>
+                            <th> <b> Total </th>
+                            <th> <b> % </th>
+                               
+                            <th> <b> Allotted</b> </th>
+                            <th> <b> Accepted </th>
+                            <th> <b> Rejected </th>
+                            <th> <b> Updated </th>
+                            <th> <b> Total </th>
+                            <th> <b> % </th>
+
+                        </tr>
+					</thead>
+					<tbody id="databody">
+					</tbody>
+				</table>
+			</div>
+		</form>
+		<div align="center" style="color: black; margin-top: 20px;">
+			<input class="btn btn-success"
+				name="ctl00$ContentPlaceHolder1$btnPrint" type="button"
+				id="ctl00_ContentPlaceHolder1_btnPrint"
+				onClick="javascript:CallPrint('divPrint')" value="Print"> <input
+				class="btn btn-success" type="button"
+				onclick="tableToExcel('tableStkId', 'Abstract')" value="Excel">
+	<input  class="btn btn-success" type="button" value="Back" onclick="goBack()" />
+		</div>
+	</div>
+	</div>
+	</div>
+</body>
+
+</html>

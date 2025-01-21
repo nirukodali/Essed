@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="header">
+
+<meta charset="UTF-8">
+<title>Horti Crops</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!--	 Your custom styles -->
+<!--<link rel="stylesheet" type="text/css" href="css/style.css">-->
+
+<!--		Bootstrap and related scripts-->
+<!--<link-->
+<!--	href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"-->
+<!--	rel="stylesheet">-->
+
+<!--	 ajax/jquery -->
+<!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>-->
+
+</head>
+
+<body>
+	<div th:insert="header"></div>
+	<div th:insert="headerImage"></div>
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+
+	<form>
+		<div
+			style="display: flex; justify-content: center; width: 100%; margin-top: 10px">
+			<div>
+				<table id="customers" class="table table-striped table-hover">
+			<thead>
+				<tr style="background-color: #04AA6D;">
+                        <th class="text-center"> <b> SI.No </b> </th>             
+                        <th class="text-center"> <b> Crop Name </b> </th>                                                         
+                        <th class="text-center"> <b>Crop-Nature</b> </th> 
+                    </tr>
+			</thead>
+			<tbody>
+<!--				 Iterate over crop groups and generate table rows with serial numbers -->
+				<tr th:each="horti, stat : ${horticrops}">
+					<td th:text="${stat.index + 1}" class="text-center"></td>
+					<td th:text="${horti.cropname}" class="text-center"></td>
+					<td th:text="${horti.cropnature}" class="text-center"></td>
+				</tr>
+				
+			</tbody>
+		</table>
+		</div>
+		</div>
+
+	</form>
+
+	<div th:if="${message}" class="alert alert-danger" role="alert">
+		<span th:text="${message}"></span>
+	</div>
+	
+	<div
+		style="display: flex; justify-content: center; width: 100%; margin-top: 1px">
+		<input type="button" value="Go Back" onclick="goBack()" class="btn btn-success" />
+	</div>
+	
+
+<script>
+	function goBack() {
+            window.location.href = "./distwisestatusrepforallcrops"; // Replace "/home" with your home page URL if it's different
+        }
+</script>
+
+</body>
+
+</html>
+

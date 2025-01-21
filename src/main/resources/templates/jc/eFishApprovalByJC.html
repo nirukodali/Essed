@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="header">
+	
+	
+<body>
+	<div th:insert="headerImage"></div>
+
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+
+<title>EFishApprovalByJC</title>
+
+<script>
+	
+	function validateVillage(selectElement) {
+        var selectedOption = selectElement.options[selectElement.selectedIndex];
+
+        if (selectedOption.value === '0' || selectedOption.text === '---Select Village---') {
+            selectElement.setCustomValidity('Please select a valid Village');
+        } else {
+            selectElement.setCustomValidity('');
+        }
+    }
+	
+    function onGrievChk(a,b){
+		
+	var flag = false;
+	var apprsts = b;
+	
+    var OccupantName = document.getElementById("OccupantName"+a).value;
+    
+    var OccupantFName = document.getElementById("OccupantFName"+a).value;
+    
+    var KhathaNo = document.getElementById("KhathaNo"+a).value;
+    
+    var SurveyNo = document.getElementById("SurveyNo"+a).value;
+    
+    var OccupantExtent = document.getElementById("OccupantExtent"+a).value;
+    
+    var MappedExtent = document.getElementById("MappedExtent"+a).value;
+    
+    var AllowableExtent = document.getElementById("AllowableExtent"+a).value;
+    
+    var ReqExtent = document.getElementById("ReqExtent"+a).value;
+    
+    var SugExtent = document.getElementById("SugExt"+a).value;
+    
+    var Remarks = document.getElementById("Remarks"+a).value;
+    
+    var Recid = document.getElementById("RecId"+a).value;
+    
+    var vCode = document.getElementById("VillageCode"+a).value;
+    
+    
+    if (apprsts === 'A') {
+        if (confirm("The details are verified by me and are found correct") === true) {
+            flag = true;
+        } else {
+            return false;
+        }
+
+    } else if (apprsts === 'R') {
+        if (confirm("The details are verified by me and are found incorrect") === true) {
+			if (document.getElementById("Remarks"+a).value == null || document.getElementById("Remarks"+a).value == "") {
+				alert("Please Enter Remarks");
+				return false;
+			} else {
+				flag = true;
+			}
+        } else {
+            return false;
+        }
+
+    }
+    if (flag === true) { 
+		
+    			document.getElementById("RecIdOrg").value = Recid;
+				document.getElementById("OccupantNameOrg").value = OccupantName;
+				document.getElementById("OccupantFNameOrg").value = OccupantFName;
+				document.getElementById("KhathaNoOrg").value = KhathaNo;
+				document.getElementById("SurveyNoOrg").value = SurveyNo;
+				document.getElementById("OccupantExtentOrg").value = OccupantExtent;
+				document.getElementById("MappedExtentOrg").value = MappedExtent;
+				document.getElementById("AllowableExtentOrg").value = AllowableExtent;
+				document.getElementById("ReqExtentOrg").value = ReqExtent;
+				document.getElementById("SugExtentOrg").value = SugExtent;
+				document.getElementById("RemarksOrg").value = Remarks;
+				document.getElementById("VillageOrg").value = vCode;
+				
+				document.getElementById("approvalStsOrg").value = apprsts;
+				
+				 var sendData = {
+					 
+					 	 RecIdOrg : Recid,
+				    		
+						 OccupantNameOrg : OccupantName,
+						 OccupantFNameOrg : OccupantFName,
+						 KhathaNoOrg : KhathaNo,
+						 SurveyNoOrg : SurveyNo,
+						 OccupantExtentOrg : OccupantExtent,
+						 MappedExtentOrg : MappedExtent,
+						 AllowableExtentOrg : AllowableExtent,
+						 ReqExtentOrg : ReqExtent,
+						 SugExtentOrg : SugExtent,
+						 RemarksOrg : Remarks,
+						 VillageOrg : vCode,
+						 
+						 approvalStsOrg : apprsts,
+							
+						};
+						// alert(JSON.stringify(sendData));
+						$.ajax({
+							type : 'POST',
+							url : './saveEFishDetailsByJC',
+							data : JSON.stringify(sendData),
+							contentType : 'application/json',
+							success : function(response) {
+								alert(response);
+							//	alert('Data Inserted and Updated successfully');
+								window.location.href = "eFishApprovalByJC";
+							//	window.location.reload();
+							},
+							error : function(error) {
+								console.error('Error sending data:', error);
+							}
+						});
+    }
+
+    return false;
+
+	
+}
+
+</script>
+
+</head>
+
+
+<style>
+table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+table, th, td {
+	border: 1px solid black;
+}
+
+th {
+	background-color: #e8e8e8;
+	color: black;
+	text-align: center;
+	font-weight: bold; /* Set font weight to bold */
+}
+
+td {
+	text-align: center;
+}
+
+.table-heading {
+	background-color: #3498db;
+	text-align: center;
+	width: 90%; /* Set the same width as the table */
+	margin: 0 auto; /* Center the paragraph */
+	padding: 10px; /* Add some padding for better appearance */
+	color: white; /* Set text color to white */
+	font-weight: bold; /* Set font weight to bold */
+}
+</style>
+<style>
+	
+	select.form-select option[value="0"] {
+	text-align: left;
+}
+
+.form-container {
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	margin-bottom: 15px;
+	position: relative;
+}
+
+.centered-button {
+	display: block;
+	margin: 0 auto;
+	text-align: center;
+	background-color: #3498db; /* Change background color to blue */
+	color: white; /* Set text color to white */
+	padding: 10px 20px; /* Add padding for better appearance */
+	border: none; /* Remove default button border */
+	border-radius: 5px; /* Add some border radius for a rounded look */
+	cursor: pointer; /* Show pointer cursor on hover */
+	font-weight: bold
+}
+.btnCss {
+            background-color: #4CAF50;
+            border: none;
+            color: black;
+            padding:10px 40px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 14px;
+            margin: 10px 5px;
+            cursor: pointer;
+        }
+.rejbtnCss {
+            background-color: red;
+            border: none;
+            color: black;
+            padding: 10px 40px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 14px;
+            margin: 10px 5px;
+            cursor: pointer;
+        }
+/* Additional style for hover effect */
+.centered-button:hover {
+	background-color: darkblue; /* Change background color on hover */
+}
+</style>
+
+<body style="background-color: #e8e8e8;">
+	<form id="maoVerifyForm" name="maoVerifyForm" method="post">
+		
+            <table id="tableStkId" style="width:70%" align="center">
+				<thead>
+					<tr><b><center><h2>Final Approval for Enabling e -Fish Records for Crop Booking During Kharif-2024</h2></center></b></tr>
+					
+				    <th>S.No.</th>
+				    <th> District </th>
+				    <th> Mandal </th>
+				    <th> Village </th>
+				    <th> Cultivator Name </th> 
+                    <th> Cultivator </br> Father </br> Name </th>
+                    <th> Khata No </th>
+                    <th> Survey No/LP No </th>
+                    <th> Occupant Extent </th>
+                    <th> Mapped Extent </th>
+                    <th> Allowable Extent as per e-Fish</th>
+                    <th> Requested by VAA ,<br> verified and recommended extent by MAO & DAO  </th> 
+                    <th> DFO Suggested Extent </th>
+                    <th> Approve </th> 
+                    <th> Reject </th>
+                    <th> Re-Marks </th>
+                    
+                    
+             </thead>       
+				
+				<tr th:each="data, rowstat : ${dataList}">
+				
+				
+					<td th:text="${rowstat.index + 1}"></td>
+					
+					<input type="hidden" th:id="'RecId'+${rowstat.index}" th:name="RecId" th:value="${data.RecID}">
+					
+					<td th:text="${data.DistName}"></td>
+					<input type="hidden" th:id="'District'+${rowstat.index}" th:name="District" th:value="${data.DistCode}">
+				
+					<td th:text="${data.MandName}"></td>
+					<input type="hidden" th:id="'Mandal'+${rowstat.index}" th:name="Mandal" th:value="${data.MandCode}">
+					
+					<td th:text="${data.VName}"></td>
+					<input type="hidden" th:id="'VillageCode'+${rowstat.index}" th:name="VillageCode" th:value="${data.VCode}">
+				
+					<td th:text="${data.Occupant_Name}"></td>
+					<input type="hidden" th:id="'OccupantName'+${rowstat.index}" th:name="OccupantName" th:value="${data.Occupant_Name}">
+					
+					<td th:text="${data.Occupant_FName}"></td>
+					<input type="hidden" th:id="'OccupantFName'+${rowstat.index}" th:name="OccupantFName" th:value="${data.Occupant_FName}">
+					
+					<td th:text="${data.KhathaNo}"></td> 
+					<input type="hidden" th:id="'KhathaNo'+${rowstat.index}" th:name="KhathaNo" th:value="${data.KhathaNo}">
+					
+					<td th:text="${data.SurveyNo}"></td>
+					<input type="hidden" th:id="'SurveyNo'+${rowstat.index}" th:name="SurveyNo" th:value="${data.SurveyNo}">
+					
+					<td th:text="${data.Occupant_Extent}"></td>
+					<input type="hidden" th:id="'OccupantExtent'+${rowstat.index}" th:name="OccupantExtent" th:value="${data.Occupant_Extent}">
+					
+					<td th:text="${data.Mapped_Extent}"></td>
+					<input type="hidden" th:id="'MappedExtent'+${rowstat.index}" th:name="MappedExtent" th:value="${data.Mapped_Extent}">
+					
+					<td th:text="${data.Allowable_Ext}"></td>
+					<input type="hidden" th:id="'AllowableExtent'+${rowstat.index}" th:name="AllowableExtent" th:value="${data.Allowable_Ext}">
+					
+					<td th:text="${data.ReqExt}"></td>
+					<input type="hidden" th:id="'ReqExtent'+${rowstat.index}" th:name="ReqExtent" th:value="${data.ReqExt}">
+					
+					<td th:text="${data.DFO_SugExt}"></td>
+					<input type="hidden" th:id="'SugExt'+${rowstat.index}" th:name="SugExt" th:value="${data.DFO_SugExt}">
+					
+					<td align="left">
+						<a th:onclick="' return onGrievChk(\'' + ${rowstat.index} + '\', \'' + A + '\')'">
+							<button align="left" class="btnCss">ACCEPT </button>
+						</a>
+					</td>
+					
+					<td align="left">
+						<a th:onclick="' return onGrievChk(\'' + ${rowstat.index} + '\', \'' + R + '\')'">
+							<button align="left" class="rejbtnCss">REJECT</button>
+						</a>
+					</td>
+					
+					<td><input type="text" th:id="'Remarks' + ${rowstat.index}" th:name="Remarks" th:value="${Remarks}" /></td>
+					
+				</tr>
+                
+
+		</tbody>
+		</table>
+		<input type="hidden" th:id="RecIdOrg" th:name="RecIdOrg" />
+		
+		<input type="hidden" th:id="OccupantNameOrg" th:name="OccupantNameOrg" />
+		<input type="hidden" th:id="OccupantFNameOrg" th:name="OccupantFNameOrg"  />
+		<input type="hidden" th:id="KhathaNoOrg" th:name="KhathaNoOrg"  />
+		<input type="hidden" th:id="SurveyNoOrg" th:name="SurveyNoOrg"  />
+		<input type="hidden" th:id="OccupantExtentOrg" th:name="OccupantExtentOrg"  />
+		<input type="hidden" th:id="MappedExtentOrg" th:name="MappedExtentOrg"  />
+		<input type="hidden" th:id="AllowableExtentOrg" th:name="AllowableExtentOrg"  />
+		<input type="hidden" th:id="ReqExtentOrg" th:name="ReqExtentOrg"  />
+		<input type="hidden" th:id="SugExtentOrg" th:name="SugExtentOrg"  />
+		<input type="hidden" th:id="RemarksOrg" th:name="RemarksOrg"  />
+		<input type="hidden" th:id="VillageOrg" th:name="VillageOrg"  />
+		
+		<input type="hidden" th:id="approvalStsOrg" th:name="approvalStsOrg"  />
+    
+    <div>
+    	<span th:utext="${msg}"></span>
+    </div>
+    
+</form>
+
+</body>
+
+</html>

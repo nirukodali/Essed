@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="header"></head>
+
+<body>
+	<div th:insert="headerImage"></div>
+
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+
+	<div class="container">
+		<section class="content" style="padding-top: 1px;">
+			<div class="row topformcontent">
+				<div class="col-md-12">
+					<div class="box box-solid box-patent" style="margin-top: 5px;margin-bottom: 10px;">
+						<div class="box-header">
+							<div class="row">
+								<div class="col-md-12">
+									<div class="col-md-6">
+										<label class="box-title">
+											<span style="font-size: 16px; color:black;font-weight: bold;padding-top:5px;">Selection Of Khata
+												No For Add/Update Cultivator</span>
+										</label>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="box-body" style="padding-left: 10x0px ; height: auto;">
+							<div class="row">
+ 								<div class="col-md-3"> 
+ 										<label><b> Select Village : </b></label> 
+ 									<div class="col-md-7"> 
+ 										<div class="form-group" style="margin-bottom: 5px;"> 
+ 											<div class="input-group"> 
+ 												<select class="form-control" id="village" name="village" required> 
+													<option value="" disabled selected>Select Village</option>
+ 													<option th:each="vill : ${vill}" th:value="${vill.vcode}" 
+ 														th:text="${vill.wbvname}" > 
+ 													</option> 
+ 												</select> 
+ 												<span id="dropdownError" style="color: red;"></span> 
+ 											</div> 
+ 										</div> 
+ 									</div> 
+ 								</div> 
+<!--								<div class="col-md-3">-->
+<!--									<div class="col-md-5">-->
+<!-- 										<label>Search By</label> -->
+<!--									</div>-->
+<!--									<div class="col-md-7">-->
+<!--										<div class="form-group" style="margin-bottom: 5px;">-->
+<!--											<div class="input-group">-->
+<!-- 												<select class="form-control" id="searchParam" name="searchParam" style="width: 190px"> -->
+<!-- 													<option value="khNo" selected>Katha No</option> -->
+<!-- 												</select> -->
+<!-- <label> -->
+<!-- <span style="font-size: large;"><b>Khata No</b></span> -->
+<!-- </label> -->
+<!--											</div>-->
+<!--										</div>-->
+<!--									</div>-->
+<!--								</div>-->
+								
+									<div class="col-md-7">
+										<div class="form-group" style="margin-bottom: 5px;">
+										
+											<div class="input-group" style="margin-top: 4%;">
+											
+											<label><b>Search Katha No : </b></label>
+												<input style="width:120px;margin-left: 20px" type="text" name="fromKhno" id="fromKhnoId" 
+													onkeypress="return ValidateNum(event);" maxlength="12" required>
+												<button style="margin-left: 50px" type="button" class="btn btn-primary" id="searchId"
+														onclick="searchData()"
+														title="Search Opposition Details">Search</button>
+													<!--<button style="margin-left: 20px" type="button" class="btn btn-warning" id="resetId"
+														title="To reset all the details">Reset</button>-->
+											</div>
+										</div>
+										
+									</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+	</div>
+
+	<form action="/cultivator" method="GET">
+		<input type=hidden th:value="${session.wbdcode}" th:id="wbdcode" />
+		<input type="hidden" th:value="${session.wbmcode}" th:id="wbmcode" />
+		<input type="hidden" th:value="${session.wbvcode}" th:id="wbvcode" />
+		<input type="hidden" th:value="${session.userid}" th:id="userid" />
+		<input type="hidden" th:value="${session.dcode}" th:id="dcode" />
+		<input type="hidden" th:value="${session.mcode}" th:id="mcode" />
+		
+		</form>
+
+	<div class="container" id="contentDivId"></div>
+
+	<div th:insert="rbkroles/cultivatorModal"></div>
+	
+<!--  	<div th:insert="ccrcModal"></div>  -->
+
+	<div th:insert="rbkroles/ownerOrEnjoyerModal"></div>
+	<div th:insert="rbkroles/cultivatorROFRModal"></div>
+
+	
+</body>
+
+</html>

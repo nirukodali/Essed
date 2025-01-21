@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head inset="header">
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+	<link rel="stylesheet" href="styles/reportstylesheet.css">
+	<title>Social Audit Crop Pattern</title>
+<!--	<script src="js/jquery.js"></script>-->
+<!--	<script src="js/jquery-ui.js"></script>-->
+<!--	<script type="text/javascript" src="<%=request.getContextPath()%>/js/req.js"></script>-->
+	<link rel="stylesheet" href="styles/reportstylesheet.css">
+<!--<script src="./js/jquery-3.7.0.js"></script> -->
+<!--	 <script src="./js/jquery-3.7.1.js"></script>  -->
+<!--	<script src="./js/jquery-3.6.0.min.js"></script>-->
+
+	
+<!--	<script src="./js/popper.min.js"></script>-->
+<!--	<script src="./js/alertify.min.js"></script>-->
+<!--	<script src="./js/nprogress.min.js"></script>-->
+<!--	<script src="./js/sweetalert2.all.min.js"></script>-->
+<!--	<script src="./js/bootstrap.bundle.min.js"></script>-->
+<!--	<script src="./js/jquery.dataTables.min.js"></script>-->
+<!--	<script src="./js/dataTables.bootstrap5.min.js"></script>-->
+
+<!--	<script src="./js/custom/ecropCultivator.js"></script>-->
+<!--	<link rel="stylesheet" type="text/css" href="./css/style.css" /> -->
+	
+	
+<!--	   csrf -->
+	
+<!--	<meta name="_csrf" th:content="${_csrf.token}"/>-->
+<!--    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>-->
+
+	<link rel="stylesheet"  type="text/css" href="./css/nprogress.min.css" />
+	<link rel="stylesheet"  type="text/css" href="./css/font-awesome.css" />
+	<link rel="stylesheet"  type="text/css" href="./css/sweetalert2.min.css" />
+	<link rel="stylesheet"  type="text/css" href="./css/bootstrap.min.css">
+	<link rel="stylesheet"  type="text/css" href="./css/dataTables.bootstrap5.min.css">
+	<link rel="stylesheet"  type="text/css" href="./css/alertify.min.css" />
+	<style>
+		.webland-container-new {
+			text-align: center;
+			margin-bottom: 5px;
+		}
+		.input-buttons-container {
+  margin-top: 50px; /* Adjust this value to your preference */
+}
+
+.input-buttons-container input[type="button"] {
+  margin-top: 5px; /* Adjust this value to add some space between the buttons */
+}
+
+		.box-container {
+			border: 1px solid rgb(255, 128, 64);
+			border-radius: 4px;
+			padding: 15px;
+			box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+			cursor: pointer;
+		}
+
+		h5 {
+			color: #007bff;
+			margin-bottom: 5px;
+		}
+
+		label {
+			font-weight: bold;
+			display: block;
+			margin-bottom: 5px;
+		}
+
+		select,
+		input {
+			width: 90%;
+			padding: 10px;
+			margin-bottom: 10px;
+			box-sizing: border-box;
+			border: 1px solid #ced4da;
+			border-radius: 1px;
+			background-color: #fff;
+		}
+
+		.mb-3 {
+			margin-bottom: 5px;
+		}
+
+		input[type="button"] {
+			background-color: #007bff;
+			color: #fff;
+			font-size: 14px;
+		}
+
+		.heading-container {
+			background-color: rgb(251, 254, 194);
+			color: rgb(0, 0, 0);
+			font-weight: bold;
+			padding: 10px;
+		}
+
+		.action-button {
+			background-color: #007bff;
+			color: #fff;
+			font-size: 14px;
+			padding: 10px;
+			cursor: pointer;
+		}
+
+		#btnRefresh {
+			background-color: #28a745;
+			color: #fff;
+			font-size: 14px;
+			padding: 10px;
+			cursor: pointer;
+		}
+	</style>
+	<script>
+		
+
+
+		function show_hide_textfield() {
+			var searchParam = document.editCrBookingForm.searchParam.value;
+			$('#tr_surveyno').hide();
+			$('#tr_khno_bkid').hide();
+			$('#tr_aadharno').hide();
+			$('#surveyno').val("");
+			$('#khno_bkid').val("");
+			$('#aadharno').val("");
+			if (searchParam == "1") {
+				$('#tr_surveyno').show();
+			} else if (searchParam == "2") {
+				$('#tr_khno_bkid').show();
+			} else if (searchParam == "3") {
+				$('#tr_aadharno').show();
+			}
+		}
+
+		function fetchData() {
+			if ($('#cropyear').val() === "") {
+				alert("Please Select CropYear");
+				return false;
+			}
+			if ($('#vcode').val() === "") {
+				alert("Please Select Village");
+				return false;
+			}
+			var searchParam = $('#searchParam').val();
+			var surveyno = $('#surveyno').val();
+			var applictionId = document.getElementById("appId").value;
+			if (applictionId === null || applictionId === "") {
+				alert("Please Enter Applicant Id");
+				return false;
+			} else if (applictionId === "0") {
+				alert("Applicant Id cannot be empty ");
+				return false;
+			}
+			var applictionMob = document.getElementById("appMob").value;
+			if (applictionMob === null || applictionMob === "") {
+				alert("Please Enter Applicant Mobile No");
+				return false;
+			} else if (applictionMob === "0") {
+				alert("Applicant Mobile No cannot be empty ");
+				return false;
+			}
+			if (applictionMob == "") {
+				alert("Mobile Number cannot be empty");
+				return false;
+			} else if (applictionMob.length != 10) {
+				alert("Mobile Number Should be 10 digits");
+				return false;
+			} else if (parseInt(applictionMob) == 0) {
+				alert("Mobile Number Should not be 0");
+				return false;
+			} else if (parseInt(applictionMob) <= 6000000000) {
+				alert("Mobile Number Should not start with 5 or less");
+				return false;
+			} else if (parseInt(applictionMob) == 6666666666 || parseInt(applictionMob) == 7777777777 || parseInt(applictionMob) == 8888888888 || parseInt(applictionMob) == 9999999999) {
+				alert("Mobile Number Should not have same 10 digits");
+				return false;
+			}
+			var applictionName = document.getElementById("appName").value;
+			if (applictionName === null || applictionName === "") {
+				alert("Please Enter Applicant Name ");
+				return false;
+			} else if (applictionName === "0") {
+				alert("Applicant Name  cannot be empty ");
+				return false;
+			}
+			var khno_bkid = $('#khno_bkid').val();
+			var aadharno = $('#aadharno').val();
+			if (searchParam === "1") {
+				if (surveyno === null || surveyno === "") {
+					alert("Please Enter SurveyNo");
+					return false;
+				} else if (surveyno === "0") {
+					alert("Survey Number cannot be 0");
+					return false;
+				}
+			} else if (searchParam === "2") {
+				if (khno_bkid === null || khno_bkid === "") {
+					alert("Please Enter Khata Number");
+					return false;
+				} else if (khno_bkid === "0") {
+					alert("Khata Number cannot be 0");
+					return false;
+				}
+			} else if (searchParam === "3") {
+				if (aadharno === null || aadharno === "") {
+					alert("Please Enter Aadhaar Number");
+					return false;
+				} else if (aadharno === "0") {
+					alert("Aadhar Number cannot be 0");
+					return false;
+				}
+			}
+			
+    
+			document.editCrBookingForm.applicaId.value = applictionId;
+			document.editCrBookingForm.applicaMobile.value = applictionMob;
+			document.editCrBookingForm.applicaName.value = applictionName;
+
+// 			document.editCrBookingForm.method = "post";
+// 			document.editCrBookingForm.action = './getcroppatterndata';
+// 			document.editCrBookingForm.submit();
+			return true;
+		}
+
+		setTimeout(function () {
+			$('#tr_msg').hide();
+		}, 4000);
+
+
+		function refreshPage() {
+			location.reload(true);
+		}
+		
+	
+
+	</script>
+</head>
+
+<body>
+	<div th:insert="headerImage"></div>
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+
+	<div class="webland-container-new box-container">
+		<form name="editCrBookingForm" th:action="@{./getcroppatterndata}" method="post">
+			<table style="margin: 0 auto;">
+				<tr>
+					<td colspan="6" class="heading-container">Rabi 2022-23 Mono To Mixed Cropping Pattern Change</td>
+				</tr>
+				<tr id="tr_msg">
+					<td colspan="3" align="center">
+						<font style="color: green;"></font>
+					</td>
+				</tr>
+				<tr>
+					<td class="tdnum" width="50%"><b>Crop Year <font color="red">*</font></b></td>
+					<td>
+						<select id="cropyear" name="cropyear" onchange="fetchVillage()" style="width: 200px">
+							<option value="">---Select---</option>
+							<option th:each="season : ${activeSeasons}" th:value="${season.seasonvalue}"
+								th:text="${season.cropyear}"></option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td class="tdnum" width="50%"> <b> Village <font color="red">*</font></b> </td>
+					<td>
+						<select id="vcode" name="vcode" style="width:200px">
+							<option value="">----Select----</option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td class="tdnum" width="50%"> <b> Cropping Pattern Type <font color="red">*</font></b> </td>
+					<td>
+						<select id="cropTypeId" name="cropTypeId" class="cropTypeId" style="width:200px">
+							<option>---select---</option>
+							<option value="1">Mono To Mixed</option>
+							<!--    <option value="2">Mono To Intercrop</option>
+                                <option value="3">Mixed To Intercrop</option>
+                                <option value="4">Mixed To Mono</option>
+                                <option value="5">Intercrop To Mono</option>
+                                <option value="6">Intercrop To Mixed</option>-->
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td class="tdnum" width="50%"><b>Applicant Name </b>
+						<font color="red">*
+					</td>
+					<td>
+						<input type="text" name="appName" id="appName" maxlength="50" required />
+
+					</td>
+				</tr>
+				<tr>
+					<td class="tdnum" width="50%"><b>Applicant Mobile No</b>
+						<font color="red">*
+					</td>
+					<td>
+						<input type="text" name="appMob" id="appMob" maxlength="10" onkeypress="return ( event.charCode == 8 || event.charCode == 0) || event.charCode == 46 ? null : event.charCode >= 48 && event.charCode <= 57 " required />
+					</td>
+				</tr>
+				<tr>
+					<td class="tdnum" width="50%"><b>Application Serial No </b>
+						<font color="red">*
+					</td>
+					<td>
+						<input type="text" name="appId" id="appId" maxlength="50" onkeypress="return ( event.charCode == 8 || event.charCode == 0) || event.charCode == 46 ? null : event.charCode >= 48 && event.charCode <= 57 " required />
+					</td>
+				</tr>
+				<tr>
+					<td class="tdnum" width="50%"> <b>Search By <font color="red">*</font></b> </td>
+					<td>
+						<select id="searchParam" name="searchParam" style="width: 200px"
+							onchange="show_hide_textfield()">
+							<option value="1">Survey No</option>
+							<option value="2">Khata No</option>
+							<option value="3">Aadhar No</option>
+						</select>
+					</td>
+				</tr>
+				<tr id="tr_surveyno">
+					<td class="tdnum" width="50%"><b>Enter Survey No/LP No <font color="red">*</font></b></td>
+					<td>
+						<input type="text" name="surveyno" id="surveyno" style="width: 200px">
+					</td>
+				</tr>
+				<tr id="tr_khno_bkid" style="display: none;">
+					<td class="tdnum" width="50%"><b><label id="khno_bkid_label">Enter Khata No <font color="red">*
+								</font></label></b></td>
+					<td>
+						<input type="number" name="khno_bkid" id="khno_bkid" style="width: 200px">
+					</td>
+				</tr>
+				<tr id="tr_aadharno" style="display: none;">
+					<td class="tdnum" width="50%"><b>Enter Aadhar No <font color="red">*</font></b></td>
+					<td>
+						<input type="text" name="aadharno" id="aadharno" style="width: 200px">
+					</td>
+				</tr>
+				<tr>
+				<tr>
+				<tr>
+					<td>
+					<td align="center" colspan="2" class="input-buttons-container">
+						<input type="submit" class="btn btn-primary" value="Search" onclick="fetchData()" />
+				
+					
+						<input type="button" id="btnRefresh" class="action-button" value="Refresh"
+							onclick="refreshPage()">
+							</td>
+							</td>
+							
+				</tr>
+			</table>
+			<input type="hidden" id="reqCropyear" name="reqCropyear" />
+			<input type="hidden" id="surveynoId" name="surveynoId" />
+			<input type="hidden" id="applicaId" name="applicaId" />
+			<input type="hidden" id="applicaMobile" name="applicaMobile" />
+			<input type="hidden" id="applicaName" name="applicaName" />
+		</form>
+	</div>
+<!--	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>-->
+<!--	<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>-->
+<!--	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"></script>-->
+
+
+	
+</body>
+<script>
+	
+		function fetchVillage() {
+			var selectedCropYear = $('#cropyear').val();  
+
+			if (selectedCropYear === '') {
+				$('#vcode').empty().append('<option value="" disabled selected>Select VillageName</option>');
+				return;
+			}
+
+			$.ajax({
+				url: './rest/api/cropPattern/getVillages',
+				method: 'GET',
+				data: {cropyear: selectedCropYear},  
+				dataType: 'json',
+				beforeSend: function () {
+				},
+				success: function (response) {
+					var data = response;
+					var str = '<option value="" " style="text-align: center;">Select VillageName</option>';
+					$.each(data, function (index, obj) {
+						str += '<option value="' + obj.vcode + '" style="text-align: center;">' + obj.wbvname + '</option>';
+					});
+					$('#vcode').html(str);
+				},
+				error: function (xhr, status, error) {
+					alert('Technical error. ' + error);
+				},
+			});
+		}
+
+</script>
+</html>

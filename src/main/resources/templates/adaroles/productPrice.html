@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="header"></head>
+
+<!-- jQuery UI CSS (for datepicker style) -->
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+<!-- jQuery library -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- jQuery UI JavaScript -->
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+
+
+<style>
+	#checkboxContainer {
+		max-height: 200px;
+		/* Adjust the height as needed */
+		overflow-y: scroll;
+		/* Enable vertical scrolling */
+		padding: 10px;
+		border: 1px solid #ccc;
+		/* Add border for clarity */
+		background-color: #f9f9f9;
+		/* Optional background color */
+		margin-top: 10px;
+	}
+
+	label {
+		display: block;
+		margin-bottom: 5px;
+		/* Space between checkboxes */
+	}
+
+	input[type="text"] {
+		width: 180px;
+		padding: 5px;
+		font-size: 14px;
+	}
+
+	#ftime,
+	#ttime,
+	#pstime,
+	#pctime,
+	#dstime,
+	#dctime {
+		background-color: #f4f4f4;
+		/* Light background color for visibility */
+		border: 1px solid #ccc;
+		/* Light border for input fields */
+		padding: 5px;
+	}
+
+
+
+	/* Add padding to table headers for spacing */
+	th {
+		padding: 10px;
+		text-align: center;
+		background-color: #006400;
+		color: white;
+	}
+
+	/* Add margin or padding to header title */
+	.heading {
+		margin-bottom: 20px;
+		/* Add some space between the header and table */
+		padding: 15px;
+		font-size: 18px;
+		text-align: center;
+		background-color: #006400;
+		color: white;
+	}
+
+	/* Add padding to table data cells for better readability */
+	td {
+		padding: 8px;
+		text-align: center;
+	}
+
+	/* Optional: Styling for the input fields inside the table */
+	select,
+	input {
+		padding: 5px;
+		font-size: 14px;
+	}
+
+	/* Space for the dropdowns and other form elements */
+	.form-element {
+		margin-bottom: 20px;
+	}
+</style>
+
+<body>
+
+	<div th:insert="headerImage"></div>
+
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+
+	<div align="center">
+
+		<FORM name="f1">
+			<div align="center">
+				<table>
+					<tr>
+						<td colspan="2" class="heading"><b>Seed Variety Prices View/Update/Activate</b></font>
+						</td>
+					</tr>
+					<div>
+						<tr>
+							<td colspan="2" style="padding: 15px; text-align: left; padding-left: 25%;">
+
+								<!-- Season -->
+								<div class="form-group">
+									<b>Season: </b>
+									<select name="season" id="season" style="width: 70%; padding: 8px; font-size: 14px;">
+										<option value="">--Select--</option>
+										<option th:each="seasonValues : ${seasonValues}"
+											th:value="${seasonValues.season}" th:text="${seasonValues.seasonname}">
+										</option>
+									</select>
+								</div>
+							</td>
+						</tr>
+					</div> <br>
+				<tr>
+					<td colspan="2" style="padding: 5px; text-align: left; padding-left: 20%;">
+					<!-- Crop Year -->
+					<div class="form-group">
+						<b>Crop Year: </b>
+						<select name="cropYear" id="cropYear" style="width: 63%; padding: 8px; font-size: 14px; border: 1px solid #ccc;">
+							<option value="">--Select--</option>
+							<option th:each="cropYear : ${cropYear}" th:value="${cropYear.cropyear}"
+								th:text="${cropYear.cropyear}"></option>
+						</select>
+					</div>
+</td>
+				</tr>
+
+					<tr>
+						<td colspan="2" style="padding: 5px; text-align: left; padding-left: 10%;">
+
+						
+					<!-- Product Name -->
+					<div class="form-group">
+						<b>Product Name <font color="red">*</font></b>
+						<select name="pcode" id="pcode" onchange="getspcode()" style="width: 55%; padding: 8px; font-size: 14px;">
+							<option value="">--Select--</option>
+
+							<option th:each="productname : ${productname}" th:value="${productname.productcode}"
+								th:text="${productname.productname}">
+							</option>
+
+						</select>
+					</div>
+</td>
+					</tr>
+					<tr>
+						<td colspan="2" style="padding: 5px; text-align: left; padding-left: 0%;">
+							
+						
+					<!-- Sub Product Name -->
+					<div class="form-group">
+						<b>Sub Product Name <font color="red">*</font></b>
+						<select name="spcode" id="spcode" onchange="VarityName()" style="width: 50%; padding: 8px; font-size: 14px;">
+							<option value="">--Select--</option>
+						</select>
+					</div>
+</td>
+					</tr>
+					
+					<tr>
+						<td colspan="2" style="padding: 5px; text-align: left; padding-left: 0%;">
+					<!-- Seed Variety Name -->
+					<div class="form-group">
+						<b>Seed Variety Name <font color="red">*</font></b>
+						<select name="seedVarity" id="seedVarity" style="width: 50%; padding: 8px; font-size: 14px;">
+							<option value="">--Select--</option>
+						</select>
+					</div>
+					</td>
+					</tr>
+
+					<tr>
+						<td colspan="2" align="center">
+							<input type="button" name="Submit" value="SUBMIT" onclick="productPrices()" />
+						</td>
+					</tr>
+				</table>
+			</div>
+			<table border="1" width="54%" align="Center" height="181">
+
+				<thead>
+					<tr>
+						<th> <input type="checkbox" id="SuperChkbox"> </th>
+						<th>Dist Name</th>
+						<th>Product Name</th>
+						<th>Product price</th>
+						<th>Subsidy Amount</th>
+						<th>Non Subsidy Amount</th>
+						<th>From Date</th>
+						<th>To Date</th>
+						<th>Payment Start Date</th>
+						<th>Payment Close Date</th>
+						<th>Distribution Start Date</th>
+						<th>Distribution Close Date </th>
+						<th>Quantity Per Bag</th>
+						<th>Active</th>
+
+						<th>Active OR InActive</th>
+					</tr>
+				</thead>
+				<tbody id="agencyDetailsTableBody"></tbody>
+
+
+			</table><br>
+			<tr>
+				<td colspan="2" align="center">
+					<input type="button" name="update" value="update" onclick="editPrices()" />
+				</td>
+			</tr>
+		</FORM>
+
+		<script type="text/javascript">
+
+			function getspcode() {
+				// Get the product code from the select input
+				var productCode = $('#pcode').val();  // Using jQuery to get the value
+
+				// Check if productCode is not empty
+				if (productCode) {
+					// Prepare the AJAX request using jQuery's $.ajax()
+					$.ajax({
+						url: './getSubProductPricesAddition',      // The URL to send the request to
+						type: 'GET',                  // HTTP method (GET)
+						data: {productCode: productCode},  // Send productCode as query parameter
+						success: function (response) {
+							// On success, update the subproduct dropdown
+							var subProductSelect = $('#spcode');
+							subProductSelect.empty();  // Clear existing options
+							subProductSelect.append('<option value="">--Select--</option>'); // Add default option
+
+							// Loop through the response (assumed to be an array of subproducts)
+							$.each(response, function (index, subProduct) {
+								// Create a new option for each subproduct
+								subProductSelect.append('<option value="' + subProduct.subproductcode + '">' + subProduct.subproductname + '</option>');
+							});
+						},
+						error: function (xhr, status, error) {
+							alert('Error: ' + error);
+						}
+					});
+				} else {
+					// If no product code selected, clear the subproduct dropdown
+					$('#spcode').empty().append('<option value="">--Select--</option>');
+				}
+			}
+
+			var varietyCode = '';
+			//VarityName
+			function VarityName() {
+				// Get the product code from the select input
+				var subproductCode = $('#spcode').val();  // Using jQuery to get the value
+
+				// Check if productCode is not empty
+				if (subproductCode) {
+					// Prepare the AJAX request using jQuery's $.ajax()
+					$.ajax({
+						url: './getVatietyName',      // The URL to send the request to
+						type: 'GET',                  // HTTP method (GET)
+						data: {subproductCode: subproductCode},  // Send productCode as query parameter
+						success: function (response) {
+							// On success, update the subproduct dropdown
+							var subProductSelect = $('#seedVarity');
+							subProductSelect.empty();  // Clear existing options
+							subProductSelect.append('<option value="">--Select--</option>'); // Add default option
+
+							// Loop through the response (assumed to be an array of subproducts)
+							$.each(response, function (index, subProduct) {
+								// Create a new option for each subproduct
+								subProductSelect.append('<option value="' + subProduct.varietycode + '">' + subProduct.varietyname + '</option>');
+							});
+							if (response.length > 0) {
+								varietyCode = response[0].varietycode;  // Set the variety code from the first response item
+								console.log('Selected variety code:', varietyCode);
+							}
+						},
+						error: function (xhr, status, error) {
+							// Handle any errors that occur during the request
+							alert('Error: ' + error);
+						}
+					});
+				} else {
+					// If no product code selected, clear the subproduct dropdown
+					$('#spcode').empty().append('<option value="">--Select--</option>');
+				}
+			}
+
+
+			function productPrices() {
+				var season = document.getElementById('season').value;
+				//alert(season);
+				var cropyear = document.getElementById('cropYear').value;
+				//alert(cropyear);
+				//var seedvariety = document.getElementById('varietyCode').value;
+				//alert(varietyCode)
+
+				var formData = {
+					seasonname: season,
+					cropyear: cropyear,
+					seedvariety: varietyCode
+				};
+
+				$.ajax({
+					url: './productPrice',
+					type: 'GET',
+					data: formData,
+					dataType: 'json',
+					success: function (response) {
+						if (Array.isArray(response) && response.length > 0) {
+							var tableBody = $('#agencyDetailsTableBody');
+							tableBody.empty(); // Clear existing rows
+
+							$.each(response, function (index, agency) {
+								var row = $('<tr></tr>');
+								var checkboxCell = $('<td></td>');
+								var checkbox = $('<input type="checkbox" class="row-checkbox" data-id="' + agency.id + '">');
+								checkboxCell.append(checkbox);
+								row.append(checkboxCell);
+								row.append('<td class="editable"  data-field="dcode" style="display:none"> ' + (agency.dcode || '') + '</td>');
+								row.append('<td>' + (agency.dname || '') + '</td>');
+								row.append('<td>' + (agency.name || '') + '</td>');
+
+								row.append('<td class="editable"  data-field="product_price">' + (agency.product_price || '') + '</td>');
+
+								row.append('<td class="editable" data-field="subsidy_amt">' + (agency.subsidy_amt || '') + '</td>');
+
+								//row.append('<td class="editable" data-field="nonsubsidy_amt">' + (agency.nonsubsidy_amt || '') + '</td>');
+								row.append('<td class="editable" data-field="nonsubsidy_amt">' + (agency.nonsubsidy_amt ? agency.nonsubsidy_amt.toFixed(2) : '') + '</td>');
+
+								row.append('<td class="editable" data-field="fromdate">' +
+									'<input type="text" value="' + (agency.fromdate || '') + '" disabled> </td>');
+
+								row.append('<td class="editable" data-field="todate">' +
+									'<input type="text" value="' + (agency.todate || '') + '" disabled> </td>');
+
+								row.append('<td class="editable" data-field="payment_from_dt">' +
+									'<input type="text" value="' + (agency.payment_from_dt || '') + '" disabled> </td>');
+
+								row.append('<td class="editable" data-field="payment_close_dt">' +
+									'<input type="text" value="' + (agency.payment_close_dt || '') + '" disabled> </td>');
+
+								row.append('<td class="editable" data-field="dist_from_dt">' +
+									'<input type="text" value="' + (agency.dist_from_dt || '') + '" disabled> </td>');
+
+								row.append('<td class="editable" data-field="dist_close_dt">' +
+									'<input type="text" value="' + (agency.dist_close_dt || '') + '" disabled> </td>');
+
+
+								row.append('<td class="editable" data-field="quantityperbag">' + (agency.quantityperbag || '') + '</td>');
+
+								row.append('<td>' + (agency.active || '') + '</td>');
+
+								row.append('<td><button class="btn ' + (agency.active === 'A' ? 'btn-danger' : 'btn-success') +
+
+									'" data-id="' + agency.dcode + '" data-status="' + agency.active + '">' +
+									(agency.active === 'A' ? 'Inactive' : 'Active') + '</button></td>');
+
+
+								tableBody.append(row);
+							});
+
+							updateSuperCheckbox();
+						} else {
+							alert("No agency details found for the selected Mandal.");
+						}
+					},
+					error: function (xhr, status, error) {
+						console.error("Error fetching agency details:", error);
+						alert("There was an error fetching the agency details.");
+					}
+				});
+			}
+
+
+			// Attach click event
+			$(document).on('click', '.btn', function () {
+
+				var season = document.getElementById('season').value;
+				var cropyear = document.getElementById('cropYear').value;
+				//	var seedvariety = document.getElementById('seedvariety').value;
+				//alert(varietyCode);
+				var dcode = $(this).data('id');
+
+				var currentStatus = $(this).data('status');
+				var newStatus = currentStatus === 'A' ? 'N' : 'A';
+
+				// AJAX request to update the status
+				$.ajax({
+					url: './updateAgencyStatus', // Update with your backend API URL
+					type: 'POST',
+					contentType: 'application/json',
+					data: JSON.stringify({
+						dcode: dcode,
+						status: newStatus,
+						seasonname: season,
+						seedvariety: varietyCode,
+						cropyear: cropyear
+
+
+					}),
+					success: function (response) {
+
+						alert(response);
+						//alert('Status updated successfully!');
+						// Optionally refresh the row or the table
+					},
+					error: function (error) {
+						console.error('Error updating status:', error);
+						alert('Failed to update status.');
+					}
+				});
+			});
+
+			$(document).on('dblclick', '.row-checkbox', function () {
+				var row = $(this).closest('tr');
+				row.find('td.editable input[type="date"]').each(function () {
+					// Only clear the value if it is editable and needed
+					if (!$(this).prop('disabled')) {
+						$(this).val('');
+					}
+				});
+			});
+
+
+			// Existing code...
+			$('#SuperChkbox').on('click', function () {
+				var isChecked = $(this).prop('checked');
+
+				// Select or deselect all checkboxes
+				$('.row-checkbox').prop('checked', isChecked);
+
+				// Trigger row editing for each row checkbox
+				$('.row-checkbox').each(function () {
+					var isChecked = $(this).prop('checked');
+					toggleRowEditing($(this).closest('tr'), isChecked);
+				});
+
+				// Update the master checkbox state
+				updateSuperCheckbox();
+			});
+
+			$('#SuperChkbox').on('click', function () {
+				var isChecked = $(this).prop('checked');
+				$('.row-checkbox').prop('checked', isChecked).trigger('change');
+			});
+
+
+
+
+			$(document).on('change', '.row-checkbox', function () {
+				updateSuperCheckbox();
+				toggleRowEditing($(this).closest('tr'), $(this).prop('checked'));
+			});
+
+			function updateSuperCheckbox() {
+				var totalCheckboxes = $('.row-checkbox').length;
+				var checkedCheckboxes = $('.row-checkbox:checked').length;
+
+				$('#SuperChkbox').prop('checked', totalCheckboxes === checkedCheckboxes);
+
+				$('#SuperChkbox').prop('indeterminate', totalCheckboxes !== checkedCheckboxes && checkedCheckboxes > 0);
+			}
+			/*
+						function toggleRowEditing(row, isChecked) {
+							var cells = row.find('td.editable');
+			
+							if (isChecked) {
+								cells.each(function () {
+									var originalText = $(this).text();
+									var inputField = $(this).find('input');
+									var data = inputField.val();
+									var fieldName = $(this).data('field');
+			
+									if (fieldName === 'fromdate' || fieldName === 'todate' || fieldName === 'payment_from_dt' || fieldName === 'payment_close_dt' || fieldName === 'dist_from_dt' || fieldName === 'dist_close_dt') {
+										var inputField = $('<input type="date" class="edit-input" data-field="' + fieldName + '" value="' + data + '">');
+										$(this).html(inputField);
+									} else {
+										var inputField = $('<input type="text" class="edit-input" data-field="' + fieldName + '" value="' + originalText + '">');
+										$(this).html(inputField);
+									}
+								});
+							} else {
+								cells.each(function () {
+									var inputField = $(this).find('input');
+									var newText = inputField.val();
+									$(this).text(newText);
+			
+			
+								});
+							}
+						}
+			*/
+			/*	function toggleRowEditing(row, isChecked) {
+					var cells = row.find('td.editable');
+	
+					if (isChecked) {
+						cells.each(function () {
+							var inputField = $(this).find('input');
+							var value = inputField.length > 0 ? inputField.val() : $(this).text().trim();
+							var fieldName = $(this).data('field');
+	
+							if (fieldName === 'fromdate' || fieldName === 'todate' || fieldName === 'payment_from_dt' || fieldName === 'payment_close_dt' || fieldName === 'dist_from_dt' || fieldName === 'dist_close_dt') {
+								$(this).html('<input type="text" class="edit-input" data-field="' + fieldName + '" value="' + value + '">');
+							} else {
+								$(this).html('<input type="text" class="edit-input" data-field="' + fieldName + '" value="' + value + '">');
+							}
+						});
+					} else {
+						cells.each(function () {
+							var inputField = $(this).find('input');
+							if (inputField.length > 0) {
+								var value = inputField.val();
+								$(this).text(value);
+							}
+						});
+					}
+				}*/
+
+			function toggleRowEditing(row, isChecked) {
+				var cells = row.find('td.editable');
+
+				if (isChecked) {
+					cells.each(function () {
+						var inputField = $(this).find('input');
+						var value = inputField.length > 0 ? inputField.val() : $(this).text().trim();
+						var fieldName = $(this).data('field');
+
+						if (fieldName === 'fromdate' || fieldName === 'todate' || fieldName === 'payment_from_dt' || fieldName === 'payment_close_dt' || fieldName === 'dist_from_dt' || fieldName === 'dist_close_dt') {
+							$(this).html('<input type="text" class="edit-input datepicker" data-field="' + fieldName + '" value="' + value + '">');
+							// Initialize datepicker
+							$(this).find('.datepicker').datepicker({
+								dateFormat: 'dd/mm/yy', // or your preferred format
+								changeMonth: true,
+								changeYear: true
+							});
+						} else {
+							$(this).html('<input type="text" class="edit-input" data-field="' + fieldName + '" value="' + value + '">');
+						}
+					});
+				} else {
+					cells.each(function () {
+						var inputField = $(this).find('input');
+						if (inputField.length > 0) {
+							var value = inputField.val();
+							$(this).text(value);
+						}
+					});
+				}
+			}
+
+
+
+
+			$('#saveChangesButton').on('click', function () {
+				var selectedIds = [];
+				$('.row-checkbox:checked').each(function () {
+					selectedIds.push($(this).data('id'));
+				});
+
+				var updatedData = [];
+				selectedIds.forEach(function (id) {
+					var row = $('input[data-id="' + id + '"]').closest('tr');
+					var editedRow = {};
+
+					row.find('td.editable').each(function () {
+						var field = $(this).data('field');
+						var value = $(this).find('input').val();
+						editedRow[field] = value;
+					});
+
+					updatedData.push(editedRow);
+
+				});
+
+				console.log(updatedData);
+
+			});
+
+
+			function editPrices() {
+				var updatedData = [];
+
+				$('.row-checkbox:checked').each(function () {
+					var row = $(this).closest('tr');
+					var editedRow = {};
+
+					row.find('td.editable').each(function () {
+						var fieldName = $(this).data('field');
+						var value = '';
+
+						var input = $(this).find('input');
+						if (input.length > 0) {
+							value = input.val();
+						} else {
+							value = $(this).text().trim();
+						}
+
+						editedRow[fieldName] = value;
+					});
+
+
+					updatedData.push(editedRow);
+				});
+
+
+				var season = document.getElementById('season').value;
+
+				var cropyear = document.getElementById('cropYear').value;
+				//	var seedvariety = document.getElementById('seedvariety').value;
+				alert(varietyCode);
+
+				console.log(updatedData)
+				var formData = {
+					seasonname: season,
+					cropYear: cropyear,
+					seedvariety: varietyCode,
+					updatedData: updatedData
+
+
+				}; $.ajax({
+					url: './UpdateProductPrice',
+					type: 'POST',
+					data: JSON.stringify(formData),
+					contentType: 'application/json',
+					dataType: 'json',
+					success: function (response) {
+						console.log('Success:', response);
+						alert(response);
+						alert(" Seed Variety Prices updated successfully ");
+						window.location.reload();
+					},
+					error: function (xhr, status, error) {
+						console.error('Error:', error);
+						alert('Error: ' + error);
+					}
+				});
+			}
+
+		</script>
+
+
+</body>
+
+</html>

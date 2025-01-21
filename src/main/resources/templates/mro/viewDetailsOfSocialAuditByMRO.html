@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="header"></head>
+
+<body>
+	<div th:insert="headerImage"></div>
+
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+
+<title>socialAuditByMRO</title>
+<style>
+table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+table, th, td {
+	border: 1px solid black;
+}
+
+th {
+	background-color: #e8e8e8;
+	color: black;
+	text-align: center;
+	font-weight: bold; /* Set font weight to bold */
+}
+
+td {
+	text-align: center;
+}
+
+.table-heading {
+	background-color: #3498db;
+	text-align: center;
+	width: 90%; /* Set the same width as the table */
+	margin: 0 auto; /* Center the paragraph */
+	padding: 10px; /* Add some padding for better appearance */
+	color: white; /* Set text color to white */
+	font-weight: bold; /* Set font weight to bold */
+}
+</style>
+<script>
+	$(document).ready(function() {
+		$("#checkedAll").change(function() {
+			if (this.checked) {
+				$(".checkSingle").each(function() {
+					this.checked = true;
+				})
+			} else {
+				$(".checkSingle").each(function() {
+					this.checked = false;
+				})
+			}
+		});
+
+		$(".checkSingle").click(function() {
+			if ($(this).is(":checked")) {
+				var isAllChecked = 0;
+				$(".checkSingle").each(function() {
+					if (!this.checked)
+						isAllChecked = 1;
+				})
+				if (isAllChecked == 0) {
+					$("#checkedAll").prop("checked", true);
+				}
+			} else {
+				$("#checkedAll").prop("checked", false);
+			}
+		});
+	});
+	
+	$(document).ready(function() {
+	    function populateReasonsForObjection(selectedRow, isEnabled) {
+	        var selectElement = $(selectedRow).find('select');
+	        $(selectElement).prop('disabled', !isEnabled);
+	    }
+	  
+	    $(".checkSingle").each(function() {
+	        var isChecked = $(this).is(":checked");
+	        var selectedRow = $(this).closest('tr');
+	        populateReasonsForObjection(selectedRow, isChecked);
+	    });
+
+	    var checkedAll = $("#checkedAll").is(":checked");
+	    $(".checkSingle").prop('checked', checkedAll).trigger('change');
+
+	    $("#checkedAll").change(function() {
+	        var isCheckedAll = $(this).is(":checked");
+	        $(".checkSingle").prop('checked', isCheckedAll).trigger('change');
+
+	        if (isCheckedAll) {
+	            var selectElements = $(".checkSingle:checked").closest('tr').find('select');
+	            selectElements.prop('disabled', false);
+	        } else {
+	            var selectElements = $(".checkSingle").closest('tr').find('select');
+	            selectElements.prop('disabled', true);
+	        }
+	    });
+
+	    $(".checkSingle").click(function() {
+	        var isChecked = $(this).is(":checked");
+	        var selectedRow = $(this).closest('tr');
+	        populateReasonsForObjection(selectedRow, isChecked);
+	    });
+	});
+
+function onGrievChk(a,b){
+
+	var flag = false;
+	var apprsts = b;
+	
+	var grievId = document.getElementById("grievanceId"+a).value;
+    var crsowdt = document.getElementById("sownDate"+a).value;
+    var survNo = document.getElementById("surveyNo"+a).value;
+    var ocupName = document.getElementById("farmerName"+a).value;
+    var ocupFname = document.getElementById("farmerFatherName"+a).value;
+    var varietycode = document.getElementById("varietyName"+a).value;
+    var webdcode = document.getElementById("dcode").value;
+    var webmcode = document.getElementById("mcode").value;
+    var cropNo = document.getElementById("cropSequence"+a).value;
+    
+    var bookingid = document.getElementById("bookingId"+a).value;
+    var webvcode = document.getElementById("vcode").value;
+    var cropcode = document.getElementById("cropName"+a).value;
+    var khataNo = document.getElementById("khataNo"+a).value;
+    
+    
+    if (apprsts === 'A') {
+        if (confirm("The details are verified by me and are found correct") === true) {
+            flag = true;
+        } else {
+            return false;
+        }
+
+    } else if (apprsts === 'D') {
+        if (confirm("The details are verified by me and are found incorrect") === true) {
+            flag = true;
+        } else {
+            return false;
+        }
+
+    }
+    if (flag === true) { // alert('flage 2:' + bookingID);  
+    
+    			document.getElementById("grievanceIdOrg").value = grievId;
+				document.getElementById("sownDateOrg").value = crsowdt;
+				document.getElementById("surveyNoOrg").value = survNo;
+				document.getElementById("farmerNameOrg").value = ocupName;
+				document.getElementById("farmerFatherNameOrg").value = ocupFname;
+				document.getElementById("varietyCodeOrg").value = varietycode;
+				document.getElementById("disCodeOrg").value = webdcode;
+				document.getElementById("mandCodeOrg").value = webmcode;
+				document.getElementById("cropNumberOrg").value = cropNo;
+				
+				document.getElementById("bookingIdOrg").value = bookingid;
+				document.getElementById("villCodeOrg").value = webvcode;
+				document.getElementById("cropCodeOrg").value = cropcode;
+				document.getElementById("khathaNoOrg").value = khataNo;
+				document.getElementById("approvalStsOrg").value = apprsts;
+				
+				 var sendData = {
+				    	
+				    	 grievanceIdOrg : grievId,
+						 sownDateOrg : crsowdt,
+						 surveyNoOrg : survNo,
+						 farmerNameOrg : ocupName,
+						 farmerFatherNameOrg : ocupFname,
+						 varietyCodeOrg : varietycode,
+						 disCodeOrg : webdcode,
+						 mandCodeOrg : webmcode,
+						 cropNumberOrg : cropNo,
+						 bookingIdOrg : bookingid,
+						 villCodeOrg : webvcode,
+						 cropCodeOrg : cropcode,
+						 khathaNoOrg : khataNo,
+						 approvalStsOrg : apprsts,
+							
+						};
+						//alert(JSON.stringify(sendData));
+						$.ajax({
+							type : 'POST',
+							url : './saveSocialAuditByMRO',
+							data : JSON.stringify(sendData),
+							contentType : 'application/json',
+							success : function(response) {
+								alert(response);
+								// alert('Data Inserted and Updated successfully');
+								window.location.reload();
+							},
+							error : function(error) {
+								console.error('Error sending data:', error);
+							}
+						});
+    }
+
+    return false;
+
+	
+}
+	
+</script>
+<style>
+.centered-button {
+	display: block;
+	margin: 0 auto;
+	text-align: center;
+	background-color: #3498db; /* Change background color to blue */
+	color: white; /* Set text color to white */
+	padding: 10px 20px; /* Add padding for better appearance */
+	border: none; /* Remove default button border */
+	border-radius: 5px; /* Add some border radius for a rounded look */
+	cursor: pointer; /* Show pointer cursor on hover */
+	font-weight: bold
+}
+.btnCss {
+            background-color: #4CAF50;
+            border: none;
+            color: black;
+            padding:10px 40px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 14px;
+            margin: 10px 5px;
+            cursor: pointer;
+        }
+.rejbtnCss {
+            background-color: red;
+            border: none;
+            color: black;
+            padding: 10px 40px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 14px;
+            margin: 10px 5px;
+            cursor: pointer;
+        }
+/* Additional style for hover effect */
+.centered-button:hover {
+	background-color: darkblue; /* Change background color on hover */
+}
+</style>
+
+</head>
+<body style="background-color: #e8e8e8;">
+	<form id="maoVerifyForm" name="maoVerifyForm" method="post">
+              <div onscroll='scroller("scrollme", "scroller")' style="overflow-x:scroll; height:850px" id=scrollme>
+            <table id="tableStkId" style="width:70%" align="center">
+            <th class="table-heading" colspan="30" ><font size="5pt">Supervisory Check Records Correction Validation</font></th>
+				<tr>
+                    <th colspan="16" style="background-color: #d5ffd5">Data As Per Crop Booking</th>
+                    <th colspan="11" style="background-color: #b1dfbb">Data As Per VAA/VHA/VSA Corrections</th>
+                    <th colspan="22" style="background-color: #EE802F">MAO Remarks</th>
+                </tr>		
+                
+				    <th><b>S.No.</b></th>
+				    <th> <b> Mandal </b> </th>  
+                    <th> <b> Village </b> </th>
+                    <th> <b> Booking ID </b> </th>  
+                    <th> <b> Khata No </b> </th>
+                    <th> <b> Survey No/LP No </b> </th>
+                    <th> <b> Cultivator Name </b> </th> 
+                    <th> <b> Cultivator </br> Father </br> Name </b> </th>                
+                    <th> <b> Crop Name </b> </th>
+                    <th> <b> Variety </b> </th>
+                    <th> <b> Booked Extent  </b> </th>
+                    <th> <b> Crop Sequence </b> </th> 
+                    <th> <b> Sown Date </b> </th>
+                    <th> <b> Cropping Pattern </b> </th>
+                    <th> <b> Source Of Irrigation </b> </th>    
+                    <th> <b> Farming Type </b> </th>
+                    <th><b>MAO</br> Marked </br>Status</br></b></th>
+                    <th> <b> Corrected </br>Cultivator Name</b> </th> 
+                    <th> <b> Corrected </br>Cultivator </br> Father </br> Name </b> </th>                
+                    <th> <b> Corrected </br> Crop Name </b> </th>
+                    <th> <b> Corrected </br> Variety </b> </th>
+                    <th> <b> Corrected </br>Booked Extent </b> </th>
+                    <th> <b>Corrected </br> Source Of</br> Irrigation  </b> </th>
+                    <th> <b>Corrected </br> Crop Sequence</br> </b> </th> 
+                    <th> <b>Corrected </br> Cropping </br>Pattern  </b> </th>
+                    <th> <b>Corrected </br> Sown Date   </b> </th>    
+                    <th> <b>Corrected </br> Farming Type </b> </th>
+                    <th> Approve </th> 
+                    <th> Reject </th>
+				
+			</tbody>
+				 
+            <tr th:each="data, rowstat : ${viewDetails}">
+                
+                <td th:text="${rowstat.index + 1}"></td>
+                
+                 <input type="hidden" th:id="'grievanceId'+${rowstat.index}" name="grievanceId" th:value="${data.grievance_id}"/>
+				
+				<td   th:text="${data.wbmname}"></td>
+				<input type="hidden" th:id="'mandal'+${rowstat.index}" th:name="mandal" th:value="${data.cr_mand_code}">
+                
+				<td th:text="${data.wbvname}"></td>
+				<input type="hidden" th:id="'village' + ${rowstat.index}" th:name="village" th:value = "${data.cr_vcode}" />
+				
+				<td  th:text="${data.bookingid}" ></td>
+				<input type="hidden" th:id="'bookingId' + ${rowstat.index}" th:name="bookingId" th:value="${data.bookingid}"/>
+				
+				<td  th:text="${data.kh_no}" ></td>
+				<input type="hidden" th:id="'khataNo' + ${rowstat.index}" name="khataNo" th:value="${data.kh_no}"/>
+				
+				<td  th:text="${data.cr_sno}" ></td>
+				<input type="hidden" th:id="'surveyNo' + ${rowstat.index}" name="surveyNo" th:value="${data.cr_sno}"/>
+				
+				<td th:text="${data.occupname}" ></td>
+				<input type="hidden" th:id="'farmerName' + ${rowstat.index}" name="farmerName" th:value="${data.occupname}"/>
+				
+				<td th:text="${data.occupfname}" ></td>
+				<input type="hidden" th:id="'farmerFatherName' + ${rowstat.index}" name="farmerFatherName" th:value="${data.occupfname}"/>
+				
+				<td th:text="${data.cropname}" ></td>
+				<input type="hidden" th:id="'cropName' + ${rowstat.index}" name="cropName" th:value="${data.cr_crop}"/>
+				
+				<td th:text="${data.varietyname}" ></td>
+				<input type="hidden" th:id="'varietyName' + ${rowstat.index}" name="varietyName" th:value="${data.variety}"/>
+				
+				<td   th:text="${data.cr_mix_unmix_ext}"></td>
+				<input type="hidden" th:id="'bookedExtent'+${rowstat.index}" th:name="bookedExtent" th:value="${data.cr_mix_unmix_ext}">
+                
+                <td   th:text="${data.description}"></td>
+				<input type="hidden" th:id="'cropSequence'+${rowstat.index}" th:name="cropSequence" th:value="${data.cr_no}">
+                
+                <td   th:text="${data.cr_sow_date}"></td>
+				<input type="hidden" th:id="'sownDate'+${rowstat.index}" th:name="sownDate" th:value="${data.cr_sow_date}">
+                
+                <td th:text="${data.naturedesc}"></td>
+				<input type="hidden" th:id="'croppingPattern' + ${rowstat.index}" th:name="croppingPattern" th:value = "${data.naturedesc}" />
+				
+				<td  th:text="${data.wsrcdesc}" >
+				<input type="hidden" th:id="'sourceOfIrrigation' + ${rowstat.index}" th:name="sourceOfIrrigation" th:value="${data.wsrcdesc}"/></td>
+				
+				<td  th:text="${data.cropschdesc}" >
+				<input type="hidden" th:id="'farmingType' + ${rowstat.index}" th:name="farmingType" th:value="${data.cropschdesc}"/></td>
+				
+				<td align="center" style="background-color: #bee5eb; border: 1px #d5ffd5 solid">
+				<th:block th:if="${data.mark_delet == 'A'}">
+    				Marked</br>For </br>Deletion
+				</th:block>
+				<th:block th:if="${data.mark_delet != 'A' }">
+    				Marked</br>For </br>Acceptance
+				</th:block></td>
+				
+				<td th:text="${data.fname_sug}"></td>
+				<input type="hidden" th:id="'correctedCultivatorName' + ${rowstat.index}" th:name="correctedCultivatorName" th:value="${data.fname_sug}"/>				
+				
+				<td th:text="${data.ffname_sug}" ></td>
+				<input type="hidden" th:id="'correctedCultivatorFatherName' + ${rowstat.index}" th:name="correctedCultivatorFatherName" th:value="${data.ffname_sug}"/>
+				
+				<td>
+    				<th:block th:if="${data.cr_crop_sug == 0}"></th:block>
+    				<th:block th:if="${data.cr_crop_sug != 0}">
+        				<span th:text="${data.cr_crop_sug}"></span>
+        				<input type="hidden" th:id="'correctedCropName' + ${rowstat.index}" th:name="correctedCropName" th:value="${data.cr_crop_sug}"/>
+    				</th:block>
+				</td>
+				
+				<td>
+    				<th:block th:if="${data.variety_sug == 0}"></th:block>
+    				<th:block th:if="${data.variety_sug != 0}">
+        				<span th:text="${data.variety_sug}" ></span>
+        				<input type="hidden" th:id="'correctedVariety' + ${rowstat.index}" th:name="correctedVariety" th:value="${data.variety_sug}"/>
+    				</th:block>
+				</td>
+				
+				<td>
+    				<th:block th:if="${data.extent_sug == 0.0000}"></th:block>
+    				<th:block th:if="${data.extent_sug != 0.0000}">
+        				<span th:text="${data.extent_sug}" ></span>
+        				<input type="hidden" th:id="'correctedBookedExtent' + ${rowstat.index}" th:name="correctedBookedExtent" th:value="${data.extent_sug}"/>
+    				</th:block>
+				</td>
+				
+				<td>
+    				<th:block th:if="${data.cr_w_draw_sug == 0}"></th:block>
+    				<th:block th:if="${data.cr_w_draw_sug != 0}">
+        				<span th:text="${data.cr_w_draw_sug}" ></span>
+        				<input type="hidden" th:id="'correctedSourceOfIrrigation' + ${rowstat.index}" th:name="correctedSourceOfIrrigation" th:value="${data.cr_w_draw_sug}"/>
+    				</th:block>
+				</td>
+			
+				<td th:text="${data.cr_no_sug}"></td>
+				<input type="hidden" th:id="'correctedCropSequence'+${rowstat.index}" th:name="correctedCropSequence" th:value="${data.cr_no_sug}">
+                
+                <td th:text="${data.cr_sow_type_sug}"></td>
+				<input type="hidden" th:id="'correctedCroppingPattern' + ${rowstat.index}" th:name="correctedCroppingPattern" th:value = "${data.cr_sow_type_sug}" />
+				
+				<td   th:text="${data.cr_sow_date_sug}"></td>
+				<input type="hidden" th:id="'correctedSownDate'+${rowstat.index}" th:name="correctedSownDate" th:value="${data.cr_sow_date_sug}">
+                
+				<td  th:text="${data.cropschtype_sug}" ></td>
+				<input type="hidden" th:id="'correctedFarmingType' + ${rowstat.index}" th:name="correctedFarmingType" th:value="${data.cropschtype_sug}"/>
+				
+				<td align="left">
+    			<a th:onclick="' return onGrievChk(\'' + ${rowstat.index} + '\', \'' + A + '\')'" >
+       	 			<button align="left" class="btnCss">ACCEPT </button>
+    			</a>
+				</td>
+				
+				<td align="left">
+				<a th:onclick="' return onGrievChk(\'' + ${rowstat.index} + '\', \'' + D + '\')'" >
+					<button align="left" class="rejbtnCss">REJECT</button>
+				</a>
+				</td>
+				
+				<input type="hidden" th:id="dcode" name="dcode" th:value="${data.cr_dist_code}"/>
+  		        <input type="hidden" th:id="mcode" name="mcode" th:value="${data.cr_mand_code}"/>
+  		        <input type="hidden" th:id="vcode" name="mcode" th:value="${data.cr_vcode}"/>
+				
+				
+				<th style="text-align: center;"></th>
+		</tr>
+
+		</tbody>
+		</table>
+		</div>
+		
+				<input type="hidden" th:id="grievanceIdOrg" th:name="grievanceIdOrg"  />
+				<input type="hidden" th:id="sownDateOrg" th:name="sownDateOrg" />
+				<input type="hidden" th:id="surveyNoOrg" th:name="surveyNoOrg"  />
+				<input type="hidden" th:id="farmerNameOrg" th:name="farmerNameOrg"  />
+				<input type="hidden" th:id="farmerFatherNameOrg" th:name="farmerFatherNameOrg"  />
+				<input type="hidden" th:id="varietyCodeOrg" th:name="varietyCodeOrg"  />
+				<input type="hidden" th:id="disCodeOrg" th:name="disCodeOrg"  />
+				<input type="hidden" th:id="mandCodeOrg" th:name="mandCodeOrg"  />
+				<input type="hidden" th:id="cropNumberOrg" th:name="cropNumberOrg"  />
+				
+				<input type="hidden" th:id="bookingIdOrg" th:name="bookingIdOrg"  />
+				<input type="hidden" th:id="villCodeOrg" th:name="villCodeOrg"  />
+				<input type="hidden" th:id="cropCodeOrg" th:name="cropCodeOrg"  />
+				<input type="hidden" th:id="khathaNoOrg" th:name="khathaNoOrg"  />
+				
+				<input type="hidden" th:id="approvalStsOrg" th:name="approvalStsOrg"  />
+				
+				
+
+				
+	<br>
+				
+				
+    
+    
+    <div>
+    	<span th:utext="${msg}"></span>
+    </div>
+    
+</form>
+
+</body>
+
+</html>

@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="header">
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<!-- Unused scripts and styles commented out -->
+	<!-- <script src="js/jquery.js"></script> -->
+	<!-- <script src="js/jquery-ui.js"></script> -->
+	<!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"> -->
+	<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script> -->
+	<!-- <link rel="stylesheet" type="text/css" href="css/style.css"> -->
+
+	<title>Report On Records by Data Source </title>
+</head>
+
+<body>
+	<div th:insert="headerImage"></div>
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+
+	<div class="container">
+		<form id="myform" name="myform" method="post" th:action="@{/RepdatasrcwiseCnt}">
+			<br>
+			<div class="heading" style="text-align:center;font-size: 25px">
+				<b>Report on Records by Data Source</b>
+			</div>
+
+			<div style="display: flex; justify-content: center; align-items: center; padding-top: 20px;">
+				<label style="margin-right: 10px;"><b>Crop Year:</b></label>
+				<select style="width: 200px" id="crYear" name="crYear" class="form-select" aria-label="Crop Year">
+					<option th:each="emp : ${activeseason}" th:value="${emp.getSeasonvalue()}" th:text="${emp.getCropyear()}">
+					</option>
+				</select>
+			</div>
+
+			<div th:if="${role == 17}">
+				<label for="name">District:</label>
+				<select id="dcode" name="dcode" class="form-select" aria-label="District">
+					<option value="0">---Select---</option>
+					<option th:each="dist : ${distdrpdwn}" th:value="${dist.getDcode()}" th:text="${dist.getDname()}">
+					</option>
+				</select>
+			</div>
+
+			<div class="row justify-content-center" style="text-align: center; padding-top: 15px;">
+				<button type="submit" class="btn btn-success" onclick="return validateForm()">Submit</button>
+			</div>
+
+			<div align="center" id="divPrint">
+				<table id="tableStkId" align="center" class="table table-striped border ">
+					<thead>
+						<tr>
+							<th><b>Sl.No</b></th>
+							<th th:if="${role == 17}"><b>District Name</b></th>
+							<th th:if="${role == 5 || role == 9 || role == 17}"><b>Mandal Name</b></th>
+							<th><b>Revenue Village Name</b></th>
+							<th><b>No of Records from Webland</b></th>
+							<th><b>No of Records from CCRC</b></th>
+							<th><b>No of Records from efish</b></th>
+							<th><b>No of Records from ROFR</b></th>
+							<th><b>No of Records from Perennial Data</b></th>
+						</tr>
+					</thead>
+					<tbody id="databody">
+						<tr th:each="bean,row: ${list}">
+							<td style="text-align:center;" th:text="${row.index+1}"></td>
+							<td th:if="${role == 17}" style="text-align:left;" th:text="${bean.Wbdname}"></td>
+							<td th:if="${role == 5 || role == 9 || role == 17}" style="text-align:left;" th:text="${bean.Wbmname}"></td>
+							<td style="text-align:left;" th:text="${bean.Wbvname}"></td>
+							<td style="text-align:right;" th:text="${bean.Wbcount}"></td>
+							<td style="text-align:right;" th:text="${bean.Ccrccount}"></td>
+							<td style="text-align:right;" th:text="${bean.Efishcount}"></td>
+							<td style="text-align:right;" th:text="${bean.Rofrcount}"></td>
+							<td style="text-align:right;" th:text="${bean.Pericount}"></td>
+						</tr>
+						<tr>
+							<td th:if="${role == 17}"></td>
+							<td th:if="${role == 5 || role == 9 || role == 17}"></td>
+							<td></td>
+<!-- 							<td></td> -->
+							<td  style="font-weight:bold;text-align:center;"><span th:text="' Total '"></span></td>
+							<td style="font-weight:bold;text-align:right;"><span th:text="${a1}"></span></td>
+							<td style="font-weight:bold;text-align:right;"><span th:text=" ${a2}"></span></td>
+							<td style="font-weight:bold;text-align:right;"><span th:text=" ${a3}"></span></td>
+							<td style="font-weight:bold;text-align:right;"><span th:text=" ${a4}"></span></td>
+							<td style="font-weight:bold;text-align:right;"><span th:text=" ${a5}"></span></td>
+						</tr>
+					</tbody>
+				</table>
+				<div th:if="${NoRecordsFound}" align="center">
+					<b style="font-size:18px;">-- No Records found --</b>
+				</div>
+			</div>
+		</form>
+
+		<div align="center" style="color:black;margin-top: 20px;">
+			<input class="btn btn-success" name="ctl00$ContentPlaceHolder1$btnPrint" type="button" id="ctl00_ContentPlaceHolder1_btnPrint" onClick="javascript:CallPrint('divPrint')" value="Print">
+			<input class="btn btn-success" type="button" onclick="tableToExcel('tableStkId', 'Abstract')" value="Excel">
+			<input class="btn btn-success" type="button" value="Back" onclick="goBack()" />
+		</div>
+	</div>
+
+	<script>
+		function validateForm() {
+			var cropyear = document.getElementById("crYear").value;
+			if (cropyear == 0 || cropyear == null) {
+				alert("Please select Crop Year");
+				return false; // Prevent form submission
+			}
+		}
+
+		function CallPrint(strid) {
+			var prtContent = document.getElementById(strid);
+			var mywindow = window.open('', '', 'left=0,top=0,width=950,height=600,toolbar=1,scrollbars=1,status=1,addressbar=0');
+			var is_chrome = Boolean(mywindow.chrome);
+			mywindow.document.write(prtContent.innerHTML);
+			mywindow.document.close();
+
+			if (is_chrome) {
+				mywindow.onload = function () {
+					mywindow.focus();
+					mywindow.print();
+					mywindow.close();
+				};
+			} else {
+				mywindow.focus();
+				mywindow.print();
+				mywindow.close();
+			}
+		}
+
+		var tableToExcel = (function () {
+			var uri = 'data:application/vnd.ms-excel;base64,'
+				, template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>'
+				, base64 = function (s) {
+					return window.btoa(unescape(encodeURIComponent(s)))
+				}
+				, format = function (s, c) {
+					return s.replace(/{(\w+)}/g, function (m, p) {
+						return c[p];
+					});
+				}
+			return function (table, name) {
+				if (!table.nodeType) table = document.getElementById(table);
+				var ctx = {worksheet: name || 'Worksheet', table: table.innerHTML};
+				window.location.href = uri + base64(format(template, ctx));
+			}
+		})();
+
+		function goBack(){
+			window.location.href="./home";
+		}
+	</script>
+</body>
+
+</html>

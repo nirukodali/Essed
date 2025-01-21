@@ -1,0 +1,281 @@
+<style>
+    @media print {
+        /* Force the table borders to be visible during printing */
+        table {
+            border-collapse: collapse !important;
+            width: 100% !important;
+        }
+
+        table, th, td {
+            border: 1px solid #000 !important; /* Ensure borders are visible */
+            padding: 8px !important; /* Add padding for better readability */
+        }
+
+        /* Hide non-essential elements during printing */
+        .modal-header,
+        #printBtn,
+        .close,
+        img {
+            display: none !important; /* Hide buttons, close icon, and images */
+        }
+
+        /* Ensure the modal content fits the page without margins */
+        .modal-content {
+            border: none !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 100% !important;
+            box-shadow: none !important;
+        }
+    }
+</style>
+
+
+
+<div th:if="${repCultivatorDtlsList!=null and !repCultivatorDtlsList.isEmpty()}" class="panel-group"
+	th:fragment="repCultModalPage">
+	<div th:fragment="repCultModalPage" class="container">
+		<div class=" modal face" id="repCultModal" tabindex="-1" role="dialog" aria-labelledby="repCultModal"
+			aria-hidden="true">
+			<div class="modal-dialog" style="max-width: 1300px!important;" role="document">
+				<div class="modal-content" id="savePage">
+<!--					<img src="./images/headlarge.png">-->
+				<img src="./images/Phy.png">
+
+					<div class="modal-header d-flex justify-content-center align-items-center">
+    <label class="modal-title flex-grow-1 text-center" style="font-size: x-large;"><b>e- పంట నమోదు ధృవీకరణ పత్రము</b></label>
+    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" id="closeModalButton">
+        <span aria-hidden="true"><b>&times;</b></span>
+    </button>
+</div><br>
+	<div class="modal-body">
+						<div class="container">
+							<div class="col-sm-12" style="display: flex; justify-content: center;">
+								<table class="table table-bordered col-sm-10" style="text-align: center;">
+
+									<thead>
+										<tr>
+											<td colspan="4" text-align="left">
+												<font style="font-size: 15pt"><b>సాగుదారుని వివరాలు</b></font>
+												&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+												&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+												
+												<b text-align="center">Time : </b> <span id="theDate"></span>
+											</td>
+											
+											
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td><b> జిల్లా: &nbsp; </b><span class="district-name" id="district" th:text="${session.wbedname}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+											</td>
+											<td><b>మండలం: &nbsp; </b> <span th:text="${session.wbemname}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+											</td>
+											<td> <b>రైతు సేవా కేంద్రం: &nbsp;</b><span	th:text="${session.wbevname}"></span> 
+
+											</td>
+										</tr>
+
+										<tr th:each="repCultiNames, cultivatorStat:${reprepCultivatorDtls}">
+
+											<td><b> పేరు: &nbsp; </b><span
+															th:text="${repCultiNames.occupName}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+											</td>
+											<td><b>తండ్రి పేరు: &nbsp; </b> <span
+															th:text="${repCultiNames.occupFNname}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+											</td>
+											<td style="white-space: nowrap"><b>పంట కాలం:
+													&nbsp; </b>
+													<span th:if="${cropDuration} == 'K,2024'">Kharif,2024</span>
+													</td>
+										</tr>
+
+										<tr th:each="repCultiNames, cultivatorStat:${reprepCultivatorDtls}">
+											<td><b>ఆధార్ లో పేరు: &nbsp; </b><span
+															th:text="${repCultiNames.ekycName}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+											</td>
+											<td><b>ఆధార్ నెంబరు: &nbsp; </b><span
+															th:text="${repCultiNames.crFarmeruid}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+											</td>
+											<td><b>మొబైల్ నంబర్: &nbsp; </b><span
+															th:text="${repCultiNames.smsMobileNo}"></span>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+								<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+								<div class="col-sm-2" id="qrcode" style="width: 200px;height: fit-content;"></div>
+							</div>
+							<div class="panel panel-primary">
+								<div class="panel-body">
+
+									<table id="ownerGrid" class="table table-bordered table-striped dataTable"
+										style="width: 100%; text-align: center;">
+										<thead class="color-palette">
+											<tr>
+												<th><b>Sl.No</b></th>
+												<th><b>రెవెన్యూ గ్రామం</b></th>
+												
+												<th><b>బుకింగ్ నెంబరు</b></th>
+												<th><b>సాగుదారు</b></th>
+												<th><b>ఖాతా సంఖ్య</b></th>
+												<th><b>&nbsp;సర్వే నెం/ఎల్ పి నెం</b></th>
+												<th><b>విస్తీర్ణం (ఎకరం)</b></th>
+												<th><b>పంట పేరు/రకం</b></th>
+												<th><b>&nbsp;నాటిన తేదీ</b></th>
+																								
+												<th><b>నీటి వసతి</b></th>
+												<th><b>e-Kyc తేదీ</b></th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr th:id="${repCulti.bookingId}"
+												th:each="repCulti, cultivatorStat:${repCultivatorDtlsList}">
+
+												<td style="width:3%;">
+													<span th:text="${cultivatorStat.index+1}"></span>
+												</td>
+												<td style="width:10%;">
+													<span th:text="${repCulti.wbVName}"></span>
+													<input type="hidden" th:value="${repCulti.wbVName}"
+														th:id="'wbVName'+${cultivatorStat.index}">
+												</td>
+												<td style="width:10%;">
+													<span th:text="${repCulti.bookingId}"></span>
+													<input type="hidden" th:value="${repCulti.bookingId}"
+														th:id="'bookingId'+${cultivatorStat.index}">
+												</td>
+												<td style="width:10%;">
+													<span th:text="${repCulti.cultDescLocLang}"></span>
+													<input type="hidden" th:value="${repCulti.cultDescLocLang}"
+														th:id="'cultDescLocLang'+${cultivatorStat.index}">
+												</td>
+												<td style="width:10%;">
+													<span th:text="${repCulti.kh_no}"></span>
+													<input type="hidden" th:value="${repCulti.kh_no}"
+														th:id="'kh_no'+${cultivatorStat.index}">
+												</td>
+												<!--                    		<p id ='m_value' name="m_value">Value of m_value: <span th:text="${m_value}"></span></p>-->
+
+												<td style="width:15%;">
+													<span th:text="${repCulti.cr_sno}"></span>
+													<input type="hidden" th:value="${repCulti.cr_sno}"
+														th:id="'cr_sno'+${cultivatorStat.index}">
+												</td>
+												<td style="width:10%;">
+													<span th:text="${repCulti.crMixUnmixExt}"></span>
+													<input type="hidden" th:value="${repCulti.crMixUnmixExt}"
+														th:id="'crMixUnmixExt'+${cultivatorStat.index}">
+														<input type="hidden" th:id="wbdcode" th:value="${#session.getAttribute('wbdcode')}">
+														<input type="hidden" th:id="wbmcode" th:value="${#session.getAttribute('wbmcode')}">
+														<input type="hidden" th:id="wbvcode23" th:value="${repCulti.crVcode}">
+														<input type="hidden" th:id="userid" th:value="${#session.getAttribute('userid')}">
+														<input type="hidden" th:id="fullUid" th:value="${repCulti.fullUid}">
+														
+												</td>
+												<td style="width:10%;">
+													<span th:text="${repCulti.cropName}"></span> - <span
+														th:text="${repCulti.varietyName}"></span>
+													<input type="hidden" th:value="${repCulti.varietyName}"
+														th:id="'varietyName'+${cultivatorStat.index}">
+													<input type="hidden" th:value="${repCulti.cropName}"
+														th:id="'cropName'+${cultivatorStat.index}">
+												</td>
+												
+												<td style="width:15%;">
+													<span th:text="${repCulti.sowDate}"></span>
+													<input type="hidden" th:value="${repCulti.sowDate}"
+														th:id="'sowDate'+${cultivatorStat.index}">
+												</td>
+												
+												
+												
+												<td style="width:10%;">
+													<span th:text="${repCulti.wsrcDesc}"></span>
+													<input type="hidden" th:value="${repCulti.wsrcDesc}"
+														th:id="'wsrcDesc'+${cultivatorStat.index}">
+												</td>
+												<td style="width:10%;">
+													<span th:text="${repCulti.dt_ekyc}"></span>
+													<input type="hidden" th:value="${repCulti.dt_ekyc}"
+														th:id="'dt_ekyc'+${cultivatorStat.index}">
+												</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+							</div>
+
+							<div>
+								<span th:utext="${errorMessage}"></span>
+							</div>
+							<!--							<div style="text-align: center;font-weight: bold;color:red;"-->
+							<!--								th:unless="${repCultivatorDtlsList!=null and !repCultivatorDtlsList.isEmpty()}">-->
+							<!--								<span>No Data Available</span>-->
+							<!--							</div>-->
+
+							<input type="hidden" th:value="${m_value}" th:id="m_value" />
+							<input type="hidden" th:value="${n_value}" th:id="n_value" />
+							<input type="hidden" th:value="${encoded_value}" th:id="encoded_value" />
+							<table width="100%" border="0" id="seedDistribRep" style="border-collapse: collapse">
+								<tr>
+									<td colspan="3">పై పంట నమోదు వివరాలు సరైనవని ధృవీకరిస్తున్నాము</td>
+								</tr>
+							</table>
+
+							<table width="100%" border="1" id="seedDistribRep" style="border-collapse: collapse">
+								<tr>
+									<td width="40%" colspan=1 style="font-size: 10pt" align="center"><br><br> రైతు సంతకం
+									</td>
+									<td colspan=2 style="font-size: 10pt" align="center"><br><br>
+										వి.ఎ.ఎ/వి.హెచ్.ఎ/వి.ఎస్.ఎ సంతకం</td>
+								</tr>
+							</table>
+
+							<table width="100%" border="0" id="seedDistribRep" style="border-collapse: collapse">
+								<tr>
+									<!--									<td style="font-size: 10pt" align="left">-->
+									<!--										(*)  ఎన్.టి.ఆర్ ఉచిత పంటల బీమా పధకము క్రింద నోటిపై చేయబడిన మీ పంటకు-->
+									<!--										ప్రీమియం పూర్తిగా రాష్ట్ర-->
+									<!--										ప్రభుత్వమే చెల్లించి తద్వారా పంట బీమా చేయబడినది.-->
+									<!--										</br> గమనిక : సాగు చేసిన పంట మరియు పంట విస్తీర్ణం నిర్ధారణకు లోబడి చెల్లుబాటు-->
+									<!--										అవుతుంది.-->
+									<!--									</td>-->
+								</tr>
+							</table><br>
+						</div>
+					</div>
+					<button id="printBtn" onclick="printPage()" style="display: block;margin: 0 auto;">Print</button>
+				</div>
+
+
+
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<script>
+	$(document).ready(function () {
+		var currentDate = new Date();
+		var day = currentDate.getDate();
+		var month = currentDate.getMonth() + 1; // Months are zero-indexed, so we add 1
+		var year = currentDate.getFullYear();
+
+		var hours = currentDate.getHours();
+		var minutes = currentDate.getMinutes();
+		var seconds = currentDate.getSeconds();
+
+		// Format the date and time as day-month-year hours:minutes:seconds
+		var formattedDate = day + '-' + month + '-' + year + ' ' + hours + ':' + minutes + ':' + seconds;
+		$("#theDate").text(formattedDate);
+	});
+
+
+ document.getElementById('closeModalButton').addEventListener('click', function() {
+        location.reload();
+    });
+
+</script>

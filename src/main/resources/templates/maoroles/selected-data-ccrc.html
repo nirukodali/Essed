@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+	rel="stylesheet">
+
+<link rel="stylesheet" type="text/css" href="css/style.css">
+
+
+<title>Crop Details</title>
+<head th:insert="header"></head>
+
+
+<style>
+/* Custom styles for the selected crop details */
+.webland-container {
+	background-color: #f8f9fa;
+	/* Light gray background */
+	padding: 20px;
+	border-radius: 10px;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+	margin: auto;
+	/* Center the container horizontally */
+	margin-top: 5vh;
+	/* Adjust the top margin as needed */
+	max-width: 400px;
+	/* Set a maximum width for the container */
+}
+
+.selected-village {
+	font-weight: bold;
+	color: darkgreen;
+}
+
+.total-records {
+	font-weight: bold;
+	color: #007bff;
+	/* Blue color */
+}
+</style>
+</head>
+
+<body>
+
+
+	<div th:insert="headerImage"></div>
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+			<div th:insert="header"></div>
+	
+	
+
+
+	<div class="container-fluid header-design-login">
+		<div class="row justify-content-center align-items-center"
+			style="height: 10vh;">
+			<div class="webland-container text-center">
+				<h5 style="color: black;">Selected Crop Details</h5>
+				<br />
+				<div>
+					<p class="selected-village">
+						Selected Village: <span th:text="${selectedVillageName}"></span>
+					</p>
+
+					<p class="available-records">
+						Already Available Record Counts: <span
+							th:text="${AlreadyAvailableRecordCounts}"></span>
+					</p>
+					<p class="new-records">
+						New Record Counts: <span
+							th:text="${newRecords}"></span>
+					</p>
+
+					<p class="total-records">
+						Total Number Of Records: <span th:text="${TotalRecords}"></span>
+					</p>
+
+					<!-- "GO BACK" button -->
+					<button type="button" class="btn btn-info go-back-button"
+						onclick="goBack()">Go Back</button>
+
+					<span th:text="${errorMessage}"></span>
+					</p>
+
+					<!-- Alert message container -->
+					<div class="alert-container" id="alertContainer"></div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script
+		src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+	<script type="text/javascript" th:src="@{/js/jquery.js}"></script>
+	<script>
+		$(function() {
+			var alreadyAvailableRecords = parseInt('[[${AlreadyAvailableRecordCounts}]]');
+			var newRecords = parseInt('[[${TotalRecords}]]');
+			var totalRecords = alreadyAvailableRecords + newRecords;
+			var message = '[[${message}]]';
+
+			if (newRecords === 0) {
+				showAlert('9999-No Data Available For Selected Village....', 'blue', totalRecords);
+
+				// Hide the paragraph with class "total-records"
+				$('.total-records').hide();
+				// Hide the paragraph with class "temp-table-records"
+
+				$('.temp-table-records').hide();
+				// Show the paragraph with class "total-records" when the condition is not true
+
+				var totalRecordsDiv = $('<div>').text(
+						'Total Records: ' + totalRecords).css({
+					'color' : 'black',
+					'font-weight' : 'bold'
+				});
+				$('#alertContainer').append(totalRecordsDiv);
+
+			} else if (newRecords > 0) {
+
+				showAlert('CCRC Records Inserted successfully.', 'red',
+						totalRecords);
+
+				// Show the total records only when the condition is not true
+				$('.total-records').show();
+
+			} else {
+
+				showAlert('Unable to connect to the ccrc server.', 'orange');
+
+				// Hide the paragraph with class "total-records"
+				$('.total-records').hide();
+
+			}
+
+		});
+
+		// Function to show alert message with color and total records
+		function showAlert(message, color, totalRecords) {
+			var alertDiv = $('<div class="alert">').text(message).addClass(
+					'alert-' + color);
+			var alertContainer = $('#alertContainer');
+
+			alertDiv
+					.append('<button onclick="hideAlert()" style="margin-top: 5px;"> OK </button>');
+			alertContainer.append(alertDiv);
+		}
+
+		// Function to hide the alert
+		function hideAlert() {
+			$('.alert').remove();
+		}
+
+		// Function to hide the alert message
+		function hideAlert() {
+			$('.alert').fadeOut('slow', function() {
+				$(this).remove();
+			});
+		}
+
+		// Function to go back to the first page
+		function goBack() {
+			window.location.href = './ccrcCropEntry'; // Replace with the actual URL of your first page
+		}
+	</script>
+</body>
+
+</html>

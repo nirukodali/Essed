@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>SCRA</title>
+	<!--	<link rel="stylesheet" href="./styles/reportstylesheet.css" />-->
+
+	<head th:insert="header"></head>
+	<div th:insert="headerImage"></div>
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+	<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.slim.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+	<script>
+
+		function CallPrint(strid) {
+			var prtContent = document.getElementById(strid);
+			var mywindow = window.open('', '', 'left=0,top=0,width=950,height=600,toolbar=1,scrollbars=1,status=1,addressbar=0');
+			var is_chrome = Boolean(mywindow.chrome);
+			mywindow.document.write(prtContent.innerHTML);
+			mywindow.document.close(); // necessary for IE >= 10 and necessary before onload for chrome
+
+			if (is_chrome) {
+				mywindow.onload = function () { // wait until all resources loaded 
+					mywindow.focus(); // necessary for IE >= 10
+					mywindow.print(); // change window to mywindow
+					mywindow.close(); // change window to mywindow
+				};
+			} else {
+				mywindow.document.close(); // necessary for IE >= 10
+				mywindow.focus(); // necessary for IE >= 10
+				mywindow.print();
+				mywindow.close();
+			}
+
+			return true;
+		}
+
+	</script>
+	<script language="javascript">
+		var tableToExcel = (function () {
+			var uri = 'data:application/vnd.ms-excel;base64,'
+				, template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table align="center">{table}</table></body></html>'
+				, base64 = function (s) {
+					return window.btoa(unescape(encodeURIComponent(s)))
+				}
+				, format = function (s, c) {
+					return s.replace(/{(\w+)}/g, function (m, p) {
+						return c[p];
+					})
+				}
+			return function (table, name) {
+				if (!table.nodeType)
+					table = document.getElementById(table)
+				var ctx = {worksheet: name || 'Worksheet', table: table.innerHTML}
+				window.location.href = uri + base64(format(template, ctx))
+			}
+		})()
+	</script>
+
+<style>
+	
+	thead{
+		position: sticky;
+		top:0%;
+	}
+</style>
+
+</head>
+<script>
+	$(document).ready(function () {
+
+	});
+
+	function getData() {
+		// 		alert("getData=========>");
+		// 		var inputwbdcode = $("#inputwbdcode").val();
+		// 		var inputwbmcode = $("#inputwbmcode").val();
+		// 		var userid = $("#inputuserid").val();
+		// 		var cropyear = $("#cropyear").val();
+		// 		alert("cropyear=========>" + cropyear);
+
+		// 		var data = {};
+		// 		data['wbdcode'] = inputwbdcode;
+		// 		data['wbmcode'] = inputwbmcode;
+		// 		data['cropyear'] = cropyear;
+		// 		data['userid'] = userid;
+
+		// 		$.ajax({
+		// 			type: "GET",
+		// 			url: "./unServeyedReport",
+		// 			contentType: 'application/json',
+		// 			data: JSON.stringify(data),
+		// 			cache: false,
+		// 			timeout: 600000,
+		// 			success: function (resp) {
+		// 				alert(JSON.stringify(resp));
+		// 				var sno = 0;
+		// 				for (var j = 0; j < resp.length; j++) {
+		// 					sno = sno + 1;
+		// 					var bean = resp[j];
+		// 					$("#databody").append('<tr style="fontsize:200px; font-weight: bold;">'
+		// 						+ '<td>' + sno + '</td>'
+		// 						+ '<td>' + bean.mname + '</td>'
+		// 						+ '<td>' + bean.vname + '</td>'
+		// 						+ '<td>' + bean.kn_no + '</td>'
+		// 						+ '<td>' + bean.cr_no + '</td>'
+		// 						+ '<td>' + bean.occupname + '(' + bean.ekycfarmername + ')</td>'
+		// 						+ '<td>' + bean.occupfname + '</td>'
+		// 						+ '<td>' + bean.cropname + '(' + bean.varietyname + ')</td>'
+		// 						+ '<td>' + bean.cr_sow_date + '</td>'
+		// 						+ '<td>' + bean.cr_mix_unmix_ext + '</td>'
+		// 						+ '<td>' + bean.wsrcdesc + '</td>'
+		// 						+ '<td>' + bean.exception_type + '</td>'
+		// 					+ '</tr>');
+		// 				}
+		// 			}
+		// 		});
+	}
+	function goBack(){
+		window.location.href="./home"
+			}
+</script>
+
+<body>
+	<div class="heading" colspan="30" style="text-align:center;font-size:25px;"><b>UnSurveyed UnSettled Land Entry Details</b> </div>
+
+
+
+	<div class="">
+		<form id="unlockreport" name="unlockreport" method="post">
+			<div align="center" id="divPrint">
+				<!--			 th:if="${pattadharDetails != null and not #lists.isEmpty(pattadharDetails)}"-->
+				<div>
+					<table id="databody" align="center" class="table table-striped border border-secondary">
+						<thead>
+
+							<tr>
+								<th> <b> S.No. </b> </th>
+
+								<th> <b> District </b> </th>
+								<th> <b>Mandal </b> </th>
+								<th> <b> Village </b> </th>
+								<th> <b> Cultivator Name </b> </th>
+								<th> <b> Cultivator Father Name </b> </th>
+								<th> <b>Polam No </b> </th>
+
+								<th> <b> Total Extent </b> </th>
+								<th> <b> Cultivator Extent </b> </th>
+								<th> <b> Category </b> </th>
+								<th> <b>Farmer Aadhaar </b> </th>
+
+								<th> <b>Gender </b> </th>
+								<th> <b>Mobile No </b> </th>
+
+							</tr>
+</thead>
+							<tr th:each="pattadhar, rowStat : ${data}">
+
+
+								<td th:text="${rowStat.index + 1}"></td>
+								<td th:text="${pattadhar.wbdname}"></td>
+								<td th:text="${pattadhar.wbmname}"></td>
+								<td th:text="${pattadhar.wbvname}"></td>
+								<td th:text="${pattadhar.occupname}"></td>
+								<td th:text="${pattadhar.occupfname}"></td>
+								
+								<td th:text="${pattadhar.crSno}"></td>
+								<td th:text="${pattadhar.totExtent}"></td>
+								<td th:text="${pattadhar.occupantExtent}"></td>
+								<td th:text="${pattadhar.settledsts}"></td>
+								<td th:text="${pattadhar.gender}"></td>
+								<td th:text="${pattadhar.mobileno}"></td>
+
+							</tr>
+
+						
+						<tbody>
+
+
+						</tbody>
+					</table>
+				</div>
+				<div th:if="${pattadharDetails == null or #lists.isEmpty(pattadharDetails)}">
+
+					<h3> --- No records found ---</h3>
+				</div>
+			</div>
+		</form>
+		<div align="center" style="color:black">
+			<input class="btn btn-success" name="ctl00$ContentPlaceHolder1$btnPrint" type="button"
+				id="ctl00_ContentPlaceHolder1_btnPrint" onClick="javascript:CallPrint('divPrint')" value="Print">
+			<input class="btn btn-success" type="button" onclick="tableToExcel('databody', 'Abstract')" value="Excel">
+						<input  class="btn btn-success" type="button" value="Back" onclick="goBack()" />
+		</div>
+	</div>
+	</div>
+</body>
+
+</html>

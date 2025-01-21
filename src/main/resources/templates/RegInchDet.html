@@ -1,0 +1,55 @@
+<form th:fragment="content" th:object="${regDet}" th:action="@{/rbkmapping}" method="get">
+	<table class="table table-bordered">
+		<thead>
+			<tr>
+				<th>S.no</th>
+				<th>RSK</th>
+				<th>Employee Name</th>
+				<th>Employee Code</th>
+				<th>RSK User ID</th>
+				<th>Employee Status</th>
+				<th>Mobile</th>
+				<th>Email Id</th>
+				<th>Masked Aadhaar</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr th:each="item, rowStat : ${regDet}">
+				<td th:text="${rowStat.index + 1}" data-label="S.no"></td>
+				<td th:text="${item.vname}" data-label="RSK "></td>
+				<td th:text="${item.emp_name}" data-label="Employee Name"></td>
+				<td th:text="${item.emp_code}" data-label="Employee Code"></td>
+				<td th:text="${item.rbkuserid}" data-label="RSK User ID"></td>
+				<td th:text="${item.incharge_sts}" data-label="Employee Status"></td>
+				<td th:text="${item.mobile}" data-label="Mobile"></td>
+				<td th:text="${item.email}" data-label="Email Id"></td>
+				<td th:text="${item.aadhaar_id}" data-label="Masked Aadhaar"></td>
+			</tr>
+		</tbody>
+	</table>
+</form>
+
+<script>
+	$(document).ready(function () {
+
+
+		// Change the selector if needed
+		var $table = $('table.scroll'),
+			$bodyCells = $table.find('tbody tr:first').children(),
+			colWidth;
+
+		// Adjust the width of thead cells when window resizes
+		$(window).resize(function () {
+			// Get the tbody columns width array
+			colWidth = $bodyCells.map(function () {
+				return $(this).width();
+			}).get();
+
+			// Set the width of thead columns
+			$table.find('thead tr').children().each(function (i, v) {
+				$(v).width(colWidth[i]);
+			});
+		}).resize(); // Trigger resize handler
+
+	});
+</script>

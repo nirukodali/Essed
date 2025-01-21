@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="header">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>e-Crop</title>
+<style>
+/* Custom styles for the NProgress bar */
+#nprogress .bar {
+    background: deepskyblue !important;
+    height: 4px !important;
+}
+
+/* Custom styles for the "Please wait" message */
+#pleaseWaitMessage {
+    font-size: 18px;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+/* Modal styles */
+</style>
+</head>
+
+<body>
+    <!-- Include your common header content -->
+    <div th:insert="headerImage"></div>
+    <div th:insert="navBarTop"></div>
+    <div th:insert="headerMessage"></div>
+
+    <div class="container-fluid header-design-login">
+        <div class="row justify-content-center align-items-center" style="height: 10vh;">
+            <div class="webland-container">
+                <form th:action="@{/fetchperinialdataentry}" method="post" id="weblandForm">
+                    <h5 style="color: darkgreen;">Data Preparation From Perennial</h5>
+                    <br />
+                    <!-- Crop Year Dropdown -->
+                    <div class="mb-3 form-group">
+                        <label for="cropyear">Select Crop Season & Year :</label>
+                        <select id="cropyear" name="cropyear" class="form-control custom-select" required>
+                            <option value="" disabled selected>Select Crop Season & Year</option>
+                            <option th:each="season : ${activeSeasons}"
+                                th:value="${season.seasonvalue}" th:text="${season.cropyear}"></option>
+                        </select>
+                    </div>
+
+                    <!-- Village Dropdown -->
+                    <div class="mb-3 form-group">
+                        <label for="village">Select Village:</label>
+                        <select id="village" name="village" class="form-control custom-select" required>
+                            <option value="" disabled selected>Select Village</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block"
+                        onclick="return confirmForm();" style="margin-right: 30px;">Download</button>
+                    <button type="button" class="btn btn-secondary btn-block" onclick="resetForm()">Refresh</button>
+
+                    <!-- "Please wait" message -->
+                    <div id="pleaseWaitMessage" style="display: none;">Please wait while fetching the data...</div>
+
+                    <!-- Display Success Message -->
+                    <div th:if="${successMessage}" class="alert alert-success" role="alert">
+                        <strong>Success:</strong> <span th:text="${successMessage}"></span>
+                    </div>
+
+                    <!-- Display Error Message -->
+                    <div th:if="${errorMessage}" class="alert alert-danger" role="alert">
+                        <strong>Error:</strong> <span th:text="${errorMessage}"></span>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(function() {
+            $('#weblandForm').submit(function(e) {
+                if ($('#cropyear').val() === '' || $('#village').val() === '') {
+                    alert('Please select both Crop Year and Village.');
+                    e.preventDefault();
+                } else {
+                    $('#pleaseWaitMessage').show();
+                    NProgress.start();
+                }
+            });
+
+            $('#cropyear').on('change', function() {
+                $('#village').empty().append('<option value="" disabled selected>Select Village</option>');
+                if ($('#cropyear').val() !== '') {
+                    fetchVillageList();
+                }
+            });
+
+            $('#village').on('change', function() {
+                $('#pleaseWaitMessage').hide();
+                NProgress.done();
+            });
+        });
+
+        function confirmForm() {
+            var f1 = document.forms["weblandForm"];
+            var cryear = f1.cropyear.value.trim();
+            if (cryear === null || cryear === '') {
+                alert("Please select crop year");
+                return false;
+            }
+
+            var village = f1.village.value.trim();
+            if (village === null || village === '') {
+                alert("Please select Village");
+                return false;
+            }
+
+            return true;
+        }
+
+        function fetchVillageList() {
+            $.ajax({
+                url: './rest/api/perinialdata/villages',
+                method: 'GET',
+                data: {
+                    activeSeason: $('#cropyear').val()
+                },
+                dataType: 'json',
+                beforeSend: function() {},
+                success: function(response) {
+                    var data = response;
+                    var str = '<option value="">Select Village</option>';
+                    $.each(data, function(index, obj) {
+                        str += '<option value="' + obj.wbvcode + '">' + obj.wbevname + '</option>';
+                    });
+                    $('#village').html(str);
+                },
+                error: function(xhr, status, error) {
+                    console.error(error);
+                },
+                complete: function() {
+                    NProgress.done();
+                    $('#pleaseWaitMessage').hide();
+                }
+            });
+        }
+
+        function resetForm() {
+            $('#cropyear').val('');
+            $('#cropyear').change();
+            window.location.href = './perinialdataEntry';
+        }
+
+        function reloadPage() {
+            location.reload();
+        }
+    </script>
+</body>
+
+</html>

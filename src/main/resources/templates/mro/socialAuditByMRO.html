@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="header"></head>
+
+<body>
+	<div th:insert="headerImage"></div>
+
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+
+<title>socialAuditByMRO</title>
+
+<style>
+    .table-heading {
+        background-color: #3498db;
+        text-align: center;
+        width: 100%;
+        margin: 0 auto;
+        padding: 5px;
+        color: white;
+        font-weight: bold;
+    }
+
+    /* Align text right for labels and inputs */
+    label,
+    input,
+    select,
+    textarea {
+        text-align: left;
+    }
+
+    /* Add red asterisk to required fields */
+    /* Using two Unicode non-breaking spaces */
+    label:after {
+        content: '*\00a0\00a0\00a0\00a0'; 
+        color: red;
+    }
+
+    /* Center placeholder text in the select dropdown */
+    select.form-select option[value="0"] {
+        text-align: left;
+    }
+
+    .webland-container {
+        width: 460px;
+        height: 40px;    
+        /* Any other styles you want to add */
+        /* This is used to distance between Updation Of Social Audit Grievances Received and Crop Year  */
+    }
+
+    .form-container {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        margin-bottom: 15px;
+        position: relative;
+    }
+
+    .form-container label {
+        width: 250px;
+        margin-right: 10px;
+        text-align: right;
+    }
+
+    .form-container input,
+    .form-container select {
+        width: 270px;
+    }
+
+    .error-message {
+        position: absolute;
+        left: 250px; /* Adjust this value based on your label width */
+        bottom: -17px; /* Adjust this value to position the error message below the input field */
+        color: red;
+        font-size: 13px;
+        margin-top: 5px;
+        white-space: nowrap; /* Prevent the error message from wrapping */
+    }
+</style>
+
+
+
+<body style="background-color: #e8e8e8;">
+    <p class="table-heading">Supervisory Check Records Correction Validation</p>
+            <div class="row justify-content-center align-items-center" style="height: 10vh;">
+            <div class="webland-container">
+				<div class="card ecropCardAudit">
+
+					<div class="card-body" style="padding: 10px;">
+                <form th:object="${mrosocialAudit}" th:action="@{/viewSocialAuditByMRO}" method="get">
+
+<div class="form-container">
+    <label for="name">Crop Year </label>
+    <select name="crYear" class="form-select" aria-label="Crop Year" onchange="validateSelection(this)">
+        <option value="0">---Select---</option>
+        <option th:each="emp : ${activeseason}" th:value="${emp.seasonvalue}" th:text="${emp.cropyear}"></option>
+    </select>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var selectElement = document.querySelector('select[name="crYear"]');
+        validateSelection(selectElement);
+
+        selectElement.addEventListener('change', function () {
+            validateSelection(this);
+        });
+    });
+
+    function validateSelection(selectElement) {
+        var selectedOption = selectElement.options[selectElement.selectedIndex];
+
+        if (selectedOption.value === '0' || selectedOption.text === '--Select Crop Year--') {
+            
+            selectElement.setCustomValidity('Please select a valid Crop Year');
+        } else {
+            selectElement.setCustomValidity('');
+        }
+    }
+</script>
+
+<div class="form-container">
+    <label for="name">Select Village </label>
+    <select th:id="rbkVillage" th:name="rbkVillage" class="form-select" aria-label="Select Village" onchange="validateVillage(this)">
+        <option value="0">---Select---</option>
+        <option th:each="emp : ${villages}" th:value="${emp.wbvcode}" th:text="${emp.wbvname}"></option>
+    </select>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var selectElement = document.querySelector('select[name="rbk"]');
+        validateVillage(selectElement);
+
+        selectElement.addEventListener('change', function () {
+            validateVillage(this);
+        });
+    });
+
+    function validateVillage(selectElement) {
+        var selectedOption = selectElement.options[selectElement.selectedIndex];
+
+        if (selectedOption.value === '0' || selectedOption.text === '---Select Village---') {
+            selectElement.setCustomValidity('Please select a valid Village');
+        } else {
+            selectElement.setCustomValidity('');
+        }
+    }
+</script>
+
+<div class="mb-3" style="display: flex; flex-direction: column; align-items: center;">
+    <div style="display: flex; justify-content: center; margin-bottom: 10px;">
+        <button type="submit" class="btn btn-primary" onclick="fetchData()">Search</button>
+        <button type="button" class="btn btn-primary" th:onclick="window.location.href='/home'" style="margin-left: 10px;">Back</button>
+    </div>
+
+    <div>
+        <span th:utext="${msg}"></span>
+    </div>
+</div>
+
+
+                </form>
+            </div>
+        </div>
+</body>
+
+</html>

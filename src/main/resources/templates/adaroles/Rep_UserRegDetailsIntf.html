@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:insert="header"></head>
+<div th:insert="headerImage"></div>
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+	<!--<div style="font-size: 150%;font-weight: bold;padding-left: 40%">Welcome To M Jagga Rao ADMINISTRATOR</div><br>-->
+
+<head>
+   
+    <style>
+        #loading {
+            position: fixed;
+            top: 80%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            border-radius: 5px;
+            background-color: rgba(255, 255, 255, 0.8);
+            display: none; /* Hidden by default */
+            z-index: 1000;
+        }
+    </style>
+
+    <script>
+        // Function to handle print
+        function CallPrint(strid) {
+            var prtContent = document.getElementById(strid);
+            var mywindow = window.open('', '', 'left=0,top=0,width=950,height=600,toolbar=1,scrollbars=1,status=1,addressbar=0');
+            var is_chrome = Boolean(mywindow.chrome);
+            mywindow.document.write(prtContent.innerHTML);
+            mywindow.document.close(); // Necessary for IE >= 10 and necessary before onload for Chrome
+
+            if (is_chrome) {
+                mywindow.onload = function () { // Wait until all resources loaded 
+                    mywindow.focus(); // Necessary for IE >= 10
+                    mywindow.print(); // Print the content
+                    mywindow.close(); // Close the window
+                };
+            } else {
+                mywindow.focus(); // Necessary for IE >= 10
+                mywindow.print();
+                mywindow.close();
+            }
+
+            return true;
+        }
+
+        // Function to export table to Excel
+        var tableToExcel = (function () {
+            var uri = 'data:application/vnd.ms-excel;base64,',
+                template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" ' +
+                           'xmlns:x="urn:schemas-microsoft-com:office:excel" ' +
+                           'xmlns="http://www.w3.org/TR/REC-html40">' +
+                           '<head><!--[if gte mso 9]><xml><x:ExcelWorkbook>' +
+                           '<x:ExcelWorksheets><x:ExcelWorksheet>' +
+                           '<x:Name>{worksheet}</x:Name>' +
+                           '<x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions>' +
+                           '</x:ExcelWorksheet></x:ExcelWorksheets>' +
+                           '</x:ExcelWorkbook></xml><![endif]--></head>' +
+                           '<body><table align="center">{table}</table></body></html>',
+                base64 = function (s) {
+                    return window.btoa(unescape(encodeURIComponent(s)));
+                },
+                format = function (s, c) {
+                    return s.replace(/{(\w+)}/g, function (m, p) {
+                        return c[p];
+                    });
+                };
+            return function (table, name) {
+                if (!table.nodeType)
+                    table = document.getElementById(table);
+                var ctx = { worksheet: name || 'Worksheet', table: table.innerHTML };
+                window.location.href = uri + base64(format(template, ctx));
+            };
+        })();
+
+        // Function to validate form inputs
+        function validateForm() { 
+            var dcode = $("#dcode").val();
+        var mcode = $("#mcode").val();
+            var vcode = $("#vcode").val();
+           
+            if (dcode === "") {
+                alert("Please select District");
+                $("#loading").hide();
+                return false;
+            } else if (mcode === "") {
+                alert("Please select Mandal");
+                $("#loading").hide();
+                return false;
+            }else if (vcode === "") {
+                alert("Please select Village");
+                $("#loading").hide();
+                return false;
+            }
+            return true;
+        }
+
+        
+        // Function to fetch and display data
+        function getData() {
+        
+            $("#databody").empty(); // Clear previous data
+            $('#loading').show(); // Show loading indicator
+
+            if (validateForm()) { // Proceed only if form is valid
+                var dcode = $("#dcode").val();
+                var mcode = $("#mcode").val();
+                var vcode = $("#vcode").val();
+ 
+               $.ajax({
+                    type: "POST",
+                    url: "./utilADA/UserRegDetails", // Removed the trailing '?'
+                    data: {
+                     
+                    	dcode: dcode,
+                    	mcode: mcode,
+                    	vcode: vcode,
+                    
+                    },
+                    cache: false,
+                    dataType: 'json', // Expect JSON response
+                    success: function (resp) {
+                        // Debugging alerts
+                        
+//                         alert("Number of records: " + resp.length);
+//                         alert("resp==>" +resp);
+
+                        $('#loading').hide(); // Hide loading indicator
+
+                        if (resp.length === 0) {
+                            alert("No Records Found");
+                            return;
+                        }
+
+                        var sno = 0;
+                        for (var j = 0; j < resp.length; j++) {
+                            sno++;
+                            var bean = resp[j];
+
+
+ var rowHtml = '<tr>' +
+                    '<td>' + sno + '</td>' +
+                    '<td>' + (bean.mandalname || '') + '</td>' +
+                    '<td>' + (bean.villagename || '') + '</td>' +
+                    '<td>' + (bean.name || '') + '</td>' +
+                    '<td>' + (bean.userid || '') + '</td>' +
+                    '<td>' + (bean.mobile_phone || '') + '</td>' +  
+    '<td>' + (bean.sec_type === 'R' ? 'Rural' : (bean.sec_type === 'U' ? 'Urban' : 'N/A')) + '</td>' +
+
+                    '</tr>';
+
+                            $("#databody").append(rowHtml);
+                        }
+                    },
+                    
+//                     error: function (xhr, status, error) {
+//                         $('#loading').hide(); // Hide loading indicator
+//                         alert("An error occurred while fetching data: " + error);
+//                         console.error("AJAX Error:", status, error);
+//                     }
+                });
+            } else {
+                $('#loading').hide(); // Hide loading indicator if validation fails
+            }
+        }
+
+        // Function to navigate back
+        function goBack() {
+            window.location.href = "./home";
+        }
+        
+        
+       
+    	function getMandal() {
+			var districtCode = document.getElementById("dcode").value;
+
+			if (districtCode === "") {
+				$('#mcode').html('<option value="">-------Select-------</option>');
+				return;
+			}
+
+			$.ajax({
+				url: './getMandalsByDistrict',
+				type: 'GET',
+				data: {dcode: districtCode},
+				success: function (response) {
+					var subProductSelect = $('#mcode');
+					subProductSelect.empty();
+					subProductSelect.append('<option value="">-------Select-------</option>');
+
+					$.each(response, function (index, subProduct) {
+						subProductSelect.append('<option value="' + subProduct.mcode + '">' + subProduct.mname + '</option>');
+					});
+				},
+				error: function (xhr, status, error) {
+					console.error("Error fetching Mandals:", error);
+					alert("There was an error fetching the Mandals.");
+				}
+			});
+		}
+
+		function getVillageSec() {
+			var districtCode = document.getElementById("dcode").value;
+// 			alert("districtCode------->"+districtCode);
+			
+			var mandalCode = document.getElementById("mcode").value;
+// 			alert("mandalCode==>" +mandalCode);
+
+			if (districtCode === "" && mandalCode === "" ) {
+				$('#mcode').html('<option value="">-------Select-------</option>');
+				return;
+			}
+
+			$.ajax({
+				url: './utilADA/getVillageSecbymcodendcode',
+				type: 'GET',
+				  data: {
+					  dcode: districtCode,
+					  mcode: mandalCode,
+                  },
+				
+				success: function (response) {
+
+					 var subProductSelect = $('#vcode');
+				        subProductSelect.empty(); // Clear any existing options
+				        subProductSelect.append('<option value="">--Select--</option>'); // Add a default option
+
+				        // Populate the dropdown with the data from the response
+				        $.each(response, function(index, subProduct) {
+				            subProductSelect.append('<option value="' + subProduct.vcode + '">' + subProduct.vname + '</option>');
+				        });
+				    },
+				    error: function(xhr, status, error) {
+				        console.error("Error fetching villages:", error);
+				        alert("There was an error fetching the village list.");
+				    }
+				});
+		}
+					
+    </script>
+</head>
+
+<body>
+
+<div class="heading" style="text-align: center; font-size: 25px;">
+		<b>User Registration Details </b>
+	</div>
+	<br>
+	<div id="loading" style="display: none;">Loading...</div>
+        <div align="center">
+        <form>
+            <table id="ObjEntryTable">
+                <tr>
+                    <td colspan="3"></td>
+                </tr>
+            </table>
+
+<div style="display: flex; justify-content: center; align-items:right; margin-bottom: 0.5%;">
+    <b style="margin-right: 10px;">Select District <font color="red">*</font> </b>
+    <select id="dcode" name="dcode" onchange="getMandal()" style="width: 225px;">
+        <option value="">-------Select-------</option>
+        <option th:each="district : ${district}" th:value="${district.dcode}" th:text="${district.dname}"></option>
+    </select>
+</div>
+
+<div style="display: flex; justify-content: center; align-items:right; margin-bottom: 0.5%;margin-left:1%;">
+    <b style="margin-right: 10px;">Select Mandal</b>
+    <select id="mcode" name="mcode" onchange="getVillageSec()"  style="width:225px">
+							<option value="">-------Select-------</option>
+						</select>
+</div>
+
+<div style="display: flex; justify-content: center; align-items: right; margin-bottom: 0.5%;margin-right:0.1%;">
+    <b style="margin-right: 10px;">Village Secretariat</b>
+    <select id="vcode" name="vcode" style="width: 220px;">
+        <option value="">-------Select-------</option>
+    </select>
+</div>
+ <!-- Submit Button -->
+            <div align="center" style="padding-top:10px; padding-bottom:10px;">
+                <button type="button" id="btnSubmit" class="btn btn-success" value="Submit" onclick="getData()">Submit</button>
+            </div>
+      </form>
+        </div>
+
+        <!-- Results Table -->
+             <div class="container">
+        <form id="unlockreport" name="unlockreport" method="post">
+            <div align="center" id="divPrint" class="table table-hover">
+                <table id="tableStkId" style="width: 70%">
+                    <thead>
+                        <tr>
+                      <th> <b> S.No </b> </th>
+                <th> <b> Mandal </b> </th>
+                <th> <b> Village Secretariat </b> </th>
+                <th> <b> Name </b> </th>
+                <th> <b>User Id </b> </th>
+                <th> <b>Mobile No</b> </th>
+                <th> <b>Sec Type </b> </th>
+                        </tr>
+                    </thead>
+                    <tbody id="databody">
+                        <!-- Rows will be appended here via JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!-- Action Buttons -->
+        <div align="center" style="color:black; margin-top: 20px;">
+            <input class="btn btn-success" type="button" onclick="CallPrint('divPrint')" value="Print">
+            <input class="btn btn-success" type="button" onclick="tableToExcel('tableStkId', 'Abstract')" value="Excel">
+            <input class="btn btn-success" type="button" value="Back" onclick="goBack()" />
+        </div>
+    </form>
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:insert="header">
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<div th:insert="headerImage"></div>
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+	<div class="container-fluid header-design-login  ">
+		<div class="row justify-content-center align-items-center"
+			style="height: 10vh;">
+			<div class="webland-container" style="padding-top: 20px;">
+				<div class="card ecropCard cardbg">
+					<div class="card-title">
+						<h5 style="text-align: center;">Enable Objectionable Land
+							Parcels For Booking Details</h5>
+					</div>
+
+					<div class="card-body table-wrapper"
+						style="padding: 10px; overflow-y: scroll; max-height: 300px"
+						id="divPrint">
+						<div style="overflow-y: auto;">
+							<table class="table mapped " id="absseasondistwise">
+								<thead style="position: sticky">
+									<tr>
+										<th>S.No</th>
+										<th>Survey/LP No</th>
+										<th>Khatha No</th>
+										<th>Farmer Name</th>
+										<th>Father Name</th>
+										<th>Total Extent</th>
+										<th>Occupent Name</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr th:each="data,rowstat: ${landpattaDetails}">
+										<td th:text="${rowstat.index+1}"></td>
+										<td th:text="${data.surveyNo}"></td>
+										<td th:text="${data.khatNo}"></td>
+										<td th:text="${data.farmerName}"></td>
+										<td th:text="${data.fatherName}"></td>
+										<td th:text="${data.totalExtent}"></td>
+										<td th:text="${data.occupName}"></td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						<div>
+							<h5 style="text-align: center; color: red; font-size: x-large;"
+								th:text="${msg}"></h5>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>crpMao</title>
+    <head th:insert="header"></head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function CallPrint(strid) {
+            var prtContent = document.getElementById(strid);
+            var mywindow = window.open('', '', 'left=0,top=0,width=950,height=600,toolbar=1,scrollbars=1,status=1,addressbar=0');
+            var is_chrome = Boolean(mywindow.chrome);
+            mywindow.document.write(prtContent.innerHTML);
+            mywindow.document.close(); // necessary for IE >= 10 and necessary before onload for chrome
+
+            if (is_chrome) {
+                mywindow.onload = function() { // wait until all resources loaded 
+                    mywindow.focus(); // necessary for IE >= 10
+                    mywindow.print(); // change window to mywindow
+                    mywindow.close(); // change window to mywindow
+                };
+            } else {
+                mywindow.document.close(); // necessary for IE >= 10
+                mywindow.focus(); // necessary for IE >= 10
+                mywindow.print();
+                mywindow.close();
+            }
+
+            return true;
+        }
+
+        var tableToExcel = (function() {
+            var uri = 'data:application/vnd.ms-excel;base64,',
+                template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table align="center">{table}</table></body></html>',
+                base64 = function(s) { return window.btoa(unescape(encodeURIComponent(s))) },
+                format = function(s, c) { return s.replace(/{(\w+)}/g, function(m, p) { return c[p]; }) }
+            return function(table, name) {
+                if (!table.nodeType) table = document.getElementById(table)
+                var ctx = { worksheet: name || 'Worksheet', table: table.innerHTML }
+                window.location.href = uri + base64(format(template, ctx))
+            }
+        })();
+    </script>
+</head>
+
+<body>
+    <div th:insert="headerImage"></div>
+<!--    <div th:insert="navBarTop"></div>-->
+<!--    <div th:insert="headerMessage"></div>-->
+<div style="color: white;" class="navbar navbar-expand-sm bg-dark-green navbar-dark container-fluid">
+                        <ul class="navbar-nav">
+                            <li class="nav-item">
+                                <a style="color: white;font-size: larger;font-weight: bolder;" class="nav-item dropdown" href="#">Home <span class="active"></span></a>
+                            </li>
+                            <li class="nav-item" style="margin-left: 100%;">
+                                <a style="color: white;font-size: larger;font-weight: bolder;" href="#" id="reportsDropdown"
+							data-bs-toggle="dropdown">
+Reports</a>
+                                <ul class="dropdown-menu" aria-labelledby="reportsDropdown">
+							<li ><a style="color: black;font-size: large;font-weight: bolder;"  href="crbookingabsIntf">District Wise Abstract on Extent Booked</a></li>
+							<li><a style="color: black;font-size: large;font-weight: bolder;" href="stateWiseCropNames">State Wide Crop Report</a></li>
+							<li><a  style="color: black;font-size: large;font-weight: bolder;" href="cropnamesPB">List of Perennial/Biennial Crops</a></li>
+						</ul>
+
+                            </li>
+                            <li class="nav-item" style="padding-left: 100%;">
+                                <a style="color: white;font-size: larger;font-weight: bolder;" href="logout">Logout</a>
+                            </li>
+                        </ul>
+                    </div>
+    <form method="post">
+        <div align="center" id="divPrint">
+            <div>
+                <b>Mandal-wise Crop Report</b>
+            </div>
+<!--            <div style="padding-left: 1300px;">-->
+<!--                <b>Report Time :<span th:text="${reportTime}"></span></b>-->
+<!--            </div>-->
+            <div class="container">
+                <div align="center" class="table-responsive">
+                    <table align="center" id="tableStkId" class="table table-hover table-striped" style="width:50%;">
+                        <thead>
+                            <tr class="heading">
+                                <th colspan="4">
+                                        Crop Name: <span th:text="${cropid}"></span> &nbsp; &nbsp; &nbsp;
+                                        Crop Year: <span th:text="${cropyear}"></span> &nbsp; &nbsp; &nbsp;
+                                        Season: <span th:text="${cseason}"></span> &nbsp; &nbsp; &nbsp;
+                                    </b>
+                                </th>
+                            </tr>
+                            <tr>
+                                <th align="center" rowspan="2"><b> S.No. </b></th>
+                                <th align="center" rowspan="2"><b> Mandal Name </b></th>
+                                <th align="center" rowspan="2"><b> Extent Booked(in acres and cents)</b></th>
+                                <th align="center" rowspan="2"><b> No. of Farmers </b></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="list, iterStat : ${crmand}">
+                                <td th:text="${iterStat.count}"></td>
+                                <td>
+                                    <a th:href="@{'/CropNamesSecWise?wbmcode=' + ${list.cr_mand_code} + '&cseason=' + ${cseason} + '&cropyear=' + ${cropyear}+
+                                     '&crop=' + ${cropid}+'&wbdcode='+${wbdcode}}" th:value="${list.cr_mand_code}" th:text="${list.wbmname}"></a>
+                                </td>
+<!--                                 <td th:text="${list.bookedext}"></td> -->
+ <td th:text="${#numbers.formatDecimal(list.bookedext, 1, 2, 'POINT')}"></td>
+                                <td th:text="${list.farmers}"></td>
+                            </tr>
+                     <tr>
+                     <td colspan="2" align="left"><b>Total</b></td>
+                     <td><b><span th:text="${totalArea}"></span></b></td>
+                     <td><b><span th:text="${totalFarmers}"></span></b></td>
+                   </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div align="center" style="color: black; margin-top: 20px;">
+                <input class="btn btn-success" name="ctl00$ContentPlaceHolder1$btnPrint" type="button" id="ctl00_ContentPlaceHolder1_btnPrint" onClick="javascript:CallPrint('divPrint')" value="Print">
+                <input class="btn btn-success" type="button" onclick="tableToExcel('tableStkId', 'Abstract')" value="Excel">
+            </div>
+        </div>
+        <div align="center" style="margin-top: 20px;">
+            <input type="hidden" name="cropyear">
+            <input type="hidden" name="crop">
+            <input type="hidden" name="wbdcode">
+        </div>
+    </form>
+</body>
+
+</html>

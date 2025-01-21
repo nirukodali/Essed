@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="header">
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>District Wise Indents Entry</title>
+	<style>
+		.heading {
+			background-color: #006400;
+			font-family: arial;
+			font-size: 18px;
+			line-height: 1.5;
+			text-align: center;
+			width: 100%;
+			font-weight: bold;
+			color: white;
+		}
+	</style>
+</head>
+
+<body>
+	<div th:insert="headerImage"></div>
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+
+	<div class="container-fluid header-design-login" style=" width: 40%; height: 38vh;">
+		<div class="row justify-content-center align-items-center">
+			<div class="card ecropCard">
+				<form id="crop-selection-form">
+					<div class="card-title">
+						<h4 class="heading">District Wise Indents Entry</h4>
+					</div>
+					<br />
+					<div class="mb-3 form-group">
+						<label for="cropyear" style="padding-left: 15%;">Select Crop Year :</label>
+						<select id="cropyear" name="cropyear" class="form-control custom-select" style="width: 50%;"
+							required>
+							<option th:each="season : ${cropYear}" th:value="${season.seasonvalue}"
+								th:text="${season.cropyear}" selected="selected"></option>
+						</select>
+					</div>
+
+					<div class="mb-3 form-group">
+						<label for="product" style="padding-left: 17%;">Product Name : </label>
+						<select id="product" name="product" class="form-control custom-select" style="width: 50%;"
+							onchange="getSubProduct()" required>
+							<option value="" disabled selected>Select Product</option>
+							<option th:each="season : ${product}" th:value="${season.getProductcode()}"
+								th:text="${season.getName()}"></option>
+						</select>
+					</div>
+
+					<div class="mb-3 form-group">
+						<label for="subProduct" style="padding-left: 11%;">Sub Product Name :</label>
+						<select id="subProduct" name="subProduct" class="form-control custom-select" style="width: 50%;"
+							onchange="getSeedVariety()" required>
+							<option value="" disabled selected>Select Sub Product</option>
+						</select>
+					</div>
+
+					<div class="mb-3 form-group">
+						<label for="variety" style="padding-left: 11%;">Select Seed Variety :</label>
+						<select id="variety" name="variety" class="form-control custom-select" style="width: 50%;"
+							required onchange="loadDistrictTable()">
+							<option value="" disabled selected>Select Seed Variety </option>
+						</select>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<div id="district-table-section" style="display:none;">
+		<div
+			style="background-color: green; text-align: center;font-size: large;font-weight: bolder;width: 50%;margin-left: 25%;color: white;">
+			District Wise Indents Entry
+		</div>
+		<br>
+		<div style="background-color: floralwhite; height: 50px; text-align: center;width: 50%;margin-left: 25%;">
+			<pre style="font-size: large; font-family: sans-serif">
+                Target Indent Seed Variety: <span id="seed-variety" style="color: green;font-weight: bold;"></span> 
+                <br>Crop Year: <span id="crop-year" style="color: green;font-weight: bold;"></span>
+            </pre>
+			<br>
+			<br>
+		</div>
+
+		<br>
+		<form id="district-form">
+			<div
+				style="background-color: ghostwhite; margin-left: auto; margin-right: auto; width: 60%;margin-top: 2%;">
+				<table id="district-table" style="width: 100%; border-collapse: collapse;">
+
+				</table>
+			</div>
+			<br />
+			<div class="form-group" style="text-align: center;">
+				<button type="submit" class="btn btn-primary" id="submit-button">Submit</button>
+			</div>
+		</form>
+	</div>
+
+	<script>
+		function getSubProduct() {
+			var productCode = $("#product").val();
+			$.ajax({
+				type: "get",
+				url: "./getsubProduct?productCode=" + productCode,
+				success: function (response) {
+					$("#subProduct").empty().append('<option value="" disabled selected>Select Sub Product</option>');
+					response.forEach(function (item) {
+						$("#subProduct").append('<option value="' + item.subproductcode + '">' + item.subproductname + '</option>');
+					});
+				}
+			});
+		}
+
+		function getSeedVariety() {
+			var subProductCode = $("#subProduct").val();
+			$.ajax({
+				type: "get",
+				url: "./getSeedVariety?subProductCode=" + subProductCode,
+				success: function (response) {
+					$("#variety").empty().append('<option value="" disabled selected>Select Seed Variety</option>');
+					response.forEach(function (item) {
+						$("#variety").append('<option value="' + item.varietycode + '">' + item.varietyname + '</option>');
+					});
+				}
+			});
+		}
+
+		function getVarietyName(varietyCode) {
+			$.ajax({
+				url: '/getVarietyName',   
+				type: 'GET',
+				data: {varietyCode: varietyCode},   
+				success: function (response) {
+					$("#seed-variety").text(JSON.stringify(response));
+				},
+				error: function (xhr, status, error) {
+					console.log('Error fetching variety name:', error);
+				}
+			});
+		}
+
+		$('#variety').change(function () {
+			var selectedVarietyCode = $(this).val();
+			if (selectedVarietyCode) {
+				getVarietyName(selectedVarietyCode);  
+			}
+		});
+		
+function handleInput(input) {
+
+   let value = input.value.replace(/[^.0-9]/g, '');  
+
+    if (value.length > 8) {
+      value = value.slice(0, 8);
+    }
+
+    input.value = value;
+  }
+    
+		function loadDistrictTable() {
+			var variety = $("#variety").val();
+			var cropYear = $("#cropyear").val();
+			var productCode = $("#product").val();
+			var subProductCode = $("#subProduct").val();
+
+			if (!variety || !cropYear || !productCode || !subProductCode) {
+				return;
+			}
+
+
+			$("#crop-year").text(cropYear);
+
+			$.ajax({
+				type: "POST",
+				url: "./indentsEntryData",   
+				data: {variety: variety, cropYear: cropYear, productCode: productCode, subProductCode: subProductCode},
+				success: function (response) {
+					$("#district-table-section").show();
+					$("#district-table").html(`
+                        <thead>
+                            <tr>
+                                <th>SNO</th>
+                                <th>District Name</th>
+                                <th>Target Quantity (In Quintals)</th>
+                            </tr>
+                        </thead>
+                       <tbody>
+    ${response.map(function (item, index) {
+						return `
+            <tr>
+                <td>${index + 1}</td>
+                <td>${item.dname}
+                    <input type="hidden" value="${item.dcode}" id="dcode_${index}" name="dcode_${index}">
+                    <input type="hidden" value="${item.dname}" id="dname_${index}" name="dname_${index}">
+                </td>
+                <td><input type="text" name="quantity" value="0" required   onkeypress="return ( event.charCode == 8 || event.charCode == 0) || event.charCode == 46 ? null : event.charCode >= 48 && event.charCode <= 57 "
+									 required maxlength="8"></td>
+            </tr>
+        `;
+					}).join('')}
+</tbody>
+                    `);
+				}
+			});
+		}
+
+		$('#district-form').submit(function (event) {
+			event.preventDefault();   
+			 var rows = document.querySelectorAll('tbody tr');
+        let valid = true;
+
+        rows.forEach(function (row) {
+            var inputField = row.querySelector('[name="quantity"]');
+            var quantityValue = inputField.value;
+
+            if (quantityValue === '' || !inputField.checkValidity()) {
+                alert('Please enter a valid Quantity for the District: ' + row.querySelector('[name="dname"]').value);
+                valid = false;
+            }
+        });
+		if (valid){
+		 var formData = [];
+    $('#district-table tbody tr').each(function (index) {
+        var dcode = $(this).find(`input[name="dcode_${index}"]`).val();   
+        var quantity = $(this).find('input[name="quantity"]').val();   
+
+				formData.push({
+					dcode: dcode,
+					quantity: quantity
+				});
+			});
+			$.ajax({
+				type: 'POST',
+				url: './indentsEntryDataSubmit',  
+				contentType: 'application/json', 
+				data: JSON.stringify({
+					variety: $("#variety").val(),
+					cropYear: $("#cropyear").val(),
+					productCode: $("#product").val(),
+					subProductCode: $("#subProduct").val(),
+					districtData: formData 
+				}),
+				success: function (response) {
+					alert("Data submitted successfully!");
+					 loadDistrictTable();
+				},
+				error: function (xhr, status, error) {
+					console.error("Error submitting form data:", error);
+					alert("There was an error submitting the data. Please try again.");
+				}
+			});
+			}
+		});
+	</script>
+</body>
+
+</html>

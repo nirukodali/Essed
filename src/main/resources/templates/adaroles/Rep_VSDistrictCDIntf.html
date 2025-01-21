@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:insert="header"></head>
+<div th:insert="headerImage"></div>
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+	<!--<div style="font-size: 150%;font-weight: bold;padding-left: 40%">Welcome To M Jagga Rao ADMINISTRATOR</div><br>-->
+
+<head>
+   
+
+    <style>
+        #loading {
+            position: fixed;
+            top: 80%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            border-radius: 5px;
+            background-color: rgba(255, 255, 255, 0.8);
+            display: none; /* Hidden by default */
+            z-index: 1000;
+        }
+    </style>
+
+    <script>
+        // Function to handle print
+        function CallPrint(strid) {
+            var prtContent = document.getElementById(strid);
+            var mywindow = window.open('', '', 'left=0,top=0,width=950,height=600,toolbar=1,scrollbars=1,status=1,addressbar=0');
+            var is_chrome = Boolean(mywindow.chrome);
+            mywindow.document.write(prtContent.innerHTML);
+            mywindow.document.close(); // Necessary for IE >= 10 and necessary before onload for Chrome
+
+            if (is_chrome) {
+                mywindow.onload = function () { // Wait until all resources loaded 
+                    mywindow.focus(); // Necessary for IE >= 10
+                    mywindow.print(); // Print the content
+                    mywindow.close(); // Close the window
+                };
+            } else {
+                mywindow.focus(); // Necessary for IE >= 10
+                mywindow.print();
+                mywindow.close();
+            }
+
+            return true;
+        }
+
+        // Function to export table to Excel
+        var tableToExcel = (function () {
+            var uri = 'data:application/vnd.ms-excel;base64,',
+                template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" ' +
+                           'xmlns:x="urn:schemas-microsoft-com:office:excel" ' +
+                           'xmlns="http://www.w3.org/TR/REC-html40">' +
+                           '<head><!--[if gte mso 9]><xml><x:ExcelWorkbook>' +
+                           '<x:ExcelWorksheets><x:ExcelWorksheet>' +
+                           '<x:Name>{worksheet}</x:Name>' +
+                           '<x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions>' +
+                           '</x:ExcelWorksheet></x:ExcelWorksheets>' +
+                           '</x:ExcelWorkbook></xml><![endif]--></head>' +
+                           '<body><table align="center">{table}</table></body></html>',
+                base64 = function (s) {
+                    return window.btoa(unescape(encodeURIComponent(s)));
+                },
+                format = function (s, c) {
+                    return s.replace(/{(\w+)}/g, function (m, p) {
+                        return c[p];
+                    });
+                };
+            return function (table, name) {
+                if (!table.nodeType)
+                    table = document.getElementById(table);
+                var ctx = { worksheet: name || 'Worksheet', table: table.innerHTML };
+                window.location.href = uri + base64(format(template, ctx));
+            };
+        })();
+
+        // Function to validate form inputs
+        function validateForm() { 
+            var cropyear = $("#cropyear").val();
+          
+            if (cropyear === "") {
+                alert("Please select cropyear");
+                $("#loading").hide();
+                return false;
+            }
+
+            return true;
+        }
+
+        
+        function getData() {
+    $("#databody").empty(); // Clear previous data
+    $('#loading').show(); // Show loading indicator
+
+    if (validateForm()) { // Proceed only if form is valid
+        var cropyear = $("#cropyear").val();
+        console.log("Selected Crop Year: " + cropyear); // Debug crop year value
+
+        $.ajax({
+            type: "POST",
+            url: "./utilADA/VSDistrictCDRep", // Removed the trailing '?'
+            data: {
+                cropyear: cropyear,
+            },
+            cache: false,
+            dataType: 'json', // Expect JSON response
+            success: function (resp) {
+//             	alert("resp===>" +resp);
+//             alert("Response: " + JSON.stringify(resp));
+
+//                 CONSOLE.LOG("RESPONSE: ", JSON.STRINGIFY(RESP)); // DEBUGGING THE RESPONSE
+
+                $('#loading').hide(); // Hide loading indicator
+
+                // Check if no records are found
+                if (resp.length === 0) {
+                    alert("No Records Found");
+                    return;
+                }
+
+                var sno = 0;
+                for (var j = 0; j < resp.length; j++) {
+                    sno++;
+                    var bean = resp[j];
+
+              var rowHtml = '<tr>' +
+            '<td>' + sno + '</td>' +
+            '<td>' + (bean.dname || '') + '</td>' +
+            '<td>' + (bean.mname || '') + '</td>' +
+            '<td>' + (bean.vname || '') + '</td>' +
+            '<td>' + (bean.cname || '') + '</td>' +
+            '</tr>';
+
+                    $("#databody").append(rowHtml);
+                }
+                
+            },
+            error: function (xhr, status, error) {
+                $('#loading').hide(); // Hide loading indicator
+                alert("An error occurred while fetching data: " + error);
+                console.error("AJAX Error:", status, error);
+            }
+        });
+    } else {
+        $('#loading').hide(); // Hide loading indicator if validation fails
+    }
+}
+
+        // Function to navigate back
+        function goBack() {
+            window.location.href = "./home";
+        }
+    </script>
+
+<body>
+   <div class="heading" style="text-align: center; font-size: 25px;">
+		<b>Village Secretariat Details </b>
+	</div>
+	<br>
+	<div id="loading" style="display: none;">Loading...</div>
+        <div align="center">
+        <form>
+            <table id="ObjEntryTable">
+                <tr>
+                    <td colspan="3"></td>
+                </tr>
+            </table>
+   
+<div style="display: flex; justify-content: center; align-items: right; margin-bottom: 0.5%;">
+    <b style="margin-right: 10px;">Crop Year</b>
+    <select id="cropyear" name="cropyear" style="width: 225px;">
+        <option value="">-------Select-------</option>
+         <option th:each="seasonValue : ${seasonValues}" th:value="${seasonValue.season}" th:text="${seasonValue.seasonname}"> </option>
+    </select>
+    
+</div>
+ <!-- Submit Button -->
+            <div align="center" style="padding-top:10px; padding-bottom:10px;">
+                <button type="button" id="btnSubmit" class="btn btn-success" value="Submit" onclick="getData()">Submit</button>
+            </div>
+            </form>
+        </div>
+
+        <!-- Results Table -->
+ <div class="container">
+        <form id="unlockreport" name="unlockreport" method="post">
+            <div align="center" id="divPrint" class="table table-hover">       
+                <table id="tableStkId" style="width: 70%">
+                    <thead>
+                     <tr>
+                     <th  align="center"> <b> S.No. </b> </th>
+                    <th  align="center"> <b> District</b> </th>
+                    <th  align="center"> <b> Mandal</b> </th>
+                    <th  align="center"> <b> Village </b> </th>
+                    <th  align="center"> <b> Village Secretariat Name</b> </th>
+                         
+                        </tr>
+                    </thead>
+                    <tbody id="databody">
+                        <!-- Rows will be appended here via JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!-- Action Buttons -->
+        <div align="center" style="color:black; margin-top: 20px;">
+            <input class="btn btn-success" type="button" onclick="CallPrint('divPrint')" value="Print">
+            <input class="btn btn-success" type="button" onclick="tableToExcel('tableStkId', 'Abstract')" value="Excel">
+            <input class="btn btn-success" type="button" value="Back" onclick="goBack()" />
+        </div>
+    </form>
+</body>
+
+</html>

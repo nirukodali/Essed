@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<!--	<title>Mandal EkYC</title>-->
+
+	<head th:insert="header"></head>
+	<div th:insert="headerImage"></div>
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+<!--	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>-->
+	<script>
+		function CallPrint(strid) {
+			var prtContent = document.getElementById(strid);
+			var mywindow = window.open('', '', 'left=0,top=0,width=950,height=600,toolbar=1,scrollbars=1,status=1,addressbar=0');
+			var is_chrome = Boolean(mywindow.chrome);
+			var title = document.getElementById('printTitle').innerText;
+			var reportTime = document.getElementById('theDate').innerText;
+			var headingContent = document.getElementById('heading').innerText;
+
+			mywindow.document.write('<html><head><title>Print</title>');
+			mywindow.document.write('<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">');
+			mywindow.document.write('<style>');
+			mywindow.document.write('@page { size: landscape; }');
+			mywindow.document.write('th, td { font-size: 10px; border: 1px solid black; }');
+			mywindow.document.write('table { width: 100%; }');
+			mywindow.document.write('th, td { font-size: 10px; }');
+			mywindow.document.write('h5 { text-align: center; }');
+			mywindow.document.write('</style>');
+			mywindow.document.write('</head><body>');
+			mywindow.document.write('<div style="text-align: center; margin-bottom: 20px;">');
+			mywindow.document.write('<h1>' + title + '</h1>');
+			mywindow.document.write('<p><b>Report Time:</b> ' + reportTime + '</p>');
+			mywindow.document.write('<h5>' + headingContent + '</h5>');
+			mywindow.document.write('</div>');
+			mywindow.document.write(prtContent.innerHTML);
+			mywindow.document.write('</body></html>');
+			mywindow.document.close();
+			if (is_chrome) {
+				mywindow.onload = function () {
+					mywindow.focus();
+					mywindow.print();
+					mywindow.close();
+				};
+			} else {
+				mywindow.onload = function () {
+					mywindow.focus();
+					mywindow.print();
+					mywindow.close();
+				};
+			}
+			return true;
+		}
+	</script>
+
+	<script language="javascript">
+		var tableToExcel = (function () {
+			var uri = 'data:application/vnd.ms-excel;base64,',
+				template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table align="center">{table}</table></body></html>',
+				base64 = function (s) {
+					return window.btoa(unescape(encodeURIComponent(s)));
+				},
+				format = function (s, c) {
+					return s.replace(/{(\w+)}/g, function (m, p) {
+						return c[p];
+					});
+				},
+				sanitizeText = function (text) {
+					return text.replace(/[\u00A0-\u9999<>\&]/g, function (i) {
+						return '&#' + i.charCodeAt(0) + ';';
+					}).replace(/\s+/g, ' ').trim();
+				};
+			return function (table, name) {
+				if (!table.nodeType)
+					table = document.getElementById(table);
+
+				var title = sanitizeText(document.getElementById('printTitle').innerText);
+				var reportTime = sanitizeText(document.getElementById('theDate').innerText);
+				var headingContent = sanitizeText(document.getElementById('heading').innerText);
+
+				var additionalHeading = `
+				            <tr><th colspan="26" style="text-align: center; font-size: 20px; font-weight: bold;">${title}</th></tr>
+				            <tr><th colspan="26" style="text-align: center; font-size: 15px; font-weight: bold;">Report Time: ${reportTime}</th></tr>
+				            <tr><th colspan="26" style="text-align: center; font-size: 15px; font-weight: bold;">${headingContent}</th></tr>
+				        `;
+				var tableHTML = additionalHeading + table.innerHTML;
+				var ctx = {worksheet: name || 'Worksheet', table: tableHTML};
+				window.location.href = uri + base64(format(template, ctx));
+			}
+		})();
+
+	</script>
+	<style>
+		#tableStkId thead {
+			
+			position: -webkit-sticky;
+			position: sticky;
+			top: 0;
+			z-index: 2;
+		}
+
+		#tableStkId th,
+		#tableStkId td {
+			padding: 5px;
+			text-align: center;
+		}
+	</style>
+	<style>
+		#ObjEntryTable {
+			border-collapse: separate;
+			border-spacing: 0 0.5em;
+		}
+	</style>
+</head>
+<script>
+	function handleNullValue(value) {
+		return (value !== null && value !== undefined) ? value : "--";
+	}
+	$(document).ready(function () {
+		var currentDate = new Date();
+		var formattedDate = currentDate.toLocaleString();
+		$("#theDate").text(formattedDate);
+		$("#loadingsign").hide();
+		$.ajax({
+			type: "get",
+			url: "./util/getAllSeason",
+			cache: false,
+			timeout: 600000,
+			success: function (resp) {
+				for (var j = 0; j < resp.length; j++) {
+					var bean = resp[j];
+					$("#cropyear").append(
+						'<option value="' + bean.col1 + '">'
+						+ bean.col2 + '</option>');
+				}
+			}
+		});
+	});
+	function getData() {
+		var cropyear = $("#cropyear").val();
+		if (!cropyear) {
+			alert("Please select a Crop Year.");
+			return false;
+		}
+		$("#loadingsign").show();
+		var wbdcode = $("#wbdcode").val();
+		var cropYear = $("#cropyear").val();
+		var data = {};
+		data['wbdcode'] = wbdcode;
+		data['cropyear'] = cropYear;
+		var [season, year] = cropYear.split('@');
+		var inputwbedname = $("#inputwbedname").val().replace(/Â/g, ' ').trim();
+		$.ajax({
+			type: "post",
+			url: "./util/mandalekyc",
+			contentType: 'application/json',
+			data: JSON.stringify(data),
+			cache: false,
+			timeout: 600000,
+			success: function (resp) {
+				$("#loadingsign").hide();
+				$("#databody").empty();
+				$("#heading").empty();
+				$("#heading").append('<tr style="font-size:22px;">'
+					+ '<td style="font-weight: 100">District: <b>' + inputwbedname + '&nbsp;&nbsp;&nbsp;</b></td>'
+					+ '<td style="font-weight: 100">Year: <b>' + year + '</b>&nbsp;&nbsp;&nbsp;</td>'
+					+ '<td style="font-weight: 100">Season: <b>' +
+					(season === 'k' || season === 'K' ? 'Kharif' : season === 'r' || season === 'R' ? 'Rabi' :
+						season === 's' || season === 'S' ? 'Summer' : season) + '&nbsp &nbsp &nbsp</b></td>' + + '</tr>');
+				var sno = 0;
+				var vaa_agri_farmers = 0, vro_agri_farmers = 0, ekyc_agri_farmers = 0, vaa_agri_ext = 0, vro_agri_ext = 0, ekyc_agri_ext = 0,
+					vaa_horti_farmers = 0, vro_horti_farmers = 0, ekyc_horti_farmers = 0, vaa_horti_ext = 0, vro_horti_ext = 0, ekyc_horti_ext = 0,
+					vaa_seri_farmers = 0, vro_seri_farmers = 0, ekyc_seri_farmers = 0, vaa_seri_ext = 0, vro_seri_ext = 0, ekyc_seri_ext = 0,
+					vaa_forestry_farmers = 0, vro_forestry_farmers = 0, ekyc_forestry_farmers = 0, vaa_forestry_ext = 0, vro_forestry_ext = 0, ekyc_forestry_ext = 0;
+				for (var j = 0; j < resp.length; j++) {
+					sno = sno + 1;
+					var bean = resp[j];
+					vaa_agri_farmers = vaa_agri_farmers + parseInt(bean.vaa_agri_farmers);
+					vro_agri_farmers = vro_agri_farmers + parseInt(bean.vro_agri_farmers);
+					ekyc_agri_farmers = ekyc_agri_farmers + parseInt(bean.ekyc_agri_farmers);
+					vaa_agri_ext = vaa_agri_ext + parseInt(bean.vaa_agri_ext);
+					vro_agri_ext = vro_agri_ext + parseInt(bean.vro_agri_ext);
+					ekyc_agri_ext = ekyc_agri_ext + parseInt(bean.ekyc_agri_ext);
+					vaa_horti_farmers = vaa_horti_farmers + parseInt(bean.vaa_horti_farmers);
+					vro_horti_farmers = vro_horti_farmers + parseInt(bean.vro_horti_farmers);
+					ekyc_horti_farmers = ekyc_horti_farmers + parseInt(bean.ekyc_horti_farmers);
+					vaa_horti_ext = vaa_horti_ext + parseInt(bean.vaa_horti_ext);
+					vro_horti_ext = vro_horti_ext + parseInt(bean.vro_horti_ext);
+					ekyc_horti_ext = ekyc_horti_ext + parseInt(bean.ekyc_horti_ext);
+					vaa_seri_farmers = vaa_seri_farmers + parseInt(bean.vaa_seri_farmers);
+					vro_seri_farmers = vro_seri_farmers + parseInt(bean.vro_seri_farmers);
+					ekyc_seri_farmers = ekyc_seri_farmers + parseInt(bean.ekyc_seri_farmers);
+					vaa_seri_ext = vaa_seri_ext + parseInt(bean.vaa_seri_ext);
+					vro_seri_ext = vro_seri_ext + parseInt(bean.vro_seri_ext);
+					ekyc_seri_ext = ekyc_seri_ext + parseInt(bean.ekyc_seri_ext);
+					vaa_forestry_farmers = vaa_forestry_farmers + parseInt(bean.vaa_forestry_farmers);
+					vro_forestry_farmers = vro_forestry_farmers + parseInt(bean.vro_forestry_farmers);
+					ekyc_forestry_farmers = ekyc_forestry_farmers + parseInt(bean.ekyc_forestry_farmers);
+					vaa_forestry_ext = vaa_forestry_ext + parseInt(bean.vaa_forestry_ext);
+					vro_forestry_ext = vro_forestry_ext + parseInt(bean.vro_forestry_ext);
+					ekyc_forestry_ext = ekyc_forestry_ext + parseInt(bean.ekyc_forestry_ext);
+
+					$("#databody").append('<tr style="fontsize:200px; font-weight:0;">'
+						+ '<td align="center">' + sno + '</td>'
+						+ '<td style="text-align:left">' + bean.mname + '</td>'
+						+ '<td align="center">' + bean.vaa_agri_farmers + '</td>'
+						+ '<td align="center">' + bean.vro_agri_farmers + '</td>'
+						+ '<td align="center">' + bean.ekyc_agri_farmers + '</td>'
+						+ '<td align="center">' + bean.vaa_agri_ext + '</td>'
+						+ '<td align="center">' + bean.vro_agri_ext + '</td>'
+						+ '<td align="center">' + bean.ekyc_agri_ext + '</td>'
+						+ '<td align="center">' + bean.vaa_horti_farmers + '</td>'
+						+ '<td align="center">' + bean.vro_horti_farmers + '</td>'
+						+ '<td align="center">' + bean.ekyc_horti_farmers + '</td>'
+						+ '<td align="center">' + bean.vaa_horti_ext + '</td>'
+						+ '<td align="center">' + bean.vro_horti_ext + '</td>'
+						+ '<td align="center">' + bean.ekyc_horti_ext + '</td>'
+						+ '<td align="center">' + bean.vaa_seri_farmers + '</td>'
+						+ '<td align="center">' + bean.vro_seri_farmers + '</td>'
+						+ '<td align="center">' + bean.ekyc_seri_farmers + '</td>'
+						+ '<td align="center">' + bean.vaa_seri_ext + '</td>'
+						+ '<td align="center">' + bean.vro_seri_ext + '</td>'
+						+ '<td align="center">' + bean.ekyc_seri_ext + '</td>'
+						+ '<td align="center">' + bean.vaa_forestry_farmers + '</td>'
+						+ '<td align="center">' + bean.vro_forestry_farmers + '</td>'
+						+ '<td align="center">' + bean.ekyc_forestry_farmers + '</td>'
+						+ '<td align="center">' + bean.vaa_forestry_ext + '</td>'
+						+ '<td align="center">' + bean.vro_forestry_ext + '</td>'
+						+ '<td align="center">' + bean.ekyc_forestry_ext + '</td>'
+						+ '</tr>');
+				}
+				$("#databody").append('<tr style="fontsize:200px; font-weight: bold;">'
+					+ '<td colspan = "2">TOTAL<b></b></td>'
+					+ '<td align="left">' + vaa_agri_farmers + '</td>'
+					+ '<td align="center">' + vro_agri_farmers + '</td>'
+					+ '<td align="center">' + ekyc_agri_farmers + '</td>'
+					+ '<td align="center">' + vaa_agri_ext + '</td>'
+					+ '<td align="center">' + vro_agri_ext + '</td>'
+					+ '<td align="center">' + ekyc_agri_ext + '</td>'
+					+ '<td align="center">' + vaa_horti_farmers + '</td>'
+					+ '<td align="center">' + vro_horti_farmers + '</td>'
+					+ '<td align="center">' + ekyc_horti_farmers + '</td>'
+					+ '<td align="center">' + vaa_horti_ext + '</td>'
+					+ '<td align="center">' + vro_horti_ext + '</td>'
+					+ '<td align="center">' + ekyc_horti_ext + '</td>'
+					+ '<td align="center">' + vaa_seri_farmers + '</td>'
+					+ '<td align="center">' + vro_seri_farmers + '</td>'
+					+ '<td align="center">' + ekyc_seri_farmers + '</td>'
+					+ '<td align="center">' + vaa_seri_ext + '</td>'
+					+ '<td align="center">' + vro_seri_ext + '</td>'
+					+ '<td align="center">' + ekyc_seri_ext + '</td>'
+					+ '<td align="center">' + vaa_forestry_farmers + '</td>'
+					+ '<td align="center">' + vro_forestry_farmers + '</td>'
+					+ '<td align="center">' + ekyc_forestry_farmers + '</td>'
+					+ '<td align="center">' + vaa_forestry_ext + '</td>'
+					+ '<td align="center">' + vro_forestry_ext + '</td>'
+					+ '<td align="center">' + ekyc_forestry_ext + '</td>'
+					+ '</tr>')
+			}
+		});
+	}
+	function goBack(){
+window.location.href="./home"
+	}
+</script>
+
+<body>
+	<div class="heading" colspan="20" style="text-align:center;font-size: 25px;">
+		<b id="printTitle"> Report on Department wise Mandal wise EKYC</b>
+	</div>
+	<p th:text="${msg}"></p>
+	<input type="hidden" id="wbdcode" th:value="${#session.getAttribute('wbdcode')}" />
+	<input type="hidden" id="inputuserid" th:value="${#session.getAttribute('userid')}" />
+	<input type="hidden" id="inputwbedname" th:value="${#session.getAttribute('wbedname')}" />
+	<div id="loadingsign">
+		<div class="d-flex justify-content-center">
+			<div class="spinner-border" role="status">
+				<span class="sr-only">Loading...</span>
+			</div>
+		</div>
+	</div>
+	<div align="center">
+		<form>
+			<table id="ObjEntryTable" style="font-size: inherit !important; border-radius: 10px;">
+				<tr style="padding-left:450px;">
+					<td align="right" width="30%"><b>Crop Year <font color="red">*</font></b></td>
+
+					<td align="left"><select id="cropyear" name="cropyear" style="width: 200px">
+							<option value="">-------Select-------</option>
+						</select></td>
+				</tr>
+			</table>
+			<div colspan="3" align="center" style="padding-top: 10px; padding-bottom: 10px;">
+				<button type="button" id="btnSubmit" class="btn btn-success" value="Submit"
+					onclick="return getData();">Submit</button>
+			</div>
+		</form>
+	</div>
+	<div
+		style="position: relative; width: 100%; height: 50px; display: flex; align-items: center; justify-content: center;">
+		<h5 id="heading" style="margin: 0;"></h5>
+		<div style="margin-left: 10px;">
+			<b>Report Time:</b> <span id="theDate"></span>
+		</div>
+	</div>
+	<form id="unlockreport" name="unlockreport" method="post">
+		<div align="center" id="divPrint" class="table table-hover table table-striped">
+			<table id="tableStkId" align="center" style=" text-align: center;">
+				<thead>
+					<tr>
+						<th> <b> S.No. </b> </th>
+						<th> <b>Mandal Name </b> </th>
+						<th> <b>VAA Agri Farmers </b> </th>
+						<th> <b> VRO Agri Farmers </b> </th>
+						<th> <b>eKYC Agri Farmers</b> </th>
+						<th> <b> VAA Agri Extent </b> </th>
+						<th> <b> VRO Agri Extent </b> </th>
+						<th> <b> eKYC Agri Extent </b> </th>
+						<th> <b>VAA Horti Farmers </b> </th>
+						<th> <b> VRO Horti Farmers</b> </th>
+						<th> <b> eKYC Horti Farmers </b> </th>
+						<th> <b> VAA Horti Extent </b> </th>
+						<th> <b> VRO Horti Extent</b> </th>
+						<th> <b> eKYC Horti Extent </b> </th>
+						<th> <b>VAA Seri Farmers</b> </th>
+						<th> <b>VRO Seri Farmers </b> </th>
+						<th> <b>eKYC Seri Farmers</b> </th>
+						<th> <b>VAA Seri Extent </b> </th>
+						<th> <b>VRO Seri Extent </b> </th>
+						<th> <b>eKYC Seri Extent </b> </th>
+						<th> <b>VAA Social Farmers</b> </th>
+						<th> <b>VRO Social Farmers </b> </th>
+						<th> <b>eKYC Social Farmers</b> </th>
+						<th> <b>VAA Social Extent </b> </th>
+						<th> <b>VRO Social Extent </b> </th>
+						<th> <b>eKYC Social Extent </b> </th>
+					</tr>
+				</thead>
+				<tbody id="databody">
+				</tbody>
+			</table>
+		</div>
+	</form>
+	<div align="center" style="color: black; margin-top: 20px;">
+		<input class="btn btn-success" name="ctl00$ContentPlaceHolder1$btnPrint" type="button"
+			id="ctl00_ContentPlaceHolder1_btnPrint" onClick="javascript:CallPrint('divPrint')" value="Print"> 
+			<input class="btn btn-success" type="button" onclick="tableToExcel('tableStkId', 'Abstract')" value="Excel">
+			<input class="btn btn-success" type="button" onclick="goBack()" value="Back">
+	</div>
+</body>
+
+</html>

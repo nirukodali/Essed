@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html >
+<meta charset="UTF-8" />
+<!--<meta name="viewport" content="width=device-width, initial-scale=1">-->
+<!--<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">-->
+<!--<link rel="stylesheet" type="text/css" href="css/style.css">-->
+<!--<link rel="stylesheet" href="styles/reportstylesheet.css">-->
+<title>Details of Social Audit Crop Pattern</title>
+
+ 	<script src="./js/jquery-3.7.0.js"></script> 
+	<!-- <script src="./js/jquery-3.7.1.js"></script>  -->
+	<script src="./js/jquery-3.6.0.min.js"></script>
+
+	
+	<script src="./js/popper.min.js"></script>
+	<script src="./js/alertify.min.js"></script>
+	<script src="./js/nprogress.min.js"></script>
+	<script src="./js/sweetalert2.all.min.js"></script>
+	<script src="./js/bootstrap.bundle.min.js"></script>
+	<script src="./js/jquery.dataTables.min.js"></script>
+	<script src="./js/dataTables.bootstrap5.min.js"></script>
+
+	<script src="./js/custom/ecropCultivator.js"></script>
+	
+	
+	
+	<!--   csrf -->
+	
+	<meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+
+	<link rel="stylesheet"  type="text/css" href="./css/nprogress.min.css" />
+	<link rel="stylesheet"  type="text/css" href="./css/font-awesome.css" />
+	<link rel="stylesheet"  type="text/css" href="./css/sweetalert2.min.css" />
+	<link rel="stylesheet"  type="text/css" href="./css/bootstrap.min.css">
+	<link rel="stylesheet"  type="text/css" href="./css/dataTables.bootstrap5.min.css">
+	<link rel="stylesheet"  type="text/css" href="./css/alertify.min.css" />
+	<link rel="stylesheet" type="text/css" href="./css/style.css" /> 
+<!--<script src="js/jquery.js"></script>-->
+<!--<script src="js/jquery-ui.js"></script>-->
+<!--<script type="text/javascript" src="<%=request.getContextPath()%>/js/req.js"></script>-->
+<!--<link rel="stylesheet" href="styles/reportstylesheet.css">-->
+
+<script type="text/javascript">
+
+	$(document).ready(function () {
+        
+		
+		$(".checkSingle").change(function () {
+			var index = $(this).data('index');
+			edit_function(index);
+		});
+
+		$("#checkedAll").change(function () {
+			$(".checkSingle").prop("checked", this.checked);
+			$(".checkSingle").trigger("change");
+		});
+	});
+
+	function getCropList(a, b, c) {
+		var lastChar = b.charAt(b.length - 1);
+
+
+		var d = c + lastChar
+
+
+
+/*		if (null === a || '' === a) {
+			var str = '<option value="">---Select---</option>';
+			//	$('#cropname').html(str);
+			document.getElementById(d).innerHTML = str;
+			return;
+		}					*/
+		$.ajax({
+			url: "./rest/api/cropPattern/getCropTypes",
+			type: "get",
+			data: {
+				cropcode: a
+			},
+			dataType: "json",
+			success: function (response) {
+
+				var str = '<option value="">---Select---</option>';
+				$.each(response, function (index, object) {
+
+					var cropid = object.cropid;
+
+					var cropname = object.cropname;
+
+					str += '<option value="' + cropid + '">' + cropname + '</option>';
+				});
+				//$('#cropnameId').html(str);
+				document.getElementById(d).innerHTML = str;
+			},
+			error: function (xhr, status, error) {
+				alert('Technical error. Please try again later.');
+			}
+		});
+	}
+
+
+	function getCropListSec(valSec, b, c) {
+
+		var lastChar = b.charAt(b.length - 1);
+
+		var d = c + lastChar
+
+		if (null === valSec || '' === valSec) {
+			var str = '<option value="">---Select---</option>';
+			$('#cropnameSec').html(str);
+			return;
+		}
+		$.ajax({
+			url: "./rest/api/cropPattern/getCropTypesSec",
+			type: "get",
+			data: {
+				cropcode: valSec
+			},
+			dataType: "json",
+			success: function (response) {
+
+				var str = '<option value="">---Select---</option>';
+				$.each(response, function (index, object) {
+
+					var cropidSec = object.cropid;
+					var cropnameSec = object.cropname;
+					str += '<option value="' + cropidSec + '">' + cropnameSec + '</option>';
+				});
+				//$('#cropnameSec').html(str);
+				document.getElementById(d).innerHTML = str;
+			},
+			error: function (xhr, status, error) {
+				alert('Technical error. Please try again later.');
+			}
+		});
+
+
+	}
+
+	$(function () {
+		$(".farmerName").keypress(function (e) {
+			var keyCode = e.keyCode || e.which;
+			var regex = /^[A-Za-z- ]+$/;
+
+			var isValid = regex.test(String.fromCharCode(keyCode));
+			if (!isValid) {
+				$(".farmerName").val("");
+			}
+			return isValid;
+		});
+	});
+
+
+	var reasonsvalue = "";
+
+	function checkVal() {
+
+		var selopt = document.getElementsByName("checkClosureAlloc");
+		var flag = false;
+
+		for (var i = 0; i < selopt.length; i++) {
+			if (selopt[i].checked) {
+				flag = true;
+			}
+		}
+		if (flag) {
+			if (confirm("Please Ensure That All The Details Are Entered Correctly. Once Submitted Cannot Be Edited") === true) {
+				return submitClosure();
+			} else {
+				return false;
+			}
+
+		} else {
+			alert('Select atleast one Record to Submit');
+			return false;
+		}
+
+		$("#mroVerifyForm").attr("action", './SocialAuditCropPatternSave').submit();
+	}
+
+	function submitClosure() {
+
+		var bkIdsList = "", khatanoList = "", surveynoList = "", sowDtList = "", tot_extentList = "", cropNatureList = "", crCodeList = "",
+			varietyCodeList = "", crCode_orgList = "", varietyCode_orgList = "", cropNoList = "", extOrgList = "", crCodeSecList = "",
+			varietyCodeSecList = "", cropTypeList = "", cropTypeSecList = "";
+
+		var checkboxes = document.querySelectorAll('input[type="checkbox"][name="checkClosureAlloc"]')
+		var totCheckBoxCnt = checkboxes.length;
+
+
+		for (i = 0; i < totCheckBoxCnt; i++) {
+			if ((document.getElementById("checkBoxId" + i).checked) === true) {
+				bkIdsList = bkIdsList + document.getElementById("bookingIds" + i).value + ",";
+				khatanoList = khatanoList + document.getElementById("khataa_no" + i).value + ",";
+				surveynoList = surveynoList + document.getElementById("surveyy_No" + i).value + ",";
+				sowDtList = sowDtList + document.getElementById("sowDate" + i).value + ",";
+				tot_extentList = tot_extentList + document.getElementById("totExt" + i).value + ",";
+				cropNatureList = cropNatureList + document.getElementById("crSowType" + i).value + ",";
+				crCodeList = crCodeList + document.getElementById("cropname" + i).value + ",";
+				varietyCodeList = varietyCodeList + document.getElementById("varietyname" + i).value + ",";
+				crCode_orgList = crCode_orgList + document.getElementById("cropCodeOrg" + i).value + ",";
+				varietyCode_orgList = varietyCode_orgList + document.getElementById("varCodeOrg" + i).value + ",";
+				cropNoList = cropNoList + document.getElementById("cropNo" + i).value + ",";
+				extOrgList = extOrgList + document.getElementById("extent" + i).value + ",";
+				crCodeSecList = crCodeSecList + document.getElementById("cropnameSec" + i).value + ",";
+				varietyCodeSecList = varietyCodeSecList + document.getElementById("varietynameSec" + i).value + ",";
+				cropTypeList = cropTypeList + document.getElementById("cropType" + i).value + ",";
+				cropTypeSecList = cropTypeSecList + document.getElementById("cropTypeSec" + i).value + ",";
+			}
+
+		}
+		document.getElementById("bkIds").value = bkIdsList;
+		document.getElementById("khNos").value = khatanoList;
+		document.getElementById("surNos").value = surveynoList;
+		document.getElementById("sowDts").value = sowDtList;
+		document.getElementById("extS").value = tot_extentList;
+		document.getElementById("crpNture").value = cropNatureList;
+		document.getElementById("crCds").value = crCodeList;
+		document.getElementById("varCds").value = varietyCodeList;
+		document.getElementById("orgCrCode").value = crCode_orgList;
+		document.getElementById("orgVarCode").value = varietyCode_orgList;
+		document.getElementById("crNos").value = cropNoList;
+		document.getElementById("orgExt").value = extOrgList;
+		document.getElementById("crCdsec").value = crCodeSecList;
+		document.getElementById("varCdsec").value = varietyCodeSecList;
+		document.getElementById("croppingType").value = cropTypeList;
+		document.getElementById("croppingTypeSec").value = cropTypeSecList;
+		document.mroVerifyForm.submit();
+	}
+
+
+	function getVarietySec(a, b, c) {
+		var selectedCropId = a.value;
+		var lastChar = b.charAt(b.length - 1);
+
+		var d = c + lastChar
+
+
+		$.ajax({
+			url: './rest/api/cropPattern/getVarietyCodeVarietyNameCropnameSec',
+			method: 'GET',
+			dataType: 'json',
+			data: {cropnameSec: selectedCropId},
+			success: function (response) {
+				var data = response;
+				if (data.length === 0) {
+					//	$('#varietynameSec').html('<option value="" disabled selected>No variety available</option>');
+					var st = '<option value="" disabled selected>No variety available</option>';
+					document.getElementById(d).innerHTML = st;
+					return;
+				}
+				var str = '<option value="" disabled selected>Select VarietyName</option>';
+				$.each(data, function (index, obj) {
+					str += '<option value="' + obj.varietycode + '">' + obj.varietyname + '</option>';
+				});
+				//$('#varietynameSec').html(str);
+				document.getElementById(d).innerHTML = str;
+			},
+			error: function (xhr, status, error) {
+				console.error('Error fetching variety list: ' + error);
+				//$('#varietynameSec').html('<option value="" disabled selected>No variety available</option>');
+				var s = '<option value="" disabled selected>No variety available</option>';
+				document.getElementById(d).innerHTML = s;
+
+			},
+		});
+	}
+
+	$(document).ready(function () {
+		$('#cropnameSec').change(function () {
+			var selectedCropId = $(this).val();
+			getVarietySec(selectedCropId);
+		});
+
+		getVarietySec($('#cropnameSec').val());
+	});
+
+	function getVariety(selectedCropId, b, c) {
+		var cropid = selectedCropId.value;
+		var lastChar = b.charAt(b.length - 1);
+
+		var d = c + lastChar
+
+
+
+		$.ajax({
+			url: './rest/api/cropPattern/getVarietyCodeVarietyNameCropname',
+			method: 'GET',
+			dataType: 'json',
+			data: {cropname: cropid},
+			success: function (response) {
+				var data = response;
+				if (data.length === 0) {
+					//$('#varietyname').html('<option value="" disabled selected>No variety available</option>');
+					var st = '<option value="" disabled selected>No variety available</option>';
+					document.getElementById(d).innerHTML = st;
+					return;
+				}
+
+				var str = '<option value="" disabled selected>Select VarietyName</option>';
+				$.each(data, function (index, obj) {
+					str += '<option value="' + obj.varietycode + '">' + obj.varietyname + '</option>';
+
+
+				});
+				//$('#varietyname').html(str);
+				document.getElementById(d).innerHTML = str;
+			},
+			error: function (xhr, status, error) {
+
+				console.error('Error fetching variety list: ' + error);
+				$('#varietyname').html('<option value="" disabled selected>No variety available</option>');
+			},
+		});
+	}
+
+	$(document).ready(function () {
+		$('#cropname').change(function () {
+			var selectedCropId = $(this).val();
+			getVariety(selectedCropId);
+		});
+
+		getVariety($('#cropname').val());
+	});
+
+	function edit_function(i) {
+		if ($("#checkBoxId" + i).is(":checked")) {
+			var ext = $("#extent" + i).val();
+			$("#totExt" + i).val(ext).prop("disabled", false);
+			$("#cropname" + i + ", #varietyname" + i).prop("disabled", false);
+			$("#totExtSec" + i).val(ext).prop("disabled", false);
+			$("#cropnameSec" + i + ", #varietynameSec" + i).prop("disabled", false);
+			$("#cropType" + i + ", #cropTypeSec" + i).prop("disabled", false);
+		} else {
+			$("#totExt" + i + ", #cropname" + i + ", #varietyname" + i).val("").prop("disabled", true);
+			$("#totExtSec" + i + ", #cropnameSec" + i + ", #varietynameSec" + i + ", #cropType" + i + ", #cropTypeSec" + i).val("").prop("disabled", true);
+		}
+	}
+	function refreshPage() {
+		location.reload(true);
+	}
+
+	function goBack() {
+		window.location.href = './cropPattern';
+	}
+</script>
+<style>
+	.webland-container-new {
+		text-align: center;
+		margin-bottom: 15px;
+	}
+
+
+	.box-container {
+		border: 1px solid #007bff;
+		border-radius: 4px;
+		padding: 15px;
+		box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+		cursor: pointer;
+	}
+
+	h5 {
+		color: #007bff;
+		margin-bottom: 5px;
+	}
+
+	label {
+		font-weight: bold;
+		display: block;
+		margin-bottom: 5px;
+	}
+
+	select,
+	input {
+		width: 100%;
+		padding: 10px;
+		margin-bottom: 10px;
+		box-sizing: border-box;
+		border: 1px solid #ced4da;
+		border-radius: 4px;
+		background-color: #fff;
+	}
+
+	input[type="button"] {
+		background-color: #007bff;
+		color: #fff;
+		font-size: 14px;
+		width: 150px;
+		padding: 10px;
+		margin-top: 10px;
+		border: none;
+	}
+
+	.heading {
+		background-color: #007bff;
+		color: #fff;
+		font-weight: bold;
+		padding: 4px;
+		text-align: center;
+	}
+
+	.button-container {
+		text-align: center;
+		margin-top: 10px;
+	}
+
+	.action-button {
+		width: 150px;
+		padding: 10px;
+		margin: 0 10px;
+		border: none;
+		cursor: pointer;
+	}
+
+	#btnRefresh {
+		background-color: #28a745;
+		color: #fff;
+	}
+
+	#btnBack {
+		background-color: red;
+		color: #fff;
+	}
+</style>
+</head>
+
+<body  style="background-color: #e8e8e8;">
+	<div th:insert="headerImage"></div>
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+
+	<div class="webland-container-new">
+		<div class="box-container">
+			<h5 class="heading">Rabi 2022-23 Mono To Mixed Cropping Pattern Change</h5>
+		</div>
+	<div>
+    <span th:text="${NoDataAvailableMessage}"style="font-weight: bold; font-size: larger;color: green;"></span>
+	</div>
+	</div>
+
+	<div class="container">
+		<div class="row justify-content-center">
+			<div class="col-md-13">
+				<form id="mroVerifyForm" name="mroVerifyForm" method="get" action="./SocialAuditCropPatternSave">
+					<div>
+						<table class="table">
+							<thead class="thead-dark">
+								<tr>
+									<th><input type="checkbox" th:id="checkedAll" /></th>
+									<th> <b> S.No. </b> </th>
+									<th> <b> Survey No/LP No</b> </th>
+									<th> <b> Khata No </b> </th>
+									<th> <b> Booking Id </b> </th>
+									<th> <b> Aadhaar No</b> </th>
+									<th> <b> Cropping Pattern </b> </th>
+									<th> <b> Booked Extent </b> </th>
+									<th> <b> Crop Name </b> </th>
+									<th> <b> Variety Name </b> </th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr th:each="item, j : ${resultList}">
+									<td><input type="checkbox" class="checkSingle" name="checkClosureAlloc"
+											th:id="'checkBoxId' + ${j.index}"
+											th:onchange="'return edit_function('+${j.index}+')'" /></td>
+									<td th:text="${j.index + 1}"></td>
+									<td th:text="${item.cr_sno}"></td>
+									<td th:text="${item.kh_no}"></td>
+									<td th:text="${item.bookingid}"></td>
+									<td th:text="${item.cr_farmeruid}"></td>
+									<td> <input type="text" th:id="'sowType'+${j.index}" th:value="${item.cropnature}"
+											readonly disabled="true" />
+										<select th:id="'cropType'+${j.index}" name="cropType" class="cropType"
+											onchange="getCropList(this.value,this.id,'cropnameId')">
+											<option value="">----select----</option>
+											<option value="1">Main Crop</option>
+										</select><br>
+										<select th:id="'cropTypeSec'+${j.index}" name="cropTypeSec" class="cropTypeSec"
+											onchange="getCropListSec(this.value,this.id, 'cropnameSec')">
+											<option>----select----</option>
+											<option value="2">Sub Crop</option>
+										</select>
+									</td>
+									<td> <input type="text" th:id="'extent'+${j.index}" class="extent" name="extent"
+											th:value="${item.cr_mix_unmix_ext}" readonly  /><br>
+										<input type="text" th:id="'totExt'+${j.index}" class="totExt" name="totExt"
+											>
+										<input type="text" th:id="'totExtSec'+${j.index}" class="totExtSec"
+											name="totExtSec" >
+									</td>
+									<td>
+										<input type="text" th:id="'cropName'+${j.index}" name="cropName"
+											th:value="${item.cropname}" readonly disabled="true" />
+										<br>
+										<select th:id="'cropnameId'+${j.index}" name="cropnameId"
+											onchange="getVariety(this,this.id,'varietyname')">
+											<option value="">----Select----</option>
+										</select>
+										<select th:id="'cropnameSec'+${j.index}" name="cropnameSec"
+											onchange="getVarietySec(this,this.id,'varietynameSec')">
+											<option value="">----Select----</option>
+										</select>
+									</td>
+									<td> <input type="text" th:id="'varietyName'+${j.index}"
+											th:value="${item.varietyname}" readonly disabled="true" /> <br>
+										<select th:id="'varietyname'+${j.index}" name="varietyname"
+											th:value="${item.varietyname}">
+											<option value="">----SelectVariety----</option>
+
+										</select><br>
+
+										<select th:id="'varietynameSec'+${j.index}" name="varietynameSec"
+											th:value="${item.varietyname}">
+											<option value="">----SelectVariety----</option>
+										</select>
+									</td>
+
+									<input type="hidden" name="bookingIds" th:id="'bookingIds'+ ${j.index}"
+										th:value="${item.bookingid}" />
+
+									<input type="hidden" name="khataa_no" th:id="'khataa_no'+ ${j.index}"
+										th:value="${item.kh_no}" />
+
+									<input type="hidden" name="surveyy_No" th:id="'surveyy_No'+ ${j.index}"
+										th:value="${item.cr_sno}" />
+
+									<input type="hidden" name="sowDate" th:id="'sowDate'+ ${j.index}"
+										th:value="${item.cr_sow_date}" />
+
+									<input type="hidden" name="totExt" th:id="'totExt'+ ${j.index}"
+										th:value="${item.tot_extent}" />
+
+									<input type="hidden" name="crSowType" th:id="'crSowType'+ ${j.index}"
+										th:value="${item.cr_sow_type}" />
+
+									<input type="hidden" name="cropname" th:id="'cropname'+ ${j.index}"
+										th:value="${item.cropname}" />
+
+									<input type="hidden" name="varietyname" th:id="'varietyname'+ ${j.index}"
+										th:value="${item.varietyname}" />
+
+									<input type="hidden" name="cropCodeOrg" th:id="'cropCodeOrg'+ ${j.index}"
+										th:value="${item.cr_crop}" />
+
+									<input type="hidden" name="varCodeOrg" th:id="'varCodeOrg'+ ${j.index}"
+										th:value="${item.variety}" />
+
+									<input type="hidden" name="cropNo" th:id="'cropNo'+ ${j.index}"
+										th:value="${item.cr_no}" />
+
+									<input type="hidden" name="extent" th:id="'extent'+ ${j.index}"
+										th:value="${item.cr_mix_unmix_ext}" />
+
+									<input type="hidden" name="cropnameSec" th:id="'cropnameSec'+ ${j.index}"
+										th:value="${item.cropname}" />
+
+									<input type="hidden" name="varietynameSec" th:id="'varietynameSec'+ ${j.index}"
+										th:value="${item.varietyname}" />
+
+									<input type="hidden" name="cropType" th:id="'cropType'+ ${j.index}"
+										th:value="${item.croppingType}" />
+
+
+									<input type="hidden" id="sowDate" name="sowDate" th:value="${item.cr_sow_date}">
+									<input type="hidden" id="crSowType" name="crSowType" th:value="${item.cr_sow_type}">
+									<input type="hidden" id="cropNo" name="cropNo" th:value="${item.cr_no}">
+									<input type="hidden" id="cropCodeOrg" name="cropCodeOrg" th:value="${item.cr_crop}">
+									<input type="hidden" id="varCodeOrg" name="varCodeOrg" th:value="${item.variety}">
+									<input type="hidden" id="bookingIds" name="bookingIds" th:value="${item.bookingid}">
+									<input type="hidden" id="khatano" name="khatano" th:value="${item.kh_no}">
+									<input type="hidden" id="surveyno" name="surveyno" th:value="${item.cr_sno}">
+									<input type="hidden" id="sowDt" name="sowerDt" th:value="${item.cr_sow_date}">
+									<input type="hidden" id="wbldcode" name="wbldcode" th:value="${item.cr_dist_code}">
+									<input type="hidden" id="mandcode" name="mandcode" th:value="${item.cr_mand_code}">
+									<input type="hidden" id="cropyear" name="cropyear" th:value="${item.cr_year}">
+									<input type="hidden" id="season" name="season" th:value="${item.cr_season}">
+									<input type="hidden" id="farmername" name="farmername" th:value="${item.oc_name}">
+									<input type="hidden" id="cropName" name="cropName" th:value="${item.cropname}">
+									<input type="hidden" id="varietyname" name="varietyname"
+										th:value="${item.varietyname}">
+									<input type="hidden" id="totExtent" name="totExtent"
+										th:value="${item.cr_mix_unmix_ext}">
+									<input type="hidden" id="occupFather" name="occupFather"
+										th:value="${item.oc_fname}">
+									<input type="hidden" id="wtrsrc" name="wtrsrc" th:value="${item.wsrcid}">
+									<input type="hidden" id="crpNature" name="crpNature" th:value="${item.cropnature}">
+									<input type="hidden" id="vcode" name="vcode" th:value="${item.cr_vcode}">
+
+									</td>
+								</tr>
+						</table>
+						<div align="center"class="button-container">
+							<input type="button" id="btnRefresh" class="action-button" value="Refresh"
+								onclick="refreshPage()">
+							<input type="button" id="btncheckval" value="Submit" onclick="return checkVal();">
+							
+							<input type="button" id="btnBack" class="action-button" value="Go Back" onclick="goBack()">
+						</div>
+						<input type="hidden" id="crNos" name="crNos">
+						<input type="hidden" id="bookingIds" name="bookingIds">
+						<input type="hidden" id="crNos" name="crNos">
+						<input type="hidden" id="khatano" name="khatano">
+						<input type="hidden" id="surveyno" name="surveyno">
+						<input type="hidden" id="sowDt" name="sowerDt">
+						<input type="hidden" id="wbldcode" name="wbldcode" value="wbldcode">
+						<input type="hidden" id="mandcode" name="mandcode" value="mandcode">
+						<input type="hidden" id="cropyear" name="cropyear" value="cropyear">
+						<input type="hidden" id="season" name="season" value="season">
+						<input type="hidden" id="vscode" name="vscode" value="vscode">
+						<input type="hidden" id="farmername" name="farmername">
+						<input type="hidden" id="cropName" name="cropName">
+						<input type="hidden" id="varietyName" name="varietyName">
+						<input type="hidden" id="totExtent" name="tot_Extent">
+						<input type="hidden" id="occupFather" name="occupFather">
+						<input type="hidden" id="aadharId" name="aadhar_sug">
+						<input type="hidden" id="wtrsrc" name="wtr_src">
+						<input type="hidden" id="crpNature" name="crp_Nature">
+						<input type="hidden" id="farmingType" name="farming_Type">
+
+
+						<input type="hidden" id="bkIds" name="bkIds">
+						<input type="hidden" id="crpNture" name="crpNture">
+						<input type="hidden" id="extS" name="extS">
+						<input type="hidden" id="khNos" name="khNos">
+						<input type="hidden" id="surNos" name="surNos">
+						<input type="hidden" id="sowDts" name="sowDts">
+						<input type="hidden" id="crCds" name="crCds">
+						<input type="hidden" id="varCds" name="varCds">
+						<input type="hidden" id="orgCrCode" name="orgCrCode">
+						<input type="hidden" id="orgVarCode" name="orgVarCode">
+						<input type="hidden" id="crNos" name="crNos">
+						<input type="hidden" id="orgExt" name="orgExt">
+						<input type="hidden" id="crCdsec" name="crCdsec">
+						<input type="hidden" id="varCdsec" name="varCdsec">
+						<input type="hidden" id="croppingType" name="croppingType" th:value="${croppingType}">
+						<input type="hidden" id="croppingTypeSec" name="croppingTypeSec" th:value="${croppingTypeSec}">
+						<input type="hidden" id="wbldcode_org" name="wbldcode_org" value="wbldcode">
+						<input type="hidden" id="mandcode_org" name="mandcode_org" value="mandcode">
+						<input type="hidden" id="cropyear_org" name="cropyear_org" value="cropyear">
+						<input type="hidden" id="season_org" name="season_org" value="season">
+						<input type="hidden" id="vscode_org" name="vscode_org" value="vscode">
+						<input type="hidden" id="applID" name="applID" th:value="${appId}" />
+						<input type="hidden" id="mobId" name="mobId" th:value="${appMob}" />
+						<input type="hidden" id="applName" name="applName" th:value="${appName}" />
+						<input type="hidden" id="bookingId" name="bookingId" th:value="${bookingId}" />
+
+
+				</form>
+</body>
+
+</html>

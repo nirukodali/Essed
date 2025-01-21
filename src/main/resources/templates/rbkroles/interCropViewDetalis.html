@@ -1,0 +1,429 @@
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+	<title>Social Audit Grievance Redressal</title>
+	<script src="js/jquery.js"></script>
+	<script src="js/jquery-ui.js"></script>
+	<style>
+		.webland-container-new {
+			text-align: center;
+			margin-bottom: 5px;
+		}
+
+
+		mb-3 input[type="checkbox"] {
+			margin-right: 100px;
+			float: left;
+		}
+
+		.mb-3 label {
+			display: inline-block;
+			margin-left: 5px;
+		}
+
+		.mb-3 input[type="button"] {
+			width: 10px;
+			background-color: #007bff;
+			color: #fff;
+			font-size: 14px;
+			padding: 10px;
+			cursor: pointer;
+		}
+
+		.mb-3 select {
+			width: auto;
+			margin: 0 auto;
+			display: block;
+		}
+
+
+
+		h5 {
+			color: #007bff;
+			margin-bottom: 5px;
+		}
+
+		label {
+			font-weight: bold;
+			display: block;
+			margin-bottom: 5px;
+		}
+
+		select,
+		input {
+
+			padding: 10px;
+			margin-bottom: 10px;
+			box-sizing: border-box;
+			border: 1px solid #ced4da;
+			border-radius: 1px;
+			background-color: #fff;
+		}
+
+		.mb-3 {
+			margin-bottom: 5px;
+		}
+
+		input[type="button"] {
+			background-color: #007bff;
+			color: #fff;
+			font-size: 14px;
+		}
+
+
+		input[type="text"] {
+			width: 200px;
+			padding: 8px;
+			margin-bottom: 10px;
+			box-sizing: border-box;
+			border: 1px solid #ced4da;
+			border-radius: 1px;
+			background-color: #fff;
+		}
+
+
+
+		.heading-container {
+			background-color: #007bff;
+			color: #fff;
+			font-weight: bold;
+			padding: 10px;
+		}
+
+		.action-button {
+			background-color: #007bff;
+			color: #fff;
+			font-size: 14px;
+			padding: 10px;
+			/* Adjust padding as needed */
+			cursor: pointer;
+		}
+
+		#btnBack {
+			background-color: red;
+			color: #fff;
+		}
+	</style>
+</head>
+
+<body>
+	<div th:insert="headerImage"></div>
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+
+	<div class="webland-container-new box-container">
+		<form id="mroVerifyForm" name="mroVerifyForm" th:action="@{./getDatainterCropViewDetails}" method="post">
+			<div style="margin: 2 ;">
+				<div class="heading-container mb-3">Rabi 2022-23 Social Audit Grievance Redressal(Mixed to Inter Crop)
+				</div>
+				<div style="color: blue;" class="mb-3">Crop Booking Details</div>
+
+				<div>
+					<div class="mb-3">
+						<label for="khNo_org">Khata No:</label>
+						<div><input type="text" id="khNo_org" name="khNo_org" th:value="${resultList[0].kh_no}" readonly
+								disabled="true" /></div>
+					</div>
+					<div class="mb-3">
+						<label for="srNo_org${iterStat.index}">Survey No/LP No:</label>
+						<div><input type="text" id="srNo_org" name="srNo_org" th:value="${resultList[0].cr_sno}"
+								readonly disabled="true" /></div>
+					</div>
+					<div class="mb-3">
+						<label for="bookId_org${iterStat.index}">Booking Id:</label>
+						<div><input type="text" id="bookId_org" name="bookId_org" th:value="${resultList[0].bookingid}"
+								readonly disabled="true" /></div>
+					</div>
+					<div class="mb-3">
+						<label for="aadharNo_org">Aadhaar No:</label>
+						<div><input type="text" id="aadharNo_org" name="aadharNo_org"
+								th:value="${resultList[0].cr_farmeruid}" readonly disabled="true" /></div>
+					</div>
+					<div class="mb-3">
+						<label for="totEx_org">Total Extent:</label>
+						<div><input type="text" id="totEx_org" name="totEx_org" th:value="${resultList[0].tot_extent}"
+								readonly disabled="true" /></div>
+					</div>
+					<div class="mb-3">
+						<label for="farmerName_org">Farmer Name:</label>
+						<div><input type="text" id="farmerName_org" name="farmerName_org"
+								th:value="${resultList[0].oc_name}" readonly disabled="true" /></div>
+					</div>
+					<div class="mb-3">
+						<label for="farFathName_org">Farmer Father Name:</label>
+						<div><input type="text" id="farFathName_org" name="farFathName_org"
+								th:value="${resultList[0].oc_fname}" readonly disabled="true" /></div>
+					</div>
+					<div class="mb-3">
+						<input type="checkbox" class="checkSingle" name="checkClosureAlloc" th:value="${size}"
+							id="crpNaturecheckboxId" th:onclick="return getCrpNature(this.value)">
+						
+						<label for="crpNre_org">Cropping Pattern:</label>
+						<input type="text" th:id="crpNre_org" th:name="crpNre_org" th:value="${resultList[0].cropnature}"
+							readonly disabled="true" />
+					</div>
+					<div class="mb-3" align="center">
+						<select id="crpNatureSug" name="crpNatureSug" class="form-control custom-select"
+							onchange="getInterCropDetails()" hidden>
+							<option value="">----select----</option>
+						</select>
+					</div>
+
+					<div id="editratioDiv" style="display: none;">
+						<table th:each="item, iterStat : ${resultList}">
+							<tr id="'editratio'+${iterStat.index}">
+								
+								<td>Crop Name:<span th:text="${item.cropname}"></span><input type="hidden" th:id="'cropname_org' +${iterStat.index}"
+										th:name="'cropname_org' +${iterStat.index}" th:value="${item.cr_crop}" readonly
+										disabled="true" /></td>
+										                                        <td style="padding-left: 10px;">&nbsp;</td>
+
+								<td>Variety Name:<span th:text="${item.varietyname}"></span>
+								<input type="hidden" th:id="'varietyname_org'+${iterStat.index}"
+										name="'varietyname_org'+${iterStat.index}" th:value="${item.variety}"
+										readonly disabled="true" /></td>
+										
+								<input type="hidden" th:id="'sowDate_org'+${iterStat.index}"
+									name="'sowDate_org'+${iterStat.index}" th:value="${item.cr_sow_date}">
+								<input type="hidden" th:id="'crNo_org'+${iterStat.index}"
+									th:name="'crNo_org'+${iterStat.index}" th:value="${item.cr_no}">
+																			    <td style="padding-left: 10px;">&nbsp;</td>
+
+								<td>Area Sown :<input type="text" th:id="'totExt_org'+${iterStat.index}"
+										th:name="'totExt_org'+${iterStat.index}" th:value="${item.tot_extent}" readonly
+										disabled="true" /></td>
+										
+								<td>Ratio :<input th:id="'txtrasioNum'+${iterStat.index}" class="" type="number"
+										th:name="'txtrasioNum'+${iterStat.index}"
+										th:onchange="'getInterCropArea(\'' + ${size} + '\')'" value="" />
+										
+								<td>Inter Crop Area :
+									<input type="text" th:id="'interTotExt_org'+${iterStat.index}"
+										th:name="'interTotExt_org'+${iterStat.index}" value="">
+								</td>
+							</tr>
+						</table>
+					</div>
+
+					<div>
+						<input type="button" id="btncheckval" value="Submit" onclick="return checkVal();">
+						<input type="button" id="btnBack" class="action-button" value="Go Back" onclick="goBack()">
+					</div>
+
+				</div>
+			</div>
+
+			<!-- Hidden fields -->
+			<input type="hidden" name="param" id="param" th:value="${size}">
+
+			<input type="hidden" id="wbldcode" name="wbldcode" th:value="${resultList[0].cr_dist_code}" />
+			<input type="hidden" id="mandcode" name="mandcode" th:value="${resultList[0].cr_mand_code}" />
+			<input type="hidden" id="cropyear" name="cropyear" th:value="${resultList[0].cr_year}" />
+
+			<input type="hidden" id="seasonStr" name="seasonStr" th:value="${cr_season_str}" />
+			<input type="hidden" id="season" name="season" th:value="${resultList[0].cr_season}" />
+			<input type="hidden" id="vscode" name="vscode" th:value="${vcode}" />
+			<input type="hidden" id="vscode_org" name="vscode_org" th:value="${vcode}" />
+
+			<input type="hidden" id="crpNature" name="crpNature" />
+			<input type="hidden" id="cropName" name="cropName" />
+			<input type="hidden" id="varietyName" name="varietyName" />
+			<input type="hidden" id="totExtent" name="tot_Extent" />
+			<input type="hidden" id="occupFather" name="occupFather" />
+			<input type="hidden" id="aadharId" name="aadharId" />
+			<input type="hidden" id="bookingIds" name="bookingIds" />
+			<input type="hidden" id="crNos" name="crNos" />
+			<input type="hidden" id="khatano" name="khatano" />
+			<input type="hidden" id="surveyno" name="surveyno" />
+			<input type="hidden" id="sowDt" name="sowDt" />
+			<input type="hidden" id="farmername" name="farmername" />
+
+			<input type="hidden" id="ratioOne" name="ratioOne" />
+
+			<input type="hidden" id="applID" name="applID" th:value="${appId}" />
+			<input type="hidden" id="mobId" name="mobId" th:value="${appMob}" />
+			<input type="hidden" id="applName" name="applName" th:value="${appName}" />
+			<input type="hidden" id="crcropCode" name="crcropCode" th:value="${resultList[0].cr_crop}" />
+			<input type="hidden" id="varietyCode" name="varietyCode" th:value="${resultList[0].variety}" />
+			<input type="hidden" id="crpNatSuges" name="crpNatSuges" />
+		</form>
+	</div>
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script type="text/javascript">
+
+		var reasonsvalue = "";
+		$(document).ready(function () {
+			$("#checkedAll").change(function () {
+				//alert('step1');
+				if (this.checked) {
+					$(".checkSingle").each(function () {
+						this.checked = true;
+					});
+				} else {
+					$(".checkSingle").each(function () {
+						//alert('step2');
+						this.checked = false;
+					});
+				}
+
+			});
+			$(".checkSingle").click(function () {
+				if ($(this).is(":checked")) {
+					var isAllChecked = 0;
+					$(".checkSingle").each(function () {
+
+
+						if (!this.checked)
+							isAllChecked = 1;
+					});
+					if (isAllChecked == 0) {
+						// alert('step4')
+						$("#checkedAll").prop("checked", true);
+					}
+				} else {
+
+					$("#checkedAll").prop("checked", false);
+				}
+			});
+		});
+		function checkVal() {
+
+			var selopt = document.getElementsByName("checkClosureAlloc");
+			var flag = false;
+			for (var i = 0; i < selopt.length; i++) {
+				if (selopt[i].checked) {
+					flag = true;
+				}
+			}
+
+			if (flag) {
+				if (confirm("Please Ensure That All The Details Are Entered Correctly. Once Submitted Cannot Be Edited") === true) {
+					return submitClosure();
+				} else {
+					return false;
+				}
+
+			} else {
+				alert('Select atleast one Record to Submit');
+				return false;
+			}
+
+		}
+		function submitClosure() {
+			var bkIdsList = "", khatanoList = "", surveynoList = "", sowDtList = "", tot_extentList = "", cropNatureSugList = "",
+				farmerNameList = "", farmerFathNameList = "", aadharList = "", cropNatureList = "", crnoList_org = "", cropNameList_org = "", varietyNameList_org = "", ratioNumList = "";
+
+			bkIdsList = bkIdsList + document.getElementById("bookId_org").value;
+			khatanoList = khatanoList + document.getElementById("khNo_org").value;
+			surveynoList = surveynoList + document.getElementById("srNo_org").value;
+			aadharList = aadharList + document.getElementById("aadharNo_org").value;
+			farmerNameList = farmerNameList + document.getElementById("farmerName_org").value;
+			farmerFathNameList = farmerFathNameList + document.getElementById("farFathName_org").value;
+			cropNatureList = cropNatureList + document.getElementById("crpNre_org").value;
+			cropNatureSugList = cropNatureSugList + document.getElementById("crpNatureSug").value;
+
+			for (i = 0; i < document.getElementById("param").value; i++) {
+				crnoList_org = crnoList_org + document.getElementById("crNo_org" + i).value + "$$";
+				sowDtList = sowDtList + document.getElementById("sowDate_org" + i).value + "$$";
+				cropNameList_org = cropNameList_org + document.getElementById("cropname_org" + i).value + "$$";
+				varietyNameList_org = varietyNameList_org + document.getElementById("varietyname_org" + i).value + "$$";
+				tot_extentList = tot_extentList + document.getElementById("totExt_org" + i).value + "$$";
+				ratioNumList = ratioNumList + document.getElementById("txtrasioNum" + i).value + "$$";
+			}
+
+			document.getElementById("bookingIds").value = bkIdsList;
+			document.getElementById("crNos").value = crnoList_org;
+			document.getElementById("khatano").value = khatanoList;
+			document.getElementById("surveyno").value = surveynoList;
+			document.getElementById("farmername").value = farmerNameList;
+			document.getElementById("occupFather").value = farmerFathNameList;
+			document.getElementById("aadharId").value = aadharList;
+			document.getElementById("sowDt").value = sowDtList;
+			document.getElementById("crpNature").value = cropNatureList;
+			document.getElementById("cropName").value = cropNameList_org;
+			document.getElementById("varietyName").value = varietyNameList_org;
+			document.getElementById("totExtent").value = tot_extentList;
+			document.getElementById("ratioOne").value = ratioNumList;
+			document.getElementById("crpNatSuges").value = cropNatureSugList;
+			document.mroVerifyForm.submit();
+		}
+
+		function getCrpNature(a) {
+			if (document.getElementById("crpNaturecheckboxId").checked === true) {
+				$('#crpNatureSug').removeAttr('hidden');
+				var cropddl = $('#crpNre_org').val();
+
+				if (cropddl == "2") {
+					$('#crpNatureSug').attr('disabled', true);
+				} else if (cropddl == "3")
+					$('#crpNatureSug').attr('disabled', true);
+				else {
+					$('#crpNatureSug').attr('disabled', false);
+				}
+			} else {
+				$('#crpNatureSug').attr('hidden', 'hidden');
+				$('.editratio').css('display', 'none');
+				$("#crpNatureSug").val("");
+				$("#txtrasioNum" + a).val("");
+				$("#interTotExt_org" + a).val("");
+			}
+		}
+		function getInterCropDetails() {
+
+			if ($("#crpNatureSug").val() === "3") {
+				$("#editratioDiv").css("display", "block");
+			} else {
+				$("#editratioDiv").css("display", "none");
+			}
+		}
+
+		function getInterCropArea(a) {
+			var numXlist = "";
+			var numYlist = "";
+			var b = 1;
+
+			if (a === "2") {
+				b = parseInt(a) - 1;
+				numXlist = document.getElementById("txtrasioNum" + a).value;
+				numYlist = document.getElementById("txtrasioNum" + b).value;
+				var abc = parseFloat(document.getElementById("totExt_org" + b).value) * (document.getElementById("txtrasioNum" + b).value);
+				var second_crop = parseFloat(document.getElementById("totExt_org" + a).value) * (document.getElementById("txtrasioNum" + a).value);
+				var def = parseFloat(document.getElementById("txtrasioNum" + b).value) + parseInt(document.getElementById("txtrasioNum" + a).value);
+				document.getElementById("interTotExt_org" + b).value = (parseFloat(abc) / parseFloat(def)).toFixed(3);
+				document.getElementById("interTotExt_org" + a).value = (parseFloat(second_crop) / parseFloat(def)).toFixed(3);
+
+			}
+		}
+
+		$(document).ready(function () {
+			$.ajax({
+				url: './rest/api/interSocial/getIDNaturedesc',
+				type: 'GET',
+				success: function (data) {
+					var options = '<option value="">----Select----</option>';
+					$.each(data, function (index, item) {
+						options += '<option value="' + item.id + '">' + item.naturedesc + '</option>';
+					});
+					$('#crpNatureSug').html(options);
+				},
+				error: function (xhr, status, error) {
+					console.error(xhr.responseText);
+				}
+			});
+		});
+
+		function refreshPage() {
+			location.reload(true);
+		}
+
+		function goBack() {
+			window.location.href = '/getGrivanceRed';
+		}
+	</script>
+
+	</div>
+</body>
+
+</html>

@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="header">
+
+<meta charset="UTF-8">
+<title>Supervisory Verification Pending List</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!--	 Your custom styles -->
+<!--<link rel="stylesheet" type="text/css" href="css/style.css">-->
+
+<!--		Bootstrap and related scripts-->
+<!--<link-->
+<!--	href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"-->
+<!--	rel="stylesheet">-->
+
+<!--	 ajax/jquery -->
+<!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>-->
+
+</head>
+
+<body>
+    <div th:insert="header"></div>
+<div th:insert="headerImage"></div>
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+
+	<div class="container">
+		<div class="row justify-content-center">
+			<div class="col-auto">
+				<div class="card card-body" style="background-color: #e6e2d3;">
+					<form name="f1" method="get" th:action="@{/getSuperverifypen}">
+						<div class="card-title">
+							<h4
+								style="background-color: darkgreen; color: white; width: auto; text-align: center; padding: 7px; border: none; border-radius: 5px;">
+								Supervisory Verification Pending List</h4>
+							<br />
+						</div>
+						<div align="center" id="divPrint">
+							<table align="center"
+								style="width: 100%; background-color: #e6e2d3">
+
+								<tr>
+									<td class="tdnum" colspan="2" > <b>Crop Year <font color="red">*
+											</font>:</b> </td>
+									<td>
+										<select name="cropyear" id="cropyear" style="width: 200px">
+											<option value='' th:selected="0">------Select Crop Year--------</option>
+											<option th:each="cropyr: ${cropyears}" th:value="${cropyr.seasonvalue}"
+												th:text="${cropyr.cropyear}"></option>
+										</select>
+									</td>
+								</tr>
+							</table>
+							<br>
+							<br>
+							<th class="heading" colspan="3"><b> Supervisory Check
+									Entry Found Incorrect Report &nbsp;&nbsp; &nbsp;&nbsp;</b></th>
+
+							</tr>
+						</div>
+					</form>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	<p id="displayText"></p>
+
+	<div
+		style="display: flex; justify-content: center; width: 100%; margin-top: 10px">
+		<div>
+			<table id="customers" class="table table-striped table-hover">
+
+				<thead>
+					<tr style="background-color: #04AA6D;">
+					 <th style="padding: 12px 15px; text-align:center; border: 1px solid #ddd;"> <b> S.No. </b> </th>    
+                    <th style="padding: 12px 15px; text-align: center; border: 1px solid #ddd;"> <b> Mandal   </b> </th>  
+                    <th style="padding: 12px 15px; text-align: center; border: 1px solid #ddd;"> <b> Village   </b> </th>
+                    <th style="padding: 12px 15px; text-align: center; border: 1px solid #ddd;"> <b> Booking ID   </b> </th>
+                    <th style="padding: 12px 15px; text-align: center; border: 1px solid #ddd;"> <b> Khata No   </b> </th>
+                    <th style="padding: 12px 15px; text-align: center; border: 1px solid #ddd;"> <b> Survey No  </b> </th>          
+                    <th style="padding: 12px 15px; text-align: center; border: 1px solid #ddd;"> <b>Cultivator Name/</br>e-Kyc Name </b> </th>
+                    <th style="padding: 12px 15px; text-align: center; border: 1px solid #ddd;"> <b>Cultivator </br> Father </br> Name  </b> </th>                     
+                    <th style="padding: 12px 15px; text-align: center; border: 1px solid #ddd;"> <b> Cultivator Extent </b> </th>
+                    <th style="padding: 12px 15px; text-align: center; border: 1px solid #ddd;"> <b> Crop Sown /Variety  </b> </th>
+                    <th style="padding: 12px 15px; text-align: center; border: 1px solid #ddd;"> <b> Sown Date </b> </th>
+                    <th style="padding: 12px 15px; text-align: center; border: 1px solid #ddd;"> <b>Area Sown </b> </th> 
+                    <th style="padding: 12px 15px; text-align: center; border: 1px solid #ddd;"> <b>Source Of</br> Irrigation </b> </th> 
+                    <th style="padding: 12px 15px; text-align: center; border: 1px solid #ddd;"> <b>Exception </br> Category </b> </th> 
+                    <th style="padding: 12px 15px; text-align: center; border: 1px solid #ddd;"> <b>Mobile No </b> </th> 
+                    <th style="padding: 12px 15px; text-align: center; border: 1px solid #ddd;"> <b>Entry Found </br> Correct </b> </th> 
+                    <th style="padding: 12px 15px; text-align: center; border: 1px solid #ddd;"> <b>Entry Found </br> InCorrect </b> </th> 
+                    <th style="padding: 12px 15px; text-align: center; border: 1px solid #ddd;"> <b>Remarks </b> </th> 
+					</tr>
+				</thead>
+				<tbody>
+					<!-- Table body rows will be populated dynamically -->
+				</tbody>
+
+				</tbody>
+
+			</table>
+		</div>
+	</div>
+
+
+
+	<div><span th:text="${bind}" class="text-danger text-danger d-flex w-100 justify-content-center"></span> </div>
+ 
+ <script>
+        // Execute the AJAX call to get table data when cropgroup is selected
+        $('#cropyear').on('change', function() {
+            var sescropyear = $(this).val();
+            //alert(sescropyear);
+            $.get("./getSuperverifypen/"+sescropyear, function(response) {
+                $('#customers tbody').empty();
+                if (response.message) {
+                    $('#displayText').show();
+                    $('#alertText').text(response.message);
+                } else {
+                    $('#displayText').hide();
+                    if (response.data && response.data.length > 0) {
+                        $.each(response.data, function(i, rowData) {
+                            var row = $('<tr>');
+                            $('<td align="right" style="border:1px solid black; padding:7px">').text(i + 1).appendTo(row); // S.No.
+                            
+                            $('<td align="left" style="border:1px solid black; padding:7px">').text(rowData.dname).appendTo(row);
+                            $('<td align="left" style="border:1px solid black; padding:7px">').text(rowData.vname).appendTo(row);
+                            $('<td align="right" style="border:1px solid black; padding:7px">').text(rowData.bookingid).appendTo(row);
+                            $('<td align="right" style="border:1px solid black; padding:7px">').text(rowData.kh_no).appendTo(row);
+                            $('<td align="right" style="border:1px solid black; padding:7px">').text(rowData.cr_sno).appendTo(row);
+                            $('<td align="left" style="border:1px solid black; padding:7px">').text(rowData.oc_fname).appendTo(row);
+                            $('<td align="left" style="border:1px solid black; padding:7px">').text(rowData.ekycfarmername).appendTo(row);
+                            $('<td align="right" style="border:1px solid black; padding:7px">').text(rowData.occupant_extent).appendTo(row);
+                            $('<td align="right" style="border:1px solid black; padding:7px">').text(rowData.variety).appendTo(row);
+                            $('<td align="right" style="border:1px solid black; padding:7px">').text(rowData.cr_sow_date).appendTo(row);
+                            $('<td align="right" style="border:1px solid black; padding:7px">').text(rowData.cr_crop).appendTo(row);
+                            $('<td align="right" style="border:1px solid black; padding:7px">').text(rowData.watersource).appendTo(row);
+                            $('<td align="right" style="border:1px solid black; padding:7px">').text(rowData.exception_type).appendTo(row);
+                            $('<td align="right" style="border:1px solid black; padding:7px">').text(rowData.mobileno).appendTo(row);
+//                             $('<td align="right" style="border:1px solid black; padding:7px">').text(rowData.).appendTo(row);
+//                             $('<td align="right" style="border:1px solid black; padding:7px">').text(rowData.).appendTo(row);
+//                             $('<td align="right" style="border:1px solid black; padding:7px">').text(rowData.).appendTo(row);
+                         	
+                            row.appendTo('#customers tbody');
+                        });
+                    } else {
+                        $('#displayText').show();
+                        $('#alertText').text("No data found");
+                    }
+                }
+            });
+        });
+        
+        
+    </script>
+    <script>
+        function submitForm() {
+            var cropyear = $('#cropyear').val();
+            if (cropyear == '') {
+                alert('Please select an option from the crop year.');
+                return false;
+            }
+           
+            $('#myform').submit();
+        }
+    </script>
+ 
+</body>
+
+</html>

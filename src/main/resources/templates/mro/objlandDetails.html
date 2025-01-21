@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+<!--	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">-->
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+
+	<title>Enable Objectionable Land Parcels</title>
+	<style>
+		/* Overlay background */
+		.modal-backdrop {
+			background-color: rgba(0, 0, 0, 0.5);
+			/* semi-transparent black */
+		}
+
+		.modal-backdrop.show {
+			opacity: 0;
+		}
+
+		/* Modal content */
+		.modal-content {
+			background-color: #fff;
+			/* White background */
+			border: none;
+			/* No border */
+			border-radius: 5px;
+			/* Rounded corners */
+		}
+
+		/* Modal header */
+		.modal-header {
+			border-bottom: 1px solid #dee2e6;
+			/* Light gray border bottom */
+			padding: 15px;
+			/* Padding */
+		}
+
+		/* Modal title */
+		.modal-title {
+			margin: 0;
+			/* Remove margin */
+		}
+
+		/* Close button */
+		.close {
+			color: #000;
+			/* Black color */
+		}
+
+		/* Modal body */
+		.modal-body {
+			padding: 15px;
+			/* Padding */
+		}
+
+		/* Modal footer */
+		.modal-footer {
+			border-top: 1px solid #dee2e6;
+			/* Light gray border top */
+			padding: 15px;
+			/* Padding */
+		}
+
+		/* Button styles */
+		.btn {
+			cursor: pointer;
+			/* Cursor style */
+			border-radius: 3px;
+			/* Rounded corners */
+			padding: 8px 15px;
+			/* Padding */
+		}
+
+		.btn-secondary {
+			background-color: #6c757d;
+			/* Gray background */
+			border: none;
+			/* No border */
+			color: #fff;
+			/* White text color */
+		}
+
+		.btn-secondary:hover {
+			background-color: #5a6268;
+			/* Darker gray on hover */
+		}
+
+		.btn-primary {
+			background-color: #007bff;
+			/* Blue background */
+			border: none;
+			/* No border */
+			color: #fff;
+			/* White text color */
+		}
+
+		.btn-primary:hover {
+			background-color: #0056b3;
+			/* Darker blue on hover */
+		}
+
+		table {
+			border: 0px;
+			border-style: 0px;
+			border-collapse: collapse;
+			width: 80%;
+		}
+
+		th {
+			position: sticky;
+			top: 0px;
+			background-color: grey;
+			color: black;
+		}
+
+		.table_wrapper {
+			overflow-y: scroll;
+			overflow-x: scroll;
+		}
+
+		.btnCss,
+		.rejbtnCss {
+			background-color: #4caf50;
+			border: none;
+			color: black;
+			padding: 10px 60px;
+			text-align: center;
+			text-decoration: none;
+			display: inline-block;
+			font-size: 16px;
+			margin: 10px 5px;
+			cursor: pointer;
+		}
+
+		.rejbtnCss {
+			background-color: #fc7676;
+		}
+
+		.table td.fit,
+		.table th.fit {
+			white-space: nowrap;
+			width: 1%;
+		}
+
+		table,
+		th,
+		td {
+			border: 0px solid grey;
+			border-collapse: collapse;
+			padding: 15px;
+			text-align: center;
+		}
+
+		table tr:nth-child(odd) {
+			background-color: #f1f1f1;
+		}
+
+		table tr:nth-child(even) {
+			background-color: #b6d0e2;
+		}
+
+		.centered-container {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			height: 10vh;
+		}
+	</style>
+</head>
+
+<body style="background-color: #e8e8e8">
+	<!-- Your header, navigation, and other content here -->
+	<div th:insert="headerImage"></div>
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+	<div th:insert="header"></div>
+
+	<form id="mroVerifyForm" name="mroVerifyForm">
+
+		<div class="table_wrapper">
+			<table id="tableStkId" class="table table-bordered table-responsive table-striped"
+				style="text-align: center; padding-left: 300px">
+				<thead>
+					<tr>
+						<th colspan="11" class="heading">
+							<font size="5pt">	Final Approval for Enabling Objectionable Land Parcels for Crop Booking During Kharif-2024
+							</font>
+							<div id="popupMessage" th:if="${msg != null}" class="alert alert-success">
+								<p th:text="${msg}"></p>
+							</div>
+						</th>
+
+					</tr>
+					<tr>
+						<th style="padding-bottom : 2.5%">S.No.</th>
+						<th style="padding-bottom : 2.5%">Mandal</th>
+						<th style="padding-bottom : 2.5%">Village</th>
+						<th style="padding-bottom : 2.5%">RSK Name</th>
+						<th style="padding-bottom : 2.5%">Category</th>
+						<th style="padding-bottom : 2.5%">Khata No</th>
+						<th style="padding-bottom : 2.5%">Survey No/LP No</th>
+						<th style="padding-bottom : 2.5%">Cultivator Extent</th>
+						<th> Requested by VAA ,<br> verified and recommended extent by<br> MAO & Tahsildar & DAO   </th> 
+						<th style="padding-bottom : 2.5%">Accept</th>
+						<th style="padding-bottom : 2.5%">Reject</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="item, j : ${resultList}">
+						<td th:text="${j.index + 1}"></td>
+
+						<td th:text="${item.mname}"></td>
+						<td th:text="${item.vname}"></td>
+						<td th:text="${item.rbkname}"></td>
+						<td th:text="${item.category}"></td>
+						<td th:text="${item.khNo}"></td>
+						<td th:text="${item.crSno}"></td>
+						<td th:text="${item.occupExtent}"></td>
+						<td th:text="${item.requestExtent}"></td>
+						<td th:text="${item.recId}" style="display: none;"></td>
+						<td><a th:href="@{/accept/{id}(id=${item.recId})}" class="btn btn-primary"
+								onclick="return confirm('Are You Sure?')">Accept</a>
+
+						</td>
+						<!--                  <td>  -->
+						<!-- 						<a th:href="@{/reject/{id}(id=${item.ebj.recId})}" class="btn btn-primary">Rejects</a> -->
+
+						<!--                     </td> -->
+						<td>
+							<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#exampleModal"
+								th:id="'recidvalue_' + ${j.index + 1}" th:value="${item.recId}"
+								onclick="showModalAndSetValue(this)">Reject</button>
+
+						</td>
+						<!--  <td> -->
+						<!--     <button type="button" class="btn btn-success" data-toggle="modal" data-target="#exampleModal" th:id="'recidvalue_' + ${j.index + 1}" th:value="${item.ebj.recId}" onclick="showModalAndSetValue(this)">Accept</button> -->
+						<!--     <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#exampleModal" th:id="'recidvalue_' + ${j.index + 1}" th:value="${item.ebj.recId}" onclick="showModalAndSetValue(this)">Reject</button> -->
+						<!-- </td> -->
+
+
+						<!-- 	<td> <button  type="button"  class="btn btn-primary" data-toggle="modal"  data-target="#exampleModal" id="recidvalue"  -->
+						<!--                     th:value="${item.ebj.recId}" >Reject</button> -->
+
+						<!--                       </td> -->
+					</tr>
+				</tbody>
+
+			</table>
+		</div>
+
+
+	</form>
+
+	<div class="modal fade" id="exampleModal" tabindex="1" role="dialog" aria-labelledby="exampleModalLabel"
+		aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">Please Enter
+						Remarks For Rejection</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body" id="my">
+					<form id="reject" th:action="@{/reject}" th:object="${rejectForm}" method="get"
+						onsubmit="return validateForm()" style="background-color: #ffffff">
+						<input type="hidden" id="recid" name="recid">
+						<div class="form-group">
+							<label for="remark">Remarks:</label> <input type="text" class="form-control" id="remark"
+								name="remark">
+						</div>
+						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+						<button type="submit" class="btn btn-primary" value="Submit">Save</button>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.2/xlsx.full.min.js"></script>
+	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+	<script>
+		function showModalAndSetValue(l) {
+
+			$('#exampleModal').modal();
+
+			document.getElementById('recid').value = l.value;
+
+		}
+
+		function validateForm() {
+			var remarks = document.getElementById()
+		}
+		setTimeout(function () {
+			$('#popupMessage').hide();
+		}, 4000);
+	</script>
+
+
+
+</body>
+
+</html>

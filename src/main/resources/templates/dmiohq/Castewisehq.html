@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="header"></head>
+
+<body>
+	<div th:insert="headerImage"></div>
+
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+	
+
+</head>
+
+<style>
+		#loading {
+    	position: fixed;
+    	top: 80%;
+    	left: 50%;
+    	transform: translate(-50%, -50%);
+    	padding: 20px;
+    	border-radius: 5px;
+	}
+	</style>
+<script>
+		function CallPrint(strid) {
+			var prtContent = document.getElementById(strid);
+			var mywindow = window.open('', '', 'left=0,top=0,width=950,height=600,toolbar=1,scrollbars=1,status=1,addressbar=0');
+			var is_chrome = Boolean(mywindow.chrome);
+			mywindow.document.write(prtContent.innerHTML);
+			mywindow.document.close(); // necessary for IE >= 10 and necessary before onload for chrome
+
+			if (is_chrome) {
+				mywindow.onload = function () { // wait until all resources loaded 
+					mywindow.focus(); // necessary for IE >= 10
+					mywindow.print(); // change window to mywindow
+					mywindow.close(); // change window to mywindow
+				};
+			} else {
+				mywindow.document.close(); // necessary for IE >= 10
+				mywindow.focus(); // necessary for IE >= 10
+				mywindow.print();
+				mywindow.close();
+			}
+
+			return true;
+		}
+
+	</script>
+	<script language="javascript">
+		var tableToExcel = (function () {
+			var uri = 'data:application/vnd.ms-excel;base64,'
+				, template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table align="center">{table}</table></body></html>'
+				, base64 = function (s) {
+					return window.btoa(unescape(encodeURIComponent(s)))
+				}
+				, format = function (s, c) {
+					return s.replace(/{(\w+)}/g, function (m, p) {
+						return c[p];
+					})
+				}
+			return function (table, name) {
+				if (!table.nodeType)
+					table = document.getElementById(table)
+				var ctx = {worksheet: name || 'Worksheet', table: table.innerHTML}
+				window.location.href = uri + base64(format(template, ctx))
+			}
+		})()
+		</script>
+<script>
+//	VALIDATION
+function validateForm() {
+    var cropyear = document.getElementById("cropyear").value;
+    if (cropyear == "") {
+        alert("Please select a Crop Year");
+		$("#loadingsign").hide();
+        return false;
+    }
+    return true;
+}
+
+
+	$(document).ready(function () {
+		$.ajax({
+			type: "get",
+			url: "./util/getAllSeason",
+			cache: false,
+			timeout: 600000,
+			success: function (resp) {
+				for (var j = 0; j < resp.length; j++) {
+					var bean = resp[j];
+					$("#cropyear").append('<option value="' + bean.col1 + '">' + bean.col2 + '</option>');
+				}
+			}
+		});
+	});
+
+	
+	function getData() {
+		$("#databody").empty();
+	    $('#loading').show();
+	    var sno = 0;
+		 if (validateForm()) {
+		var cropYear = $("#cropyear").val();
+		//alert("cropYear=============>" + cropYear);
+		$.ajax({
+			type: "get",
+			url: "./util/getcastewisehq?cropyear=" + cropYear,
+			cache: false,
+			timeout: 600000,
+			success: function (resp) {
+			    $('#loading').hide();
+				
+				var 
+					//sc_conventional_farmers_total = 0, sc_conventional_ext_total = 0,
+					//st_conventional_farmers_total=0,st_conventional_ext_total=0,
+					//bc_conventional_farmers_total=0,bc_conventional_ext_total=0,
+					//gen_conventional_farmers_total=0,gen_conventional_ext_total=0;
+				
+					sc_dripirr_farmers_total=0,sc_dripirr_ext_total=0,
+					st_dripirr_farmers_total=0,st_dripirr_ext_total=0,
+					bc_dripirr_farmers_total=0,bc_dripirr_ext_total=0,
+				 	gen_dripirr_farmers_total=0, gen_dripirr_ext_total=0;
+					
+					sc_sprinkler_farmers_total=0,sc_sprinkler_ext_total=0,
+					st_sprinkler_farmers_total=0,st_sprinkler_ext_total=0,
+					bc_sprinkler_farmers_total=0,bc_sprinkler_ext_total=0,
+					gen_sprinkler_farmers_total=0,gen_sprinkler_ext_total=0;
+				
+// 						b1 = 0, b2 = 0;
+				for (var j = 0; j < resp.length; j++) {
+					sno = sno + 1;
+					var bean = resp[j];
+// 					a1 = (parseFloat(bean.dagri_ext) + parseFloat(bean.dhorti_ext) + parseFloat(bean.dseri_ext) + parseFloat(bean.dsoc_ext)).toFixed(4);
+// 					a2 = (parseFloat(bean.dagri_farmers) + parseFloat(bean.dhorti_farmers) + parseFloat(bean.dseri_farmers) + parseFloat(bean.dsoc_farmers));
+					//sc_conventional_farmers_total = sc_conventional_farmers_total + bean.sc_conventional_farmers_total;
+					//sc_conventional_ext_total = sc_conventional_ext_total + bean.sc_conventional_ext_total;
+					//st_conventional_farmers_total = st_conventional_farmers_total + bean.st_conventional_farmers_total;
+					//st_conventional_ext_total = st_conventional_ext_total + bean.st_conventional_ext_total;
+					//bc_conventional_farmers_total = bc_conventional_farmers_total + bean.bc_conventional_farmers_total
+					//bc_conventional_ext_total = bc_conventional_ext_total + bean.bc_conventional_ext_total;
+					//gen_conventional_farmers_total = gen_conventional_farmers_total + bean.gen_conventional_farmers_total;
+					//gen_conventional_ext_total = gen_conventional_ext_total + bean.gen_conventional_ext_total;
+					
+					sc_dripirr_farmers_total = sc_dripirr_farmers_total + bean.sc_dripirr_farmers_total;
+					sc_dripirr_ext_total = sc_dripirr_ext_total + bean.sc_dripirr_ext_total;
+					st_dripirr_farmers_total = st_dripirr_farmers_total + bean.st_dripirr_farmers_total;
+					st_dripirr_ext_total = st_dripirr_ext_total + bean.st_dripirr_ext_total;
+					bc_dripirr_farmers_total = bc_dripirr_farmers_total + bean.bc_dripirr_farmers_total
+					bc_dripirr_ext_total = bc_dripirr_ext_total + bean.bc_dripirr_ext_total;
+					gen_dripirr_farmers_total = gen_dripirr_farmers_total + bean.gen_dripirr_farmers_total;
+					gen_dripirr_ext_total = gen_dripirr_ext_total + bean.gen_dripirr_ext_total;
+					
+					sc_sprinkler_farmers_total = sc_sprinkler_farmers_total + bean.sc_sprinkler_farmers_total
+					sc_sprinkler_ext_total = sc_sprinkler_ext_total + bean.sc_sprinkler_ext_total;
+					st_sprinkler_farmers_total = st_sprinkler_farmers_total + bean.st_sprinkler_farmers_total;
+					st_sprinkler_ext_total = st_sprinkler_ext_total + bean.st_sprinkler_ext_total;
+					bc_sprinkler_farmers_total = bc_sprinkler_farmers_total + bean.bc_sprinkler_farmers_total;
+					bc_sprinkler_ext_total = bc_sprinkler_ext_total + bean.bc_sprinkler_ext_total;
+					gen_sprinkler_farmers_total = gen_sprinkler_farmers_total + bean.gen_sprinkler_farmers_total;
+					gen_sprinkler_ext_total = gen_sprinkler_ext_total + bean.gen_sprinkler_ext_total;
+
+// 					b1 = (parseFloat(b1) + parseFloat(a1)).toFixed(4);
+// 					b2 = b2 + a2;
+
+					
+					$("#databody").append('<tr>'
+							+ '<td>' + sno + '</td>'
+							+ '<td>' + '<a href="./hqmandal?wbdcode=' + bean.wbdcode + '&cropyear=' + cropYear + '">' + bean.wbdname + '</a>' + '</td>'
+
+							//+ '<td>' + bean.sc_conventional_farmers_total + '</td>'
+							//+ '<td>' + (bean.sc_conventional_ext_total).toFixed(4) + '</td>'
+							//+ '<td>' + bean.st_conventional_farmers_total + '</td>'
+							//+ '<td>' + (bean.st_conventional_ext_total).toFixed(4) + '</td>'
+							//+ '<td>' + bean.bc_conventional_farmers_total + '</td>'
+							//+ '<td>' + (bean.bc_conventional_ext_total).toFixed(4) + '</td>'
+							//+ '<td>' + bean.gen_conventional_farmers_total + '</td>'
+							//+ '<td>' + (bean.gen_conventional_ext_total).toFixed(4) + '</td>'
+
+							+ '<td>' + bean.sc_dripirr_farmers_total + '</td>'
+							+ '<td>' + (bean.sc_dripirr_ext_total).toFixed(4) + '</td>'
+							+ '<td>' + bean.st_dripirr_farmers_total + '</td>'
+							+ '<td>' + (bean.st_dripirr_ext_total).toFixed(4) + '</td>'
+							+ '<td>' + bean.bc_dripirr_farmers_total + '</td>'
+							+ '<td>' + (bean.bc_dripirr_ext_total).toFixed(4) + '</td>'
+							+ '<td>' + bean.gen_dripirr_farmers_total + '</td>'
+							+ '<td>' + (bean.gen_dripirr_ext_total).toFixed(4) + '</td>'
+
+							+ '<td>' + bean.sc_sprinkler_farmers_total + '</td>'
+							+ '<td>' + (bean.sc_sprinkler_ext_total).toFixed(4) + '</td>'
+							+ '<td>' + bean.st_sprinkler_farmers_total + '</td>'
+							+ '<td>' + (bean.st_sprinkler_ext_total).toFixed(4) + '</td>'
+							+ '<td>' + bean.bc_sprinkler_farmers_total + '</td>'
+							+ '<td>' + (bean.bc_sprinkler_ext_total).toFixed(4) + '</td>'
+							+ '<td>' + bean.gen_sprinkler_farmers_total + '</td>'
+							+ '<td>' + (bean.gen_sprinkler_ext_total).toFixed(4) + '</td>'
+
+// 							+ '<td>' + a1 + '</td>'
+// 							+ '<td>' + a2 + '</td>'
+							+ '</tr>');
+					}
+					$("#databody").append('<tr style="fontsize:200px; font-weight: bold;">'
+						+ '<td colspan = "2x">TOTAL<b></b></td>'
+						//+ '<td>' + sc_conventional_farmers_total + '</td>'
+						//+ '<td>' + (sc_conventional_ext_total).toFixed(4) + '</td>'
+						//+ '<td>' + st_conventional_farmers_total + '</td>'
+						//+ '<td>' + (st_conventional_ext_total).toFixed(4) + '</td>'
+						//+ '<td>' + bc_conventional_farmers_total + '</td>'
+						//+ '<td>' + (bc_conventional_ext_total).toFixed(4) + '</td>'
+						//+ '<td>' + gen_conventional_farmers_total + '</td>'
+						//+ '<td>' + (gen_conventional_ext_total).toFixed(4) + '</td>'
+						
+						
+						+ '<td>' + sc_dripirr_farmers_total + '</td>'
+						+ '<td>' + (sc_dripirr_ext_total).toFixed(4) + '</td>'
+						+ '<td>' + st_dripirr_farmers_total + '</td>'
+						+ '<td>' + (st_dripirr_ext_total).toFixed(4) + '</td>'
+						+ '<td>' + bc_dripirr_farmers_total + '</td>'
+						+ '<td>' + (bc_dripirr_ext_total).toFixed(4) + '</td>'
+						+ '<td>' + gen_dripirr_farmers_total + '</td>'
+						+ '<td>' + (gen_dripirr_ext_total).toFixed(4) + '</td>'
+						
+						+ '<td>' + sc_sprinkler_farmers_total + '</td>'
+						+ '<td>' + (sc_sprinkler_ext_total).toFixed(4) + '</td>'
+						+ '<td>' + st_sprinkler_farmers_total + '</td>'
+						+ '<td>' + (st_sprinkler_ext_total).toFixed(4) + '</td>'
+						+ '<td>' + bc_sprinkler_farmers_total + '</td>'
+						+ '<td>' + (bc_sprinkler_ext_total).toFixed(4) + '</td>'
+						+ '<td>' + gen_sprinkler_farmers_total + '</td>'
+						+ '<td>' + (gen_sprinkler_ext_total).toFixed(4) + '</td>'
+
+// 						+ '<td>' + b1 + '</td>'
+// 						+ '<td>' + b2 + '</td>'
+
+						+ '</tr>')
+				}
+		});
+	}
+}
+</script>
+<body>
+	<div class="heading" colspan="20" style="text-align:center;background-color: white;font-size: 20px;"><b> Report On District/Category Wise Drip/Sprinkler Extent(in acres) </b>
+	</div>
+<br>
+<div id="loading" style="display: none;">
+       	Loading...
+</div>
+		
+	<div align="center">
+		<form>
+			<table id="ObjEntryTable">
+				<tr>
+					<td colspan="3"></td>
+				</tr>
+				<tr>
+					<td align="right" width="30%"><b>Crop Year</b></td>
+
+					<td align="left">
+						<select id="cropyear" name="cropyear" style="width: 200px">
+						<option value="">----Select----</option></select>
+					</td>
+				</tr>
+			</table>
+			<div colspan="3" align="center" style="padding-top:10px;padding-bottom:10px;">
+				<button type="button" id="btnSubmit" class="btn btn-primary" value="Submit"
+					onclick="return getData();">Submit</button>
+			</div>
+		</form>
+	</div>
+	<div>
+		<form  name="unlockreport" method="post">
+			<div align="center" id="divPrint" class="table table-hover">
+				<table id="tableStkId" align="center" class="table table-striped border border-secondary">
+					<thead>
+						<tr>       
+                        <th  align="center" rowspan="2"> <b> S.No. </b> </th>
+                        <th  align="center" rowspan="2"> <b> District  </b> </th>  
+
+<!--                        <th  style="padding-left: 10%" colspan="8" >Conventional</th>-->
+                        <th  style="color:black; padding-left: 20%;background: #dfffe1" colspan="8" >Drip</th>
+                        <th  style="padding-left: 20%" colspan="8">Sprinkler</th>
+
+<!--                         <th  align="center" colspan="3">Total</th> -->
+                    </tr>
+                    <tr>
+<!--                        <th> <b> SC Farmer Total </b></th>-->
+<!--                        <th> <b> SC Ext Total </b></th> -->
+<!--                        <th> <b> ST Farmer Total </b></th> -->
+<!--                        <th> <b> ST Ext Total </b></th> -->
+<!--                        <th> <b> BC Farmer Total </b></th> -->
+<!--                        <th> <b> BC Ext Total </b></th> -->
+<!--                        <th> <b> Gen Farmer Total </b></th> -->
+<!--                        <th> <b> Gen Ext Total </b></th>-->
+                        
+                        <th style="color:black;background: #dfffe1"> <b> SC Farmer Total </b></th>
+                        <th style="color:black;background: #dfffe1"> <b> SC Ext Total </b></th> 
+                        <th style="color:black;background: #dfffe1"> <b> ST Farmer Total </b></th> 
+                        <th style="color:black;background: #dfffe1"> <b> ST Ext Total </b></th> 
+                        <th style="color:black;background: #dfffe1"> <b> BC Farmer Total </b></th> 
+                        <th style="color:black;background: #dfffe1"> <b> BC Ext Total </b></th> 
+                        <th style="color:black;background: #dfffe1"> <b> Gen Farmer Total </b></th> 
+                        <th style="color:black;background: #dfffe1"> <b> Gen Ext Total </b></th>
+                        
+                        <th> <b> SC Farmer Total </b></th>
+                        <th> <b> SC Ext Total </b></th> 
+                        <th> <b> ST Farmer Total </b></th> 
+                        <th> <b> ST Ext Total </b></th> 
+                        <th> <b> BC Farmer Total </b></th> 
+                        <th> <b> BC Ext Total </b></th> 
+                        <th> <b> Gen Farmer Total </b></th> 
+                        <th> <b> Gen Ext Total </b></th> 
+                         
+                       
+                    </tr>
+
+					</thead>
+					<tbody id="databody">
+						
+					</tbody>
+				</table>
+			</div>
+		</form>
+		<div align="center" style="color:black">
+			<input class="btn btn-primary" name="ctl00$ContentPlaceHolder1$btnPrint" type="button"
+				id="ctl00_ContentPlaceHolder1_btnPrint" onClick="javascript:CallPrint('divPrint')" value="Print">
+			<input class="btn btn-primary" type="button" onclick="tableToExcel('tableStkId', 'Abstract')" value="Excel">
+		</div>
+	</div>
+	</div>
+</body>
+
+</html>

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="header">
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Mandal Wise Indents Updation<title>
+</head>
+<style>
+	.heading {
+    background-color: #006400;
+    font-family: arial;
+    font-size: 18px;
+    line-height: 1.5;
+    text-align: center;
+    width: 100%;
+    font-weight: bold;
+    color: white;
+}
+</style>
+<body>
+	<div th:insert="headerImage"></div>
+
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+	<br>
+	<div class="container-fluid header-design-login"
+		style=" width: 40%; height: 38vh;">
+		<div class="row justify-content-center align-items-center">
+			<div class="card ecropCard">
+				<form th:action="@{/indentsUpdateDataMandal}" method="post">
+				
+				<div class="card-title">
+					<h4 class="heading">Mandal Wise Indents Updation</h4>
+						
+						</div>
+					<br />
+					
+					<div class="mb-3 form-group">
+						<label for="cropyear" style="padding-left: 15%;">Select Crop Year :</label>
+						<select id="cropyear" name="cropyear" class="form-control custom-select" style="width: 50%;"
+							required>
+<!-- 							<option value="" disabled selected>Select Crop Year</option> -->
+							<option th:each="season : ${cropYear}" th:value="${season.seasonvalue}" th:text="${season.cropyear}" selected="selected"></option>
+						</select>
+					</div>
+					<div   class="mb-3 form-group">
+						<label for="product" style="padding-left: 17%;">Product Name :  </label> 
+						<select id="product" name="product" class="form-control custom-select" 
+						style="width: 50%;" onchange="getSubProduct()" required>
+							<option value="" disabled selected>Select Product</option>
+							<option th:each="season : ${product}" th:value="${season.getProductcode()}" th:text="${season.getName()}"></option>
+						</select>
+					</div>
+
+					<div class="mb-3 form-group">
+						<label for="subProduct" style="padding-left: 11%;">Sub Product Name :</label>
+						<select id="subProduct" name="subProduct" class="form-control custom-select"
+							style="width: 50%;  "  onchange="getSeedVariety()"  required>
+							<option value="" disabled selected>Select Sub Product</option>
+							<option th:each="names : ${cropNames}" th:text="${names.getCropname()}" th:value="${names.getCropname()+'-'+names.getCropid()}"></option>
+						</select>
+					</div>
+					
+					<div class="mb-3 form-group">
+						<label for="variety" style="padding-left: 11%;">Select Seed Variety  :</label>
+						<select id="variety" name="variety" class="form-control custom-select"
+							style="width: 50%;  " required>
+							<option value="" disabled selected>Select Seed Variety </option>
+							<option th:each="names : ${cropNames}" th:text="${names.getCropname()}" th:value="${names.getCropname()+'-'+names.getCropid()}"></option>
+						</select>
+					</div>
+
+					<button type="submit" class="btn btn-primary"
+						style="margin-right: 30px; margin-left: 40%;">Submit</button>
+					<!--                    <button type="button" onclick="goBack()" class="btn btn-primary" style="margin-right: 30px;">Go Back</button>-->
+				
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<script>
+		window.onload = function () {
+			if (window.performance && window.performance.navigation.type === window.performance.navigation.TYPE_BACK_FORWARD) {
+				location.reload();
+			}
+		}
+		
+		
+		function getSubProduct(){
+					$("#subProduct").empty();
+					var procode= $("#product").val();
+		$.ajax({
+			type : "get",
+			url : "./getsubProduct?productCode=" + procode,
+			cache : false,
+			timeout : 600000,
+			success : function(resp) {
+				//alert("sucess=>"+JSON.stringify(resp));
+				$("#subProduct").append('<option value="">-----------Select--------</option>');
+				for (var j = 0; j < resp.length; j++) {
+					var bean = resp[j];
+					$("#subProduct").append(
+							'<option value="' + bean.subproductcode + '">' + bean.subproductname
+									+ '</option>');
+				}
+			}
+		});
+		}
+		
+		function getSeedVariety(){
+					$("#variety").empty();
+					var subProduct= $("#subProduct").val();
+		$.ajax({
+			type : "get",
+			url : "./getSeedVariety?subProductCode=" + subProduct,
+			cache : false,
+			timeout : 600000,
+			success : function(resp) {
+				$("#variety").append('<option value="">-----------Select--------</option>');
+				for (var j = 0; j < resp.length; j++) {
+					var bean = resp[j];
+					$("#variety").append(
+							'<option value="' + bean.varietycode + '">' + bean.varietyname
+									+ '</option>');
+				}
+			}
+		});
+		}
+	</script>
+
+</body>
+
+</html>

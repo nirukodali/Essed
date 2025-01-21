@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<title>Data Source Wise Extent And Booking Report </title>
+
+	<script>
+		function CallPrint(strid) {
+			var prtContent = document.getElementById(strid);
+			var mywindow = window.open('', '', 'left=0,top=0,width=950,height=600,toolbar=1,scrollbars=1,status=1,addressbar=0');
+			var is_chrome = Boolean(mywindow.chrome);
+			mywindow.document.write(prtContent.innerHTML);
+			mywindow.document.close(); // necessary for IE >= 10 and necessary before onload for chrome
+
+			if (is_chrome) {
+				mywindow.onload = function () { // wait until all resources loaded 
+					mywindow.focus(); // necessary for IE >= 10
+					mywindow.print(); // change window to mywindow
+					mywindow.close(); // change window to mywindow
+				};
+			} else {
+				mywindow.document.close(); // necessary for IE >= 10
+				mywindow.focus(); // necessary for IE >= 10
+				mywindow.print();
+				mywindow.close();
+			}
+
+			return true;
+		}
+
+	</script>
+	<script language="javascript">
+		var tableToExcel = (function () {
+			var uri = 'data:application/vnd.ms-excel;base64,'
+				, template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table align="center">{table}</table></body></html>'
+				, base64 = function (s) {
+					return window.btoa(unescape(encodeURIComponent(s)))
+				}
+				, format = function (s, c) {
+					return s.replace(/{(\w+)}/g, function (m, p) {
+						return c[p];
+					})
+				}
+			return function (table, name) {
+				if (!table.nodeType)
+					table = document.getElementById(table)
+				var ctx = {worksheet: name || 'Worksheet', table: table.innerHTML}
+				window.location.href = uri + base64(format(template, ctx))
+			}
+		})()
+	</script>
+
+	<script>
+		function validateForm() {
+			var cropyear = document.getElementById("crYear").value;
+			var vcode = document.getElementById("vcode").value;
+
+			// Check if both fields are selected
+			if (cropyear == 0) {
+				alert("Please select Crop Year.");
+				return false; // Prevent form submission
+			} else {
+				return true;
+			}
+		}
+	</script>
+	<style>
+		.heading1{
+	background-color: #dfffe1;
+    font-family: arial;
+    font-size: 10px;
+    line-height: 1.5;
+    text-align: center;
+    width:80%;
+    font-weight: bold;}
+
+	</style>
+</head>
+
+<body>
+	<div th:insert="header"></div>
+<div th:insert="headerImage"></div>
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+	<div class="container">
+		<form id="myform" name="myform" method="post" th:action="@{./RepDataSrcWiseBkedExt}"
+			style="margin-bottom: 0%;height:40%;">
+			<br>
+			<div class="ecropCardRbk2">
+				
+			<h5 style="background-color:#006400;color: white;font-weight:bolder;font-size:large;margin-left:14%;text-align: center;"  >
+					Data Source Wise Extent And Booking Report</h5>		
+				
+				
+				<div class="mb-3" style="width:50%;margin-left:35%;margin-top:5%;" >
+					<label for="name" style="width:40%">Crop Year :</label>
+					<select id="crYear" name="crYear" class="form-select" aria-label="Crop Year" style="width:50%">
+						<option value="0">---Select---</option>
+						<option th:each="emp:${activeseason}" th:value="${emp.seasonvalue}" th:text="${emp.cropyear}">
+						</option>
+					</select>
+				</div>
+				<div align="center" style="margin-top:7%;margin-left:20%;">
+					<button type="submit" class="btn btn btn-success" 
+						onclick="return validateForm()">Submit</button>
+<!--					<button type="button" class="btn btn-primary btn-block">Back</button>-->
+				</div>
+			</div>
+			<!-- <h5 style="font-size:20px" colspan="20" class="heading" align="center">Data Source Wise Extent And Booking Report</h5>-->
+
+			<div align="center" id="divPrint" style="margin-top:5%;">
+				<table id="tableStkId" style="width:80%" align="center">
+					<thead>
+						<h5 style="font-size:20px;margin-top: 5%;margin-bottom:0%;"  class="heading1" align="center">
+			CropYear: <span th:text=${cropyear}></span>&numsp;&numsp;    Season: <span th:text="${season} == 'K' ? 'Kharif' : (${season} == 'R' ? 'Rabi' : (${season} == 'S' ? 'Summer' : ' '))"></span>&numsp;&numsp;  
+	</h5>
+						<tr>
+							<th style="font-size: 13pt;" rowspan="2"> <b> S.No. </b> </th>
+							<th style="font-size: 13pt;" rowspan="2"> <b>Mandal</b> </th>
+							<th style="text-align:center;font-size: 13pt;" colspan="2"> <b> Webland</b> </th>
+							<th style="font-size: 13pt;" colspan="2"> <b> Non-Webland</b> </th>
+							<th style="text-align:center;font-size: 13pt;" colspan="2"> <b> CCRC </b> </th>
+							<th style="text-align:center;font-size: 13pt;" colspan="2"> <b> ROFR </b> </th>
+							<th style="font-size: 13pt;" colspan="2"> <b> Unsettled/Unsurvey </b> </th>
+							<th  style="text-align:center;font-size: 13pt;"  colspan="2"> <b> Total </b> </th>
+						</tr>
+						<tr border="1">
+							<th style="font-size: 13pt;"> Farmer</th>
+							<th style="font-size: 13pt;"> Extent </th>
+							<th style="font-size: 13pt;"> Farmer</th>
+							<th style="font-size: 13pt;"> Extent </th>
+							<th style="font-size: 13pt;"> Farmer</th>
+							<th style="font-size: 13pt;"> Extent </th>
+							<th style="font-size: 13pt;"> Farmer</th>
+							<th style="font-size: 13pt;"> Extent </th>
+							<th style="font-size: 13pt;"> Farmer</th>
+							<th style="font-size: 13pt;"> Extent </th>
+							<th style="font-size: 13pt;">Farmer</th>
+							<th style="font-size: 13pt;"> Extent </th>
+						</tr>
+					</thead>
+					<tbody></tbody>
+
+					<tr th:each="bean,row: ${list}">
+						<td th:text="${row.index+1}" />
+						<td style="text-align:left;font-size: 20px;"  th:text="${bean.Wbemname}" />
+						<td style="text-align:right;font-size: 20px;" th:text="${bean.Web_farmers}" />
+						<td style="text-align:right;font-size: 20px;" th:text="${bean.Web_ext}" />
+						<td style="text-align:right;font-size: 20px;" th:text="${bean.Nweb_farmers}" />
+						<td style="text-align:right;font-size: 20px;" th:text="${bean.Nweb_ext}" />
+						<td style="text-align:right;font-size: 20px;" th:text="${bean.Ccrc_farmers}" />
+						<td style="text-align:right;font-size: 20px;" th:text="${bean.Ccrc_ext}" />
+						<td style="text-align:right;font-size: 20px;" th:text="${bean.Rofr_farmers}" />
+						<td style="text-align:right;font-size: 20px;" th:text="${bean.Rofr_ext}" />
+						<td style="text-align:right;font-size: 20px;" th:text="${bean.Usus_farmers}" />
+						<td style="text-align:right;font-size: 20px;" th:text="${bean.Usus_ext}" />
+						<td style="text-align:right;font-size: 20px;" th:text="${a10}" />
+						<td style="text-align:right;font-size: 20px;" th:text="${a11}" />
+					</tr>
+					<tr>
+						<td></td>
+						<td style="font-weight:bold;font-size: 20px;text-align:center;"> Total </td>
+						<td style="text-align:right;font-weight:bold;font-size: 20px;" th:text="${Web_farmers}"> </td>
+						<td style="text-align:right;font-weight:bold;font-size: 20px;" th:text="${Web_ext}"> </td>
+						<td style="text-align:right;font-weight:bold;font-size: 20px;" th:text="${Nweb_farmers}"> </td>
+						<td style="text-align:right;font-weight:bold;font-size: 20px;" th:text="${Nweb_ext}"> </td>
+						<td style="text-align:right;font-weight:bold;font-size: 20px;" th:text="${Ccrc_farmers}"> </td>
+						<td style="text-align:right;font-weight:bold;font-size: 20px;" th:text="${Ccrc_ext}"> </td>
+						<td style="text-align:right;font-weight:bold;font-size: 20px;" th:text="${Rofr_farmers}"> </td>
+						<td style="text-align:right;font-weight:bold;font-size: 20px;" th:text="${Rofr_ext}"> </td>
+						<td style="text-align:right;font-weight:bold;font-size: 20px;" th:text="${Usus_farmers}"> </td>
+						<td style="text-align:right;font-weight:bold;font-size: 20px;" th:text="${Usus_ext}"> </td>
+						<td style="text-align:right;font-weight:bold;font-size: 20px;" th:text="${a12}"> </td>
+						<td style="text-align:right;font-weight:bold;font-size: 20px;" th:text="${a13}"> </td>
+					</tr>
+					</tbody>
+				</table>
+				<div th:if="${NoRecordsFound}" align="center">
+					<b style="font-size:18px;">---- No Records found-----</b>
+				</div>
+			</div>
+	</div>
+	</form>
+	<div align="center" style="color:black; padding:5%;">
+		<input class="btn btn-success" name="ctl00$ContentPlaceHolder1$btnPrint" type="button"
+			id="ctl00_ContentPlaceHolder1_btnPrint" onClick="javascript:CallPrint('divPrint')" value="Print">
+		<input class="btn btn-success" type="button" onclick="tableToExcel('tableStkId', 'Abstract')" value="Excel">
+		<!--  <input  class="btn btn-primary" type="button" value="Back" onclick="goBack()" /> -->
+
+	</div>
+</body>
+
+</html>

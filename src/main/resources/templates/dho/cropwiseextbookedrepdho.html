@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:insert="header">
+    <meta charset="UTF-8">
+    <title>Insert title here</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Scripts -->
+<!--     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> -->
+<!-- <!--     <script src="./js/jquery/jquery.cookie.js"></script> --> -->
+<!--    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">-->
+<!--    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>-->
+<!--     <script src="https://www.google.com/recaptcha/api.js" async defer></script> -->
+<!--<script src="./js/jquery-3.6.0.min.js"></script>-->
+
+<!--    <link rel="stylesheet" type="text/css" href="css/style.css">-->
+    <title>Dropdown Validation</title>
+<script>
+    function chk() {
+        var cropyear = document.getElementById('cropyear');
+        var crpgrp = document.getElementById('crpgrp');
+        var cropname = document.getElementById('cropname');
+        if (cropyear.value == '') {
+            alert('Please select an option from the cropyear.');
+            return false; // Prevent form submission
+        }
+        if (crpgrp.value == '') {
+            alert('Please select an option from the cropgroup.');
+            return false; // Prevent form submission
+        }
+        if (cropname.value == 0) {
+			
+            alert('Please select an option from the cropname.');
+            return false; // Prevent form submission
+        }
+        
+         var form = document.getElementById('myform');
+            // Here, you can specify the action URL dynamically if needed
+              var actionUrl = '/crop-report'; // Your desired action URL
+        form.action = actionUrl;
+
+        // If all dropdowns have a selected value, you can proceed with your logic here
+        return true; // Allow form submission
+    }
+
+    function validateWithoutClick() {
+        // Trigger chk() function without clicking on the dropdown
+        var isValid = chk();
+        if (isValid) {
+            // If validation is successful, submit the form programmatically
+            document.getElementById('myform').submit();
+        }
+    }
+</script>
+    <style>
+		
+		select{
+			border: none;
+			border-radius: 5px;
+			padding: 1.5px;
+			margin-bottom: 5px;
+		}
+		
+        #customers {
+          font-family: Arial, Helvetica, sans-serif;
+          border-collapse: collapse;
+          width: 100%;
+        }
+
+        #customers td, #customers th {
+          border: 1px solid #ddd;
+          padding: 8px;
+        }
+
+        #customers tr:nth-child(even){background-color: #f2f2f2;}
+
+        #customers tr:hover {background-color: #ddd;}
+
+        #customers th {
+          padding-top: 12px;
+          padding-bottom: 12px;
+          text-align: left;
+          background-color: #04AA6D;
+          color: white;
+        }
+    </style>
+    
+   <!--  <script>
+		<p id="displayText"></p>
+        function getOptionText() {
+			
+// 			event.preventDefault();
+            // Get the dropdown element
+            var dropdown = document.getElementById("cropname");
+            
+            // Get the selected option
+            var selectedOption = dropdown.options[dropdown.selectedIndex];
+            
+            // Get the text content of the selected option
+            var optionText = selectedOption.textContent;
+            
+            // Display the text content of the selected option
+            document.getElementById("displayText").textContent = "Selected Option Text: " + optionText;
+        }
+        
+        document.getElementById("submitButton").addEventListener("click", function() {
+            getOptionText(); // Call the function when the button is clicked
+        });
+    </script> -->
+       
+</head>
+<body>
+    <div th:insert="headerImage"></div>
+    <div th:insert="navBarTop"></div>
+    <div th:insert="headerMessage"></div>
+
+<div class="container">
+<div class="row justify-content-center">
+	<div class="col-auto">
+		<div class="card ecropCard">
+    <form name="myform" id="myform" >
+		<div class="card-title">
+				
+						<h4
+							style="background-color: darkgreen; color: white; width: auto; text-align: center;">Cropwise 
+							Extent Booked</h4>
+						<br />
+				</div>
+        <div align="center" id="divPrint">
+            <table  align="center" style="width:60%; background-color:  #e6e2d3">
+                <tr>
+                    <td class="tdnum" colspan="2" style="width:50%"> <b>Crop Year <font color="red">*</font>:</b> </td>
+                    <td>
+                        <select name="cropyear" id="cropyear" style="width: 200px">
+                            <option value='' th:selected="0">------Select Crop Year--------</option>
+                            <option th:each="cropyr: ${cropyears}" th:value="${cropyr.seasonvalue}"
+                             th:text="${cropyr.cropyear}"></option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="tdnum" colspan="2" style="width:50%"><b>Crop Group :</b></td>
+                    <td>
+                        <select name="crpgrp" id="crpgrp" style="width: 200px">
+                            <option value='' th:selected="0">------Select Crop Group--------</option>
+                            <option th:each="cropgroup: ${cropgroups}" th:value="${cropgroup.cropgrpid}" th:text="${cropgroup.grpname}"></option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="tdnum" colspan="2"><b>Crop Name :</b></td>
+                    <td>
+                        <select name="cropname" id="cropname" style="width: 200px">
+                            <option value='0' th:selected="0">------Select Crop Name--------</option>
+                            <option th:each="cropnme: ${cropnames}" th:value="${cropnme.cropid}" th:text="${cropnme.cropname}"></option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td align="center" colspan="3"> <input type="button" class="btn btn-primary" value="Submit" onclick="validateWithoutClick();getOptionText()"></td>
+                </tr>
+            </table>
+            <br><br>
+            <th class="heading" colspan="3"><b> Abstract On Extent Booked &nbsp;&nbsp; &nbsp;&nbsp;</b></th>
+            <tr>
+                <td class="heading tdnum" colspan="10">
+                    <b>Report Time : <span th:text="${theDate}"></span></b>
+                </td>
+            </tr>
+            
+			
+        </div>
+    </form>
+ </div>  
+	</div>
+</div>	
+</div>
+ 
+ 
+ 
+	<p id="displayText"></p>
+
+    <table id="customers">
+        <thead>
+            <tr>
+                <th><b>S.No.</b></th>
+                <th><b>Mandal</b></th>
+                <th><b>Extent Booked</b></th>
+               
+            </tr>
+        </thead>
+        
+        <tbody>
+    <tr th:each="crpgroup, iterStat : ${cropreport}">
+        <td th:text="${iterStat.count}"></td>
+        <td th:text="${crpgroup.mname}"></td>
+        <td th:text="${crpgroup.totextent}"></td>
+        
+    </tr>
+	<tr class="grandtotal">
+		<td colspan="2" id="totalExtent">Total</td>
+		<!--                         <td th:text="${crpgroup.sum(totextent)}"></td>-->
+	</tr>
+    <tr>
+        <td colspan="20" align="center">
+            <input type="button" value="Go Back" onclick="back()">
+        </td>
+    </tr>
+</tbody>
+
+    </table>
+
+    <script>
+		
+        // Execute the AJAX call when the dropdown selection changes
+        $('#crpgrp').on('change', function () {
+            var grpcode = $(this).val();
+            var href1 = "./cropreportdho/" + grpcode;
+            $.get(href1, function (cropnames) { // Line 6
+                $('#cropname').empty().append('<option value="0">Select Crop Name</option>');
+                if (cropnames != '') {
+                    var $select1 = $('#cropname');
+                    $.each(cropnames, function (i, cropname) {
+                        var option = $('<option>', {
+                            value: cropname.cropid
+                        }).html(cropname.cropname).appendTo($select1);
+                    });
+                }
+            });
+        });
+
+        // Execute the AJAX call to get table data
+        // Execute the AJAX call to get table data
+// $(document).ready(function() {
+//     $('#cropname').on('change', function () {
+//     	  $('#totalExtent').text(0);
+//         var cropid = $(this).val(); // Change variable name to cropid for clarity
+//         var cropyear= $("#cropyear").val();
+//         var cropname=	$("#cropname").val();
+//        	 var crpgrp = $("#crpgrp").val();
+// //          alert(cropyear);
+// //        var href2 = "./cropReport/"+cropyear+cropname+crpgrp; // Change variable name to href2 for clarity
+//     		var href2 = "./cropreportDho/" + cropyear + "/" + cropname + "/" + crpgrp;
+//         $.get(href2, function (tableData) {
+//         	alert(tableData.length)
+//             $('#customers tbody').empty(); // Clear existing table data before appending new data
+//             // Initialize totalExtent
+            
+//             if (tableData.length > 0) {
+//             	alert('111')
+//             	 var totalExtent = 0;
+//                 $.each(tableData, function (i, rowData) {
+//                     var row = $('<tr>'); // Create a new table row
+//                     // Append table data to the row   
+//                     $('<td>').text(i + 1).appendTo(row); // S.No.
+//                     $('<td>').text(rowData.mname).appendTo(row); // Crop Group
+//                     $('<td>').text(rowData.totextent).appendTo(row); // Extent Booked
+//                     totalExtent += rowData.totextent; // Accumulate totalExtent
+//                     row.appendTo('#customers tbody'); // Append 
+//                 });
+                
+//                 $('#totalExtent').text(totalExtent); // Set total extent
+//             } else {
+//                 $('#totalExtent').text(0); // If no data, set total extent to 0
+//             }
+//         });
+//     });
+// });
+
+$('#cropname').on('change', function () {
+    $('#tot').text(0);
+    var cropid = $(this).val(); // Change variable name to cropid for clarity
+//     alert(cropid);
+    
+     // var cropyear= document.getElementById("cropyear").value;
+     var cropyear= $("#cropyear").val();
+     var cropname=	$("#cropname").val();
+    	 var crpgrp = $("#crpgrp").val();
+//       alert(cropyear);
+//     var href2 = "./cropReport/"+cropyear+cropname+crpgrp; // Change variable name to href2 for clarity
+ 		var href2 = "./cropreportDho/" + cropyear + "/" + cropname + "/" + crpgrp;
+    alert(href2);
+    $.get(href2, function (tableData) { // Line 6
+    	alert("tableData------->"+tableData.length);
+    
+        $('#customers tbody').empty();
+      
+        // Clear existing table data before appending new data
+        if (tableData.length > 0) {
+        	  var tot= 0;
+            $.each(tableData, function (i, rowData) {
+                var row = $('<tr>');
+                tot= tot + (rowData.totextent); // Create a new table row
+                // Append table data to the row   
+                $('<td>').text(i + 1).appendTo(row); // S.No.
+                $('<td>').text(rowData.mname).appendTo(row); // Mandal
+                $('<td>').text(rowData.totextent).appendTo(row);
+                
+//                 $('<td>').text(rowData.mname).appendTo(row);// Extent Booked
+                row.appendTo('#customers tbody');
+                $('#tot').text(tot);// Append the row to the table body
+            });
+             
+//             row.appendTo('#customers tbody'); 
+        }
+    });
+    
+  /*   $('#customers tbody').css({
+        'position': 'absolute',
+        'left': '50%',
+        'top': '100%',
+        'transform': 'translate(-50%, -50%)',
+    }); */
+});
+
+    </script>
+</body>
+</html>

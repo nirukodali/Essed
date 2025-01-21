@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="header"></head>
+
+<body>
+	<div th:insert="headerImage"></div>
+
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+
+	<div class="container-fluid header-design-login">
+		<div class="row justify-content-center align-items-center" style="height: 10vh;">
+			<div class="webland-container" style="padding-top:15px;">
+				<div class="card ecropCard">
+
+					<div class="card-title">
+						<h5 style="text-align: center;">Employee Profile</h5>
+					</div>
+
+					<div class="card-body" style="padding: 10px;">
+						<form th:object="${employee}" th:action="@{/employeeprofile}" method="post">
+							<div class="form-group row">
+								<label for="empcode" class="col-sm-4 col-form-label">Employee Code</label>
+								<div class="col-sm-8">
+									<input type="number" id="empcode" name="emp_code" class="form-control" required>
+								</div>
+							</div>
+							<div class="form-group row">
+								<label for="empcode" class="col-sm-4 col-form-label">Employee Name</label>
+								<div class="col-sm-8">
+									<input type="text" id="empname" name="emp_name" class="form-control" required>
+								</div>
+							</div>
+							<div class="form-group row">
+								<label for="box" class="col-sm-4 col-form-label">Designation</label>
+								<div class="col-sm-8">
+									<select name="box" class="box form-control" aria-label="Designation" required>
+										<option value="" disabled selected>---Select option---</option>
+										<option value="1">VAA</option>
+										<option value="2">VHA</option>
+										<option value="3">VSA</option>
+										<option value="4">AEO</option>
+										<option value="5">MPEO</option>
+										<option value="6">VFA</option>
+										<option value="7">ATM</option>
+										<option value="8">BTM</option>
+									</select>
+								</div>
+							</div>
+							<div class="form-group row">
+								<label for="email" class="col-sm-4 col-form-label">Email</label>
+								<div class="col-sm-8">
+									<input type="email" id="email" name="email" class="form-control" required>
+								</div>
+							</div>
+							<div class="form-group row">
+								<label for="aadhaar" class="col-sm-4 col-form-label">Aadhaar</label>
+								<div class="col-sm-8">
+									<input type="text" data-type="aadhaar" name="aadhaar_id" maxLength="12"
+										class="form-control" required>
+								</div>
+							</div>
+							<div class="form-group row">
+								<label for="mobile" class="col-sm-4 col-form-label">Mobile</label>
+								<div class="col-sm-8">
+									<input type="text" data-type="mobileNo" name="mobile" id="mbNo" maxLength="10"
+										required onchange="validMobileNumber()" class="form-control">
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-12">
+									<div style="margin: 0 auto; width: 155px; color: #000;">
+										<button type="submit" class="btn btn-primary" id="addEmpId"
+											title="Add Employee Details">Add</button>
+										<button type="button" class="btn btn-warning" id="resetId"
+											th:onclick="window.location.href='/employeeprofile'">Reset</button>
+									</div>
+								</div>
+							</div>
+							<div>
+								<span th:utext="${msg}"></span>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+
+</html>

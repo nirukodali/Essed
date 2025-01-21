@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="header">
+	<link rel="stylesheet" type="text/css" href="css/style.css" />
+
+	<meta charset="UTF-8">
+	<title>District Wise Indents Entry</title>
+
+</head>
+
+<body>
+	<div th:insert="headerImage"></div>
+
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+	
+	
+	<div style="background-color: green; text-align: center;font-size: large;font-weight: bolder;width: 50%;margin-left: 25%;color: white;">
+		User Activation Deactivation
+	</div>
+<br>
+	
+	<br>
+	<form id="updationForm" >
+
+
+		<div style="background-color: ghostwhite; margin-left: auto; margin-right: auto; width: 60%;">
+
+			<table style="width: 100%; border-collapse: collapse;">
+				<thead style="background-color: darkgray; color: white; width: 100%;">
+
+					<tr>
+						<!--						<span th:utext="${msg}"></span>-->
+						<th style="padding: 10px; padding-left: 50px; text-align: left;"><input id="main"
+								type="checkbox"></th>
+						<th style="padding: 10px; text-align: right">SNO</th>
+						<th style="padding: 10px; padding-left: 50px; text-align: center">District Name</th>
+						<th style="padding: 10px; padding-left: 50px; text-align: center">Mandal Name</th>
+						<th style="padding: 10px; padding-left: 50px; text-align: center">Village Secretariat</th>
+						<th style="padding: 10px; padding-left: 50px; text-align: center">User Id</th>
+					</tr>
+				</thead>
+				<h2 style="text-align: center;">
+					<span th:text="${empty}"></span>
+					<tbody style="width: max-content;">
+
+						<tr th:each="item : ${results}">
+							<td style="padding: 10px; padding-left: 50px;"><input type="checkbox" class="sub-checkbox"
+									name="sub-checkbox" style="padding: 10px; padding-left: 50px;"></td>
+							<td style="padding: 10px; text-align: right;" th:text="${itemStat.index + 1}"></td>
+<!-- <!-- 							<td style="padding: 10px; padding-left: 100px;" th:text="${item.vsdname}"> </td> --> 
+<!-- 							<input type="hidden" th:value="${item.getDcode()}" th:id="dcode" th:name="dcode"> -->
+<!-- 							<input type="hidden" th:value="${varietycode}" th:id="varietycode" th:name="varietycode"> -->
+<!-- 							<input type="hidden" th:value="${item.getDname()}" th:id="dname" th:name="dname"> -->
+<!-- 							<td><input style="padding: 10px; padding-left: 100px; height: 30px;" class="input-field" -->
+<!-- 									name="quantity" disabled -->
+<!-- 									onkeypress="return ( event.charCode == 8 || event.charCode == 0) || event.charCode == 46 ? null : event.charCode >= 48 && event.charCode <= 57 " -->
+<!-- 									pattern="^\d{1,6}(\.\d{0,2})?$" required maxlength="8"> -->
+<!-- 							</td> -->
+
+
+
+
+   <td style="padding: 10px; padding-left: 120px"  th:text="${item[0]}"></td> <!-- vsdname -->
+   <input th:value="${actid}" th:id="actid" th:name="actid" type="hidden" >
+     <input th:name="district" th:id="district" th:value="${item[5]}" type="hidden">
+            <td style="padding: 10px; padding-left: 120px" th:text="${item[1]}"></td> <!-- vsmname -->
+              <input th:name="mandal" th:id="mandal" th:value="${item[6]}" type="hidden">
+            <td style="padding: 10px; padding-left: 120px" th:text="${item[2]}"></td> <!-- vname -->
+          <input th:name="village" th:id="village" th:value="${item[7]}" type="hidden">
+            <td style="padding: 10px; padding-left: 120px" th:text="${item[3]}"></td> <!-- userid -->
+             <input th:name="userid" th:id="userid" th:value="${item[3]}" type="hidden">
+<!--             <td style="padding: 10px; padding-left: 120px" th:text="${item[4]}"></td> village -->
+  <input th:name="status" th:id="status" th:value="${item[8]}" type="hidden">
+    <input th:name="cropyear" th:id="cropyear" th:value="${cropyear}" type="hidden">
+  
+  
+						</tr>
+
+					</tbody>
+					<tfoot>
+						<br>
+
+						<!--							<tr>-->
+						<!--								<td colspan="3"-->
+						<!--									style="padding-left: 65%; font-size: large; font-weight: bold;">Total&nbsp;:</td>-->
+						<!--								<td colspan="4"-->
+						<!--									style="padding-left: 15%; font-size: large; font-weight: bold;"><span-->
+						<!--									id="total"></span></td>-->
+						<!--							</tr>-->
+						<tr>
+							<td style="padding-left: 40%;"><input type="submit" class="btn btn-primary" value="Submit"
+									onclick="submitData()"></td>
+							<td style="padding-left: 45%;"><input type="button" class="btn btn-primary" value="Go Back"
+									onclick="goBack()"></td>
+						</tr>
+
+					</tfoot>
+			</table>
+		</div>
+	</form>
+
+	<script type="text/javascript">
+
+		$(document).ready(function () {
+			// Set CSRF token in AJAX requests
+			var token = $("meta[name='_csrf']").attr("content");
+			var header = $("meta[name='_csrf_header']").attr("content");
+
+			$(document).ajaxSend(function (e, xhr, options) {
+				xhr.setRequestHeader(header, token);
+			});
+		});
+
+	</script>
+	<script>
+
+		function goBack() {
+			window.location.href = "./indentsEntry";
+			window.history.back();
+		}
+		function submitData() {
+			var rows = document.querySelectorAll('tbody tr');
+			var isValid = true;
+			let checkboxes = document.querySelectorAll('.sub-checkbox:checked');
+			let records = document.querySelectorAll('.sub-checkbox');
+			if (checkboxes.length === 0) {
+		//		alert('No Data is Being Updated');
+				isValid = false;
+				return false;
+			}
+			if (records.length === 0) {
+			//	alert('No Data is Being Updated');
+				isValid = false;
+			}
+
+			rows.forEach(function (row) {
+				var inputField = row.querySelector('[name="quantity"]');
+				var checkbox = row.querySelector('[name="sub-checkbox"]');
+				var pattern = /^\d{1,7}(\.\d{1,2})?$/;
+
+				if (checkbox.checked) {
+					if (inputField.value === '' || inputField.value === null || !pattern.test(inputField.value)) {
+						alert('Please enter a valid Quantity for the District : ' + row.querySelector('[name="dname"]').value);
+						isValid = false;
+					}
+				}
+			});
+
+			if (isValid) {
+				alert('Data is submitted Successfully');
+			}
+		}
+		document.getElementById('main').addEventListener('change', function () {
+		    var checkboxes = document.querySelectorAll('.sub-checkbox');
+		    checkboxes.forEach(function (checkbox) {
+		        checkbox.checked = document.getElementById('main').checked;
+		        updateInputState(checkbox); // Ensure input fields are updated accordingly
+		    });
+		});
+
+		// Event listener for the individual checkboxes
+		var checkboxes = document.querySelectorAll('.sub-checkbox');
+		checkboxes.forEach(function (checkbox) {
+		    checkbox.addEventListener('change', function () {
+		        updateInputState(checkbox);
+		    });
+		});
+
+		// Function to update the state of the input field based on checkbox state
+		function updateInputState(checkbox) {
+		    var inputBox = checkbox.closest('tr').querySelector('.input-field');
+		    if (inputBox) {
+		        inputBox.disabled = !checkbox.checked; // Disable the input field if checkbox is unchecked
+		    }
+		}
+
+
+		document.getElementById('updationForm').addEventListener('submit', function (event) {
+			var formDataArray = [];
+			
+
+			document.querySelectorAll('tbody tr').forEach(function (row) {
+					let checkboxes = document.querySelectorAll('.sub-checkbox:checked');
+				var checkbox = row.querySelector('.sub-checkbox');
+				var inputField = row.querySelector('.input-field');
+				if (checkbox.checked) {
+
+					var userid = row.querySelector('[name="userid"]');
+					var district = row.querySelector('[name="district"]');
+					var mandal = row.querySelector('[name="mandal"]');
+					var village = row.querySelector('[name="village"]');
+					var status = row.querySelector('[name="status"]');
+					var cropyear = row.querySelector('[name="cropyear"]');
+					var actid = row.querySelector('[name="actid"]');
+					
+					formDataArray.push({
+						userid: userid.value,
+						district:district.value,
+						mandal:mandal.value,
+						village:village.value,
+						status:status.value,
+						cropyear:cropyear.value,
+						actid:actid.value
+						
+					});
+
+				}
+				
+				
+				
+			});
+			
+			
+			goBack();
+
+			console.log('FormDataArray:', formDataArray);
+			$.ajax({
+				url: './farmerecropdataSubmit',
+				type: 'POST',
+				contentType: 'application/json;',
+				data: JSON.stringify(formDataArray),
+				success: function (data) {
+					console.log('Success:', data);
+				},
+				error: function (error) {
+					console.error('Error during fetch operation:', error);
+				}
+			});
+		});
+
+
+	</script>
+</body>
+
+</html>

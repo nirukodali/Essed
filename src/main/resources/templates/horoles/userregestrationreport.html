@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="header"></head>
+<div th:insert="headerImage"></div>
+<div th:insert="navBarTop"></div>
+<div th:insert="headerMessage"></div>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>eKarshak</title>
+
+<!-- DataTables CSS and JS -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+<link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css">
+
+<script>
+    // Function to validate form and fetch data
+    function validateForm(event) {
+        // Prevent form from submitting and reloading the page
+        event.preventDefault();
+
+        // Get the district code selected by the user
+        var dcode = document.getElementById("inputdcode").value;
+        
+        // Alert to verify district code
+      //  alert("District code selected: " + dcode);
+
+        // If no district is selected, show an alert and stop further execution
+        if (!dcode) {
+            alert("Please select a district code.");
+            return;
+        }
+
+        // Show loading indicator (optional, for better UX)
+        $('#loading').show();
+
+        // AJAX call to fetch user registration data based on the district code
+        $.ajax({
+            url: "/users/" + dcode,  // API URL with district code
+            type: "GET",
+            success: function(data) {
+                // Hide loading indicator
+                $('#loading').hide();
+
+                // Clear the previous table rows
+                var tableBody = $('#userTable tbody');
+                tableBody.empty();
+
+                // Loop through the data and append rows to the table
+                data.forEach(function(user) {
+                    var row = $('<tr>');
+                    row.append('<td>' + user.userid + '</td>');
+                    row.append('<td>' + user.type_user + '</td>');
+                    row.append('<td>' + user.mobile_phone + '</td>');
+                    row.append('<td>' + user.district + '</td>');
+                    row.append('<td>' + user.mandal + '</td>');
+                    row.append('<td>' + user.aadhaar_id + '</td>');
+                    row.append('<td>' + user.emailid + '</td>');
+                    row.append('<td>' + user.regdate + '</td>');
+                    tableBody.append(row);
+                });
+
+                // Show the table after data is loaded
+                $('#userTable').show();
+
+                // Reinitialize DataTable after adding the new data
+                $('#userTable').DataTable();
+            },
+            error: function(error) {
+                // Hide loading spinner if an error occurs
+                $('#loading').hide();
+                console.log("Error fetching data: ", error);
+            }
+        });
+    }
+</script>
+
+</head>
+
+<body>
+    <div class="heading" style="text-align:center;font-size: 25px;"><b>Report on Crop Booking Details</b></div>
+
+    <div id="loading" style="display: none; text-align:center; font-size: 20px;">
+        Loading...
+    </div>
+
+    <div align="center">
+        <form onsubmit="validateForm(event)">
+            <table id="ObjEntryTable">
+                <div> 
+                    <b>District</b>
+                    <select name="selectedDist" id="inputdcode" style="width:200px;text-align:left;">
+                        <option value="">----Select----</option>
+                        <option th:each="list : ${dist}" th:value="${list.dcode}" th:text="${list.dname}"></option>
+                    </select>&numsp;&numsp;&numsp;&numsp;
+                </div>
+            </table>
+            <div colspan="3" align="center" style="padding-top:10px;padding-bottom:10px;">
+                <button type="submit" class="btn btn-success">Submit</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Table for displaying user registration data (Initially Hidden) -->
+    <div class="container">
+    <h2 style="text-align: center;">User Registration Data</h2>
+        
+        <!-- Table to display user data (Initially Hidden) -->
+        <table id="userTable" class="display" style="display: none;">
+            <thead>
+                <tr>
+                    <th>User ID</th>
+                    <th>Type User</th>
+                    <th>Mobile Phone</th>
+                    <th>District</th>
+                    <th>Mandal</th>
+                    <th>Aadhaar ID</th>
+                    <th>Email ID</th>
+                    <th>Registration Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Data will be injected here dynamically via AJAX -->
+            </tbody>
+        </table>
+    </div>
+
+</body>
+
+</html>

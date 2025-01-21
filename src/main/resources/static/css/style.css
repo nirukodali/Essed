@@ -1,0 +1,273 @@
+.header-design {
+	background-color: #ffffff;
+	width: 50%;
+	align-items: center;
+}
+
+.header-logo-col {
+	display: flex;
+	align-items: center;
+}
+
+.text-dark-green {
+	color: #006400;
+}
+
+/* img { */
+/* 	width: 100%; */
+/* 	height: 15%; */
+/* } */
+
+img {
+	padding-left: 20%;
+	width: 75%;
+	height: 10%;
+}
+
+.bg-dark-green {
+	background-color: #006400;
+}
+
+.text-white {
+	color: #ffffff;
+	font-size: 14px;
+
+	font-weight: bold;
+
+	text-transform: uppercase;
+
+	letter-spacing: 2px;
+	line-height: 1.2;
+}
+
+
+.pointer {
+	cursor: pointer;
+}
+
+.box.box-solid.box-patent {
+	border: 1px solid #9494b8;
+}
+
+.box.box-patent {
+	border-top-color: #9494b8;
+}
+
+.box.box-solid.box-patent>.box-header {
+	color: #fff;
+	background: #9494b8;
+	background-color: #9494b8;
+}
+
+.grey-text {
+	color: grey;
+	font-family: Arial, sans-serif;
+	font-size: 20px;
+	font-weight: bold;
+}
+
+#cultivatorsList {
+	width: 100%;
+}
+
+
+
+.black-text {
+	color: black;
+	font-family: Arial, sans-serif;
+	font-size: 20px;
+	font-weight: bold;
+}
+
+
+.grey-background {
+	background-color: rgb(255, 255, 255);
+}
+
+
+
+.cropbook {
+	background-color: white;
+	width: 100%;
+	text-align: center;
+}
+
+
+.blue-background {
+	background-color: #3498db;
+}
+
+
+
+.white-background {
+	background-color: white;
+}
+
+
+
+.village {
+	padding: 10px;
+	margin: 10px;
+	text-align: center;
+}
+
+.container,
+.container-lg,
+.container-md,
+.container-sm,
+.container-xl {
+	max-width: 1520px !important;
+}
+
+
+/*CCRC*/
+
+/* Custom styles for the NProgress bar */
+#nprogress .bar {
+	background: deepskyblue !important;
+	height: 4px !important;
+	/* Set the desired thickness */
+}
+
+/* Custom styles for the "Please wait" message */
+#pleaseWaitMessage {
+	font-size: 18px;
+	font-weight: bold;
+	margin-top: 10px;
+}
+
+
+.ecropCard {
+	width: 600px;
+	background-color: #e6e2d3;
+	border: 2px;
+	border-radius: 5px;
+	box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.5);
+	padding-right: 1.0rem !important;
+	padding-left: 1.0rem !important;
+	padding-top: 5px !important;
+	padding-bottom: 1.0rem !important;
+}
+
+.card-title {
+	margin-bottom: 0px !important;
+}
+
+.col-form-label {
+	font-weight: bold;
+}
+
+table.scroll {
+	width: 100%;
+	border-spacing: 0;
+	border: 1px solid black;
+}
+
+table.scroll tbody,
+table.scroll thead {
+	display: block;
+}
+
+table.scroll tbody {
+	height: 500px;
+	overflow-y: auto;
+	overflow-x: hidden;
+}
+
+
+table thead {
+/*	background-color: #9494b8;*/
+	
+/*	background-color: #0275d8;*/
+	
+/*	background-color: #28a745;*/
+background-color: #006400;
+	color:#ffffff;
+}
+
+ .ecropCardRbk {
+ margin-left: 25%;
+	width: 30%;
+	height: 10%;
+/*	width: 30%; */
+	background-color: #e6e2d3;
+	border-radius: 5px;
+	box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.5);
+	padding-right: 7% !important;
+	padding-left: 0.50% !important;
+	padding-top: 3% !important;
+	padding-bottom:3% !important;
+	margin-bottom:5% ;
+	margin-left: 35%;
+	align-items: center;
+	
+	
+}       
+
+/* .ecropCardRbk2 {*/
+/* margin-left: 0%;*/
+/*	width: 145%;*/
+/*	height: 30lvh;*/
+/*	width: 30%; */
+/*	background-color: #e6e2d3;*/
+/*	border-radius: 5px;*/
+/*	box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.5);*/
+/*	padding-right: 7% !important;*/
+/*	padding-left: 0.50% !important;*/
+/*	padding-top: 3% !important;*/
+/*	padding-bottom:30% !important;*/
+/*	margin-bottom:10% ;*/
+	
+/*	align-items: center;*/
+	
+/*}      */
+/* css for side dropodown */
+.dropdown-menu li {
+position: relative;
+}
+.dropdown-menu .dropdown-submenu {
+display: none;
+position: absolute;
+left: 50%;
+top: -7px;
+border:0;
+}
+.dropdown-menu .dropdown-submenu-left {
+right: 100%;
+left: auto;
+}
+.dropdown-menu > li:hover > .dropdown-submenu {
+display: block;
+}
+
+
+.ecropCardRbk2{
+		width: 40%;
+	height:12%;
+/*	width: 30%;*/
+	background-color: #e6e2d3;
+	border-radius: 5px;
+	box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.5);
+	padding-right: 7% !important;
+	padding-left: 0.50% !important;
+	padding-top: 3% !important;
+	padding-bottom: 3% !important;
+	margin-left: 30%;
+	margin-bottom:0% ;	
+	align-items: center;
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+

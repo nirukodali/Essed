@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="header"></head>
+
+<body>
+    <div th:insert="headerImage"></div>
+
+    <div th:insert="navBarTop"></div>
+    <div th:insert="headerMessage"></div>
+
+    <div class="container">
+        <section class="content" style="padding-top: 1px;">
+            <div class="row topformcontent">
+                <div class="col-md-12">
+                    <div class="box box-solid box-patent" style="margin-top: 5px;margin-bottom: 10px;">
+                        <div class="box-header">
+                            <div class="row">
+                                <div class="col-md-12" style="padding-left: 40%;">
+                                    <div class="col-md-6">
+                                        <label class="box-title">
+                                            <span style="font-size: 16px; color:white;font-weight: bold;padding-top:5px;">
+                                                Dept Wise Crop Damage Enumeration List
+                                            </span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="box-body" style="padding-left: 10px; height: auto;">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <label><b>Select Village:</b></label>
+                                    <div class="form-group" style="margin-bottom: 5px;">
+                                        <div class="input-group">
+                                            <select class="form-control" id="village" name="village" required onchange="updateData()">
+                                                <option value="" disabled selected>Select Village</option>
+                                                <option th:each="vill : ${vill}" th:value="${vill.vcode}"
+                                                    th:text="${vill.wbvname}"></option>
+                                            </select>
+                                            <span id="dropdownError" style="color: red;"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                              
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div id="contentDivId"></div>
+
+   
+    <script>
+        function updateData() {
+           // var dept = document.getElementById('department').value;
+            var cr_vcode = $('#village').val();
+
+            if (cr_vcode) {
+                $.ajax({
+                    type: "GET",
+                    url: './getDamagedMAO',
+                    data: {
+                        "cr_vcode": cr_vcode,
+                       
+                    },
+                    success: function(data) {
+                        $("#contentDivId").html(data);
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("An error occurred while fetching data:", status, error);
+                    }
+                });
+            }
+        }
+
+       
+        $(document).ready(function() {
+            updateData(); 
+        });
+    </script>
+</body>
+
+</html>

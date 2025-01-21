@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="header">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>supervisoryCheckReport</title>
+<!--	<link rel="stylesheet" href="./styles/reportstylesheet.css" />-->
+
+	
+<!-- <script -->
+<!-- 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script> -->
+<!-- <link rel="stylesheet" -->
+<!-- 	href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"> -->
+<!-- <script -->
+<!-- 	src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.slim.min.js"></script> -->
+<!-- <script -->
+<!-- 	src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script> -->
+<!-- <script -->
+<!-- 	src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script> -->
+<!-- <script -->
+<!-- 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script> -->
+<script>
+	function CallPrint(strid) {
+		var prtContent = document.getElementById(strid);
+		var mywindow = window
+				.open(
+						'',
+						'',
+						'left=0,top=0,width=950,height=600,toolbar=1,scrollbars=1,status=1,addressbar=0');
+		var is_chrome = Boolean(mywindow.chrome);
+		mywindow.document.write(prtContent.innerHTML);
+		mywindow.document.close(); // necessary for IE >= 10 and necessary before onload for chrome
+
+		if (is_chrome) {
+			mywindow.onload = function() { // wait until all resources loaded 
+				mywindow.focus(); // necessary for IE >= 10
+				mywindow.print(); // change window to mywindow
+				mywindow.close(); // change window to mywindow
+			};
+		} else {
+			mywindow.document.close(); // necessary for IE >= 10
+			mywindow.focus(); // necessary for IE >= 10
+			mywindow.print();
+			mywindow.close();
+		}
+
+		return true;
+	}
+</script>
+
+<script language="javascript">
+	var tableToExcel = (function() {
+		var uri = 'data:application/vnd.ms-excel;base64,', template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table align="center">{table}</table></body></html>', base64 = function(
+				s) {
+			return window.btoa(unescape(encodeURIComponent(s)))
+		}, format = function(s, c) {
+			return s.replace(/{(\w+)}/g, function(m, p) {
+				return c[p];
+			})
+		}
+		return function(table, name) {
+			if (!table.nodeType)
+				table = document.getElementById(table)
+			var ctx = {
+				worksheet : name || 'Worksheet',
+				table : table.innerHTML
+			}
+			window.location.href = uri + base64(format(template, ctx))
+		}
+	})()
+</script>
+
+</head>
+<script>
+	// 	$(document).ready(function () {
+	// 		//alert("get crop year");
+	// 		$.ajax({
+	// 			type: "get",
+	// 			url: "./util/getAllSeason",
+	// 			cache: false,
+	// 			timeout: 600000,
+	// 			success: function (resp) {
+	// 				alert(JSON.stringify(resp));
+	// 				for (var j = 0; j < resp.length; j++) {
+	// 					var bean = resp[j];
+	// 					$("#cropyear").append('<option value="' + bean.col1 + '">' + bean.col2 + '</option>');
+	// 				}
+	// 			}
+	// 		});
+	// 	});
+
+	// 	function getData() {
+	// 		alert("getData=========>");
+	// 		var inputwbdcode = $("#inputwbdcode").val();
+	// 		var inputwbmcode = $("#inputwbmcode").val();
+	// 		var userid = $("#inputuserid").val();
+	// 		var cropyear = $("#cropyear").val();
+	// 		alert("cropyear=========>" + cropyear);
+
+	// 		var data = {};
+	// 		data['wbdcode'] = inputwbdcode;
+	// 		data['wbmcode'] = inputwbmcode;
+	// 		data['cropyear'] = cropyear;
+	// 		data['userid'] = userid;
+
+	// 		alert("cropyear=========>" + cropyear);
+	// 		$.ajax({
+	// 			type: "post",
+	// 			url: "./util/supcheckReport",
+	// 			contentType: 'application/json',
+	// 			data: JSON.stringify(data),
+	// 			cache: false,
+	// 			timeout: 600000,
+	// 			success: function (resp) {
+	// 				alert("werfyhgjhkl;");
+	// 				alert(JSON.stringify(resp));
+	// 				var sno = 0;
+	// 				for (var j = 0; j < resp.length; j++) {
+	// 					sno = sno + 1;
+	// 					var bean = resp[j];
+	// 					$("#databody").append('<tr style="fontsize:200px; font-weight: bold;">'
+	// 						+ '<td>' + sno + '</td>'
+	// 						+ '<td>' + bean.wbdname + '</td>'
+	// 						+ '<td>' + bean.wbmname + '</td>'
+	// 						+ '<td>' + bean.wbvname + '</td>'
+	// 						+ '<td>' + bean.bookingid + '</td>'
+	// 						+ '<td>' + bean.occup_name + '</td>'
+	// 						+ '<td>' + bean.occup_fname + '</td>'
+	// 						+ '<td>' + bean.cropname + '</td>'
+	// 						+ '<td>' + bean.varietyname + '</td>'
+	// 						+ '<td>' + bean.cr_sow_dt + '</td>'
+	// 						+ '<td>' + bean.kh_no + '</td>'
+	// 						+ '<td>' + bean.cr_sno + '</td>' 
+	// 						+ '<td style="background-color: #829356; border: 1px solid black;color:white">' + bean.reason + '</td>' 
+	// 					+ '</tr>');
+	// 				}
+	// 			}
+	// 		});
+	// 	}
+</script>
+
+<body>
+<div th:insert="headerImage"></div>
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+	<!-- <div th:replace="home :: content"></div> -->
+	<div class="heading" colspan="20" style="text-align: center;">
+		<h4>Super Check Entry Found Incorrect Report</h4>
+	</div>
+
+	<input type="hidden" id="activeyear" name="activeyear"
+		th:value="${#session.getAttribute('ACTIVEYEAR')}" />
+
+
+
+	<div align="center">
+		<form th:action="@{./getSuperCheckReport}" th:method="post"
+			th:object="${applicationModel}">
+
+			<input type="hidden" id="inputwbdcode" name="wbdcode"
+				th:value="${#session.getAttribute('wbdcode')}" /> <input
+				type="hidden" id="inputwbmcode" name="wbmcode"
+				th:value="${#session.getAttribute('wbmcode')}" /> <input
+				type="hidden" id="inputuserid"
+				th:value="${#session.getAttribute('userid')}" />
+
+
+			<table id="ObjEntryTable">
+				<tr>
+					<td colspan="3"></td>
+				</tr>
+				<tr>
+					<td align="right" width="30%"><b>Crop Year<font
+							color="red">*</font>
+					</b></td>
+					<td align="left"><select id="cropyear" th:name="cropyear"
+						style="width: 200px">
+							<option value="" selected>----Select Crop Year----</option>
+							<option th:each="entry : ${activeSeasons}"
+								th:value="${entry.key}" th:text="${entry.value}"></option>
+					</select></td>
+				</tr>
+
+			</table>
+
+			<div colspan="3" align="center"
+				style="padding-top: 10px; padding-bottom: 50px;">
+				<input class="btn btn-primary  btn-sm" id="btnSubmit" value="Submit"
+					type="submit">
+			</div>
+
+		</form>
+	</div>
+
+	<div align="center" style="color: red;">
+		<p th:text="${msg}"></p>
+	</div>
+	<div class="container">
+		<!-- 		<form id="unlockreport" name="unlockreport" method="post"> -->
+		<div align="center" id="divPrint">
+			<table id="databody" align="center"
+				class="table table-striped border border-secondary">
+				<thead>
+					<tr>
+						<th><b> S.No. </b></th>
+						<th><b> District Name </b></th>
+						<th><b> Mandal Name </b></th>
+						<th><b>Village Name </b></th>
+						<th><b>Booking Id </b></th>
+						<th><b>Occupant Name </b></th>
+						<th><b>Occupant Father</b></th>
+						<th><b> Crop Name </b></th>
+						<th><b>Variety Name </b></th>
+						<th><b> Sown Date </b></th>
+						<th><b> Khata No </b></th>
+						<th><b>Survey NO </b></th>
+						<th><b> Reason for Entry Found Incorrect </b></th>
+
+					</tr>
+				</thead>
+				<tbody id="databody">
+					<tr th:each="object, objectStat : ${supkr}">
+						<td th:text="${objectStat.index}"></td>
+						<td th:text="${object.wbdname}"></td>
+						<td th:text="${object.wbmname}"></td>
+						<td th:text="${object.wbvname}"></td>
+						<td th:text="${object.bookingid}"></td>
+						<td th:text="${object.occup_name}"></td>
+						<td th:text="${object.cropname}"></td>
+						<td th:text="${object.varietyname}"></td>
+						<td th:text="${object.cr_sow_dt}"></td>
+						<td th:text="${object.kh_no}"></td>
+						<td th:text="${object.cr_sno}"></td>
+						<td th:text="${object.reason}"></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<div align="center" style="color: black">
+			<input class="btn btn-primary"
+				name="ctl00$ContentPlaceHolder1$btnPrint" type="button"
+				id="ctl00_ContentPlaceHolder1_btnPrint"
+				onClick="javascript:CallPrint('divPrint')" value="Print"> <input
+				class="btn btn-primary" type="button"
+				onclick="tableToExcel('databody', 'Abstract')" value="Excel">
+			<!--			<input  class="btn btn-primary" type="button" value="Back" onclick="goBack()" />-->
+		</div>
+	</div>
+	</div>
+</body>
+
+</html>

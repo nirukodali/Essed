@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="header">
+
+</head>
+
+<body>
+	<div th:insert="headerImage"></div>
+
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+
+	<div class="container">
+		<section class="content" style="padding-top: 1px;">
+			<div class="row topformcontent">
+				<div class="col-md-12">
+					<div class="box box-solid box-patent" style="margin-top: 5px;margin-bottom: 10px;">
+						<div class="box-header">
+							<div class="row">
+								<div class="col-md-12">
+									<div class="col-md-6">
+										<label class="box-title">
+											<span style="font-size: 16px; font-weight: bold;">e-Panta Physical
+												Acknowledgement</span>
+										</label>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="box-body" style="padding: 10px 10px 3px 10px; height: auto;">
+							<div class="row">
+								<div class="col-md-3">
+									<div class="col-md-5">
+										<label>Crop Year</label>
+									</div>
+									<div class="col-md-7">
+										<div class="form-group" style="margin-bottom: 5px;">
+											<div class="input-group">
+												<select class="form-control" id="cropYearId" name="cropYearId"
+													required="required">
+													<option th:each="cropyear : ${crYearList}"
+														th:value="${cropyear.seasonvalue}"
+														th:text="${cropyear.seasonvalue}" selected>
+													</option>
+												</select>
+												<span id="dropdownError" style="color: red;"></span>
+											</div>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-md-5">
+									<div class="col-md-5">
+										<label>Enter Farmer Aadhar No</label>
+									</div>
+									<div class="col-md-7">
+										<div class="form-group" style="margin-bottom: 5px;">
+											<div class="input-group">
+												<!--												<input type="number" name="aadharNo" id="aadharNo" class="form-control">-->
+												<input type="text" name="aadharNo" id="aadharNo" class="form-control"
+													maxlength="12"
+													oninput="this.value = this.value.replace(/[^0-9]/g, '').substring(0, 12);"
+													required title="Please enter exactly 12 digits">
+
+
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="col-md-3" style="padding-top: 2%;">
+									<div class="col-md-5">
+									</div>
+									<div class="col-md-7">
+										<div class="form-group" style="margin-bottom: 5px;">
+											<div class="input-group">
+												<div style="margin: 0 auto; width: 155px; color: #000;">
+													<button type="button" class="btn btn-primary" id="searchId"
+														onclick="searchRepCultivatorDtls()"
+														title="Search Opposition Details">Search</button>
+													<!--													<button type="button" class="btn btn-warning" id="resetId"-->
+													<!--
+																												title="To reset all the details">Reset</button>-->
+													
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+	</div>
+<div th:if="${msg}">
+    <span th:text="${msg}" 
+          style="font-size: larger; color: red; padding-left: 35%; font-weight: bolder;"></span>
+</div>
+
+	<form action="/cultivator" method="GET">
+		<input type="hidden" th:value="${session.wbdcode}" th:id="wbdcode" />
+		<input type="hidden" th:value="${session.wbmcode}" th:id="wbmcode" />
+		<input type="hidden" th:value="${session.wbvcode}" th:id="wbvcode" />
+		<input type="hidden" th:value="${session.userid}" th:id="userid" />
+	</form>
+
+	<div class="container" id="contentDivId"></div>
+
+
+
+</body>
+
+</html>

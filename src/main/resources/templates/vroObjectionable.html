@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="header">
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ho Lock Extent</title>
+<!--	<style>-->
+<!--		option::before {-->
+<!--			content: attr(data-code);-->
+<!--			display: contents;-->
+<!--		}-->
+<!--	</style>-->
+</head>
+
+<body>
+	<div th:insert="headerImage"></div>
+
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+
+	<br>
+
+	<form id="updation" th:action="@{/vroObjectionableSave}" method="post"
+		onsubmit="validateForm()">
+		<div
+			style="background-color: green; margin-left: auto; margin-right: auto; width: 100%; text-align: center; font-size: 200%; color: white;">
+			Vro Objectionable For Land Parcels</div>
+
+		<div class="table-wrapper"
+			style="margin: 20px; margin-right: 0; overflow-x: scroll;">
+			<div
+				style="background-color: ghostwhite; width: 120%; margin-bottom: 20px;">
+				<table id="myTable"
+					style="border: 1px solid black; border-collapse: separate; border-spacing: 0px;">
+					<thead style="background-color: darkgray; color: white;">
+						<tr>
+							<th style="border-right: 1px solid black;"><input id="main"
+								type="checkbox" onchange="toggleAllFields(this)"></th>
+							<th style="border-right: 1px solid black;">S.No.</th>
+							<th
+								style="text-align: center; padding-left: 10px; padding-right: 10px; border-right: 1px solid black;">
+								Booking Id</th>
+							<th
+								style="text-align: center; padding-left: 10px; padding-right: 10px; border-right: 1px solid black;">
+								Khata No</th>
+							<th
+								style="text-align: center; padding-left: 10px; padding-right: 10px; border-right: 1px solid black;">
+								Survey No</th>
+							<th
+								style="text-align: center; padding-left: 10px; padding-right: 10px; border-right: 1px solid black;">
+								Total Extent</th>
+							<th
+								style="text-align: center; padding-left: 10px; padding-right: 10px; border-right: 1px solid black;">
+								Crop Name</th>
+							<th
+								style="text-align: center; padding-left: 50px; padding-right: 50px; border-right: 1px solid black;">
+								Farmer Name</th>
+							<th
+								style="text-align: center; padding-left: 50px; padding-right: 50px; border-right: 1px solid black;">
+								Father Name</th>
+							<th
+								style="text-align: center; padding-left: 20px; padding-right: 20px; border-right: 1px solid black;">
+								Crop Number</th>
+							<th
+								style="text-align: center; padding-left: 10px; padding-right: 10px; border-right: 1px solid black;">
+								Variety Name</th>
+							<th
+								style="text-align: center; padding-left: 10px; padding-right: 10px; border-right: 1px solid black;">
+								Aadhaar No</th>
+							<th
+								style="text-align: center; padding-left: 10px; padding-right: 10px; border-right: 1px solid black;">
+								CropBooking Done in Objectionable Land Parcels</th>
+						</tr>
+					</thead>
+					<tbody>
+
+						<tr th:each="item : ${list}"
+							style="padding-top: 10px; border-bottom: 5px dotted black; border-spacing: 0px;">
+							<td
+								style="border-right: 1px solid black; border-bottom: 1px solid black;">
+								<input type="checkbox" class="sub-checkbox"
+								onchange="enableInputs(event)">
+							</td>
+							<td th:text="${itemStat.index + 1}"
+								style="border-bottom: 1px solid black; border-right: 1px solid black;">
+							</td>
+							<td
+								style="border-bottom: 1px solid black; text-align: center; border-right: 1px solid black;">
+								<input name="bookingid"
+								style="text-align: center; font-size: small; width: 100%; height: 4lvh;"
+								th:value="${item.getBookingid()}" disabled> <input
+								name="cr_dist_code" type="hidden"
+								th:value="${item.getCr_dist_code()}"> <input
+								name="cr_mand_code" type="hidden"
+								th:value="${item.getCr_mand_code()}"> <input
+								name="cr_year" type="hidden" th:value="${item.getCr_year()}">
+								<input name="cr_season" type="hidden"
+								th:value="${item.getCr_season()}"> <input
+								name="cr_sow_date" type="hidden"
+								th:value="${item.getCr_sow_date()}"> <input
+								name="cr_crop" type="hidden" th:value="${item.getCr_crop()}">
+								<input name="variety" type="hidden"
+								th:value="${item.getVariety()}">
+							</td>
+							<td
+								style="border-bottom: 1px solid black; text-align: center; border-right: 1px solid black;">
+								<input name="kh_no"
+								style="text-align: center; font-size: small; width: 100%; height: 4lvh;"
+								th:value="${item.getKh_no()}" disabled>
+							</td>
+							<td
+								style="border-bottom: 1px solid black; text-align: center; border-right: 1px solid black;">
+								<input name="cr_sno"
+								style="text-align: center; font-size: small; width: 100%; height: 4lvh;"
+								th:value="${item.getCr_sno()}" disabled>
+							</td>
+							<td
+								style="border-bottom: 1px solid black; text-align: center; border-right: 1px solid black;">
+								<input name="mix"
+								style="text-align: center; font-size: small; width: 100%; height: 4lvh;"
+								th:value="${item.getCr_mix_unmix_ext()}" disabled>
+							</td>
+							<td
+								style="border-bottom: 1px solid black; text-align: center; border-right: 1px solid black;">
+								<input name="cropname"
+								style="text-align: center; font-size: small; width: 100%; height: 4lvh;"
+								th:value="${item.getCropname()}" disabled>
+							</td>
+							<td
+								style="text-align: center; border-bottom: 1px solid black; border-right: 1px solid black;">
+								<input name="occupname"
+								style="text-align: center; font-size: small; width: 100%; height: 4lvh;"
+								th:value="${item.getOc_name()}" disabled>
+							</td>
+							<td
+								style="border-bottom: 1px solid black; text-align: center; border-right: 1px solid black;">
+								<input name="occupfname"
+								style="text-align: center; font-size: small; width: 100%; height: 4lvh;"
+								th:value="${item.getOc_fname()}" disabled>
+							</td>
+							<td
+								style="border-bottom: 1px solid black; text-align: center; border-right: 1px solid black;">
+								<input name="cr_no"
+								style="text-align: center; font-size: small; width: 100%; height: 4lvh;"
+								th:value="${item.getCr_no}" disabled>
+							</td>
+							<td
+								style="border-bottom: 1px solid black; text-align: center; border-right: 1px solid black;">
+								<input name="varietyname"
+								style="text-align: center; font-size: small; width: 100%; height: 4lvh;"
+								th:value="${item.getVarietyname()}" disabled>
+							</td>
+							<td
+								style="border-bottom: 1px solid black; text-align: center; border-right: 1px solid black;">
+								<input name="farmeruid"
+								style="text-align: center; font-size: small; width: 100%; height: 4lvh;"
+								th:value="${item.getCr_farmeruid()}" disabled>
+							</td>
+							<td
+								style="border-bottom: 1px solid black; text-align: center; border-right: 1px solid black;">
+								<!--								<select disabled="true" id="approval" name="category"-->
+								<!--									style="width: 200px; padding-left: 17%;" required>-->
+								<!--									<option value="" selected disabled>---Select---</option>-->
+								<!--									<option th:each="drop : ${drop}" th:value="${drop.getCategory()}"-->
+								<!--										 th:text="${drop.getCategory()}"></option>--> <!--								</select>-->
+								<select disabled="true" id="approval" name="category"
+								style="width: 200px; padding-left: 17%; width: 50%; padding-left: 10%;"
+								required>
+									<option value="" selected disabled>---Select---</option>
+									<option th:each="drop : ${drop}"
+										th:value="${drop.getCategory()+ ' - ' + drop.getCode()}"
+										th:text="${drop.getCategory()}"></option>
+							</select>
+
+							</td>
+						</tr>
+
+					</tbody>
+
+				</table>
+				<br>
+				<h2 style="text-align: center;">
+					<span th:text="${empty}"></span>
+				</h2>
+			</div>
+		</div>
+		<div style="margin-top: 15px; display: flex; justify-content: center;"
+			class="button-container">
+			<input
+				style="margin-left: 10%; width: fit-content; height: fit-content;"
+				type="submit" class=" btn btn-primary" value="Submit"></input>
+			<!--			<button type="submit">Submit</button>-->
+			<input
+				style="margin-left: 5%; width: fit-content; height: fit-content;"
+				type="button" class=" btn btn-primary" value="Go Back"
+				onclick="goBack()"></input>
+
+
+		</div>
+	</form>
+	<script defer>
+
+		function enableInputs(event) {
+			var checkbox = event.target;
+			var row = checkbox.closest('tr');
+			var inputFields = row.querySelectorAll('input[type="text"], select');
+			inputFields.forEach(function (inputField) {
+				inputField.disabled = !checkbox.checked;
+			});
+		}
+
+		function toggleAllFields(main) {
+			var checkboxes = document.querySelectorAll('.sub-checkbox');
+			checkboxes.forEach(function (checkbox) {
+				checkbox.checked = main.checked;
+				enableInputs({target: checkbox}); // Call enableInputs manually
+			});
+		}
+
+		document.addEventListener('DOMContentLoaded', function () {
+			document.getElementById('main').addEventListener('change', function () {
+				toggleAllFields(this);
+			});
+
+			var checkboxes = document.querySelectorAll('.sub-checkbox');
+			checkboxes.forEach(function (checkbox) {
+				checkbox.addEventListener('change', function (event) {
+					enableInputs(event);
+				});
+			});
+		});
+
+
+		function validateForm() {
+			let checkboxes = document.querySelectorAll('.sub-checkbox:checked');
+			let records = document.querySelectorAll('.sub-checkbox');
+
+			if (records.length > 0 && checkboxes.length === 0) {
+
+				alert('Please check at least one checkbox');
+				return false;
+			}
+			else{
+			alert("Submitted Successfully");
+// 			window.location.href='/vroObjectionable'
+			window.location.href='/home'
+			window.location.reload();
+			}
+		}
+
+		function goBack() {
+			window.history.back();
+		}
+
+		document.getElementById('updation').addEventListener('submit', function (event) {
+			event.preventDefault();
+
+			var formDataArray = [];
+			document.querySelectorAll('tbody tr').forEach(function (row) {
+				var checkbox = row.querySelector('.sub-checkbox');
+				if (checkbox.checked) {
+					formDataArray.push({
+						bookingid: row.querySelector('[name="bookingid"]').value,
+						cr_dist_code: row.querySelector('[name="cr_dist_code"]').value,
+						cr_mand_code: row.querySelector('[name="cr_mand_code"]').value,
+						cr_year: row.querySelector('[name="cr_year"]').value,
+						cr_season: row.querySelector('[name="cr_season"]').value,
+						cr_sow_date: row.querySelector('[name="cr_sow_date"]').value,
+						cr_sno: row.querySelector('[name="cr_sno"]').value,
+						kh_no: row.querySelector('[name="kh_no"]').value,
+						varietyname: row.querySelector('[name="varietyname"]').value,
+						mix: row.querySelector('[name="mix"]').value,
+						cropname: row.querySelector('[name="cropname"]').value,
+						occupname: row.querySelector('[name="occupname"]').value,
+						occupfname: row.querySelector('[name="occupfname"]').value,
+						cr_no: row.querySelector('[name="cr_no"]').value,
+						farmeruid: row.querySelector('[name="farmeruid"]').value,
+						category: row.querySelector('[name="category"]').value,
+						cr_crop: row.querySelector('[name="cr_crop"]').value,
+						variety: row.querySelector('[name="variety"]').value,
+					});
+				}
+			});
+
+			fetch('/vroObjectionableSave', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify(formDataArray),
+			})
+				.then(response => response.json())
+				.then(data => {
+					console.log('Success:', data);
+				})
+				.catch(error => {
+					console.error('Error during fetch operation:', error);
+				});
+
+		});
+
+	</script>
+
+</body>
+
+</html>

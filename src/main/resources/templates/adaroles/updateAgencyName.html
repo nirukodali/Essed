@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="header"></head>
+<style>
+	/* Add padding to table headers for spacing */
+	th {
+		padding: 10px;
+		text-align: center;
+		background-color: #006400;
+		color: white;
+	}
+
+	/* Add margin or padding to header title */
+	.heading {
+		margin-bottom: 20px;
+		/* Add some space between the header and table */
+		padding: 15px;
+		font-size: 18px;
+		text-align: center;
+		background-color: #006400;
+		color: white;
+	}
+
+	/* Add padding to table data cells for better readability */
+	td {
+		padding: 8px;
+		text-align: center;
+	}
+
+	/* Optional: Styling for the input fields inside the table */
+	select,
+	input {
+		padding: 5px;
+		font-size: 14px;
+	}
+
+	/* Space for the dropdowns and other form elements */
+	.form-element {
+		margin-bottom: 20px;
+	}
+</style>
+
+<body>
+	<div th:insert="headerImage"></div>
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+	<div align="center">
+		<form name="f1">
+			<table border="0">
+				<th class="heading" colspan="2">Update Agency Name</th>
+
+				<tr>
+					<td class="tdnum" width="50%">
+						<b>
+							<font size="2">District</font>
+							<font color="red">*</font>
+						</b>
+					</td>
+					<td>
+						<select id="dcode" name="dcode" onchange="getMandal()" style="width:200px">
+							<option value="">----Select----</option>
+							<option th:each="district : ${district}" th:value="${district.dcode}"
+								th:text="${district.dname}"></option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td class="tdnum">
+						<b>Select Mandal</b>
+					</td>
+					<td>
+						<select id="mcode" name="mcode" onchange="getagencyDetails()" style="width:200px">
+							<option value="">----Select----</option>
+						</select>
+					</td>
+				</tr>
+
+			</table>
+		</form>
+		<br>
+		<table border="1">
+			<thead>
+				<tr>
+					<th><b>S.No.</b></th>
+					<th><b>Seed Name</b></th>
+					<th><b>Seed Variety</b></th>
+					<th><b>Received Date</b></th>
+					<th><b>Entered Date</b></th>
+					<th><b>User Id<br>Entered</b></th>
+					<th><b>Vehicle No</b></th>
+					<th><b>Lot No./Batch No</b></th>
+					<th><b>Old Agency Name</b></th>
+					<th><b>Agency Name</b></th>
+					<th><b>Quantity</b></th>
+					<th><b>Quantity<br>Available (All agencies)</b></th>
+					<th align="center"><b>Update Agency</b></th>
+				</tr>
+			</thead>
+			<tbody id="agencyDetailsTableBody">
+				<tr th:each="agency, iterStat : ${agencyDetails}">
+					<td th:text="${iterStat.index + 1}"></td>
+					<td th:text="${agency.seedname}"></td>
+					<td><input type="text" name="seedvariety-${agency.seedname}" th:value="${agency.seedvariety}"
+							th:text="${agency.name}" readonly /></td>
+					<!--							<td><input type="hidden" name="seedvariety-${agency.id}" th:value="${agency.seedvariety}" disabled /></td>-->
+
+					<!--					<td th:text="${agency.name}"></td>-->
+					<td th:text="${agency.recddate}"></td>
+					<td th:text="${agency.idate}"></td>
+					<td th:text="${agency.userid}"></td>
+					<td th:text="${agency.vehicaleno}"></td>
+					<td th:text="${agency.batchno}"></td>
+					<td th:text="${agency.agencyname}"></td>
+
+
+
+					<!-- Editable Fields for Quantity and Quantity Available -->
+
+					<td><input type="number" name="quantity-${agency.id}" th:value="${agency.quantity}" /></td>
+					<td><input type="number" name="quantityAvailable-${agency.id}"
+							th:value="${agency.quantityAvailable}" /></td>
+
+					<td align="center">
+						<button type="button" th:onclick="'updateAgency(' + ${agency.id} + ')'">Update</button>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+
+		<script type="text/javascript">
+			function getMandal() {
+				var districtCode = document.getElementById("dcode").value;
+
+				if (districtCode === "") {
+					$('#mcode').html('<option value="">----Select----</option>');
+					return;
+				}
+
+				$.ajax({
+					url: './getMandalsByDistrict',
+					type: 'GET',
+					data: {dcode: districtCode},
+					success: function (response) {
+						var subProductSelect = $('#mcode');
+						subProductSelect.empty();
+						subProductSelect.append('<option value="">--Select--</option>');
+
+						$.each(response, function (index, subProduct) {
+							subProductSelect.append('<option value="' + subProduct.mcode + '">' + subProduct.mname + '</option>');
+						});
+					},
+					error: function (xhr, status, error) {
+						console.error("Error fetching Mandals:", error);
+						alert("There was an error fetching the Mandals.");
+					}
+				});
+			}
+
+			function getagencyDetails() {
+				var mCode = document.getElementById("mcode").value;
+
+				if (mCode === "") {
+					alert("Please select a Mandal first.");
+					return;
+				}
+
+				$.ajax({
+					url: './getAgencyDetails',
+					type: 'GET',
+					data: {mcode: mCode},
+					success: function (response) {
+						var tableBody = $('#agencyDetailsTableBody');
+						tableBody.empty();
+
+						$.each(response.agencyDetails, function (index, agency) {
+							var row = $('<tr></tr>');
+							row.append('<td>' + (index + 1) + '</td>');
+							row.append('<td>' + (agency.seedname || '') + '</td>');
+							row.append('<td><input type="text" name="seedvariety-' + agency.id + '" value="' + (agency.name || '') + '" disabled /></td>');
+							row.append('<td>' + (agency.recddate || '') + '</td>');
+							row.append('<td>' + (agency.idate || '') + '</td>');
+							row.append('<td>' + (agency.userid || '') + '</td>');
+							row.append('<td>' + (agency.vehicaleno || '') + '</td>');
+							row.append('<td>' + (agency.batchno || '') + '</td>');
+							row.append('<td>' + (agency.agencyname || '') + '</td>');
+
+							var agencyDropdown = '<select class="agency-dropdown" data-agency-id="' + agency.id + '">';
+							agencyDropdown += '<option value="">Select Agency</option>';  // Default option
+
+							$.each(response.agencyNames, function (i, agencyItem) {
+								// Check if the current agency matches the selected agency
+								var selected = agency.agencyname && agency.agencyname === agencyItem.name ? 'selected' : '';
+								agencyDropdown += '<option value="' + agencyItem.agencycode + '" ' + selected + '>' + agencyItem.agencyname + '</option>';
+							});
+
+							agencyDropdown += '</select>';
+							row.append('<td>' + agencyDropdown + '</td>');
+
+
+							row.append('<td><input type="number" name="quantity-' + agency.id + '" value="' + (agency.quantity || '') + '" disabled /></td>');
+							row.append('<td><input type="number" name="quantityAvailable-' + agency.id + '" value="' + (agency.quantityAvailable || '') + '" disabled /></td>');
+							row.append('<input type="hidden" name="seedVariety-' + agency.id + '" value="' + (agency.seedvariety || '') + '" />');
+							row.append('<input type="hidden" name="agencycode-' + agency.id + '" value="' + (agency.agencycode || '') + '" />');
+							row.append('<td align="center"><button onclick="updateAgency(' + agency.id + ')">Update</button></td>');
+							tableBody.append(row);
+						});
+					},
+					error: function (xhr, status, error) {
+						console.error("Error fetching agency details:", error);
+						alert("There was an error fetching the agency details.");
+					}
+				});
+			}
+
+			function updateAgency(agencyId) {
+
+				var dcode = document.getElementById("dcode").value;
+				var mCode = document.getElementById("mcode").value;
+
+				var selectedAgencyCode = $('select[data-agency-id="' + agencyId + '"]').val();
+				var agencycodeold = parseInt($('input[name="agencycode-' + agencyId + '"]').val());
+				var updateSeedVariety = $('input[name="seedVariety-' + agencyId + '"]').val();
+				var updatedQuantity = parseInt($('input[name="quantity-' + agencyId + '"]').val());
+
+
+				if (!selectedAgencyCode || selectedAgencyCode === "") {
+					alert("Please select an agency.");
+					return;
+				}
+
+
+
+				/*alert('updateSeedVariety:'+updateSeedVariety);
+				
+				alert('agencycodeold:'+agencycodeold);
+				alert('mCode: '+ mCode);
+				alert('selectedAgencyCodeNew:'+selectedAgencyCode);*/
+				//var updatedQuantityAvailable = parseInt($('input[name="quantityAvailable-' + agencyId + '"]').val());
+
+				var updatedData = {
+					dcode: dcode,
+					mCode: mCode,
+					agencycode: selectedAgencyCode,
+					quantity: updatedQuantity,
+					seedvariety: updateSeedVariety,
+					agencycodeold: agencycodeold
+				};
+				$.ajax({
+					type: 'POST',
+					url: './updateAgency',
+					data: updatedData,
+					success: function (response) {
+						alert("Agency updated successfully!");
+						window.location.reload();
+					},
+					error: function (xhr, status, error) {
+						console.error("Error updating agency:", error);
+						alert("There was an error updating the agency.");
+					}
+				});
+			}
+
+		</script>
+	</div>
+
+</body>
+
+</html>

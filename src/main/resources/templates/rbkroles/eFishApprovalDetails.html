@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="header"></head>
+
+<body>
+	<div th:insert="headerImage"></div>
+
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+
+<title>EFish Approval Details</title>
+
+<style>
+table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+table, th, td {
+	border: 1px solid black;
+}
+
+th {
+	background-color: #e8e8e8;
+	color: black;
+	text-align: center;
+	font-weight: bold; /* Set font weight to bold */
+}
+
+td {
+	text-align: center;
+}
+
+.table-heading {
+	background-color: #3498db;
+	text-align: center;
+	width: 90%; /* Set the same width as the table */
+	margin: 0 auto; /* Center the paragraph */
+	padding: 10px; /* Add some padding for better appearance */
+	color: white; /* Set text color to white */
+	font-weight: bold; /* Set font weight to bold */
+}
+</style>
+
+<div align="center" style="color: red;">
+	<h2>
+		<span th:text="${message}"></span>
+	</h2>
+</div>
+
+<div align="center" style="color: blue;" th:if="${noRecords eq 'No Records Found'}">
+        <h2>
+		<span th:text="${noRecords}"></span>
+	</h2>
+ </div>
+    
+<style>
+.centered-button {
+	display: block;
+	margin: 0 auto;
+	text-align: center;
+	background-color: #3498db; /* Change background color to blue */
+	color: white; /* Set text color to white */
+	padding: 10px 20px; /* Add padding for better appearance */
+	border: none; /* Remove default button border */
+	border-radius: 5px; /* Add some border radius for a rounded look */
+	cursor: pointer; /* Show pointer cursor on hover */
+	font-weight: bold
+}
+/* Additional style for hover effect */
+.centered-button:hover {
+	background-color: darkblue; /* Change background color on hover */
+}
+</style>
+
+<script>
+	
+	
+   
+	function submitButton() {
+		
+			var OccupantExt = "", MappedExt = "";
+			var AllowableExt = "", RequiredExt = "";
+			var Recid = "";
+			var isFlagSet = true;
+			
+			var masterName = "masterCheckboxName";
+			var checkboxes = document
+					.querySelectorAll('input[type="hidden"][name="'
+							+ masterName + '"]');
+			var numberOfCheckboxes = checkboxes.length;
+			
+			var RbkVillage = document.getElementById("rbk").value;
+			var KhathaNum = document.getElementById("KhathaNo").value;
+			var SurveyNum = document.getElementById("SurveyNo").value;
+			
+			for (var i = 0; i < numberOfCheckboxes; i++) {
+				
+				if(document.getElementById("RequiredExt" + i).value == null || document.getElementById("RequiredExt"+ i).value == "") {
+					if (isFlagSet) {
+						alert("Please select atleast one record to submit");
+						return false;
+					} else {
+						break;
+					}
+					
+					
+				} else {
+					
+					isFlagSet = false;
+					
+					OccupantExt = OccupantExt + document.getElementById("OccExtent" + i).value + ",";
+					
+					MappedExt = MappedExt + document.getElementById("MapExtent" + i).value + ",";
+					
+					AllowableExt = AllowableExt + document.getElementById("AllowableExt" + i).value + ",";
+					
+					RequiredExt = RequiredExt + document.getElementById("RequiredExt" + i).value + ",";
+					if (document.getElementById("RequiredExt" + i).value <= 0) {
+						alert("Requested Extent Should not be Zero and Negative Value");
+						return false;
+					}
+					if(document.getElementById("RequiredExt" + i).value > document.getElementById("OccExtent" + i).value){
+						alert("Requested Extent Should not be Greater then Occupant Extent");
+						return false;
+					}
+					alert('Request Sent SuccessFully')
+					Recid = Recid + document.getElementById("RecId" + i).value + ",";
+				}
+
+			}
+			window.location.href = './eFishApproval';
+			window.history.back();
+			document.getElementById("OccExtentLst").value = OccupantExt;
+			document.getElementById("MapExtentLst").value = MappedExt;
+			document.getElementById("AllowableExtLst").value = AllowableExt;
+			document.getElementById("RequiredExtLst").value = RequiredExt;
+			document.getElementById("VillagetLst").value = RbkVillage;
+			document.getElementById("KhathaLst").value = KhathaNum;
+			document.getElementById("SurveyNoLst").value = SurveyNum;
+			document.getElementById("RecIdLst").value = Recid;
+			
+
+			var sendData = {
+
+				OccExtentLst : OccupantExt,
+				MapExtentLst : MappedExt,
+				AllowableExtLst : AllowableExt,
+				RequiredExtLst : RequiredExt,
+				VillagetLst : RbkVillage,
+				KhathaLst : KhathaNum,
+				SurveyNoLst : SurveyNum,
+				RecIdLst : Recid,
+				
+			};
+			// alert(JSON.stringify(sendData));
+			
+			$.ajax({
+				type : 'POST',
+				url : './saveEFishDetails',
+				data : JSON.stringify(sendData),
+				contentType : 'application/json',
+				success : function(response) {
+					
+				},
+				error : function(error) {
+					console.error('Error sending data:', error);
+				}
+			});
+		}
+	
+</script>
+
+</head>
+<body style="background-color: #e8e8e8;">
+<!--	<div th:replace="home :: content"></div>-->
+	<p class="table-heading">EFish Approval Details</p>
+
+	<form id="mroVerifyForm" >
+		<table id="tableStkId" style="width: 90%; margin: 0 auto;">
+			<!-- Your table content -->
+			<thead>
+
+				<tr>
+					<th><b>S.No.</b></th>
+                        <th style="text-align: center;">Khata No</th>
+						<th style="text-align: center;">Survey No/LP No</th>
+						<th style="text-align: center;">Occupant Extent</th>
+						<th style="text-align: center;">Mapped Extent</th>
+						<th style="text-align: center;">Allowable Extent</th>
+						<th style="text-align: center;">Required Extent</th>
+				</tr>
+				</thead>
+			</tbody>
+				 
+			<tr th:each="data, rowstat : ${dataList}">
+				
+				<input type="hidden"
+						th:id="'masterCheckbox' + ${rowstat.index}"
+						th:name="masterCheckboxName">
+				
+			
+				
+				<td th:text="${rowstat.index + 1}"></td>  
+				
+				<td th:name="KhataNum" th:text="${data.KhathaNo}"></td>
+				
+				<td th:name="SurveyNum" th:text="${data.SurveyNo}"></td>
+				
+                <td th:name="OccExtent" th:text="${data.Occupant_Extent}"></td>
+                <input type="hidden" th:id="'OccExtent' + ${rowstat.index}" th:name="OccExtent" th:value="${data.Occupant_Extent}"/>
+                
+                <td th:name="MapExtent" th:text="${data.Mapped_Extent}" ></td>
+                <input type="hidden" th:id="'MapExtent' + ${rowstat.index}" th:name="MapExtent" th:value="${data.Mapped_Extent}"/>
+                
+				<td th:name="AllowableExt" th:text="${data.Allowable_Ext}"></td>
+				<input type="hidden" th:id="'AllowableExt' + ${rowstat.index}" th:name="AllowableExt"
+					th:value="${data.Allowable_Ext}" />
+					
+				<td>
+						<input type="text" th:id="'RequiredExt' + ${rowstat.index}" th:name="RequiredExt" maxlength="6"
+							 onkeypress="return ( event.charCode == 8 || event.charCode == 0) || event.charCode == 46 ? null : event.charCode >= 48 && event.charCode <= 57 " 
+							th:value="${RequiredExt}" />
+						<div th:id="'error-msg' + ${rowstat.index}" style="color: red; display: none;">Please Enter Only Numbers and '.' Excluding at the Beginning)
+						</div>
+				</td>
+				
+				<input type="hidden" th:id="'RecId' + ${rowstat.index}" th:name="RecId" th:value="${data.RecID}"/>
+						
+				<input type="hidden" th:id="rbk" th:name="rbk" th:value="${rbkVillage}"/>
+				<input type="hidden" th:id="KhathaNo" th:name="KhathaNo" th:value="${KhathaNo}"/>
+				<input type="hidden" th:id="SurveyNo" th:name="SurveyNo" th:value="${SurveyNo}"/>
+				
+            </tr>
+			
+		</tbody>
+		</table>
+    <button type="submit" class="centered-button blue-button" th:onclick="return submitButton();">Submit</button>
+    
+    <input type="hidden" id="OccExtentLst" name="OccExtentLst" /> 
+    <input type="hidden" id="MapExtentLst" name="MapExtentLst" /> 
+	<input type="hidden" id="AllowableExtLst" name="AllowableExtLst" /> 
+	<input type="hidden" id="RequiredExtLst" name="RequiredExtLst" />
+	<input type="hidden" id="RecIdLst" name="RecIdLst" />
+	
+	<input type="hidden" id="VillagetLst" name="VillagetLst" /> 
+	<input type="hidden" id="KhathaLst" name="KhathaLst" /> 
+	<input type="hidden" id="SurveyNoLst" name="SurveyNoLst" />
+    
+    
+</form>
+
+</body>
+
+</html>
+
+
+
+

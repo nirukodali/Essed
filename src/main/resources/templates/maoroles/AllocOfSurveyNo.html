@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="header"></head>
+
+<body>
+	<div th:insert="headerImage"></div>
+
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+
+	<div class="container-fluid header-design-login">
+		<div class="row justify-content-center align-items-center" style="height: 10vh;">
+			<div class="webland-container" style="padding-top:20px;">
+				<div class="card ecropCard">
+
+					<div class="card-title">
+						<h5 style="text-align: center;">Allocation Of Survey Numbers To VAA/VHA/VSA</h3>
+					</div>
+
+					<div class="card-body" style="padding: 10px;">
+						<form th:object="${allocSurvey}" th:action="@{/getPattaDetails}" method="post"
+							onsubmit="return validateForm()" class="form-horizontal">
+							<div id="popupMessage" th:if="${msg != null}" class="alert alert-success">
+								<p th:text="${msg}"></p>
+							</div>
+
+							<div class="form-group row">
+								<label for="crYear" class="col-sm-4 col-form-label">Crop Year</label>
+								<div class="col-sm-8">
+									<select name="crYear"  class="form-select form-control" aria-label="Crop Year">
+										<option value="0">Select Crop Year</option>
+										<option th:each="emp : ${activeseason}" th:value="${emp.seasonvalue}"
+											th:text="${emp.cropyear}">
+											Employee Name</option>
+
+									</select>
+								</div>
+							</div>
+							<div class="form-group row">
+								<label for="rbk" class="col-sm-4 col-form-label">RSK</label>
+								<div class="col-sm-8">
+									<select id="rbk" name="rbk" class="form-select form-control"
+										aria-label="Select Village" th:onchange="getVillageByRbk(this.value,'village')">
+										<option value="0">Select Village</option>
+										<option th:each="emp : ${rbk}" th:value="${emp.vcode}" th:text="${emp.vname}">
+											Village
+											Name</option>
+
+									</select>
+								</div>
+							</div>
+							<div class="form-group row">
+								<label for="village" class="col-sm-4 col-form-label">Revenue Village</label>
+								<div class="col-sm-8">
+									<select id="village" name="village" class="form-select form-control"
+										aria-label="Select Village" th:onchange="getEmployeeByRevenue('employee')">
+										<option value="0">Select Revenue Village</option>
+										<option th:each="emp : ${webLandDet}" th:value="${emp.wbvcode}"
+											th:text="${emp.wbvname}">Village
+											Name</option>
+
+									</select>
+								</div>
+							</div>
+							<div class="form-group row">
+								<label for="employee" class="col-sm-4 col-form-label">Allot to Employee</label>
+								<div class="col-sm-8">
+									<select id="employee" name="employee" class="form-select form-control"
+										aria-label="Select Village">
+										<option value="0">Select Employee Village</option>
+										<option th:each="emp : ${webLandDet}" th:value="${emp.wbvcode}"
+											th:text="${emp.wbvname}">
+											Village
+											Name</option>
+
+									</select>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-12">
+									<div style="margin: 0 auto; width: 155px; color: #000;">
+										<button type="submit" class="btn btn-primary" id="searchId"
+											title="Search Allocation of Survey No Details">Search</button>
+										<button type="button" class="btn btn-warning" id="resetId"
+											th:onclick="window.location.href='home'">Back</button>
+									</div>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script>
+		function getVillageByRbk(a, b) {
+			var dropdownselect = '<option value="">-----select------</option>';
+			$.ajax({
+				type: "get",
+				url: "./getRevenueVillage?rbkCode=" + a,
+				cache: false,
+				success: function (data) {
+					jQuery.each(data, function (index, item) {
+						dropdownselect += "<option value='" + item.wbvcode + " '>"
+							+ item.wbvname + "";
+					});
+					document.getElementById(b).innerHTML = dropdownselect
+				},
+				error: function (e) {
+
+				}
+			});
+		}
+
+		function getEmployeeByRevenue(a) {
+			var rbkCode = $('#rbk').val();
+			var dropdownselect = '<option value="">-----select------</option>';
+			$.ajax({
+				type: "get",
+				url: "./getEmployeeByRevenue?rbkCode=" + rbkCode,
+				cache: false,
+				success: function (data) {
+					jQuery.each(data, function (index, item) {
+						dropdownselect += "<option value='" + item.emp_code + " '>"
+							+ item.emp_name + "";
+					});
+					document.getElementById(a).innerHTML = dropdownselect
+				},
+				error: function (e) {
+
+				}
+			});
+		}
+		function validateForm() {
+			var cropYear = document.getElementsByName("crYear")[0].value;
+			var rbk = document.getElementById("rbk").value;
+			var village = document.getElementById("village").value;
+			var employee = document.getElementById("employee").value;
+
+			if (cropYear == 0 || rbk == 0 || village == 0 || employee == 0) {
+				alert("Please fill out all fields before submitting.");
+				return false;
+			}
+
+
+			return true;
+		}
+		setTimeout(function () {
+			$('#popupMessage').hide();
+		}, 4000);
+
+
+
+	</script>
+</body>
+
+</html>

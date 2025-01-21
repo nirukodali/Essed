@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- <title>Land Summary Report</title> -->
+
+    <script>
+        function CallPrint(strid) {
+            var prtContent = document.getElementById(strid);
+            var mywindow = window.open('', '', 'left=0,top=0,width=950,height=600,toolbar=1,scrollbars=1,status=1');
+            mywindow.document.write('<html><head><title>Print</title></head><body>');
+            mywindow.document.write(prtContent.innerHTML);
+            mywindow.document.write('</body></html>');
+            mywindow.document.close();
+
+            mywindow.focus();
+            mywindow.onload = function () {
+                mywindow.print();
+                mywindow.close();
+            };
+
+            return true;
+        }
+
+        var tableToExcel = (function () {
+            var uri = 'data:application/vnd.ms-excel;base64,',
+                template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>',
+                base64 = function (s) { return window.btoa(unescape(encodeURIComponent(s))) },
+                format = function (s, c) { return s.replace(/{(\w+)}/g, function (m, p) { return c[p]; }) };
+            return function (table, name) {
+                if (!table.nodeType) table = document.getElementById(table);
+                var ctx = { worksheet: name || 'Worksheet', table: table.innerHTML };
+                window.location.href = uri + base64(format(template, ctx));
+            }
+        })();
+
+      
+
+        function getData() {
+            $("#databody").empty();
+            var cropyear = $("#cropyear").val();
+            var inputwbdcode = $("#inputwbdcode").val();
+            var data = {
+                'cropyear': cropyear,
+                'wbdcode': inputwbdcode
+            };
+
+            $.ajax({
+                type: "post",
+                url: "./utilMao/JointLpnoDAO",
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                cache: false,
+                timeout: 600000,
+                success: function (resp) {
+                    var sno = 0;
+                    var totalLpnos = 0,
+                        totalkhatas = 0,
+                        totalUpdated = 0;
+
+                    for (var j = 0; j < resp.length; j++) {
+                        var bean = resp[j];
+                        sno++;
+
+                        var lpnos = parseInt(bean.lpnos || 0);
+                        totalLpnos += lpnos;
+
+                        var khatas = parseInt(bean.khatas || 0);
+                        totalkhatas += khatas;
+
+                        var updated = parseInt(bean.updated || 0);
+                        totalUpdated += updated;
+
+                        $("#databody").append(
+                            '<tr style="font-size:14px; font-weight: 0;">' +
+                            '<td align="center">' + sno + '</td>' +
+                            '<td align="left">' + bean.mandal + '</td>' +
+                            '<td align="center">' + lpnos + '</td>' +
+                            '<td align="center">' + khatas + '</td>' +
+                            '<td align="center">' + updated + '</td>' +
+                            '</tr>'
+                        );
+                    }
+
+                    $("#databody").append(
+                        '<tr style="font-size:14px; font-weight: bold;">' +
+                        '<td colspan="2" align="center">TOTAL</td>' +
+                        '<td align="center">' + totalLpnos + '</td>' +
+                        '<td align="center">' + totalkhatas + '</td>' +
+                        '<td align="center">' + totalUpdated + '</td>' +
+                        '</tr>'
+                    );
+                }
+            });
+        }
+
+        function validateCropYear() {
+            var cropyear = $("#cropyear").val();
+            if (!cropyear || cropyear === '--------select--------') {
+                alert("Please Select CropYear");
+                return false;
+            }
+            return true;
+        }
+        function goBack(){
+			window.location.href="./home"
+				}
+    </script>
+
+    <style>
+     
+        
+        thead{
+			position: sticky;
+			top:0%;
+			
+		}
+    </style>
+
+</head>
+
+<body>
+    <div th:insert="header"></div>
+    <div th:insert="headerImage"></div>
+    <div th:insert="navBarTop"></div>
+    <div th:insert="headerMessage"></div>
+
+    <div class="heading text-center"style="font-size: 25px; text-align: center;">
+        <b>Joint Lpnos Extent Additions</b>
+    </div>
+    
+    	<input type="hidden" id="inputwbdcode" name="inputwbdcode" th:value="${#session.getAttribute('wbdcode')}" />
+	<input type="hidden" id="dcodee" name="dcodee"th:value="${#session.getAttribute('dcode')}" />
+	<input type="hidden" id="inputuserid"  name="inputuserid"th:value="${#session.getAttribute('userid')}" />
+	<input type="hidden" id="role"  name="role"th:value="${#session.getAttribute('role')}" />
+    
+    <p th:text="${msg}"></p>
+
+    <form onsubmit="return validateCropYear();">
+       <div align="center">
+	
+			<table id="ObjEntryTable">
+				<tr>
+					<td colspan="3"></td>
+				</tr>
+				<tr>
+					<td align="right" width="30%"><b>Crop Year</b></td>
+					
+					<td align="left">
+						<select id="cropyear" name="cropyear" style="width: 200px" >
+						<option value="">-----Select------</option>
+						</select>
+					</td>
+				</tr>
+			</table>
+			<div colspan="3" align="center" style="padding-top:10px;padding-bottom:10px;">
+				<button type="button" id="btnSubmit" class="btn btn-success" value="Submit"
+					onclick="return getData();">Submit</button>
+			</div>
+		
+	</div>
+    </form>
+
+    <form id="unlockreport" name="unlockreport" method="post">
+       <div id="divPrint" class="text-center">
+    <table id="tableExl" class="table table-striped table-hover mx-auto" style="width:70%;">
+        <thead class="thead-secondary" style="background-color: #006600; color: white">
+            <tr>
+                <th>S.No.</th>
+                <th  style="width: 20%;">Mandal Name</th>
+                <th>Total Joint LP No's</th>
+                <th>Total Khatas in the Joint LP No's</th>
+                <th>Total Khatas in the Joint LP No's updated by VRO's</th>
+            </tr>
+        </thead>
+        <tbody id="databody"></tbody>
+    </table>
+</div>
+
+    </form>
+
+    <div class="text-center mt-4">
+        <button class="btn btn-success" onclick="CallPrint('divPrint')">Print</button>
+        <button class="btn btn-success" onclick="tableToExcel('tableExl', 'Abstract')">Excel</button>
+        <input class="btn btn-success" type="button" onclick="goBack()" value="Back">
+    </div>
+
+</body>
+
+<script>
+	  $(document).ready(function () {
+            $.ajax({
+                type: "get",
+                url: "./util/getAllSeason",
+                cache: false,
+                timeout: 600000,
+                success: function (resp) {
+                    for (var j = 0; j < resp.length; j++) {
+                        var bean = resp[j];
+                        $("#cropyear").append('<option value="' + bean.col1 + '">' + bean.col2 + '</option>');
+                    }
+                }
+            });
+        });
+</script>
+</html>

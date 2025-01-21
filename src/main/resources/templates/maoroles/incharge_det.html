@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="header">
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Incharge Details</title>
+</head>
+
+<body>
+	<div th:insert="headerImage"></div>
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+
+		<div class="row justify-content-center align-items-center">
+			<form th:object="${InchAdd}" th:action="@{/incharge_det}"
+				method="get">
+				<div
+					style="background-color: green; margin-left: auto; margin-right: auto; width: 80%; text-align: center; font-size: 200%; color: white;">
+					<h3>Incharges/ Additional Changes List</h3>
+				</div>
+				<br>
+				<div style="text-align: center;">
+					<b style="text-align: center; color: red;">Note: User Id's for
+						the following Incharges will be updated in place of Incharge on
+						final aproval of DAO</b>
+				</div>
+				<div style="background-color: ghostwhite; width: 100%; margin-bottom: 20px; ">
+				<table >
+					<thead>
+						<tr style="text-align: center; padding-left: 10px; padding-right: 10px; border-top: 3px solid black;">
+							<th
+								style="text-align: center; padding-left: 10px; padding-right: 10px; border-left: 3px solid black; border-right: 3px solid black; border-bottom: 3px solid black;">
+								S.no</th>
+							<th
+								style="text-align: center; padding-left: 10px; padding-right: 10px; border-right: 3px solid black; border-bottom: 3px solid black;">
+								RSK Name</th>
+							<th
+								style="text-align: center; padding-left: 10px; padding-right: 10px; border-right: 3px solid black; border-bottom: 3px solid black;">
+								Employee Name</th>
+							<th
+								style="text-align: center; padding-left: 10px; padding-right: 10px; border-right: 3px solid black; border-bottom: 3px solid black;">
+								Mobile</th>
+							<th
+								style="text-align: center; padding-left: 10px; padding-right: 10px; border-right: 3px solid black; border-bottom: 3px solid black;">
+								RSK Code</th>
+							<th
+								style="text-align: center; padding-left: 10px; padding-right: 10px; border-right: 3px solid black; border-bottom: 3px solid black;">
+								RSK User ID</th>
+							<th
+								style="text-align: center; padding-left: 10px; padding-right: 10px; border-right: 3px solid black; border-bottom: 3px solid black;">
+								Employee Code</th>
+							<th
+								style="text-align: center; padding-left: 10px; padding-right: 10px; border-right: 3px solid black; border-bottom: 3px solid black;">
+								Requested For</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="item, rowStat : ${InchAdd}">
+							<td th:text="${rowStat.index + 1}"
+								style="text-align: center; padding-left: 10px; padding-right: 10px; border-left: 3px solid black; border-right: 3px solid black; border-bottom: 3px solid black;">
+							</td>
+							<td th:text="${item.vname}"
+								style="text-align: center; padding-left: 10px; padding-right: 10px; border-right: 3px solid black; border-bottom: 3px solid black;">
+							</td>
+							<td th:text="${item.Empname}"
+								style="text-align: center; padding-left: 10px; padding-right: 10px; border-right: 3px solid black; border-bottom: 3px solid black;">
+							</td>
+							<td th:text="${item.mobile}"
+								style="text-align: center; padding-left: 10px; padding-right: 10px; border-right: 3px solid black; border-bottom: 3px solid black;">
+							</td>
+							<td th:text="${item.rbkcode}"
+								style="text-align: center; padding-left: 10px; padding-right: 10px; border-right: 3px solid black; border-bottom: 3px solid black;">
+							</td>
+							<td th:text="${item.rbkuserid}"
+								style="text-align: center; padding-left: 10px; padding-right: 10px; border-right: 3px solid black; border-bottom: 3px solid black;">
+							</td>
+							<td th:text="${item.empcode}"
+								style="text-align: center; padding-left: 10px; padding-right: 10px; border-right: 3px solid black; border-bottom: 3px solid black;">
+							</td>
+							<td
+								style="text-align: center; padding-left: 10px; padding-right: 10px; border-right: 3px solid black; border-bottom: 3px solid black;">
+								<span th:switch="${item.inchargests}"> <span
+									th:case="'I'">Incharge</span><span th:case="'A'">
+										Additional Incharge</span></span>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+					<div th:if="${noResults}" style="text-align: center;">
+					<b style="font-size: 50px;">-----No results found------</b>
+				</div>
+				<div th:if="${not #lists.isEmpty(getadaDMcode)}"></div>
+				<div style="text-align: center;">
+					<span th:utext="${msg}" style="font-size: 25px;"></span>
+				</div>
+				</div>
+				<div class="row">
+					<div class="col-md-12">
+						<div style="margin: 0 auto; width: 155px; color: #000;">
+							<a href="rbkmapping" class="btn btn-primary btn-block">Click
+								Back</a>
+						</div>
+					</div>
+				</div>
+			</form>
+		</div>
+</body>
+
+</html>

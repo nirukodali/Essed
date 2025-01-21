@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="header"></head>
+
+<body>
+	<div th:insert="headerImage"></div>
+
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+
+	<div class="container">
+		<section class="content" style="padding-top: 1px;">
+			<div class="row topformcontent">
+				<div class="col-md-12">
+					<div class="box box-solid box-patent" style="margin-top: 5px;margin-bottom: 10px;">
+						<div class="box-header">
+							<div class="row">
+								<div class="col-md-12" style="padding-left: 40%;">
+									<div class="col-md-6">
+										<label class="box-title">
+											<span
+												style="font-size: 16px; color:white;font-weight: bold;padding-top:5px;">Enumeration of Crop Damage</span>
+										</label>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="box-body" style="padding-left: 10px; height: auto;">
+							<div class="row">
+								<div class="col-md-3">
+									<label><b>Select Village:</b></label>
+									<div class="form-group" style="margin-bottom: 5px;">
+										<div class="input-group">
+											<select class="form-control" id="village" name="village" required>
+												<option value="" disabled selected>Select Village</option>
+												<option th:each="vill : ${vill}" th:value="${vill.vcode}"
+													th:text="${vill.wbvname}">
+												</option>
+											</select>
+											<span id="dropdownError" style="color: red;"></span>
+										</div>
+									</div>
+								</div>
+
+
+
+								<div class="col-md-6">
+									<div class="form-group" style="margin-bottom: 5px;">
+
+
+										<div class="input-group" id="LPSearch" style="margin-top: 4%; display: none;">
+
+											<label><b>Select Khata No</b></label>
+											<div class="form-group" style="margin-bottom: 5px;">
+												<div class="input-group">
+													<select class="form-control" id="surveyNo" name="surveyNo" required>
+														<option value="" disabled selected>Select khata No</option>
+													</select>
+												</div>
+											</div>
+											<button style="margin-left: 50px" type="button" class="btn btn-primary"
+												id="searchLPId" onclick="searchKhno()"
+												title="Search Opposition Details">Search</button>
+										</div>
+									</div>
+									<p th:text="${msg}"></p>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+	</div>
+
+	<form action="/cultivator" method="GET">
+		<input type=hidden th:value="${session.wbdcode}" th:id="wbdcode" />
+		<input type="hidden" th:value="${session.wbmcode}" th:id="wbmcode" />
+		<input type="hidden" th:value="${session.wbvcode}" th:id="wbvcode" />
+		<input type="hidden" th:value="${session.userid}" th:id="userid" />
+		<input type="hidden" th:value="${session.dcode}" th:id="dcode" />
+		<input type="hidden" th:value="${session.mcode}" th:id="mcode" />
+
+	</form>
+
+	<div  id="contentDivId"></div>
+
+	<!--	<div th:insert="rbkroles/allotExt"></div>-->
+
+	<script>
+		$(document).ready(function () {
+			$('#village').change(function () {
+				var selectedVillage = $(this).val();
+				$.ajax({
+					url: './getKhno',
+					method: 'GET',
+					data: {villageCode: selectedVillage},
+					success: function (response) {
+						$('#surveyNo').empty();
+						$('#surveyNo').append($('<option>').text('Select Khata No').attr('value', ''));
+
+						for (var j = 0; j < response.length; j++) {
+							var bean = response[j];
+							$("#surveyNo").append(
+								$('<option>').val(bean.kh_no).text(bean.kh_no)
+							);
+						}
+
+						$('#LPSearch').show();
+					},
+					error: function (xhr, status, error) {
+						console.error('Error fetching survey numbers:', error);
+
+					}
+				});
+			});
+		});
+	</script>
+
+</body>
+
+</html>

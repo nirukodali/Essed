@@ -1,0 +1,174 @@
+.header-design {
+	background-color: #ffffff;
+	width: 50%;
+	align-items: center;
+}
+
+.header-logo-col {
+	display: flex;
+	align-items: center;
+}
+
+.text-dark-green {
+	color: #006400;
+}
+
+img {
+	width: 100%;
+	height: 15%;
+}
+
+.bg-dark-green {
+	background-color: #006400;
+}
+
+.text-white {
+	color: #ffffff;
+	font-size: 14px;
+
+	font-weight: bold;
+
+	text-transform: uppercase;
+
+	letter-spacing: 2px;
+	line-height: 1.2;
+}
+
+
+.pointer {
+	cursor: pointer;
+}
+
+.box.box-solid.box-patent {
+	border: 1px solid #9494b8;
+}
+
+.box.box-patent {
+	border-top-color: #9494b8;
+}
+
+.box.box-solid.box-patent>.box-header {
+	color: #fff;
+	background: #9494b8;
+	background-color: #9494b8;
+}
+
+.grey-text {
+	color: grey;
+	font-family: Arial, sans-serif;
+	font-size: 20px;
+	font-weight: bold;
+}
+
+#cultivatorsList {
+	width: 100%;
+}
+
+
+
+.black-text {
+	color: black;
+	font-family: Arial, sans-serif;
+	font-size: 20px;
+	font-weight: bold;
+}
+
+
+.grey-background {
+	background-color: rgb(255, 255, 255);
+}
+
+
+
+.cropbook {
+	background-color: white;
+	width: 100%;
+	text-align: center;
+}
+
+
+.blue-background {
+	background-color: #3498db;
+}
+
+
+
+.white-background {
+	background-color: white;
+}
+
+
+
+.village {
+	padding: 10px;
+	margin: 10px;
+	text-align: center;
+}
+
+.container,
+.container-lg,
+.container-md,
+.container-sm,
+.container-xl {
+	max-width: 1520px !important;
+}
+
+
+/*CCRC*/
+
+/* Custom styles for the NProgress bar */
+#nprogress .bar {
+	background: deepskyblue !important;
+	height: 4px !important;
+	/* Set the desired thickness */
+}
+
+/* Custom styles for the "Please wait" message */
+#pleaseWaitMessage {
+	font-size: 18px;
+	font-weight: bold;
+	margin-top: 10px;
+}
+
+
+.ecropCard {
+	width: 600px;
+	background-color: #e6e2d3;
+	border: 2px;
+	border-radius: 5px;
+	box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.5);
+	padding-right: 1.0rem !important;
+	padding-left: 1.0rem !important;
+	padding-top: 5px !important;
+	padding-bottom: 1.0rem !important;
+}
+
+.card-title {
+	margin-bottom: 0px !important;
+}
+
+.col-form-label {
+	font-weight: bold;
+}
+
+table.scroll {
+	width: 100%;
+	border-spacing: 0;
+	border: 1px solid black;
+}
+
+table.scroll tbody,
+table.scroll thead {
+	display: block;
+}
+
+table.scroll tbody {
+	height: 500px;
+	overflow-y: auto;
+	overflow-x: hidden;
+}
+
+
+table thead {
+	background-color: #9494b8;
+}

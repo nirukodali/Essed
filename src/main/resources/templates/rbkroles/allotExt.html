@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+<div class="panel panel-primary">
+	<div class="panel-heading"
+		style="text-align: center; background-color: honeydew; padding: 8spx; margin: 0 auto; display: table;">
+		<b>Khata Wise Extent Updation For Joint LP No's</b>
+	</div>
+	<div class="panel-body">
+		
+		<input type="hidden"  th:value="${type}" id="type" name="type">
+		<table id="ownerGrid" class="table table-bordered table-striped dataTable">
+			<thead class="color-palette" style="background-color: #9494b8;">
+				<tr>
+<!--					<th style="color: white; width: 10%; background-color: #9494b8;"><b>Booking-->
+<!--							Id</b></th>-->
+					<th style="color: white; width: 7%; background-color: #9494b8;"><b>LP
+							No</b></th>
+					<th style="color: white; width: 7%; background-color: #9494b8;"><b>Khata
+							No</b></th>
+					<th style="color: white; width: 19%; background-color: #9494b8;"><b>Pattadhar
+							Name</b></th>
+					<th style="color: white; width: 19%; background-color: #9494b8;"><b>Pattadhar
+							Father Name</b></th>
+					<th style="color: white; width: 8%; background-color: #9494b8;"><b>Aadhaar
+							No</b></th>
+					<th style="color: white; width: 8%; background-color: #9494b8;"><b>JLP 
+							Ext</b></th>
+					<th style="color: white; width: 10%; background-color: #9494b8;"><b>Khata
+							Ext</b></th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="cultivator:${ownersList}">
+
+<!--					<td style="width: 10%;"><span th:text="${cultivator.bookingId}"></span> <input type="hidden"-->
+<!--							th:value="${cultivator.bookingId}" th:id="'bookingId'+${cultivatorStat.index}"> -->
+							<input
+							type="hidden" th:value="${cultivator.part_key}" th:id="'part_key'+${cultivatorStat.index}">
+						<input type="hidden" th:value="${cultivator.cr_vcode}"
+							th:id="'cr_vcode'+${cultivatorStat.index}" name="cr_vcode_owner"> <input type="hidden"
+							th:value="${cultivator.cropyear}" th:id="'cr_year'+${cultivatorStat.index}"> <input
+							type="hidden" th:value="${cultivator.season}"
+							th:id="'cr_season'+${cultivatorStat.index}"> <input type="hidden"
+							th:value="${cultivator.occup_extent}" th:id="'occupantExtent'+${cultivatorStat.index}">
+					</td>
+					<td style="width: 10%;"><span th:text="${cultivator.cr_sno}"></span>
+						<input type="hidden" th:value="${cultivator.cr_sno}" name="survyeNo"
+							th:id="'crSno'+${cultivatorStat.index}">
+					</td>
+					<td style="width: 10%;"><span th:text="${cultivator.kh_no}"></span>
+						<input type="hidden" th:value="${cultivator.kh_no}" th:id="'khNo'+${cultivatorStat.index}">
+					</td>
+					<td style="width: 13%;"><span th:text="${cultivator.occupname}"></span>
+						<input type="hidden" th:value="${cultivator.occupname}" th:id="'ocName'+${cultivatorStat.index}">
+					</td>
+					<td style="width: 15%;"><span th:text="${cultivator.occupfname}"></span> <input type="hidden"
+							th:value="${cultivator.occupfname}" th:id="'fatherName'+${cultivatorStat.index}"></td>
+					<!-- 					<td style="width: 10%;"><span th:text="${cultivator.aadharNo}"></span> -->
+					<!-- 						<input type="hidden" th:value="${cultivator.aadharNo}" -->
+					<!-- 						th:id="'aadharNo'+${cultivatorStat.index}"></td> -->
+					<!-- 						<td style="width: 10%;">  <span  th:if="${#strings.length(cultivator.aadharNo) >= 1}" th:text="'XXXXXXXX' + ${#strings.substring(cultivator.aadharNo, 8, 12)}"></span> -->
+<!--					<td th:if="${cultivator.cr_farmeruid == null || cultivator.cr_farmeruid ==''}">-->
+<!--						<span th:text="${cultivator.cr_farmeruid}" th:value="${cultivator.cr_farmeruid}" /></span>-->
+<!--					</td>-->
+<!--					<td th:unless="${cultivator.aadharNo == null || cultivator.aadharNo !=''}">-->
+	
+	
+<!--						<td th:unless="${#strings.length(cultivator.cr_farmeruid.length) = 11}">-->
+<!--						<span th:text="${cultivator.cr_farmeruid}"></span>-->
+<!--						</td>-->
+<td>
+  <span th:if="${#strings.length(cultivator.cr_farmeruid) == 12}">
+        <span th:text="'XXXXXXXX' + ${#strings.substring(cultivator.cr_farmeruid, 8, 12)}"></span>
+    </span>
+    <span th:unless="${#strings.length(cultivator.cr_farmeruid) == 12}">
+        <span th:text="${cultivator.cr_farmeruid}"></span>
+    </span>
+</td>
+<!--					<td th:if="${#strings.length(cultivator.cr_farmeruid.length) = 11}">-->
+<!--						<span th:text="'XXXXXXXX' + ${#strings.substring(cultivator.cr_farmeruid, 8, 12)}"></span>-->
+<!--					</td>-->
+
+
+					<td style="width: 10%;"><span th:text="${cultivator.tot_extent}"></span><input type="hidden"
+							th:value="${cultivator.cr_farmeruid}" th:id="'aadharNo'+${cultivatorStat.index}">
+							</span><input type="hidden"
+							th:value="${cultivator.rec_id}" th:id="'recid'+${cultivatorStat.index}">
+					<input type="hidden"
+							th:value="${crVcode}" th:id="village" name="village">
+							 <input
+							type="hidden" th:value="${cultivator.tot_extent}"
+							th:id="'anubhavadarExtent'+${cultivatorStat.index}"></td>
+							
+							
+					<td style="width: 10%;"><input type="number" th:id="'khExtent'+${cultivatorStat.index}" required > </td>
+					
+					
+					<input type="hidden" th:value="${listSize}" th:id="listSize">
+					</td>
+				
+				</tr>
+			</tbody>
+		</table>
+		<input type="button" class="btn btn-success" value="Save" style="text-align: center;margin-left: 50%;" onclick="saveKh()">
+	</div>
+</div>
+</body>
+</html>

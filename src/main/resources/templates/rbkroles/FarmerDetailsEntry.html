@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<!--	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">-->
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+	<!--	<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>-->
+	<title>Correction of Records by VAA</title>
+
+	<style>
+		.webland-container-new {
+			background-color: #fff;
+			border-radius: 8px;
+			box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+			padding: 40px;
+			max-width: 400px;
+			margin: 0 auto;
+			text-align: center;
+			margin-bottom: 5px;
+		}
+
+
+		h5 {
+			color: rgb(0, 0, 0);
+			margin-bottom: 5px;
+		}
+
+		label {
+			font-weight: bold;
+			display: block;
+			margin-bottom: 5px;
+		}
+
+		select,
+		input {
+			width: 50%;
+			padding: 10px;
+			margin-bottom: 15px;
+			box-sizing: border-box;
+			border: 1px solid #ced4da;
+			border-radius: 4px;
+			background-color: #fff;
+		}
+
+		.btn-block-inline {
+			width: calc(30% - 10px);
+			margin-right: 10px;
+		}
+
+		.mb-3 {
+			margin-bottom: 5px;
+		}
+	</style>
+
+	<script th:inline="javascript">
+		function onload() {
+			show_hide_textfield();
+			// 			attachInputListeners();
+		}
+
+		function show_hide_textfield() {
+			var searchParam = document.getElementById('searchParam').value;
+			hideAllSections();
+
+			if (searchParam === "1") {
+				document.getElementById('surveySection').style.display = 'block';
+			} else if (searchParam === "2") {
+				document.getElementById('khataSection').style.display = 'block';
+			} else if (searchParam === "3") {
+				document.getElementById('uidSection').style.display = 'block';
+			}
+		}
+
+		function hideAllSections() {
+			var sections = ['surveySection', 'khataSection', 'uidSection'];
+			sections.forEach(function (section) {
+				var element = document.getElementById(section);
+				if (element) {
+					element.style.display = 'none';
+				}
+			});
+		}
+
+		function clearForm() {
+			document.getElementById("editCrBookingForm").reset();
+			hideAllSections();
+		}
+
+
+		function getpage() {
+			var formAction = "./submitForm";
+
+			document.editCrBookingForm.method = "post";
+			document.editCrBookingForm.action = formAction;
+			document.editCrBookingForm.submit();
+		}
+
+		setTimeout(function () {
+			$('#popupMessage').hide();
+		}, 4000000);
+
+	</script>
+</head>
+
+
+<div th:insert="header"></div>
+<div th:insert="headerImage"></div>
+<div th:insert="navBarTop"></div>
+<div th:insert="headerMessage"></div>
+
+<div class="container-fluid header-design-login">
+	<div
+		style="background-color: rgb(64, 128, 128);text-align: center;margin: 10px;padding: 10px;color: white;font-size: x-large;">
+		Farmer Details Entry for Contingency Seed
+	</div>
+	<div class="row justify-content-center align-items-center">
+
+		<div>
+
+
+			<form name="f1" method="post">
+				<table>
+					<!--					<tr>-->
+					<!--						<div style="background-color: aqua;">-->
+					<!--							<td colspan="2" width="50%">Farmer Details Entry for Contingency Seed</td>-->
+					<!--						</div>-->
+					<!--					</tr>-->
+
+					<tr>
+
+						<td class="tdnum"><b> Crop Year <font size="3" color="red"> * </font> </b></td>
+						<td class="tdtext">
+							<select name="season" id="season" style="width: 200px">
+								<option value="">--Select--</option>
+								<option th:each="seasonValue : ${seasonValues}" th:value="${seasonValue.season}"
+									th:text="${seasonValue.seasonname}">
+								</option>
+
+							</select>
+
+						</td>
+					</tr>
+					<tr>
+						<td class="tdnum" width="50%"> <b> Village <font color="red">*</font></b> </td>
+						<td>
+							<select id="vcode" name="vcode" style="width:200px" onchange="getSurveyNo()">
+								<option value="">--Select--</option>
+								<option th:each="village : ${vill}" th:value="${village. getVcode()}"
+									th:text="${village.getWbvname()}">
+								</option>
+							</select>
+						</td>
+					</tr>
+
+					<tr>
+						<td class="tdnum" width="50%">
+							<b>Survey Nos <font color="red">*</font></b>
+						</td>
+						<td>
+							<select id="surveyno" name="surveyno" style="width:200px" onchange="totalExtent()">
+								<option value="">----Select----</option>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td class="tdnum" width="50%">
+							<b>Total extent<font color="red">*</font></b>
+						</td>
+						<td>
+							<input type="text" name="totalextent" id="totalextent" maxlength="10" readonly
+								style="width: 200px" autocomplete="off">
+						</td>
+					</tr>
+
+					<tr>
+						<td class="tdnum" width="50%"><b>Farmer Name<font color="red">*</font></b></td>
+						<td>
+							<input type="text" name="occupname" id="occupname" style="width: 200px"
+								onkeypress="return checkAlphabets(this, event);" autocomplete="off" maxlength="60">
+						</td>
+
+					</tr>
+					<tr>
+						<td class="tdnum" width="50%"><b>Father Name<font color="red">*</font></b></td>
+						<td>
+							<input type="text" name="occupfname" id="occupfname" style="width: 200px"
+								onkeypress="return checkAlphabets(this, event);" autocomplete="off" maxlength="60">
+						</td>
+					</tr>
+
+
+					<tr id="tr_tenant">
+						<td class="tdnum" width="50%"> <b> Owner/Tenant <font color="red">*</font></b> </td>
+						<td>
+							<select id="tenant" name="tenant" style="width:200px">
+								<option value="">----Select----</option>
+								<option value="O">Owner </option>
+								<option value="T">Tenant</option>
+							</select>
+						</td>
+					</tr>
+
+					<tr>
+						<td class="tdnum" width="50%"><b>Mobile no<font color="red">*</font></b></td>
+						<td>
+							<input type="text" name="mobileno" id="mobileno" style="width: 200px" autocomplete="off"
+								maxlength="60">
+						</td>
+					</tr>
+
+					<tr>
+						<td class="tdnum" width="50%"><b>Aadhar No <font color="red">*</font></b></td>
+						<td>
+							<input type="text" name="aadharno" id="aadharno" style="width: 200px" maxlength="12"
+								onkeypress="return checkNum(this, event);" onkeyup="checkaadhaarexists(this)"
+								onpaste="return false;" ondrop="return false;" autocomplete="off">
+						</td>
+					</tr>
+					<!--                    <tr >
+                                            <td  class="tdnum" width="50%"><b>Survey No <font color="red">*</font></b></td>
+                                            <td>
+                                                <input type="text" name="surveyno" id="surveyno" onkeypress="return checkNum(this, event);" maxlength="10"
+                                                       style="width: 200px" autocomplete="off">
+                                            </td>
+                                        </tr>-->
+
+					<tr>
+						<td class="tdnum" width="50%"> <b> Calamity <font color="red">*</font></b> </td>
+						<td>
+							<select id="clamity" name="clamity" style="width:200px"
+								onchange="validMobilenumber(), hideCalamity()">
+								<option value="">----Select----</option>
+								<option value="1">Deficit Rainfall</option>
+								<option value="2">Heavy Rainfall</option>
+
+							</select>
+						</td>
+					</tr>
+
+
+					<tr id="tr_sownId">
+						<td class="tdnum" width="50%"> <b> Crop sown/Not Sown <font color="red">*</font></b> </td>
+						<td>
+							<select id="sownId" name="sownId" style="width:200px" onchange="show_hide_textfield() ">
+								<option value="">----Select----</option>
+								<option value="Y">Crop Sown </option>
+								<option value="N">Crop Not Sown</option>
+							</select>
+						</td>
+					</tr>
+
+					<tr id="tr_damagedCrop">
+						<td class="tdnum" width="50%"> <b> Damaged Crop<font color="red">*</font></b> </td>
+						<td>
+							<select id="damagedcrop" name="damagedcrop" style="width:200px">
+								<option value="">----Select----</option>
+								<option value="10101">Paddy </option>
+								<option value="101011">Paddy Nursery</option>
+								<option value="10403">Black Gram </option>
+								<option value="10402">Green Gram</option>
+
+
+								<option value="10505">Ground Nuts</option>
+
+								<option value="3">Not Sown</option>
+
+
+							</select>
+						</td>
+					</tr>
+
+
+					<tr id="tr_areaDamaged">
+						<td class="tdnum" width="50%"><b>Area Damaged <font color="red">*</font></b></td>
+						<td>
+							<input type="text" name="areaextent" id="areaextent" maxlength="8"
+								onkeypress="return checkNum(this, event);" style="width: 200px" autocomplete="off">
+						</td>
+					</tr>
+
+					<tr>
+						<td class="tdnum" width="50%"><b>Area proposed for contingency seed <font color="red">*</font>
+							</b></td>
+						<td>
+							<input type="text" name="contingenextent" id="contingenextent" maxlength="8"
+								onkeypress="return checkNum(this, event);" style="width: 200px" autocomplete="off">
+						</td>
+					</tr>
+
+					<tr>
+
+
+
+
+
+						<td align="center" colspan="2">
+							<input type="button" id="btnSubmitUpd"
+								style="width:200px;color: rgb(255, 255, 255);background-color: darkgreen;"
+								value="Add Cultivator Details " onclick="farmerdataInsert()" />
+						</td>
+					</tr>
+
+
+
+				</table>
+
+			</form>
+		</div>
+
+	</div>
+</div>
+<script>
+
+
+	function checkAlphabets(ctrl, event) {
+		var charcode = event.which || event.keycode;
+		if ((charcode >= 65 && charcode <= 90) || (charcode >= 97 && charcode <= 122) || charcode == 46 || charcode == 32) {
+			return true;
+		} else {
+			event.preventDefault();
+			alert("Enter Only Alphabets");
+			return false;
+		}
+	}
+	function checkNum(ctrl, event) {
+		var charcode = event.which || event.keycode;
+
+		if (ctrl.id == "contingenextent" && ((charcode >= 48 & charcode <= 57) || charcode == 46)) {
+			return true;
+		} else if (ctrl.id == "aadharno" && (charcode >= 48 & charcode <= 57)) {
+			return true;
+		} else if (ctrl.id == "surveyno" && ((charcode >= 48 & charcode <= 57) || charcode == 45 || charcode == 47 ||
+			((charcode >= 65 && charcode <= 90) || (charcode >= 97 && charcode <= 122)))) {
+			return true;
+		} else if (ctrl.id == "areaextent" && ((charcode >= 48 & charcode <= 57) || charcode == 46)) {
+			return true;
+		} else if (ctrl.id == "totalextent" && ((charcode >= 48 & charcode <= 57) || charcode == 46)) {
+			return true;
+		} else {
+			event.preventDefault();
+			alert("Enter Only Numbers");
+			return false;
+		}
+	}
+
+
+	function checkaadhaarexists() {
+		var uidVal = $("#aadharno").val();
+
+		if (uidVal.length > 12) {
+			$.post("cultivatorAadhaar.jsp",
+				{
+					varuidnum: $("#aadharno").val(),
+					varcrpyear: $("#cropyear").val()
+				},
+				function (data) {
+					if (data.trim() === "true") {
+						alert("Aadhaar Already Exists");
+						$("#aadharno").val("");
+					}
+				});
+
+		}
+
+	}
+
+	function validMobilenumber() {
+		var mbl_no = $('#mobileno').val();
+		var sub = mbl_no.substring(0, 1);
+		if (mbl_no.length === 10) {
+			if (sub === "6" || sub === "7" || sub === "8" || sub === "9") {
+				return true;
+			} else {
+				alert("Please enter a valid mobile number");
+				$('#mobileno').val('');
+				return false;
+			}
+
+		} else {
+			alert("Please enter a valid mobile number");
+			$('#mobileno').val('');
+			return false;
+		}
+		return true;
+	}
+
+	function verify() {
+		var firstValue = parseFloat($("#areaextent").val());
+		var secondValue = parseFloat($("#contingenextent").val());
+		var totalextent = parseFloat($("#totalextent").val());
+		if (firstValue === 0) {
+			alert("Area damaged extent should not be Zero");
+			$('#areaextent').val('');
+			return false;
+		}
+
+		if (totalextent === 0) {
+			alert("Area proposed extent should not be Zero");
+			$('#areaextent').val('');
+			return false;
+		}
+		if (secondValue === 0) {
+			alert("Area proposed extent should not be Zero");
+			$('#areaextent').val('');
+			return false;
+		}
+		if (totalextent < firstValue) {
+			alert(" Damaged Area should be lesss than or equal to Total Extent");
+			$('#extent').val('');
+			return false;
+		}
+
+		if (firstValue < secondValue) {
+			alert(" Area proposed for contingent seed should be less than or equal to Area Damaged ");
+			$('#areaextent').val('');
+			return false;
+		}
+		return true;
+
+	}
+	function show_hide_textfield() {
+
+		var searchParam = $('#sownId').val();
+		$('#tr_damagedCrop').hide();
+		$('#tr_areaDamaged').hide();
+		$('#damagedcrop').val("");
+		$('#contingenextent').val("");
+		$('#tr_sownId').val("");
+
+		if (searchParam == "Y") {
+			$('#tr_damagedCrop').show();
+			$('#tr_areaDamaged').show();
+
+		} else if (searchParam == "N") {
+			$('#tr_damagedCrop').hide();
+			$('#tr_areaDamaged').hide();
+
+			$('#damagedCrop').val('');
+			$('#contingenextent').val('');
+
+
+		}
+	}
+
+	function getpcode(gpcode) {
+		var groupcode = gpcode.value;
+		var url = "./ajaxGpCode.jsp?param="; // The server-side script
+		http.open("GET", url + escape(groupcode), true);
+		http.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+		http.onreadystatechange = setpcode;
+		http.send(null);
+	}
+	function setpcode() {
+		if (http.readyState == 4) {
+			results = http.responseText.split("$");
+			if (results == "") {
+				alert("No Product for this type");
+			} else {
+				document.f1.pcode.length = 0
+				var oOption1 = document.createElement("OPTION");
+				oOption1.text = trim("- - - - - - select - - - - - - -");
+				oOption1.value = trim("");
+				document.f1.pcode.options.add(oOption1);
+
+				var j = 0;
+				for (var i = 0; i < results.length - 1; i++) {
+					results1 = results[i].split(";");
+					for (var j = 0; j < results1.length - 1; j++) {
+						var oOption = document.createElement("OPTION");
+						oOption.text = trim(results1[1]);
+						oOption.value = trim(results1[0]);
+						document.f1.pcode.options.add(oOption);
+
+					}
+				}
+			}
+		}
+	}
+
+	function getspcode() {
+		var url = "./ajaxProd.jsp?param="; // The server-side script
+		var pcode = document.f1.pcode.value;
+		http.open("GET", url + escape(pcode), true);
+		http.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+		http.onreadystatechange = setspcode;
+		http.send(null);
+	}
+	function setspcode() {
+		if (http.readyState == 4) {
+			results = http.responseText.split("$");
+			if (results == "") {
+				alert("No SubProduct for this type");
+			} else {
+				document.f1.spcode.length = 0;
+
+				var oOption1 = document.createElement("OPTION");
+				oOption1.text = trim("- - - - - - select - - - - - - -");
+				oOption1.value = trim("");
+				document.f1.spcode.options.add(oOption1);
+
+				var j = 0;
+				var course = document.f1.spcode;
+				for (var i = 0; i < results.length - 1; i++) {
+					results1 = results[i].split(";");
+					for (var j = 0; j < results1.length - 1; j++) {
+						var oOption = document.createElement("OPTION");
+						oOption.text = trim(results1[1]);
+						oOption.value = trim(results1[0]);
+						document.f1.spcode.options.add(oOption);
+					}
+				}
+			}
+		}
+	}
+	function getsdcode() {
+		var spcode = document.f1.spcode.value;
+		var crpyear = document.f1.cropyear.value;
+		var url = "./ajaxSeedPP.jsp?param=" + escape(spcode) + "&sescrp=" + crpyear;
+		http.open("GET", url, true);
+		http.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+		http.onreadystatechange = setsdcode;
+		http.send(null);
+	}
+	function setsdcode() {
+		if (http.readyState == 4) {
+			results = http.responseText.split("$");
+			if (results == "") {
+				alert("No variety exists with this subproduct type");
+			} else {
+				document.f1.sdcode.length = 0;
+				var oOption1 = document.createElement("OPTION");
+				oOption1.text = trim("- - - - - - select - - - - - - -");
+				oOption1.value = trim("");
+				document.f1.sdcode.options.add(oOption1);
+
+				var j = 0;
+				var course = document.f1.sdcode;
+				for (var i = 0; i < results.length - 1; i++) {
+					results1 = results[i].split(";");
+					for (var j = 0; j < results1.length - 1; j++) {
+						var oOption = document.createElement("OPTION");
+						oOption.text = trim(results1[1]);
+						oOption.value = trim(results1[0]);
+						document.f1.sdcode.options.add(oOption);
+					}
+				}
+			}
+		}
+	}
+
+
+
+
+
+
+	function hideCalamity() {
+		var searchParam = $('#clamity').val();
+
+
+
+		if (searchParam == "1") {
+			$('#tr_sownId').show();
+
+
+		} else if (searchParam == "2") {
+			$('#tr_sownId').hide();
+
+
+			$('#sownId').val('');
+
+
+
+		}
+
+	}
+	//var cr_sno='';
+
+	function getSurveyNo() {
+		var vcode = $('#vcode').val();
+		if (!vcode) {
+			alert("Please select a valid village code.");
+			return;
+		}
+
+		$.ajax({
+			url: './getSurveyNo',
+			method: 'GET',
+			data: {vscode: vcode},
+			success: function (data) {
+				var selectVillage = "<select>";
+				selectVillage += "<option value=''>--Select--</option>";
+
+				if (!data || data.length === 0) {
+					alert("Survey number not found");
+				} else {
+					data.forEach(function (item) {
+						selectVillage += `<option value="${item.cr_sno}">${item.cr_sno}</option>`;
+					});
+				}
+				selectVillage += "</select>";
+				$("#surveyno").html(selectVillage);
+			},
+			error: function () {
+				alert("An error occurred while fetching survey numbers.");
+			}
+		});
+	}
+
+
+
+
+
+	function gettotextent() {
+		document.f1.totalextent.value = document.f1.surveyno.value;
+
+	}
+
+	function totalExtent() {
+		var vcode = $('#vcode').val(); // Get the village code
+		var surveyno = $('#surveyno').val(); // Get the selected survey number
+
+		if (!vcode || !surveyno) {
+			alert("Please select a valid village code and survey number.");
+			return;
+		}
+
+		// AJAX request to fetch total extent
+		$.ajax({
+			url: './getTotalExtent',
+			method: 'GET',
+			data: {cr_sno: surveyno, vcode: vcode}, // Pass both village code and survey number
+			success: function (data) {
+				if (data && data.length > 0) {
+					var totalExtentValue = data[0].tot_extent; // Assuming the first item has the required value
+					$('#totalextent').val(totalExtentValue); // Populate the total extent field
+				} else {
+					alert("Total extent not found for the selected survey number.");
+					$('#totalextent').val(""); // Clear the field if no data found
+				}
+			},
+			error: function () {
+				alert("An error occurred while fetching the total extent.");
+			}
+		});
+	}
+
+
+	function validateFarmerData() {
+		var season = document.getElementById('season').value;
+		var vcode = document.getElementById('vcode').value;
+		var cr_sno = document.getElementById('surveyno').value;
+		var totalextent = document.getElementById('totalextent').value;
+		var occupname = document.getElementById('occupname').value;
+		var occupfname = document.getElementById('occupfname').value;
+		var tenant = document.getElementById('tenant').value;
+		var mobileno = document.getElementById('mobileno').value;
+		var aadharno = document.getElementById('aadharno').value;
+		var clamity = document.getElementById('clamity').value;
+		var sownId = document.getElementById('sownId').value;
+		var damagedcrop = document.getElementById('damagedcrop').value;
+		var contingenextent = document.getElementById('contingenextent').value;
+		var areaextent = document.getElementById('areaextent').value;
+
+		// Check if all fields are filled out
+		if (!season || !vcode || !cr_sno || !totalextent || !occupname || !occupfname || !tenant || !mobileno || !aadharno || !clamity || !sownId || !damagedcrop || !contingenextent || !areaextent) {
+			alert("Please fill in all required fields.");
+			return false; // Prevent form submission
+		}
+
+		// Optional: You can add further validation for phone number and Aadhar number formats if needed
+		var phonePattern = /^[0-9]{10}$/; // Assuming Indian phone number format
+		if (!phonePattern.test(mobileno)) {
+			alert("Please enter a valid mobile number (10 digits).");
+			return false;
+		}
+
+		var aadharPattern = /^\d{12}$/; // Assuming Aadhar number has 12 digits
+		if (!aadharPattern.test(aadharno)) {
+			alert("Please enter a valid Aadhar number (12 digits).");
+			return false;
+		}
+
+		// If all validations pass
+		return true;
+	}
+
+	function farmerdataInsert() {
+		if (validateFarmerData() && verify()) {
+			var season = document.getElementById('season').value;
+			var vcode = document.getElementById('vcode').value;
+			var cr_sno = document.getElementById('surveyno').value;
+			var totalextent = document.getElementById('totalextent').value;
+			var occupname = document.getElementById('occupname').value;
+			var occupfname = document.getElementById('occupfname').value;
+			var tenant = document.getElementById('tenant').value;
+			var mobileno = document.getElementById('mobileno').value;
+			var aadharno = document.getElementById('aadharno').value;
+			var clamity = document.getElementById('clamity').value;
+			var sownId = document.getElementById('sownId').value;
+			var damagedcrop = document.getElementById('damagedcrop').value;
+			var contingenextent = document.getElementById('contingenextent').value;
+			var areaextent = document.getElementById('areaextent').value;
+			if (!valid(aadharno)) {
+				alert('Enter valid Aadhar number')
+				return false; // Stop execution if Aadhaar validation fails
+			}
+
+			var formData = {
+				season: season,
+				vcode: vcode,
+				crSno: cr_sno,
+				totalExtent: totalextent,
+				occupName: occupname,
+				occupFName: occupfname,
+				tenant: tenant,
+				mobileNo: mobileno,
+				aadharNo: aadharno,
+				clamity: clamity,
+				sownId: sownId,
+				damagedCrop: damagedcrop,
+				areaExtent: areaextent,
+				contingenextent: contingenextent
+
+			};
+
+			$.ajax({
+				url: './insertFarmerDetails',
+				type: 'POST',
+				contentType: 'application/json',
+				data: JSON.stringify(formData),
+				success: function (response) {
+					alert(response);
+					window.location.reload();
+				},
+				error: function (xhr, status, error) {
+					alert('Error: ' + error);
+				}
+			});
+		}
+		else {
+			// If validation fails, prevent data submission
+			return false;
+		}
+	}
+	function mod(num, divisor) {
+		//alert('in mod');
+		return ((num % divisor) + divisor) % divisor;
+	}
+
+	function validateVerhoeff(num) {
+
+		var d = [
+			[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+			[1, 2, 3, 4, 0, 6, 7, 8, 9, 5],
+			[2, 3, 4, 0, 1, 7, 8, 9, 5, 6],
+			[3, 4, 0, 1, 2, 8, 9, 5, 6, 7],
+			[4, 0, 1, 2, 3, 9, 5, 6, 7, 8],
+			[5, 9, 8, 7, 6, 0, 4, 3, 2, 1],
+			[6, 5, 9, 8, 7, 1, 0, 4, 3, 2],
+			[7, 6, 5, 9, 8, 2, 1, 0, 4, 3],
+			[8, 7, 6, 5, 9, 3, 2, 1, 0, 4],
+			[9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
+		];
+
+		// permutation table p
+		var p = [
+			[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+			[1, 5, 7, 6, 2, 8, 3, 0, 9, 4],
+			[5, 8, 0, 3, 7, 9, 6, 1, 4, 2],
+			[8, 9, 1, 6, 0, 4, 3, 5, 2, 7],
+			[9, 4, 5, 3, 1, 2, 6, 8, 7, 0],
+			[4, 2, 8, 6, 5, 7, 3, 9, 0, 1],
+			[2, 7, 9, 3, 8, 0, 6, 4, 1, 5],
+			[7, 0, 4, 6, 9, 1, 3, 2, 5, 8]
+		];
+
+		var c = 0;
+		var myArray = [];
+		myArray = StringToReversedIntArray(num);
+		// alert(myArray);
+		for (var i = 0; i < myArray.length; i++) {
+			c = d[c][p[mod(i, 8)][myArray[i]]];
+			//	alert(c);
+		}
+		return (c == 0);
+	}
+	function StringToReversedIntArray(num) {
+		var myArray = [];
+
+		for (var i = 0; i < num.length; i++) {
+			myArray[i] = parseInt(num.substring(i, i + 1));
+		}
+		myArray = Reverse(myArray);
+
+		return myArray;
+
+	}
+	function Reverse(myArray) {
+		var reversed = [];
+
+		for (var i = 0; i < myArray.length; i++) {
+			reversed[i] = myArray[myArray.length - (i + 1)];
+		}
+		return reversed;
+	}
+	function valid(farmeruid) {
+		if (farmeruid.length === 12) {
+			if (farmeruid != '123456789012' && farmeruid != '012345678901' && farmeruid != '111111111111' && farmeruid != '222222222222' &&
+				farmeruid != '333333333333' && farmeruid != '444444444444' && farmeruid != '555555555555' && farmeruid != '666666666666' &&
+				farmeruid != '777777777777' && farmeruid != '888888888888' && farmeruid != '999999999999' && farmeruid != '000000000000' && farmeruid != '123123123123') {
+				return true;
+			} else if (!validateVerhoeff(farmeruid)) {
+				alert('Enter valid AadhaarNo');
+				return false;
+			}
+
+
+
+
+		}
+
+		else {
+			alert('Enter 12 digit AadhaarNo33');
+			return false;
+		}
+
+
+
+	}
+
+</script>
+
+
+
+</html>

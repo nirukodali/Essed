@@ -1,0 +1,85 @@
+<nav class="navbar navbar-expand-lg navbar-custom">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav custom-flexbox">
+            <li class="nav-item">
+                <a href="./" class="home-link">Home</a> <!-- Home link with specific class -->
+            </li>
+            <li class="nav-item">
+                <a class="nav-link dropdown-toggle text-white" href="#" id="reportsDropdown" data-bs-toggle="dropdown">Reports</a>
+                <ul class="dropdown-menu" aria-labelledby="reportsDropdown">
+                    <li><a class="dropdown-item" href="crbookingabsIntf">District Wise Abstract on Extent Booked</a></li>
+                    <li><a class="dropdown-item" href="stateWiseCropNames">State Wide Crop Report</a></li>
+                    <li><a class="dropdown-item" href="cropnamesPB">List of Perennial/Biennial Crops</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+
+<style>
+	
+
+.navbar-custom {
+    background-color:#006400; 
+    padding: 5px;
+    display: flex; 
+    justify-content: center; 
+}
+
+.navbar-nav {
+    display: flex; 
+    align-items: center; 
+}
+
+.nav-item {
+    margin: 0 80px; 
+}
+
+.nav-link {
+    color: rgb(255, 255, 255); 
+    display: block; 
+    padding: 14px; 
+    text-decoration: none; 
+     font-size: large
+}
+
+.home-link {
+    color: white; 
+    text-decoration: none; 
+     font-size: x-large
+}
+
+
+.home-link:hover {
+    color: #f0f0f0; 
+    text-decoration: underline; 
+}
+
+
+.nav-item:hover {
+    background-color: rgb(167, 156, 3);
+    color: black;
+    border-radius: 10px;
+    height: 60px; 
+    display: flex; 
+    align-items: center; 
+}
+
+.dropdown-menu {
+    background-color: white;
+     
+}
+
+/* Adjustments for mobile and larger screens */
+@media (min-width: 800px) {
+    .navbar-nav.custom-flexbox {
+        justify-content: space-evenly; /* Evenly space items on larger screens */
+    }
+}
+
+</style>

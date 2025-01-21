@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="header">
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>eKarshak</title>
+	<!--	<link rel="stylesheet" href="./styles/reportstylesheet.css" />-->
+
+	<head th:insert="header"></head>
+	<div th:insert="headerImage"></div>
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+	<script>
+
+		function CallPrint(strid) {
+			var prtContent = document.getElementById(strid);
+			var mywindow = window.open('', '', 'left=0,top=0,width=950,height=600,toolbar=1,scrollbars=1,status=1,addressbar=0');
+			var is_chrome = Boolean(mywindow.chrome);
+			mywindow.document.write(prtContent.innerHTML);
+			mywindow.document.close(); // necessary for IE >= 10 and necessary before onload for chrome
+
+			if (is_chrome) {
+				mywindow.onload = function () { // wait until all resources loaded 
+					mywindow.focus(); // necessary for IE >= 10
+					mywindow.print(); // change window to mywindow
+					mywindow.close(); // change window to mywindow
+				};
+			} else {
+				mywindow.document.close(); // necessary for IE >= 10
+				mywindow.focus(); // necessary for IE >= 10
+				mywindow.print();
+				mywindow.close();
+			}
+
+			return true;
+		}
+
+	</script>
+	<script language="javascript">
+		var tableToExcel = (function () {
+			var uri = 'data:application/vnd.ms-excel;base64,'
+				, template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table align="center">{table}</table></body></html>'
+				, base64 = function (s) {
+					return window.btoa(unescape(encodeURIComponent(s)))
+				}
+				, format = function (s, c) {
+					return s.replace(/{(\w+)}/g, function (m, p) {
+						return c[p];
+					})
+				}
+			return function (table, name) {
+				if (!table.nodeType)
+					table = document.getElementById(table)
+				var ctx = {worksheet: name || 'Worksheet', table: table.innerHTML}
+				window.location.href = uri + base64(format(template, ctx))
+			}
+		})()
+	</script>
+
+</head>
+<style>
+		#loading {
+    	position: fixed;
+    	top: 60%;
+    	left: 50%;
+    	transform: translate(-50%, -50%);
+    	padding: 20px;
+    	border-radius: 5px;
+	}
+	</style>
+	
+	
+<script>
+// VALIDATION
+function validateForm() {
+    var cropyear = document.getElementById("cropyear").value;
+    var dcode = document.getElementById("inputdcode").value;
+    var mcode = document.getElementById("inputmcode").value;
+    var vcode = document.getElementById("inputvcode").value;
+
+    // Check if district is selected
+    if (cropyear == "") {
+	    $('#loading').hide();
+        alert("Please select a Crop Year");
+        return false;
+    }
+
+    // Check if District is selected
+    if (dcode === "") {
+
+    	alert("Please select a District");
+        return false;
+    }
+    
+   // check if mandal is selected
+   if (mcode === "") {
+	    $('#loading').hide();
+        alert("Please select a Mandal");
+        return false;
+    }
+    
+  // check if village is selected 
+  if (vcode === "") {
+	    $('#loading').hide();
+        alert("Please select a Village");
+        return false;
+    }
+    
+    // Add more validations here if needed
+
+    return true;
+}
+
+
+
+
+function mandal() {
+	var inputdcode = $("#inputdcode").val().trim();
+	$.ajax({
+		type: "get",
+		url: "./getAllMandals?dcode=" + inputdcode,
+		cache: false,
+		timeout: 600000,
+		success: function (resp) {
+			//alert(JSON.stringify(resp));
+			for (var j = 0; j < resp.length; j++) {
+				var bean = resp[j];
+				$("#inputmcode").append('<option value="' + bean.col1 + '">' + bean.col2 + '</option>');
+			}
+		}
+	});
+}
+
+
+
+	
+	
+
+	function goBack(){
+				window.location.href="./home";
+				}
+
+</script>
+
+<body>
+
+<h1 style="text-align: center;">USERS ACTIVATION DEACTIVATION</h1>
+	<input type="hidden" id="inputwbdcode" th:value="${#session.getAttribute('wbdcode')}" />
+	<div align="center">
+		<form th:action="@{/farmerecropdata}" method="post">
+			<table id="ObjEntryTable">
+				<div> <b>Crop Year</b>
+					<select id="cropyear" name="cropyear" style="width: 200px" required="required">
+						<option value="">----Select----</option>
+						<option th:each="list : ${activeSeasons}" th:value="${list.seasonvalue}" th:text="${list.cropyear}"></option>
+					</select>&numsp;&numsp;&numsp;&numsp;
+
+					<b>District</b>
+					<select name="selectedDist" id="inputdcode" style="width:200px;text-align:left;"
+						onchange="return  mandal();" required="required">
+						<option value="">----Select----</option>
+						<option th:each="list : ${dist}" th:value="${list.dcode}" th:text="${list.dname}"></option>
+					</select>&numsp;&numsp;&numsp;&numsp;
+
+					<b>Mandal</b>
+					<select id="inputmcode" name="selectedMand" style="width:200px;text-align:left;" required="required">
+						<option value="">----Select----</option>
+					</select>&numsp;&numsp;&numsp;&numsp;
+
+					
+					 <b> Activate/Deactivate</b>
+                        <select id="actId" name="actId"    style="width: 250px" required="required">
+                            <option value="">----Select----</option>  
+                            <option value="A">Activate</option>
+                            <option value="D">DeActivate</option>
+                        </select>                    
+                    
+					
+					 
+				</div>
+			</table>
+			<div colspan="3" align="center" style="padding-top:10px;padding-bottom:10px;">
+				<button type="submit" id="btnSubmit" class="btn btn-success" value="Submit" >Submit</button>
+			</div>
+		</form>
+	</div>
+</body>
+
+</html>

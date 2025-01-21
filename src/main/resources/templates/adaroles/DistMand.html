@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="header"></head>
+
+<!-- jQuery UI CSS (for datepicker style) -->
+<link rel="stylesheet"
+	href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+<!-- jQuery library -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- jQuery UI JavaScript -->
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+<script>
+	function CallPrint(strid) {
+		var prtContent = document.getElementById(strid);
+		var mywindow = window
+				.open(
+						'',
+						'',
+						'left=0,top=0,width=950,height=600,toolbar=1,scrollbars=1,status=1,addressbar=0');
+		var is_chrome = Boolean(mywindow.chrome);
+		mywindow.document.write(prtContent.innerHTML);
+		mywindow.document.close(); // necessary for IE >= 10 and necessary before onload for chrome
+
+		if (is_chrome) {
+			mywindow.onload = function() { // wait until all resources loaded 
+				mywindow.focus(); // necessary for IE >= 10
+				mywindow.print(); // change window to mywindow
+				mywindow.close(); // change window to mywindow
+			};
+		} else {
+			mywindow.document.close(); // necessary for IE >= 10
+			mywindow.focus(); // necessary for IE >= 10
+			mywindow.print();
+			mywindow.close();
+		}
+
+		return true;
+	}
+</script>
+<script language="javascript">
+	var tableToExcel = (function() {
+		var uri = 'data:application/vnd.ms-excel;base64,', template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table align="center">{table}</table></body></html>', base64 = function(
+				s) {
+			return window.btoa(unescape(encodeURIComponent(s)))
+		}, format = function(s, c) {
+			return s.replace(/{(\w+)}/g, function(m, p) {
+				return c[p];
+			})
+		}
+		return function(table, name) {
+			if (!table.nodeType)
+				table = document.getElementById(table)
+			var ctx = {
+				worksheet : name || 'Worksheet',
+				table : table.innerHTML
+			}
+			window.location.href = uri + base64(format(template, ctx))
+		}
+	})()
+</script>
+
+
+<body>
+
+	<div th:insert="headerImage"></div>
+
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+
+<div class="heading" style="text-align: center; font-size: 25px;font-weight: bold;">
+		 Mandal List With Codes</div>
+	<br>
+		<div align="center">
+			<div class="tdnum">
+				<b> &numsp;&numsp;&numsp;&numsp;&numsp; District <font
+					color="red">*</font></b>&numsp; <select name="selectedDist"
+					id="inputdcode" style="width: 200px; text-align: left;">
+					<option value="">----Select----</option>
+					<option th:each="list : ${dist}" th:value="${list.dcode}"
+						th:text="${list.dname}"></option>
+				</select>
+			</div>
+			<br>
+			<div colspan="3" align="center"
+				style="padding-top: 10px; padding-bottom: 10px;">
+				<button type="button" id="btnSubmit" class="btn btn-success"
+					value="Submit" onclick="return getData();">Submit</button>
+			</div>
+		</div>
+		<script type="text/javascript">
+			function getData() {
+				var sno = 0;
+				var inputdcode = $("#inputdcode").val();
+				 if (!inputdcode) {
+			            alert("Please select a district.");
+			            return false; // Stop the function if no district is selected
+			        }
+				$("#databody").empty();
+				$.ajax({
+					type : "get",
+					url : "./util/getdata?dcode=" + inputdcode,
+					cache : false,
+					timeout : 600000,
+					success : function(resp) {
+						for (var j = 0; j < resp.length; j++) {
+							sno = sno + 1;
+							var bean = resp[j];
+							$("#databody").append(
+									'<tr>' +
+							        '<td align="center">' + sno + '</td>' +
+									'<td style="padding-left:15%">' + bean.mname + '</td>' +
+									'<td style="padding-left:11%">' + bean.mcode + '</td>' +
+									'</tr>');
+						}
+					}
+				
+				});
+			}
+		</script>
+
+		<form id="unlockreport" name="unlockreport" method="post">
+			<div align="center" id="divPrint"
+				class="table table-hover table table-striped">
+				<table id="tableStkId" style="width: 40%">
+					<thead align="center">
+						<div style="font-weight: bolder;">
+							<th>S.No.</th>
+							<th>Mandal Name</th>
+							<th>Mandal Code</th>
+						</div>
+					</thead>
+					<tbody id="databody"></tbody>
+				</table>
+			</div>
+		</form>
+		
+		<div align="center" style="color: black; margin-top: 20px;">
+			<input class="btn btn-success"
+				name="ctl00$ContentPlaceHolder1$btnPrint" type="button"
+				id="ctl00_ContentPlaceHolder1_btnPrint"
+				onClick="javascript:CallPrint('divPrint')" value="Print"> <input
+				class="btn btn-success" type="button"
+				onclick="tableToExcel('tableStkId', 'Abstract')" value="Excel">
+			<input class="btn btn-success" type="button" value="Back"
+				onclick="goBack()" />
+
+		</div>
+</body>
+
+</html>

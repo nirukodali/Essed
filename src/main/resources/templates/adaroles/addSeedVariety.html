@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="header"></head>
+
+<style>
+    /* Add padding to table headers for spacing */
+    th {
+        padding: 10px;
+        text-align: center;
+        background-color: #006400;
+        color: white;
+    }
+
+    /* Add margin or padding to header title */
+    .heading {
+        margin-bottom: 20px; /* Add some space between the header and table */
+        padding: 15px;
+        font-size: 18px;
+        text-align: center;
+        background-color: #006400;
+        color: white;
+    }
+
+    /* Add padding to table data cells for better readability */
+    td {
+        padding: 8px;
+        text-align: center;
+    }
+
+    /* Optional: Styling for the input fields inside the table */
+    select, input {
+        padding: 5px;
+        font-size: 14px;
+    }
+
+    /* Space for the dropdowns and other form elements */
+    .form-element {
+        margin-bottom: 20px;
+    }
+
+    .error {
+        color: red;
+        font-size: 12px;
+    }
+</style>
+
+<body>
+
+	<div th:insert="headerImage"></div>
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+
+	<div align="center">
+		<FORM id="f1" name="f1" METHOD=POST onsubmit="return validateForm()">
+			<div align="center">
+				<table>
+					 <th class="heading" colspan="2" style="background-color: #006400; color: white; text-align: center;">
+                    Add Seed Variety
+                </th>
+					
+					<tr>
+						<td class="tdnum"><b>Product Name <font color="red">*</font></b></td>
+						<td width="50%">
+							<select name="pcode" id="pcode" onchange="getspcode()" style="width: 200px">
+								<option value="">--Select--</option>
+								<option th:each="productname : ${productname}" th:value="${productname.productcode}" th:text="${productname.productname}"></option>
+							</select>
+							<span id="productNameError" class="error"></span>
+						</td>
+					</tr>
+
+					<tr>
+						<td class="tdnum"><b> Sub Product Name <font color="red">*</font></b></td>
+						<td>
+							<select name="spcode" id="spcode" style="width: 200px">
+								<option value="">--Select--</option>
+							</select>
+							<span id="subProductError" class="error"></span>
+						</td>
+					</tr>
+
+					<tr>
+						<td class="tdnum"><b> Seed Variety Name <font color="red">*</font></b></td>
+						<td>
+							<input type="text" size="20" maxlength="50" name="varietyname" id="varietyname" />
+							<span id="varietyNameError" class="error"></span>
+						</td>
+					</tr>
+
+					<tr>
+						<td class="tdnum"><b> Units (Kg/Gm/Litre/Quintal/ml) <font color="red">*</font></b></td>
+						<td>
+							<select name="units" id="units" style="width: 200px">
+								<option value="">--Select--</option>
+								<option th:each="units : ${units}" th:value="${units.units}" th:text="${units.units}"></option>
+							</select>
+							<span id="unitsError" class="error"></span>
+						</td>
+					</tr>
+
+					<tr>
+						<td class="tdnum"><b> Farmers to be Distributed <font color="red">*</font></b></td>
+						<td>
+							<select name="farmertype" id="farmertype" style="width: 200px">
+								<option value="">--Select--</option>
+								<option th:each="farmertype : ${farmertype}" th:value="${farmertype.farmertype}" th:text="${farmertype.farmer_desc}"></option>
+							</select>
+							<span id="farmerTypeError" class="error"></span>
+						</td>
+					</tr>
+
+					<tr>
+						<td class="tdnum"><b> Group of Product/Variety <font color="red">*</font></b></td>
+						<td>
+							<select name="groupcode" id="groupcode" style="width: 200px">
+								<option value="">--Select--</option>
+								<option th:each="getseedgroup : ${getseedgroup}" th:value="${getseedgroup.groupcode}" th:text="${getseedgroup.groupname}"></option>
+							</select>
+							<span id="groupCodeError" class="error"></span>
+						</td>
+					</tr>
+
+					<tr>
+						<td colspan="2" align="center">
+							<input type="button" name="Submit" value="SUBMIT" onclick="submitForm()" />
+						</td>
+					</tr>
+				</table>
+			</div>
+		</FORM>
+	</div>
+
+	<script type="text/javascript">
+
+		function getspcode() {
+			var productCode = $('#pcode').val();
+			if (productCode) {
+				$.ajax({
+					url: './getSubProducts',
+					type: 'GET',
+					data: {productCode: productCode},
+					success: function (response) {
+						var subProductSelect = $('#spcode');
+						subProductSelect.empty();
+						subProductSelect.append('<option value="">--Select--</option>');
+						$.each(response, function (index, subProduct) {
+							subProductSelect.append('<option value="' + subProduct.subproductcode + '">' + subProduct.subproductname + '</option>');
+						});
+					},
+					error: function (xhr, status, error) {
+						alert('Error: ' + error);
+					}
+				});
+			} else {
+				$('#spcode').empty().append('<option value="">--Select--</option>');
+			}
+		}
+
+		function validateForm() {
+			var isValid = true;
+
+			// Reset error messages
+			$('.error').text('');
+
+			// Validate Product Name (pcode)
+			if (document.getElementById('pcode').value == "") {
+				document.getElementById('productNameError').textContent = "Product Name is required.";
+				isValid = false;
+			}
+
+			// Validate Sub Product Name (spcode)
+			if (document.getElementById('spcode').value == "") {
+				document.getElementById('subProductError').textContent = "Sub Product Name is required.";
+				isValid = false;
+			}
+
+			// Validate Seed Variety Name (varietyname)
+			if (document.getElementById('varietyname').value == "") {
+				document.getElementById('varietyNameError').textContent = "Seed Variety Name is required.";
+				isValid = false;
+			}
+
+			// Validate Units (units)
+			if (document.getElementById('units').value == "") {
+				document.getElementById('unitsError').textContent = "Units are required.";
+				isValid = false;
+			}
+
+			// Validate Farmers to be Distributed (farmertype)
+			if (document.getElementById('farmertype').value == "") {
+				document.getElementById('farmerTypeError').textContent = "Farmer Type is required.";
+				isValid = false;
+			}
+
+			// Validate Group of Product/Variety (groupcode)
+			if (document.getElementById('groupcode').value == "") {
+				document.getElementById('groupCodeError').textContent = "Group is required.";
+				isValid = false;
+			}
+
+			return isValid;
+		}
+
+		function submitForm() {
+			// Only submit if form is valid
+			if (validateForm()) {
+				var pcode = document.getElementById('pcode').value;  
+				var spcode = document.getElementById('spcode').value;  
+				var varietyname = document.getElementById('varietyname').value;  
+				var units = document.getElementById('units').value;  
+				var farmertype = document.getElementById('farmertype').value;  
+				var groupcode = document.getElementById('groupcode').value;
+
+				var formData = {
+					pcode: pcode,
+					spcode: spcode,
+					varietyname: varietyname,
+					units: units,
+					farmertype: farmertype,
+					groupcode: groupcode
+				};
+
+				$.ajax({
+					url: './submitSeedVariety',
+					type: 'POST',
+					data: formData,
+					success: function (response) {
+						alert('Seed variety added successfully');
+						console.log(response);
+						document.getElementById('f1').reset();
+					},
+					error: function (xhr, status, error) {
+						console.error('Error:', error);
+						alert('Error: ' + error);
+					}
+				});
+			} else {
+				alert("Please fill all required fields.");
+			}
+		}
+
+	</script>
+
+</body>
+
+</html>

@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+
+
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="header">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Un Settled Unsurveyed Entry</title>
+<link rel="stylesheet" href="styles/reportstylesheet.css">
+<script src="js/jquery.js"></script>
+<script src="js/jquery-ui.js"></script>
+<script type="text/javascript" src="js/req.js"></script>
+<script type="text/javascript" src="scripts/js/epvalidations.js"></script>
+<style>
+html, body {
+	height: 100%;
+	background-color: #FFFFFF;
+}
+</style>
+<script type="text/javascript">
+
+		function isName(evt) {
+			evt = (evt) ? evt : window.event;
+			var charCode = (evt.which) ? evt.which : evt.keyCode;
+			if ((charCode > 64 && charCode < 91) || (charCode > 96 && charCode < 123) || charCode == 32) {
+				return true;
+			}
+			return false;
+		}
+
+		function isNumber(evt) {
+			evt = (evt) ? evt : window.event;
+			var charCode = (evt.which) ? evt.which : evt.keyCode;
+			if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+				return false;
+			}
+			return true;
+		}
+
+		function checkValue(evt) {
+			evt = (evt) ? evt : window.event;
+			var charCode = (evt.which) ? evt.which : evt.keyCode;
+			if (!(charCode >= 48 || charCode <= 57 || charCode === 46)) {
+				return false;
+			}
+			return true;
+		}
+
+	</script>
+</head>
+
+<body>
+	<div th:insert="headerImage"></div>
+
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+	<div class="container-fluid header-design-login">
+		<div class="row justify-content-center align-items-center"
+			style="height: 10vh;">
+			<div class="webland-container" style="padding-top: 20px;">
+				<div class="card ecropCard">
+
+					<div class="card-title">
+						<h5 style="text-align: center;">
+							Unsetteled Unsurveyed Data Entry
+							</h3>
+					</div>
+					<!--	    <div class="survey" align="center" style="width: 25%;height: 30%;color: aquamarine;background-color: rgb(128, 0, 0);margin-left: 40%;text-align: left;">-->
+					<div class="card-body" style="padding: 10px;">
+						<form name="myForm" id="myForm" method="post"
+							th:action="@{/saveUnsurveyedData}"
+							th:object="${unsetteled_UnsurveyedDto}">
+							<div align="center">
+								<!--<div align="center"><h1>UnSettled UnSurveyed Data Entry</h1> </div>-->
+								<table id="ObjEntryTable">
+									<!--									Selected Village Code: <span th:text="${selectedVillageCode}"></span>-->
+
+									<tr>
+										<td class="heading" colspan="3">
+											<!--						<font color='white'>UnSettled UnSurveyed Data Entry </font>-->
+										</td>
+									</tr>
+
+									<!--				<tr>-->
+									<!--					<td align="right"><b>Village:</b></td>-->
+									<!--					<td align="center">:</td>-->
+									<!--					<td align="left"><b>-->
+									<!--							<%=wbvillageName%>-->
+									<!--						</b></td>-->
+									<!--				</tr>-->
+									<div class="form-group row">
+
+										<tr id="tr_unset">
+											<td align="right" width="10%" class="col-sm-4 col-form-label">
+												<b>Select Category</b>
+											</td>
+											<td align="center">:</td>
+											<td align="left" id="td_unset"><select id="objcat"
+												name="objcat" th:field="*{objcat}"
+												class="form-select form-control">
+													<option value="">---Select---</option>
+													<option value="A">Un Surveyed Estate</option>
+													<option value="B">Un Surveyed INAM</option>
+													<option value="F">Un Settled Estate</option>
+													<option value="G">Un Settled INAM</option>
+
+											</select> <!--						<span th:if="${#fields.hasErrors('objcat')}" th:errors="*{objcat}" style="color:red;"></span>-->
+											</td>
+										</tr>
+										<tr>
+											<td colspan="3"></td>
+										</tr>
+
+									</div>
+									<div class="form-group row">
+										<tr id="tr_surveyno">
+											<td align="right" width="45%" class="col-sm-4 col-form-label">
+												<b>Polam No</b>
+											</td>
+											<td align="center">:</td>
+											<td align="left" id="td_surveyno"><input type="text"
+												id="surveyNo" class="form-control" name="surveyNo"
+												th:value="${psurveyno}" disabled> <span
+												th:if="${#fields.hasErrors('surveyNo')}"
+												th:errors="*{surveyNo}" style="color: red;"></span> <input
+												type="hidden" id="surveyNo" name="surveyNo"
+												th:value="${psurveyno}"></td>
+
+										</tr>
+									</div>
+									<div class="form-group row">
+										<tr id="tr_cultfarmerName">
+											<td align="right" width="45%" class="col-sm-4 col-form-label">
+												<b>Cultivator Name</b>
+											</td>
+											<td align="center">:</td>
+											<td align="left" id="td_cultfarmerName"><input
+												type="text" name="cultfarmerName" id="cultfarmerName"
+												th:field="*{cultfarmerName}"
+												class="form-select form-control"
+												onkeypress="return Validate(event);" maxlength="100">
+												<!--							<span th:if="${#fields.hasErrors('cultfarmerName')}" th:errors="*{cultfarmerName}" style="color:red;"></span>-->
+											</td>
+										</tr>
+									</div>
+									<div class="form-group row">
+
+										<tr id="tr_cultfatherName">
+											<td align="right" width="45%" class="col-sm-4 col-form-label">
+												<b>Cultivator Father Name</b>
+											</td>
+											<td align="center">:</td>
+											<td align="left" id="td_cultfatherName"><input
+												type="text" name="cultfatherName" id="cultfatherName"
+												th:field="*{cultfatherName}"
+												class="form-select form-control"
+												onkeypress="return Validate(event);" maxlength="100">
+												<!--				<span th:if="${#fields.hasErrors('cultfatherName')}" th:errors="*{cultfatherName}" style="color:red;"></span>-->
+
+											</td>
+										</tr>
+
+									</div>
+
+									<tr id="tr_totext">
+										<td align="right" width="45%"><b>Total Extent</b></td>
+										<td align="center">:</td>
+										<td align="left" id="td_totext"><input type="text"
+											name="totext" id="totext" th:field="*{totext}"
+											class="form-select form-control" required maxlength="11" onkeypress="return ( event.charCode == 8 || event.charCode == 0) || event.charCode == 46 ? null : event.charCode >= 48 && event.charCode <= 57 "  
+								pattern="^\d{1,6}(\.\d{0,2})?$" >
+											<!--					<span th:if="${#fields.hasErrors('totext')}" th:errors="*{totext}" style="color:red;"></span>-->
+
+										</td>
+									</tr>
+									<tr id="tr_cultext">
+										<td align="right" width="45%" class="col-sm-4 col-form-label">
+											<b>Cultivator Extent</b>
+										</td>
+										<td align="center">:</td>
+										<td align="left" id="td_cultext"><input type="text"
+											 name="cultext" id="cultext" th:field="*{cultext}"
+											class="form-select form-control" required maxlength="11" onkeypress="return ( event.charCode == 8 || event.charCode == 0) || event.charCode == 46 ? null : event.charCode >= 48 && event.charCode <= 57 "  
+								pattern="^\d{1,6}(\.\d{0,2})?$" >
+											<!--							<span th:if="${#fields.hasErrors('cultext')}" th:errors="*{cultext}" style="color:red;"></span>-->
+
+										</td>
+									</tr>
+
+									<tr id="tr_farmeruid">
+										<td align="right" width="45%" class="col-sm-4 col-form-label">
+											<b>Aadhaar No</b>
+										</td>
+										<td align="center">:</td>
+										<td align="left" id="td_farmeruid"><input type="text"
+											name="farmerUid" id="farmerUid" th:field="*{farmerUid}"
+											class="form-select form-control" input="addSpaces(event)"
+											onkeypress="if (this.value.length > 11) return false">
+											<p id="validationMessage"></p> <!--							<span th:if="${#fields.hasErrors('farmerUid')}" th:errors="*{farmerUid}" style="color:red;"></span>-->
+
+										</td>
+									</tr>
+									<tr id="tr_mobileno">
+										<td align="right" width="45%" class="col-sm-4 col-form-label">
+											<b>Mobile No</b>
+										</td>
+										<td align="center">:</td>
+										<td align="left" id="td_mobileno"><input type="text"
+											name="objMobileno" id="objMobileno" th:field="*{objMobileno}"
+											class="form-select form-control"
+											onkeypress="return isNumber(event)" maxlength="10"> <!--						<span th:if="${#fields.hasErrors('objMobileno')}" th:errors="*{objMobileno}" style="color:red;"></span>-->
+
+										</td>
+									</tr>
+									<tr id="tr_gender">
+										<td align="right" width="45%" class="col-sm-4 col-form-label">
+											<b>Gender</b>
+										</td>
+										<td align="center">:</td>
+										<td align="left" id="td_gender"><select id="objGender"
+											name="objGender" th:field="*{objGender}"
+											class="form-select form-control">
+												<option value="">---Select---</option>
+												<option value="M">Male</option>
+												<option value="F">Female</option>
+												<option value="T">Transgender</option>
+										</select> <!--						<span th:if="${#fields.hasErrors('objGender')}" th:errors="*{objGender}" style="color:red;"></span>-->
+										</td>
+									</tr>
+									<tr>
+										<td colspan="3" align="center"><input type="button"
+											style="background-color: forestgreen;" value="Submit"
+											onclick="validateAndSubmit()"> 
+											</td>
+<!--											<input class="sub"-->
+<!--											type="reset" value="Reset" onclick="goToReset()"-->
+<!--											style="background-color: forestgreen;">-->
+									</tr>
+								</table>
+							</div>
+							<!-- Hidden input field to store the selected village code -->
+							<input type="hidden" id="selectedVillageCode"
+								name="selectedVillageCode" th:value="${selectedVillageCode}" />
+
+						</form>
+						<script>
+function validateAndSubmit() {
+							
+
+							// Perform frontend validation
+							if (fetchData()) {
+								// If validation succeeds, submit the form
+								document.getElementById("myForm").submit();
+							}
+						}
+						function mod(num, divisor) {
+							return ((num % divisor) + divisor) % divisor;
+						}
+
+						function validateVerhoeff(num) {
+							
+							var d = [
+								[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+								[1, 2, 3, 4, 0, 6, 7, 8, 9, 5],
+								[2, 3, 4, 0, 1, 7, 8, 9, 5, 6],
+								[3, 4, 0, 1, 2, 8, 9, 5, 6, 7],
+								[4, 0, 1, 2, 3, 9, 5, 6, 7, 8],
+								[5, 9, 8, 7, 6, 0, 4, 3, 2, 1],
+								[6, 5, 9, 8, 7, 1, 0, 4, 3, 2],
+								[7, 6, 5, 9, 8, 2, 1, 0, 4, 3],
+								[8, 7, 6, 5, 9, 3, 2, 1, 0, 4],
+								[9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
+							];
+
+							// permutation table p
+							var p = [
+								[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+								[1, 5, 7, 6, 2, 8, 3, 0, 9, 4],
+								[5, 8, 0, 3, 7, 9, 6, 1, 4, 2],
+								[8, 9, 1, 6, 0, 4, 3, 5, 2, 7],
+								[9, 4, 5, 3, 1, 2, 6, 8, 7, 0],
+								[4, 2, 8, 6, 5, 7, 3, 9, 0, 1],
+								[2, 7, 9, 3, 8, 0, 6, 4, 1, 5],
+								[7, 0, 4, 6, 9, 1, 3, 2, 5, 8]
+							];
+
+							var c = 0;
+							var myArray = [];
+							myArray = StringToReversedIntArray(num);
+							for (var i = 0; i < myArray.length; i++) {
+								c = d[c][p[mod(i, 8)][myArray[i]]];
+							}
+
+							return (c == 0);
+						}
+						function StringToReversedIntArray(num) {
+							var myArray = [];
+
+							for (var i = 0; i < num.length; i++) {
+								myArray[i] = parseInt(num.substring(i, i + 1));
+							}
+							myArray = Reverse(myArray);
+
+							return myArray;
+
+						}
+						function Reverse(myArray) {
+							var reversed = [];
+
+							for (var i = 0; i < myArray.length; i++) {
+								reversed[i] = myArray[myArray.length - (i + 1)];
+							}
+							return reversed;
+						}
+
+				            
+						
+							function goToReset() {
+								document.getElementById("ObjEntryForm").reset();
+							}
+
+							function Validate(e) {
+								var keyCode = e.keyCode || e.which;
+								var errorMsg = document.getElementById("cultfarmerName");
+								var errorMsg = document.getElementById("cultfatherName");
+								
+								errorMsg.innerHTML = "";
+
+								//Regex to allow only Alphabets Numbers Dash Underscore and Space
+								var pattern = /^[a-zd A-Z.s]+$/i;
+
+								//Validating the textBox value against our regex pattern.
+								var isValid = pattern.test(String.fromCharCode(keyCode));
+								if (!isValid) {
+									errorMsg.innerHTML = "Only alphanumeric,dot and space are allowed.";
+								}
+
+								return isValid;
+							}
+
+							function Validate2(e) {
+								var keyCode = e.keyCode || e.which;
+								var errorMsg = document.getElementById("tot_extent");
+
+								errorMsg.innerHTML = "";
+
+								//Regex to allow only Alphabets Numbers Dash Underscore and Space
+								var pattern = "^\d{1,10}(\.\d{0,4})?$";
+
+								//Validating the textBox value against our regex pattern.
+								var isValid = pattern.test(String.fromCharCode(keyCode));
+								if (!isValid) {
+									errorMsg.innerHTML = "Only alphanumeric,dot and space are allowed.";
+								}
+
+								return isValid;
+							}
+
+							
+
+							function fetchData() {
+
+								var objcat = document.getElementById('objcat').value;
+								if (objcat === "") {
+									alert("Please Select Category ");
+									return false;
+								}
+								var surveyNo = document.getElementById('surveyNo').value;
+								if (surveyNo === '' || surveyNo === null) {
+									alert("Please Enter Polam No");
+									document.getElementById('surveyNo').focus();
+									return false;
+								}
+								var cultfarmerName = document.getElementById('cultfarmerName').value;
+								if (cultfarmerName === '' || cultfarmerName === null) {
+									document.getElementById('cultfarmerName').focus();
+									alert("Please Enter Cultivator Farmer Name");
+									return false;
+								}
+								var cultfatherName = document.getElementById('cultfatherName').value
+								if (cultfatherName === '' || cultfatherName === null) {
+									document.getElementById('cultfatherName').focus();
+									alert("Please Enter Cultivator Father Name");
+									return false;
+								}
+								var text = document.getElementById('totext').value
+								if (parseFloat(text) === 0 || text === null || text == '' || parseFloat(text)>20.0000) {
+								//	document.getElementById('totext').focus();
+									alert("Please Enter Valid Total Extent");
+									return false;
+								}
+								var ocpext = document.getElementById('cultext').value
+
+								if (parseFloat(ocpext) === 0 || ocpext === null || ocpext == '' || parseFloat(ocpext)>20.0000) {
+									document.getElementById('cultext').focus();
+									alert("Please Enter Valid Occupant Extent");
+									return false;
+								}
+								var isValid = true;
+								var inputField = document.getElementById('totext').value;
+							
+						
+								var pattern = /^\d{1,6}(?:\.\d{1,4})?$/;
+
+								if (!pattern.test(inputField)) {
+									alert('Please enter valid TotalExtent');
+									isValid = false;
+								} 
+	                            var ocupant_extent = document.getElementById('cultext').value;
+							
+							
+								var pattern = /^\d{1,6}(?:\.\d{1,4})?$/;
+
+								if (!pattern.test(ocupant_extent)) {
+									alert('Please enter valid ocupantExtent');
+									isValid = false;
+								} 
+								if (parseFloat(ocpext) > parseFloat(text)) {
+									document.getElementById('cultext').focus();
+									alert("Cultivator Extent Should Not More Than Total Extent ")
+									return false;
+								}
+
+								var fuid = document.getElementById('farmerUid').value;
+								if (fuid === '' || fuid === null) {
+									alert("Please Enter Aadhaar No");
+									return false;
+								}
+
+								if (fuid.length === 12) {
+									
+									if (validateVerhoeff(fuid)) {
+										
+										flag = true;
+									} else {
+										alert('Enter Valid  Aadhaar No');
+										$("#farmerUid").focus();
+										return false;
+									}
+									
+								} else {
+									alert("Invalid Aadhar Format");
+									return false;
+								}
+								var objMobileno = document.getElementById('objMobileno').value
+								if (objMobileno === '' || objMobileno === null) {
+									alert("Mobile Number cannot be empty");
+									return false;
+								}
+								if (objMobileno.length != 10) {
+									alert("Mobile Number Should be 10 digits");
+									return false;
+								}
+								if (parseInt(objMobileno) === 0) {
+									alert("Mobile Number Should not be 0");
+									return false;
+								}
+								if (parseInt(objMobileno) <= 6000000000) {
+									alert("Mobile Number Should not start with 5 or less");
+									return false;
+								}
+								if (parseInt(objMobileno) === 1000000000 || parseInt(objMobileno) === 2000000000 || parseInt(objMobileno) === 3000000000 || parseInt(objMobileno) === 4000000000
+									|| parseInt(objMobileno) === 5000000000 || parseInt(objMobileno) === 6000000000 || parseInt(objMobileno) === 7000000000 || parseInt(objMobileno) === 8000000000
+									|| parseInt(objMobileno) === 9000000000) {
+									alert("Invalid Mobile Number");
+									return false;
+								}
+								if (parseInt(objMobileno) === 6666666666 || parseInt(objMobileno) === 7777777777 || parseInt(objMobileno) === 8888888888 || parseInt(objMobileno) === 9999999999) {
+									alert("Mobile Number Should not have same 10 digits");
+									return false;
+								}
+
+								var objGender = document.getElementById('objGender').value
+
+								if (objGender === '' || objGender === null) {
+									alert("Please Select Gender");
+									return false;
+								}
+
+			
+								function goToReset() {
+									window.location.href = "settledUnsettledEntry.html";
+								}
+								function goToHome() {
+									window.location.href = 'home.html';
+								}
+								return true;
+							}
+						</script>
+</body>
+
+</html>

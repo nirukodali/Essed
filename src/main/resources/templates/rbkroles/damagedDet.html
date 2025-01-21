@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="ISO-8859-1">
+	<title></title>
+	<!--<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>-->
+	<script>
+// Include the JavaScript functions here
+	</script>
+</head>
+
+<body>
+
+	<div class="panel panel-primary" style="max-width: 100%;overflow-x: scroll;overflow-y: auto;">
+		<div class="panel-heading"
+			style="text-align: center; background-color: honeydew; padding: 8px; margin: 0 auto; display: table;">
+			<b>Statement Showing the Crop Damage Particulars Due to Flood/Heavy Rains in Oct 2024</b>
+		</div>
+		<div class="panel-body">
+
+			<input type="hidden" th:value="${type}" id="type" name="type">
+			<table id="ownerGrid" class="table table-bordered table-striped dataTable">
+				<thead class="color-palette" style="background-color: #9494b8;">
+					<tr>
+						<th style="color: white; width: 5%; background-color: #9494b8;"> <input type="checkbox"
+								id="masterCheckbox" onclick="toggleAllCheckboxes(this)" /></th>
+						<th style="color: white; width: 7%; background-color: #9494b8;"><b>District Name</b><br><b
+								style="margin-left:50%;">1</b></th>
+						<th style="color: white; width: 7%; background-color: #9494b8;"><b>Mandal Name</b><br><b
+								style="margin-left:50%;">2</b></th>
+						<th style="color: white; width: 19%; background-color: #9494b8;"><b>Village Name</b><br><b
+								style="margin-left:50%;">3</b></th>
+						<th style="color: white; width: 8%; background-color: #9494b8;"><b>e-Crop booking ID</b><br><b
+								style="margin-left:50%;">4</b></th>
+						<th style="color: white; width: 8%; background-color: #9494b8;" align="cener">
+							<b>Aadhaar</b><br><b style="margin-left:50%;">5</b></th>
+						<th style="color: white; width: 25%; background-color: #9494b8;"><b>Farmer Name</b><br><b
+								style="margin-left:50%;">6</b></th>
+						<th style="color: white; width: 25%; background-color: #9494b8;"><b>Father/husband
+								Name</b><br><b style="margin-left:50%;">7</b></th>
+						<th style="color: white; width: 8%; background-color: #9494b8;"><b>Crop</b><br><b
+								style="margin-left:50%;">8</b></th>
+						<th style="color: white; width: 5%; background-color: #9494b8;"><b>Tenant/ Owner</b><br><b
+								style="margin-left:50%;">9</b></th>
+						<th style="color: white; width: 19%; background-color: #9494b8;"><b>Khata No</b><br><b
+								style="margin-left:50%;">10</b></th>
+						<th style="color: white; width: 25%; background-color: #9494b8;"><b>Survey No</b><br><b
+								style="margin-left:50%;">11</b></th>
+						<th style="color: white; width: 10%; background-color: #9494b8;"><b>Crop extent</b><br><b
+								style="margin-left:50%;">12</b></th>
+						<th style="color: white; width: 8%; background-color: #9494b8;"><b>Irrigated/Rainfed</b><br><b
+								style="margin-left:50%;">13</b></th>
+						<th style="color: white; width: 8%; background-color: #9494b8;"><b>Area damaged > 33%(in
+								Acres)</b><br><b style="margin-left:50%;">14</b></th>
+						<th style="color: white; width: 8%; background-color: #9494b8;"><b>Social status</b><br><b
+								style="margin-left:50%;">15</b></th>
+								<th style="color: white; width: 8%; background-color: #9494b8;">Field damage<b></b><br><b
+								style="margin-left:50%;">16</b></th>
+								<th style="color: white; width: 8%; background-color: #9494b8;">Sce extent<b></b><br><b
+								style="margin-left:50%;">17</b></th>
+<!--						<th style="color: white; width: 8%; background-color: #9494b8;"><b>Bank account</b><br><b-->
+<!--								style="margin-left:50%;">18</b></th>-->
+<!--						<th style="color: white; width: 8%; background-color: #9494b8;"><b>Bank name</b><br><b-->
+<!--								style="margin-left:50%;">19</b></th>-->
+<!--						<th style="color: white; width: 8%; background-color: #9494b8;"><b>Bank branch</b><br><b-->
+<!--								style="margin-left:50%;">20</b></th>-->
+<!--						<th style="color: white; width: 8%; background-color: #9494b8;"><b>Type of account</b><br><b-->
+<!--								style="margin-left:50%;">21</b></th>-->
+<!--						<th style="color: white; width: 8%; background-color: #9494b8;"><b>IFSC code</b><br><b-->
+<!--								style="margin-left:50%;">22</b></th>-->
+						<!--                    <th style="color: white; width: 8%; background-color: #9494b8;"><b>Farmer Name in English</b></th>-->
+						<!--                    <th style="color: white; width: 8%; background-color: #9494b8;"><b>Father/husband Name in English</b></th>-->
+					</tr>
+				</thead>
+				<tbody>
+
+					<tr th:each="cultivator, iterStat : ${ownersList}" th:attr="data-index=${iterStat.index}">
+						<input type="hidden" th:id="'wbdcode' + ${iterStat.index}"
+							th:value="${cultivator.cr_dist_code}">
+						<input type="hidden" th:id="'wbmcode' + ${iterStat.index}"
+							th:value="${cultivator.cr_mand_code}">
+						<input type="hidden" th:id="'wbvcode' + ${iterStat.index}" th:value="${cultivator.cr_vcode}">
+						<td><input type="checkbox" th:id="'checkbox' + ${iterStat.index}"
+								th:onchange="'toggleFields(' + ${iterStat.index} + ')'" /></td>
+						<td style="width: 10%;" th:text="${dname}">
+						</td>
+						<td style="width: 10%;" th:text="${mname}">
+						</td>
+						<td style="width: 10%;" th:text="${vname}">
+						</td>
+						<td><span th:text="${cultivator.bookingid}"></span>
+							<input type="hidden" th:id="'booking'+${iterStat.index}" th:value="${cultivator.bookingid}">
+						</td>
+						<td><span th:text="${cultivator.cr_farmeruid}"></span>
+							<input type="hidden" th:id="'aadhaar'+${iterStat.index}"
+								th:value="${cultivator.cr_farmeruid}">
+							<input type="hidden" th:id="'variety'+${iterStat.index}" th:value="${cultivator.variety}">
+							<input type="hidden" th:id="'cr_no'+${iterStat.index}" th:value="${cultivator.cr_no}">
+							<input type="hidden" th:id="'cr_sow_date'+${iterStat.index}"
+								th:value="${cultivator.cr_sow_date}">
+						</td>
+						<td style="width: 25%;"><span th:text="${cultivator.occupname}"></span>
+							<input type="hidden" th:id="'ocname'+${iterStat.index}" th:value="${cultivator.occupname}">
+						</td>
+						<td style="width: 15%;"><span th:text="${cultivator.occupfname}"></span>
+							<input type="hidden" th:id="'ocfname'+${iterStat.index}"
+								th:value="${cultivator.occupfname}">
+						</td>
+						<td style="width: 15%;"><span th:text="${cultivator.cropname}"></span>
+							<input type="hidden" th:id="'crop'+${iterStat.index}" th:value="${cultivator.cr_crop}">
+						</td>
+						<td style="width: 3%;"><span th:if="${cultivator.owner_tenant == 'O'}" th:text="O"></span>
+							<span th:if="${cultivator.owner_tenant != 'O'}" th:text="T"></span>
+							<input type="hidden" th:id="'owner'+${iterStat.index}"
+								th:value="${cultivator.owner_tenant}">
+						</td>
+						<td style="width: 10%;"><span th:text="${cultivator.kh_no}"></span>
+							<input type="hidden" th:id="'khata'+${iterStat.index}" th:value="${cultivator.kh_no}">
+						</td>
+						<td style="width: 15%;"><span th:text="${cultivator.cr_sno}"></span>
+							<input type="hidden" th:id="'survey'+${iterStat.index}" th:value="${cultivator.cr_sno}">
+						</td>
+						<td style="width: 3%;"><span th:text="${cultivator.occupant_extent}"></span>
+							<input type="hidden" th:id="'extent'+${iterStat.index}"
+								th:value="${cultivator.occupant_extent}">
+						</td>
+						<td style="width: 3%;"><span th:if="${cultivator.cr_w_draw == '1'}" th:text="Rainfed"></span>
+							<span th:if="${cultivator.cr_w_draw != '1'}" th:text="Irrigated"></span>
+							<input type="hidden" th:id="'irrmethod'+${iterStat.index}"
+								th:value="${cultivator.cr_w_draw}">
+						</td>
+						<td style="width: 10%;"><input type="text" th:id="'damage'+${iterStat.index}"
+								disabled="disabled" required maxlength="8"
+								onkeypress="return ( event.charCode == 8 || event.charCode == 0) || event.charCode == 46 ? null : event.charCode >= 48 && event.charCode <= 57 ">
+						</td>
+						<td>
+							<select th:id="'caste' + ${iterStat.index}" required="required" disabled="disabled">
+								<option value="">--Select--</option>
+								<th:block th:each="caste : ${caste}">
+									<option th:value="${caste.castecode}" th:text="${caste.caste}"></option>
+								</th:block>
+							</select>
+						</td>
+						<td>
+							<select th:id="'sandtype'+${iterStat.index}" required="required" disabled="disabled" th:onchange="'enablingExtent(' + ${iterStat.index} + ', this.value)'">
+								<option value="N">--Select--</option>
+								<option value="C">Sand Casting</option>
+								<option value="E">Soil Erosion</option>
+							</select>
+						</td>
+						<td style="width: 10%;"><input type="text" th:id="'sandextent'+${iterStat.index}"
+								disabled="disabled" th:required maxlength="8"
+								onkeypress="return ( event.charCode == 8 || event.charCode == 0) || event.charCode == 46 ? null : event.charCode >= 48 && event.charCode <= 57 ">
+						</td>
+<!--						<td style="width: 10%;"><input type="text" th:id="'bankaccount'+${iterStat.index}"-->
+<!--								disabled="disabled" required maxlength="20" onkeypress="return isAlphanumeric(event)">-->
+<!--						</td>-->
+<!--						<td>-->
+<!--							<select th:id="'bankname' + ${iterStat.index}"-->
+<!--								th:onchange="'getBranch(' + ${iterStat.index} + ', this.value)'" required="required"-->
+<!--								disabled="disabled">-->
+<!--								<option value="">--Select--</option>-->
+<!--								<th:block th:each="bank : ${bankList}">-->
+<!--									<option th:value="${bank.bnk_ifsc_cod}" th:text="${bank.bnk_name}"></option>-->
+<!--								</th:block>-->
+<!--							</select>-->
+<!--						</td>-->
+<!--						<td>-->
+<!--							<select th:id="'bankbranch' + ${iterStat.index}"-->
+<!--								th:onchange="'getIfsc(' + ${iterStat.index} + ', this.value)'" disabled="disabled"-->
+<!--								required="required">-->
+<!--								<option value="">--Select--</option>-->
+<!--							</select>-->
+<!--						</td>-->
+<!--						<td>-->
+<!--							<select th:id="'banktype'+${iterStat.index}" required="required" disabled="disabled">-->
+<!--								<option value="">--Select type--</option>-->
+<!--								<option value="C">CURRENT ACCOUNT</option>-->
+<!--								<option value="S">SAVING ACCOUNT</option>-->
+<!--							</select>-->
+<!--						</td>-->
+<!--						<td style="width: 10%;"><input th:id="'ifscCode'+${iterStat.index}" disabled="disabled"-->
+<!--								readonly="readonly"></td>-->
+						<!--                    <td style="width: 10%;"><input th:id="'ownername'+${iterStat.index}" required disabled  onkeypress="return isAlpha(event)" maxlength="100"></td>-->
+						<!--                    <td style="width: 10%;"><input th:id="'ownerfathername'+${iterStat.index}" required disabled  onkeypress="return isAlpha(event)" maxlength="100"></td>-->
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div><br><br>
+
+	<div class="panel panel-primary" style="max-width: 100%;overflow-x: scroll;overflow-y: auto;">
+		<div class="panel-heading"
+			style="text-align: center; background-color: honeydew; padding: 8px; margin: 0 auto; display: table;">
+			<b>Statement Showing the Crop Damage Particulars Due to Flood/Heavy Rains in October, 2024 For Add/Update Cultivator's
+			</b>
+		</div>
+		<div class="panel-body">
+
+			<input type="hidden" th:value="${type}" id="type" name="type">
+			<table id="detGrid" class="table table-bordered table-striped dataTable">
+				<thead class="color-palette" style="background-color: #9494b8;">
+					<tr>
+						<th style="color: white; width: 5%; background-color: #9494b8;"> <input type="checkbox"
+								id="masterCheckbox_bkg" onclick="toggleAllCheckboxes_bkg(this)" /></th>
+						<th style="color: white; width: 7%; background-color: #9494b8;"><b>District Name</b><br><b
+								style="margin-left:50%;">1</b></th>
+						<th style="color: white; width: 7%; background-color: #9494b8;"><b>Mandal Name</b><br><b
+								style="margin-left:50%;">2</b></th>
+						<th style="color: white; width: 19%; background-color: #9494b8;"><b>Village Name</b><br><b
+								style="margin-left:50%;">3</b></th>
+						<th style="color: white; width: 8%; background-color: #9494b8;"><b>e-Crop booking ID</b><br><b
+								style="margin-left:50%;">4</b></th>
+						<th style="color: white; width: 8%; background-color: #9494b8;" align="cener">
+							<b>Aadhaar</b><br><b style="margin-left:50%;">5</b></th>
+						<th style="color: white; width: 25%; background-color: #9494b8;"><b>Farmer Name</b><br><b
+								style="margin-left:50%;">6</b></th>
+						<th style="color: white; width: 25%; background-color: #9494b8;"><b>Father/husband
+								Name</b><br><b style="margin-left:50%;">7</b></th>
+						<th style="color: white; width: 8%; background-color: #9494b8;"><b>Crop</b><br><b
+								style="margin-left:50%;">8</b></th>
+						<th style="color: white; width: 5%; background-color: #9494b8;"><b>Tenant/ Owner</b><br><b
+								style="margin-left:50%;">9</b></th>
+						<th style="color: white; width: 19%; background-color: #9494b8;"><b>Khata No</b><br><b
+								style="margin-left:50%;">10</b></th>
+						<th style="color: white; width: 25%; background-color: #9494b8;"><b>Survey No</b><br><b
+								style="margin-left:50%;">11</b></th>
+						<th style="color: white; width: 10%; background-color: #9494b8;"><b>Occupant extent</b><br><b
+								style="margin-left:50%;">12</b></th>
+								<th style="color: white; width: 10%; background-color: #9494b8;"><b>Crop extent</b><br><b
+								style="margin-left:50%;">13</b></th>
+						<th style="color: white; width: 8%; background-color: #9494b8;"><b>Irrigated/Rainfed</b><br><b
+								style="margin-left:50%;">14</b></th>
+						<th style="color: white; width: 8%; background-color: #9494b8;"><b>Area damaged > 33%(in
+								Acres)</b><br><b style="margin-left:50%;">15</b></th>
+						<th style="color: white; width: 8%; background-color: #9494b8;"><b>Social status</b><br><b
+								style="margin-left:50%;">16</b></th>
+						<th style="color: white; width: 8%; background-color: #9494b8;">Field damage<b></b><br><b
+								style="margin-left:50%;">17</b></th>
+								<th style="color: white; width: 8%; background-color: #9494b8;">Sce extent<b></b><br><b
+								style="margin-left:50%;">18</b></th>
+<!--						<th style="color: white; width: 8%; background-color: #9494b8;"><b>Bank account</b><br><b-->
+<!--								style="margin-left:50%;">19</b></th>-->
+<!--						<th style="color: white; width: 8%; background-color: #9494b8;"><b>Bank name</b><br><b-->
+<!--								style="margin-left:50%;">20</b></th>-->
+<!--						<th style="color: white; width: 8%; background-color: #9494b8;"><b>Bank branch</b><br><b-->
+<!--								style="margin-left:50%;">21</b></th>-->
+<!--						<th style="color: white; width: 8%; background-color: #9494b8;"><b>Type of account</b><br><b-->
+<!--								style="margin-left:50%;">22</b></th>-->
+<!--						<th style="color: white; width: 8%; background-color: #9494b8;"><b>IFSC code</b><br><b-->
+<!--								style="margin-left:50%;">23</b></th>-->
+						<!--                    <th style="color: white; width: 8%; background-color: #9494b8;"><b>Farmer Name in English</b></th>-->
+						<!--                    <th style="color: white; width: 8%; background-color: #9494b8;"><b>Father/husband Name in English</b></th>-->
+					</tr>
+				</thead>
+				<tbody>
+
+					<tr th:each="cultivator, iterStat : ${bookingList}" th:attr="data-index=${iterStat.index}">
+						<input type="hidden" th:id="'wbdcode' + ${iterStat.index}"
+							th:value="${cultivator.cr_dist_code}">
+						<input type="hidden" th:id="'wbmcode' + ${iterStat.index}"
+							th:value="${cultivator.cr_mand_code}">
+						<input type="hidden" th:id="'wbvcode' + ${iterStat.index}" th:value="${cultivator.cr_vcode}">
+						<td><input type="checkbox" th:id="'checkbox_bkg' + ${iterStat.index}"
+								th:onchange="'toggleFields_bkg(' + ${iterStat.index} + ')'" /></td>
+						<td style="width: 10%;" th:text="${dname}">
+						</td>
+						<td style="width: 10%;" th:text="${mname}">
+						</td>
+						<td style="width: 10%;" th:text="${vname}">
+						</td>
+						<td><span th:text="${cultivator.bookingid}"></span>
+							<input type="hidden" th:id="'booking_bkg'+${iterStat.index}"
+								th:value="${cultivator.bookingid}">
+						</td>
+						<td><span th:text="${cultivator.cr_farmeruid}"></span>
+							<input type="hidden" th:id="'aadhaar_bkg'+${iterStat.index}"
+								th:value="${cultivator.cr_farmeruid}">
+						</td>
+						<td style="width: 25%;"><span th:text="${cultivator.occupname}"></span>
+							<input type="hidden" th:id="'ocname_bkg'+${iterStat.index}"
+								th:value="${cultivator.occupname}">
+						</td>
+						<td style="width: 15%;"><span th:text="${cultivator.occupfname}"></span>
+							<input type="hidden" th:id="'ocfname_bkg'+${iterStat.index}"
+								th:value="${cultivator.occupfname}">
+						</td>
+						<td>
+							<select th:id="'crop_bkg' + ${iterStat.index}" required="required" disabled="disabled">
+								<option value="">--Select--</option>
+								<th:block th:each="cropdet : ${cropdet}">
+									<option th:value="${cropdet.cr_crop}" th:text="${cropdet.cropname}"></option>
+								</th:block>
+							</select>
+						</td>
+						<td style="width: 3%;"><span th:if="${cultivator.owner_tenant == 'O'}" th:text="O"></span>
+							<span th:if="${cultivator.owner_tenant != 'O'}" th:text="T"></span>
+							<input type="hidden" th:id="'owner_bkg'+${iterStat.index}"
+								th:value="${cultivator.owner_tenant}">
+						</td>
+						<td style="width: 10%;"><span th:text="${cultivator.kh_no}"></span>
+							<input type="hidden" th:id="'khata_bkg'+${iterStat.index}" th:value="${cultivator.kh_no}">
+						</td>
+						<td style="width: 15%;"><span th:text="${cultivator.cr_sno}"></span>
+							<input type="hidden" th:id="'survey_bkg'+${iterStat.index}" th:value="${cultivator.cr_sno}">
+						</td>
+						
+						<td><span th:text="${cultivator.occupant_extent}"></span>
+							<input type="hidden" th:id="'occup_extent_bkg' + ${iterStat.index}"
+								th:value="${cultivator.occupant_extent}">
+						</td>
+						<td style="width: 3%;"> 
+							<input type="text" th:id="'extent_bkg'+${iterStat.index}" maxlength="8" disabled
+								th:required="required"
+								onkeypress="return ( event.charCode == 8 || event.charCode == 0) || event.charCode == 46 ? null : event.charCode >= 48 && event.charCode <= 57 ">
+						</td>
+						<td>
+							<select th:id="'irr_bkg' + ${iterStat.index}" required="required" disabled="disabled">
+								<option value="">--Select--</option>
+								<th:block th:each="irrdet : ${irrdet}">
+									<option th:value="${irrdet.wsrcid}" th:text="${irrdet.wsrcdesc}"></option>
+								</th:block>
+							</select>
+						</td>
+						<td style="width: 10%;"><input type="text" th:id="'damage_bkg'+${iterStat.index}"
+								disabled="disabled" th:required maxlength="8"
+								onkeypress="return ( event.charCode == 8 || event.charCode == 0) || event.charCode == 46 ? null : event.charCode >= 48 && event.charCode <= 57 ">
+						</td>
+						<td>
+							<select th:id="'caste_bkg' + ${iterStat.index}" required="required" disabled="disabled">
+								<option value="">--Select--</option>
+								<th:block th:each="caste : ${caste}">
+									<option th:value="${caste.castecode}" th:text="${caste.caste}"></option>
+								</th:block>
+							</select>
+						</td>
+							<td>
+							<select th:id="'sandtype_bkg'+${iterStat.index}" required="required" disabled="disabled"  th:onchange="'enablingExtent_bkg(' + ${iterStat.index} + ', this.value)'">
+								<option value="N">--Select--</option>
+								<option value="C">Sand Casting</option>
+								<option value="E">Soil Erosion</option>
+							</select>
+						</td>
+						<td style="width: 10%;"><input type="text" th:id="'sandextent_bkg'+${iterStat.index}"
+								disabled="disabled" th:required maxlength="8"
+								onkeypress="return ( event.charCode == 8 || event.charCode == 0) || event.charCode == 46 ? null : event.charCode >= 48 && event.charCode <= 57 ">
+						</td>
+<!--						<td style="width: 10%;"><input type="text" th:id="'bankaccount_bkg'+${iterStat.index}"-->
+<!--								disabled="disabled" required maxlength="20" onkeypress="return isAlphanumeric(event)">-->
+<!--						</td>-->
+<!--						<td>-->
+<!--							<select th:id="'bankname_bkg' + ${iterStat.index}"-->
+<!--								th:onchange="'getBranch_bkg(' + ${iterStat.index} + ', this.value)'" required="required"-->
+<!--								disabled="disabled">-->
+<!--								<option value="">--Select--</option>-->
+<!--								<th:block th:each="bank : ${bankList}">-->
+<!--									<option th:value="${bank.bnk_ifsc_cod}" th:text="${bank.bnk_name}"></option>-->
+<!--								</th:block>-->
+<!--							</select>-->
+<!--						</td>-->
+<!--						<td>-->
+<!--							<select th:id="'bankbranch_bkg' + ${iterStat.index}"-->
+<!--								th:onchange="'getIfsc_bkg(' + ${iterStat.index} + ', this.value)'" disabled="disabled"-->
+<!--								required="required">-->
+<!--								<option value="">--Select--</option>-->
+<!--							</select>-->
+<!--						</td>-->
+<!--						<td>-->
+<!--							<select th:id="'banktype_bkg'+${iterStat.index}" required="required" disabled="disabled">-->
+<!--								<option value="">--Select type--</option>-->
+<!--								<option value="C">CURRENT ACCOUNT</option>-->
+<!--								<option value="S">SAVING ACCOUNT</option>-->
+<!--							</select>-->
+<!--						</td>-->
+<!--						<td style="width: 10%;"><input th:id="'ifscCode_bkg'+${iterStat.index}" disabled="disabled"-->
+<!--								readonly="readonly"></td>-->
+						<!--                    <td style="width: 10%;"><input th:id="'ownername'+${iterStat.index}" required disabled  onkeypress="return isAlpha(event)" maxlength="100"></td>-->
+						<!--                    <td style="width: 10%;"><input th:id="'ownerfathername'+${iterStat.index}" required disabled  onkeypress="return isAlpha(event)" maxlength="100"></td>-->
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<input type="button" class="btn btn-success" value="Save" style="text-align: center;margin-left: 50%;"
+		onclick=" return saveDamaged()">
+	<br><br><br><br>
+	<div class="panel panel-primary">
+		<div class="panel-heading"
+			style="text-align: center; background-color: honeydew; padding: 8px; margin: 0 auto; display: table;margin-left: 35%;">
+			<b>Crop Damage Enumeration Details Due to Flood/Heavy Rains in October, 2024</b>
+		</div>
+		<div class="panel-body">
+
+			<input type="hidden" th:value="${type}" id="type" name="type">
+			<table id="ownerGrid" class="table table-bordered table-striped dataTable">
+				<thead class="color-palette" style="background-color: #9494b8;">
+					<tr>
+						<!--                    <th style="color: white; width: 7%; background-color: #9494b8;"><b>District Name</b></th>-->
+						<!--                    <th style="color: white; width: 7%; background-color: #9494b8;"><b>Mandal Name</b></th>-->
+						<!--                    <th style="color: white; width: 19%; background-color: #9494b8;"><b>Village Name</b></th>-->
+						<th style="color: white; width: 8%; background-color: #9494b8;"><b>e-Crop booking ID</b></th>
+						<th style="color: white; width: 8%; background-color: #9494b8;"><b>Aadhaar</b></th>
+						<th style="color: white; width: 25%; background-color: #9494b8;"><b>Farmer Name</b></th>
+						<th style="color: white; width: 25%; background-color: #9494b8;"><b>Father/husband Name</b></th>
+						<th style="color: white; width: 8%; background-color: #9494b8;"><b>Crop</b></th>
+						<th style="color: white; width: 8%; background-color: #9494b8;"><b>Social status</b></th>
+						<th style="color: white; width: 5%; background-color: #9494b8;"><b>Tenant/ Owner</b></th>
+						<th style="color: white; width: 19%; background-color: #9494b8;"><b>Khata No</b></th>
+						<th style="color: white; width: 25%; background-color: #9494b8;"><b>Survey No</b></th>
+						<th style="color: white; width: 10%; background-color: #9494b8;"><b>Crop extent</b></th>
+						<!--                    <th style="color: white; width: 8%; background-color: #9494b8;"><b>Irrigated/Rainfed</b></th>-->
+						<th style="color: white; width: 8%; background-color: #9494b8;"><b>Area damaged > 33% (in Acres)
+							</b></th>
+<!--						<th style="color: white; width: 8%; background-color: #9494b8;"><b>Bank account</b></th>-->
+						<!--                    <th style="color: white; width: 8%; background-color: #9494b8;"><b>Bank name</b></th>-->
+						<!--                    <th style="color: white; width: 8%; background-color: #9494b8;"><b>Bank branch</b></th>-->
+						<!--                    <th style="color: white; width: 8%; background-color: #9494b8;"><b>Type of bank</b></th>-->
+						<!--                    <th style="color: white; width: 8%; background-color: #9494b8;"><b>IFSC code</b></th>-->
+						<!--                    <th style="color: white; width: 8%; background-color: #9494b8;"><b>Farmer Name in English</b></th>-->
+						<!--                    <th style="color: white; width: 8%; background-color: #9494b8;"><b>Father/husband in English</b></th>-->
+					</tr>
+				</thead>
+				<tbody>
+
+					<tr th:each="cultivator, iterStat : ${allDetailsList}" th:attr="data-index=${iterStat.index}">
+						<!--                    <td style="width: 10%;" th:text="${dname}">-->
+						<!--					</td>-->
+						<!--                    <td style="width: 10%;" th:text="${mname}">-->
+						<!--					</td>-->
+						<!--                    <td style="width: 10%;" th:text="${vname}">-->
+						<!--					</td>-->
+						<td><span th:text="${cultivator.bookingid}"></span>
+						<td><span th:text="${cultivator.cr_farmeruid}"></span>
+						</td>
+						<td style="width: 25%;"><span th:text="${cultivator.occupname}"></span>
+						</td>
+						<td style="width: 15%;"><span th:text="${cultivator.occupfname}"></span>
+						</td>
+						<td style="width: 15%;"><span th:text="${cultivator.cropname}"></span>
+						</td>
+						<td style="width: 15%;"><span th:text="${cultivator.caste}"></span>
+						</td>
+						<td style="width: 3%;"><span th:if="${cultivator.owner_tenant == 'O'}" th:text="O"></span>
+							<span th:if="${cultivator.owner_tenant != 'O'}" th:text="T"></span>
+						</td>
+						<td style="width: 10%;"><span th:text="${cultivator.kh_no}"></span>
+						</td>
+						<td style="width: 15%;"><span th:text="${cultivator.cr_sno}"></span>
+						<td style="width: 3%;"><span th:text="${cultivator.occupant_extent}"></span>
+						</td>
+						<!--                    <td style="width: 3%;"><span th:if="${cultivator.cr_w_draw == 1}" th:text="Rainfed"></span>-->
+						<!--                        <span th:if="${cultivator.cr_w_draw != 1}" th:text="Irrigated"></span>-->
+						<!--                    </td>-->
+						<td style="width: 10%;" th:text="${cultivator.damaged_ext_abv_33}"></td>
+<!--						<td style="width: 10%;" th:text="${cultivator.bnk_acno}"></td>-->
+						<!--                    <td style="width: 10%;" th:text="${cultivator.bnk_code"></td>-->
+						<!--                    <td style="width: 10%;" th:text="${cultivator.bnk_brnch_cod"></td>-->
+						<!--                    <td style="width: 10%;" th:text="${cultivator.bnk_actype"></td>-->
+						<!--                    <td style="width: 10%;" th:text="${cultivator.prsnt_bnk_brnch_ifsc_cod"></td>-->
+						<!--                    <td style="width: 10%;" th:text="${cultivator.occupnameeng}"></td>-->
+						<!--                    <td style="width: 10%;" th:text="${cultivator.occupfnameeng}"></td>-->
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</body>
+
+</html>

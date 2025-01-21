@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="header">
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Incharge Approval</title>
+<style>
+    .container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+    }
+</style>
+</head>
+<body>
+	<div th:insert="headerImage"></div>
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+<br>
+	<div class="container">
+	<form th:action="@{'adainchargeapproval'}" method="post" id="approvalForm"
+		>
+		<input type="hidden" th:value="${mandalcodes}" name="mandalcode"
+			id="mandalcode" />
+		<div
+			style="background-color: green; margin-left: auto; margin-right: auto; width: 80%; text-align: center; font-size: 200%; color: white;">
+			Incharge / Additional Incharge Approval</div>
+
+		<div style="text-align: center;">
+			<span style="font-size: larger;"><strong>MANDAL:</strong> <span
+				th:text="${mandalNameName}"></span></span>
+		</div>
+		<br>
+			<div style="background-color: ghostwhite; width: 100%; margin-bottom: 20px; ">
+				<table id="myTable"
+					style="border: 3px solid black; border-collapse: separate; border-spacing: 0px; text-align:center;">
+					<thead style="background-color: darkgray; color: white;">
+						<tr>
+							<th style="border-right: 3px solid black;border-bottom: 3px solid black; padding-left: 5px; padding-right: 5px;"><input
+								type="checkbox" id="checkedAll" th:onclick="return checkAll();" />
+							</th>
+							<th style="border-right: 3px solid black;border-bottom: 3px solid black;">S.No.</th>
+							<th
+								style="text-align: center; padding-left: 10px; padding-right: 10px; border-right: 3px solid black;border-bottom: 3px solid black;">
+								RSK Name</th>
+							<th
+								style="text-align: center; padding-left: 10px; padding-right: 10px; border-right: 3px solid black;border-bottom: 3px solid black;">
+								RSK User ID</th>
+							<th
+								style="text-align: center; padding-left: 10px; padding-right: 10px; border-right: 3px solid black;border-bottom: 3px solid black;">
+								Employee Name</th>
+							<th
+								style="text-align: center; padding-left: 10px; padding-right: 10px; border-right: 3px solid black;border-bottom: 3px solid black;">
+								Employee Code</th>
+							<th
+								style="text-align: center; padding-left: 10px; padding-right: 10px; border-right: 3px solid black;border-bottom: 3px solid black;">
+								Masked Aadhaar</th>
+							<th
+								style="text-align: center; padding-left: 10px; padding-right: 10px; border-right: 3px solid black;border-bottom: 3px solid black;">
+								Incharge Status</th>
+							<th
+								style="text-align: center; padding-left: 10px; padding-right: 10px; border-right: 3px solid black;border-bottom: 3px solid black;">
+								Email Id</th>
+							<th
+								style="text-align: center; padding-left: 10px; padding-right: 10px; border-right: 3px solid black;border-bottom: 3px solid black;">
+								Designation</th>
+
+							<th
+								style="text-align: center; padding-left: 10px; padding-right: 10px; border-right: 3px solid black;border-bottom: 3px solid black;">
+								Recommendation</br> Of ADA
+							</th>
+							<th
+								style="text-align: center; padding-left: 10px; padding-right: 10px; border-right: 3px solid black;border-bottom: 3px solid black;">
+								Justification For </br> Recommendation </br>Made By ADA
+							</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="rowStat ,rowStatIter  : ${getadaDMcode}"
+							style="padding-top: 10px; border-bottom: 5px dotted black; border-spacing: 0px;">
+							<td
+								style="border-right: 3px solid black; border-bottom: 3px solid black;">
+								<input type="checkbox"
+								th:id="'checkboxId' + ${rowStatIter.index}" th:name="checkBoxID"
+								th:value="${rowStatIter.index}"
+								th:onclick="'getcheckboxValues(' + ${rowStatIter.index} + ')'" />
+							</td>
+							<td
+								style="border-right: 3px solid black; border-bottom: 3px solid black;">
+								<span th:text="${rowStatIter.index + 1}" data-label="S.no"></span>
+							</td>
+							<td th:text="${rowStat.Vname}"
+								style="border-right: 3px solid black; border-bottom: 3px solid black;">
+							</td>
+							<td th:text="${rowStat.Rbkuserid}"
+								style="border-right: 3px solid black; border-bottom: 3px solid black;">
+								
+							</td>
+							
+							<input type="hidden" th:id="'Rbkuserid'+${rowStatIter.index}"
+								th:name="Rbkuserid" th:value="${rowStat.Rbkuserid}" />
+								<input	type="hidden" th:id="'aadhaar'+${rowStatIter.index}" name="aadhaar" th:value="${rowStat.aadhaar}">
+							<td th:text="${rowStat.Empname}"
+								style="border-right: 3px solid black; border-bottom: 3px solid black;">
+							</td>
+							<td th:text="${rowStat.Empcode}"
+								style="border-right: 3px solid black; border-bottom: 3px solid black;">
+							</td>
+							<input type="hidden" th:id="'Empcode'+${rowStatIter.index}"
+								th:name="Empcode" th:value="${rowStat.Empcode}" />
+							<td th:text="${rowStat.Uid}"
+								style="border-right: 3px solid black; border-bottom: 3px solid black;">
+							</td>
+							<td
+								style="border-right: 3px solid black; border-bottom: 3px solid black;">
+								<span th:switch="${rowStat.Inchargests}"> <span
+									th:case="'I'">Incharge</span><span th:case="'A'">Additional
+										Incharge</span></span>
+							</td>
+							<td th:text="${rowStat.Email}" data-label="Email"
+								style="border-right: 3px solid black; border-bottom: 3px solid black;">
+							</td>
+							<td
+								style="border-right: 3px solid black; border-bottom: 3px solid black;">
+								<span th:switch="${rowStat.Designation}"> <span
+									th:case="'1'">VAA</span> <span th:case="'2'">VHA</span> <span
+									th:case="'3'">VSA</span> <span th:case="'4'">AEO</span> <span
+									th:case="'5'">MPEO</span> <span th:case="'6'">VFA</span> <span
+									th:case="'7'">ATM</span> <span th:case="'8'">BTM</span> <span
+									th:case="*" th:text="'Unknown'"></span>
+							</span>
+							</td>
+							<td
+								style="border-right: 3px solid black; border-bottom: 3px solid black;">
+								<select name="recommendation"
+								th:id="'recommendation'+${rowStatIter.index}" disabled
+								th:onchange="'return justification_enable('+ ${rowStatIter.index}+')'">
+									<option value="" disabled selected>--Select--</option>
+									<option value="A">Approve</option>
+									<option value="R">Reject</option>
+							</select>
+							</td>
+							<td
+								style="border-right: 3px solid black; border-bottom: 3px solid black;">
+								<input type="text" name="justification"
+								th:id="'justification'+${rowStatIter.index}"
+								placeholder="Justification" disabled />
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				<input type="hidden" id="pdcodeLst" name="pdcodeLst"> <input
+					type="hidden" id="pmcodeLst" name="pmcodeLst"> <input
+					type="hidden" id="pempcodeLst" name="pempcodeLst"> <input
+					type="hidden" id="prbkusrLst" name="prbkusrLst"> <input
+					type="hidden" id="maoRecLst" name="maoRecLst"> <input
+					type="hidden" id="justifyIdLst" name="justifyIdLst"> <input
+					type="hidden" id="rbkcodeLst" name="rbkcodeLst">
+					 <input type="hidden" id="aadhaarLst" name="aadhaarLst"> 
+
+				<div th:if="${noResults}" style="text-align: center;">
+					<b style="font-size: 50px;">-----No results found------</b>
+				</div>
+				<div th:if="${not #lists.isEmpty(getadaDMcode)}"></div>
+				<br>
+				<div style="text-align: center;">
+					<input type="submit" value="Submit" /> <a href="home">
+						<button type="button">Go Back</button>
+					</a>
+				</div>
+				<br>
+				<div style="text-align: center;">
+					<span th:utext="${msg}" style="font-size: 25px;" id="msg"></span>
+				</div>
+				</div>
+	</form>
+</div>
+			   <div style="text-align:center;">
+			       <div th:replace="maoroles/RegInchDet :: content (showDeactivate=false)"></div>
+			   </div>
+	<script>
+		
+		function hideErrorMessage() {
+			var errorMsg = document.getElementById('msg');
+			if (errorMsg) {
+				errorMsg.style.display = 'none';
+			}
+		}
+
+		setTimeout(hideErrorMessage, 5000);
+	function checkAll() {
+	    var recommendation = document.getElementsByName("recommendation");
+	    var justification = document.getElementsByName("justification");
+	    var checkedAll = document.getElementById("checkedAll").checked;
+
+	    for (var i = 0; i < recommendation.length; i++) {
+	        var recommendationElement = recommendation[i];
+	        var justificationElement = justification[i];
+
+	        if (checkedAll) {
+	            recommendationElement.removeAttribute("disabled");
+	        } else {
+	            recommendationElement.setAttribute("disabled", "disabled");
+	            justificationElement.setAttribute("disabled", "disabled");
+	            recommendationElement.value = "";  // Set recommendation to null when "Select All" is unchecked
+	            justificationElement.value = "";   // Set justification to null when "Select All" is unchecked
+	        }
+	    }
+	}
+		function justification_enable(a) {
+		    var recommendationDropdown = document.getElementById("recommendation" + a);
+		    var justification = document.getElementById("justification" + a);
+
+		    recommendationDropdown.addEventListener('change', function() {
+		        if (this.value == "A") {
+		            justification.disabled = true;
+		            justification.value = "A";
+		        } else if (this.value == "R") {
+		            justification.disabled = false;
+		            justification.value = "";  // Reset justification to empty when changing to "Reject"
+		        } else {
+		            justification.disabled = false;
+		            justification.value = "";
+		        }
+		    });
+
+		    // Initial setup based on the initial recommendation value
+		    if (recommendationDropdown.value == "A") {
+		        justification.disabled = true;
+		        justification.value = "A";
+		    } else {
+		        justification.disabled = false;
+		        justification.value = "R";
+		    }
+		}
+			
+		function getcheckboxValues(a) {
+		    var recommendationDropdown = document.getElementById("recommendation" + a);
+		    var justification = document.getElementById("justification" + a);
+
+		    if (document.getElementById("checkboxId" + a).checked) {
+		        recommendationDropdown.disabled = false;
+		    } else {
+		        recommendationDropdown.disabled = true;
+		        justification.disabled = true;
+		        recommendationDropdown.value = "";  
+		        justification.value = "";       
+		    }
+		}
+
+		// Function to enable/disable elements in a row
+		function toggleRowElements(parentRow, checkboxState) {
+    const recommendationDropdown = parentRow.querySelector('select[name="recommendation"]');
+    const justificationInput = parentRow.querySelector('input[name="justification"]');
+
+    if (recommendationDropdown) {
+        recommendationDropdown.disabled = !checkboxState;
+    }
+}
+		// Get the header checkbox
+		const headerCheckbox = document.getElementById('checkedAll');
+
+		// Get all checkboxes
+		const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+
+		// Add event listener to the header checkbox
+		headerCheckbox.addEventListener('click', function () {
+			checkboxes.forEach((checkbox) => {
+				const parentRow = checkbox.closest('tr');
+				checkbox.checked = this.checked;
+				toggleRowElements(parentRow, this.checked);
+			});
+		});
+
+		// Add event listeners to each checkbox
+		checkboxes.forEach((checkbox) => {
+			checkbox.addEventListener('click', function () {
+				const parentRow = this.closest('tr');
+				toggleRowElements(parentRow, this.checked);
+			});
+		});
+
+	/*	function submitClosure() {
+			var flag='false';
+			var title = "Are You Sure Want to Submit"
+			Swal.fire({
+				title: title,
+				showDenyButton: true,
+				showCancelButton: false,
+				confirmButtonText: "Submit",
+				denyButtonText: `Cancel`
+			}).then((result) => {
+				if (result.isConfirmed) {
+					flag='true';
+					return true;
+				}
+				else {
+					flag='false';
+					return false;
+				}
+			});
+			
+			
+			if(flag){
+		    var savecheck = document.getElementsByName("checkBoxID");
+		    var recommendationDropdowns = document.getElementsByName("recommendation");
+		    var justificationInputs = document.getElementsByName("justification");
+		    
+		    // Check if at least one checkbox is selected
+		    var atLeastOneChecked = false;
+		    var maoRecList = "";
+		    var justifyIdList = "";
+		    var empcodeList = "";
+		    var rbkusersList = "";
+		    for (var i = 0; i < savecheck.length; i++) {
+		        if (savecheck[i].checked) {
+		            atLeastOneChecked = true;
+		            maoRecList += recommendationDropdowns[i].value + ",";		          
+		            if (justificationInputs[i].value === "") {
+		                justifyIdList += " ,";
+		            } else {
+		                justifyIdList += justificationInputs[i].value + ",";
+		            }
+		            empcodeList += document.getElementById("Empcode" + i).value + ",";
+		            rbkusersList += document.getElementById("Rbkuserid" + i).value + ",";
+		        }		     
+		    }
+		    if (!atLeastOneChecked) {
+		        alert("Please select at least one record.");
+		        return false;
+		    }
+		    // Check if recommendation values are selected for all checked checkboxes
+		    for (var i = 0; i < recommendationDropdowns.length; i++) {
+		        if (savecheck[i].checked && recommendationDropdowns[i].value === "") {
+		            alert("Please select a recommendation value for selected records.");
+		            return false;
+		        }
+		    }
+		    document.getElementById("pempcodeLst").value = empcodeList;
+		    document.getElementById("prbkusrLst").value = rbkusersList;
+		    document.getElementById("maoRecLst").value = maoRecList;
+		    document.getElementById("justifyIdLst").value = justifyIdList;
+		    return true;  
+		    }
+		        	
+		}			*/
+		
+		document.getElementById("approvalForm").addEventListener("submit", function(event) {
+    event.preventDefault();
+    submitClosure().then(function(result) {
+        if (result) {
+            document.getElementById("approvalForm").submit(); // Submit the form
+        } else {
+            console.log("Submission cancelled or failed.");
+        }
+    }).catch(function(error) {
+        console.error("Error in submitClosure:", error);
+    });
+});
+		
+		
+	function submitClosure() {
+    var title = "Are You Sure Want to Submit";
+    
+    return Swal.fire({
+        title: title,
+        showDenyButton: true,
+        showCancelButton: false,
+        confirmButtonText: "Submit",
+        denyButtonText: `Cancel`
+    }).then((result) => {
+        if (result.isConfirmed) {
+            var savecheck = document.getElementsByName("checkBoxID");
+            var recommendationDropdowns = document.getElementsByName("recommendation");
+            var justificationInputs = document.getElementsByName("justification");
+            
+            var atLeastOneChecked = false;
+            var maoRecList = "";
+            var justifyIdList = "";
+            var empcodeList = "";
+            var rbkusersList = "";
+            var aadhaarList = "";
+            
+            for (var i = 0; i < savecheck.length; i++) {
+                if (savecheck[i].checked) {
+                    atLeastOneChecked = true;
+                    maoRecList += recommendationDropdowns[i].value + ",";
+                    justifyIdList += justificationInputs[i].value === "" ? " ," : justificationInputs[i].value + ",";
+                    empcodeList += document.getElementById("Empcode" + i).value + ",";
+                    rbkusersList += document.getElementById("Rbkuserid" + i).value + ",";
+                    aadhaarList += document.getElementById("aadhaar" + i).value + ",";
+                }
+            }
+            
+            if (!atLeastOneChecked) {
+                alert("Please select at least one record.");
+                return false; 
+            }
+            
+            for (var i = 0; i < recommendationDropdowns.length; i++) {
+                if (savecheck[i].checked && recommendationDropdowns[i].value === "") {
+                    alert("Please select a recommendation value for selected records.");
+                    return false; // Reject the promise to indicate failure
+                }
+            }
+            
+            document.getElementById("pempcodeLst").value = empcodeList;
+            document.getElementById("prbkusrLst").value = rbkusersList;
+            document.getElementById("maoRecLst").value = maoRecList;
+            document.getElementById("justifyIdLst").value = justifyIdList;
+            document.getElementById("aadhaarLst").value = aadhaarList;
+            
+            return true; 
+        } else {
+            return false; 
+        }
+    }).catch((error) => {
+        console.error('Error in submitClosure:', error);
+        return false; 
+    });
+    return false;
+}
+
+
+	</script>
+</body>
+</html>

@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head >
+
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+ 
+    <head th:insert="header"></head>
+    <div th:insert="headerImage"></div>
+    <div th:insert="navBarTop"></div>
+    <div th:insert="headerMessage"></div>
+   
+    <script>
+        function CallPrint(strid) {
+            var prtContent = document.getElementById(strid);
+            var mywindow = window.open('', '', 'left=0,top=0,width=950,height=600,toolbar=1,scrollbars=1,status=1,addressbar=0');
+            var is_chrome = Boolean(mywindow.chrome);
+            mywindow.document.write(prtContent.innerHTML);
+            mywindow.document.close(); // necessary for IE >= 10 and necessary before onload for chrome
+
+            if (is_chrome) {
+                mywindow.onload = function () { // wait until all resources loaded 
+                    mywindow.focus(); // necessary for IE >= 10
+                    mywindow.print(); // change window to mywindow
+                    mywindow.close(); // change window to mywindow
+                };
+            } else {
+                mywindow.focus(); // necessary for IE >= 10
+                mywindow.print();
+                mywindow.close();
+            }
+
+            return true;
+        }
+    </script>
+    <script>
+        var tableToExcel = (function () {
+            var uri = 'data:application/vnd.ms-excel;base64,',
+                template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table align="center">{table}</table></body></html>',
+                base64 = function (s) {
+                    return window.btoa(unescape(encodeURIComponent(s)));
+                },
+                format = function (s, c) {
+                    return s.replace(/{(\w+)}/g, function (m, p) {
+                        return c[p];
+                    });
+                };
+            return function (table, name) {
+                if (!table.nodeType) table = document.getElementById(table);
+                var ctx = {
+                    worksheet: name || 'Worksheet',
+                    table: table.innerHTML
+                };
+                window.location.href = uri + base64(format(template, ctx));
+            };
+        })();
+    </script>
+</head>
+
+<style>
+    #loading {
+        position: fixed;
+        top: 60%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        padding: 20px;
+        border-radius: 5px;
+    }
+</style>
+
+<script>
+    function validateForm() {
+        var cropyear = document.getElementById("cropyear").value;
+        var dcode = document.getElementById("inputdcode").value;
+        var mcode = document.getElementById("inputmcode").value;
+        var vcode = document.getElementById("inputvcode").value;
+
+        if (cropyear === "") {
+            $('#loading').hide();
+            alert("Please select a Crop Year");
+            return false;
+        }
+
+        if (dcode === "") {
+            alert("Please select a District");
+            return false;
+        }
+
+        if (mcode === "") {
+            $('#loading').hide();
+            alert("Please select a Mandal");
+            return false;
+        }
+
+        if (vcode === "") {
+            $('#loading').hide();
+            alert("Please select a Village");
+            return false;
+        }
+
+        return true;
+    }
+
+    $(document).ready(function () {
+        $.ajax({
+            type: "GET",
+            url: "./util/getAllSeason",
+            cache: false,
+            timeout: 600000,
+            success: function (resp) {
+                var $cropyear = $("#cropyear");
+                $cropyear.append('<option value="">-------Select---------</option>');
+                resp.forEach(function (bean) {
+                    $cropyear.append('<option value="' + bean.col1 + '">' + bean.col2 + '</option>');
+                });
+            }
+        });
+    });
+
+    function mandal() {
+        var inputdcode = $("#inputdcode").val();
+        $("#inputmcode").empty();
+        $.ajax({
+            type: "GET",
+            url: "./util/getAllmandal?dcode=" + inputdcode,
+            cache: false,
+            timeout: 600000,
+            success: function (resp) {
+                for (var j = 0; j < resp.length; j++) {
+                    var bean = resp[j];
+                    $("#inputmcode").append('<option value="' + bean.col1 + '">' + bean.col2 + '</option>');
+                }
+            }
+        });
+    }
+
+    function getSeedVariety() {
+        var cropyear = $("#cropyear").val();
+        var dcode = $("#inputdcode").val();
+        var mcode = $("#inputmcode").val();
+
+        $("#inputvcode").empty().append('<option value="">-------Select---------</option>');
+
+        if (!cropyear) {
+            alert("Please select a Crop Year first.");
+            return;
+        }
+
+        var parts = cropyear.split('@');
+        if (parts.length !== 2) {
+            alert("Invalid Crop Year format.");
+            return;
+        }
+
+        var season = parts[0];
+        var year = parts[1];
+        
+       
+        $.ajax({
+            type: "GET",
+            url: `./util/getSeedVarietyreport?season=${season}&year=${year}&dcode=${dcode}&mcode=${mcode}`,
+            cache: false,
+            timeout: 600000,
+            success: function (resp) {
+                resp.forEach(function (bean) {
+                    $("#seedvariety").append('<option value="' + bean.col1 + '">' + bean.col2 + '</option>');
+                });
+            },
+            error: function () {
+                alert("Failed to load seed varieties.");
+            }
+        });
+    }
+    function getData() {
+        $("#databody").empty();
+        $('#loading').show();
+        var cropyear = $("#cropyear").val();
+        var mcode = $("#inputmcode").val();
+        var seedvariety = $('#seedvariety').val();
+       // alert(seedvariety);
+
+        $.ajax({
+            type: "POST",
+            url: "./util/authfarmList",
+            contentType: "application/json", // Ensure the server supports JSON
+            data: JSON.stringify({
+                cropyear: cropyear,
+                mcode: mcode,
+                seedVariety: seedvariety
+            }),
+            cache: false,
+            timeout: 600000,
+            success: function (resp) {
+                $('#loading').hide();
+                var sno = 0,totalSalePrice=0;
+                       if(resp.length==0){
+						alert('No Records Found')
+							}
+                for (var j = 0; j < resp.length; j++) {
+                    var bean = resp[j];
+                    sno++; // Incrementing sno
+
+                    // Ensure subsidyamt and collectedamount are numbers
+                    var subsidyamt = parseFloat(bean.subsidyamt) || 0;
+                    var collectedamount = parseFloat(bean.collectedamount) || 0;
+
+                    var saleprice = subsidyamt + collectedamount; // Calculating saleprice
+                    totalSalePrice += saleprice;
+
+                    $("#databody").append(
+                        '<tr>' +
+                        '<td>' + sno + '</td>' +
+                        '<td>'+bean.cropName+'</td>' + // Placeholder cell
+                        '<td>'+ bean.seedvariety + '</td>' + // Placeholder cell
+                        '<td>' + bean.farmername + '</td>' +
+                        '<td>' + bean.dt_issue + '</td>' +
+                        '<td>' + bean.issuedbags + '</td>' +
+                        '<td>' + totalSalePrice.toFixed(2) + '</td>' + // Formatting saleprice to 2 decimal places
+                        '<td>' + bean.subsidyamt + '</td>' + 
+                        '<td>' + bean.issueduserid + '</td>' + 
+                        '<td>'+bean.authType+'</td>' +
+                        '<td>' + bean.mobileno + '</td>' + 
+                        '<td>' + bean.ts + '</td>' + 
+                        '</tr>'
+                    );
+                }
+            },
+            error: function () {
+                $('#loading').hide();
+                alert("An error occurred while processing the request.");
+            }
+        });
+    }
+
+    
+    function goBack() {
+        window.location.href = "./home";
+    }
+</script>
+//
+<body>
+	
+	<div class="heading" colspan="20" style="text-align: center;font-size:25px;">
+			<b>
+				<h4> Officer Authenticated Farmers List</h4>
+			</b>
+		</div>
+	
+	
+	
+	
+	
+    <div class="heading" style="text-align: center; font-size: 25px;">
+        <b></b>
+    </div>
+    <p th:text="${msg}"></p>
+
+    <div id="loading" style="display: none;">Loading...</div>
+
+    <input type="hidden" id="inputwbdcode" th:value="${#session.getAttribute('wbdcode')}" />
+
+    <div align="center">
+        <form>
+            <table id="ObjEntryTable">
+                <div>
+                    <b>Crop Year</b>
+                    <select id="cropyear" name="cropyear" style="width: 150px">
+                        <option value="">-------Select-------</option>
+                    </select>
+
+                    <b>District</b>
+                    <select name="selectedDist" id="inputdcode" style="width: 200px; text-align: left;" onchange="return mandal();">
+                        <option value="">----Select----</option>
+                        <option th:each="list : ${dist}" th:value="${list.dcode}" th:text="${list.dname}"></option>
+                    </select>
+                    &nbsp;&nbsp;&nbsp;&nbsp;
+
+                    <b>Mandal</b>
+                    <select id="inputmcode" name="selectedMand" style="width: 200px; text-align: left;" onchange="return getSeedVariety();">
+                        <option value="">----Select----</option>
+                    </select>
+                    &nbsp;&nbsp;&nbsp;&nbsp;
+
+                    <b>Seed Variety</b>
+                    <select id="seedvariety" name="seedvariety" style="width: 150px">
+                        <option value="">-------Select-------</option>
+                    </select>
+                </div>
+            </table>
+            <div colspan="3" align="center" style="padding-top: 10px; padding-bottom: 10px;">
+                <button type="button" id="btnSubmit" class="btn btn-success" value="Submit" onclick="return getData();">Submit</button>
+            </div>
+        </form>
+    </div>
+
+    <div>
+        <form method="post">
+            <div align="center" id="divPrint" class="table table-hover">
+                <table id="tableStkId" align="center" class="table table-striped border border-secondary">
+                    <thead>
+                        <tr>
+                            <th><b>S.No.</b></th>
+                            <th><b>Crop Name</b></th>
+                            <th><b>Seed Name</b></th>
+                            <th><b>Name of the Farmer</b></th>
+                            <th><b>Dt. of Allocation</b></th>
+                            <th><b>Quantity Issued<br/>(in Bags)</b></th>
+                            <th><b>Full Cost</b></th>
+                            <th><b>Subsidy<br>Amount</b></th>
+                            <th><b>Allocated Userid<br>Issued Userid</b></th>
+                            <th><b>Authentication Type</b></th>
+                            <th><b>OTP Mobile No.</b></th>
+                            <th><b>Time Stamp</b></th>
+                        </tr>
+                    </thead>
+                    <tbody id="databody"></tbody>
+                </table>
+            </div>
+        </form>
+        <div align="center" style="color: black">
+            <input class="btn btn-success" name="ctl00$ContentPlaceHolder1$btnPrint" type="button" id="ctl00_ContentPlaceHolder1_btnPrint" onclick="javascript:CallPrint('divPrint')" value="Print">
+            <input class="btn btn-success" type="button" onclick="tableToExcel('tableStkId', 'Abstract')" value="Excel">
+            <input class="btn btn-success" type="button" value="Back" onclick="goBack()" />
+        </div>
+    </div>
+</body>
+
+</html>

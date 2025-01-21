@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    
+    <script>
+        // JavaScript code here
+        alert("-----");
+    </script>
+</head>
+<body>
+
+    <h2>Login Page</h2>
+
+    <!-- Display a logout message if redirected with a "logout" parameter -->
+    <p th:if="${param.logout}">Logout successful!</p>
+
+	
+    <form th:action="@{./logout}" th:object="${user}" method="get">
+        <button  type="submit">Logout</button>
+    </form>
+
+</body>
+</html>

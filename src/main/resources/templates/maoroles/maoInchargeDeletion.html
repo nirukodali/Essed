@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="header">
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Incharge/Additional Incharge Deletion</title>
+</head>
+
+<body>
+	<div th:insert="headerImage"></div>
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+	<div class="row justify-content-center align-items-center">
+		<form th:action="@{'detetingMAO-Incharge'}" method="post"
+			onsubmit="return submitClosure();">
+			<h3
+				style="background-color: green; margin-left: auto; margin-right: auto; width: 80%; text-align: center; font-size: 200%; color: white;">
+				<b>Incharge/Addtitional Incharge Deletion</b>
+			</h3>
+			<br>
+			<div
+				style="background-color: ghostwhite; width: 100%; margin-bottom: 20px;">
+				<table id="myTable"
+					style="border: 3px solid black; border-collapse: separate; border-spacing: 0px; text-align: center;">
+					<thead style="background-color: darkgray; color: white;">
+						<tr>
+							<th
+								style="border-right: 3px solid black; border-bottom: 3px solid black; padding-left: 5px; padding-right: 5px;"><input
+								type="checkbox" id="checkedAll" th:onclick="return checkAll();" />
+							<th
+								style="text-align: center; padding-left: 10px; padding-right: 10px; border-right: 3px solid black; border-bottom: 3px solid black;">S.No.</th>
+							<th
+								style="text-align: center; padding-left: 10px; padding-right: 10px; border-right: 3px solid black; border-bottom: 3px solid black;">RSK
+								Name</th>
+							<th
+								style="text-align: center; padding-left: 10px; padding-right: 10px; border-right: 3px solid black; border-bottom: 3px solid black;">RSK
+								User ID</th>
+							<th
+								style="text-align: center; padding-left: 10px; padding-right: 10px; border-right: 3px solid black; border-bottom: 3px solid black;">Employee
+								Name</th>
+							<th
+								style="text-align: center; padding-left: 10px; padding-right: 10px; border-right: 3px solid black; border-bottom: 3px solid black;">Employee
+								Code</th>
+							<th
+								style="text-align: center; padding-left: 10px; padding-right: 10px; border-right: 3px solid black; border-bottom: 3px solid black;">Masked
+								Aadhaar</th>
+							<th
+								style="text-align: center; padding-left: 10px; padding-right: 10px; border-right: 3px solid black; border-bottom: 3px solid black;">Incharge
+								Status</th>
+							<th
+								style="text-align: center; padding-left: 10px; padding-right: 10px; border-right: 3px solid black; border-bottom: 3px solid black;">Email
+								Id</th>
+							<th
+								style="text-align: center; padding-left: 10px; padding-right: 10px; border-right: 3px solid black; border-bottom: 3px solid black;">Designation</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="rowStat ,rowStatIter  : ${getmaoDMcode}">
+							<td
+								style="border-right: 3px solid black; border-bottom: 3px solid black;"><input
+								type="checkbox" th:id="'checkboxId' + ${rowStatIter.index}"
+								th:name="checkBoxID" th:value="${#vars.counter}"
+								th:onclick=" 'getcheckboxValues('+ ${rowStatIter.index}+')'" /></td>
+							<td
+								style="border-right: 3px solid black; border-bottom: 3px solid black;"><span
+								th:text="${rowStatIter.index + 1}" data-label="S.no"></span></td>
+							<td
+								style="border-right: 3px solid black; border-bottom: 3px solid black;"
+								th:text="${rowStat.Vname}"></td>
+							<td
+								style="border-right: 3px solid black; border-bottom: 3px solid black;"
+								th:text="${rowStat.Rbkuserid}"></td>
+							<input type="hidden" th:id="'Rbkuserid'+${rowStatIter.index}"
+								th:name="Rbkuserid" th:value="${rowStat.Rbkuserid}" />
+							<td
+								style="border-right: 3px solid black; border-bottom: 3px solid black;"
+								th:text="${rowStat.Empname}"></td>
+							<td
+								style="border-right: 3px solid black; border-bottom: 3px solid black;"
+								th:text="${rowStat.Empcode}"></td>
+							<input type="hidden" th:id="'Empcode'+${rowStatIter.index}"
+								th:name="Empcode" th:value="${rowStat.Empcode}" />
+							<td
+								style="border-right: 3px solid black; border-bottom: 3px solid black;"
+								th:text="${rowStat.Uid}"></td>
+							<td
+								style="border-right: 3px solid black; border-bottom: 3px solid black;"><span
+								th:switch="${rowStat.Inchargests}"> <span th:case="'I'">Incharge</span><span
+									th:case="'A'">Additional Incharge</span></span></td>
+							<td
+								style="border-right: 3px solid black; border-bottom: 3px solid black;"
+								th:text="${rowStat.Email}" data-label="Email"></td>
+							<td
+								style="border-right: 3px solid black; border-bottom: 3px solid black;"><span
+								th:switch="${rowStat.Designation}"> <span th:case="'1'">VAA</span>
+									<span th:case="'2'">VHA</span> <span th:case="'3'">VSA</span> <span
+									th:case="'4'">AEO</span> <span th:case="'5'">MPEO</span> <span
+									th:case="'6'">VFA</span> <span th:case="'7'">ATM</span> <span
+									th:case="'8'">BTM</span> <span th:case="*" th:text="'Unknown'"></span>
+							</span></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div th:if="${noResults}" style="text-align: center;">
+				<b style="font-size: 40px;">-----No results found------</b>
+			</div>
+			<div th:if="${not #lists.isEmpty(getmaoDMcode)}"></div>
+			<div style="text-align: center;">
+				<span th:utext="${msg}" style="font-size: 25px;"></span>
+			</div>
+			<input type="hidden" id="pdcodeLst" name="pdcodeLst"> <input
+				type="hidden" id="pmcodeLst" name="pmcodeLst"> <input
+				type="hidden" id="pempcodeLst" name="pempcodeLst"> <input
+				type="hidden" id="prbkusrLst" name="prbkusrLst"> <input
+				type="hidden" id="rbkcodeLst" name="rbkcodeLst"> <br>
+			<div class="botn" align="center">
+				<button type="Submit" value="Submit">Submit</button>
+				<a href="home">
+					<button type="button">Go Back</button>
+				</a>
+			</div>
+		</form>
+	</div>
+	<script>
+		function checkAll() {
+			var checkboxes = document.getElementsByName("checkBoxID");
+			var checkedAll = document.getElementById("checkedAll").checked;
+
+			for (var i = 0; i < checkboxes.length; i++) {
+				checkboxes[i].checked = checkedAll;
+			}
+		}
+
+		function submitClosure() {
+			var empcodeList = "", rbkusersList = "";
+
+			var savecheck = document.getElementsByName("checkBoxID");
+			var checkedAll = document.getElementById("checkedAll").checked;
+
+			var atLeastOneChecked = false;
+
+			for (var i = 0; i < savecheck.length; i++) {
+				if (savecheck[i].checked) {
+					empcodeList += document.getElementById("Empcode" + i).value
+							+ ",";
+					rbkusersList += document.getElementById("Rbkuserid" + i).value
+							+ ",";
+					atLeastOneChecked = true;
+				}
+			}
+ 			if (!atLeastOneChecked) {
+ 				alert("Please select at least one record to submit / No Records Found");
+				return false; // Prevent form submission
+ 			}
+
+			document.getElementById("pempcodeLst").value = empcodeList;
+			document.getElementById("prbkusrLst").value = rbkusersList;
+		}
+	</script>
+
+</body>
+</html>

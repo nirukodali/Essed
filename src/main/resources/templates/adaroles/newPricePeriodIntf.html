@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="header"></head>
+
+<style>
+    /* Add padding to table headers for spacing */
+    th {
+        padding: 10px;
+        text-align: center;
+        background-color: #006400;
+        color: white;
+    }
+
+    /* Add margin or padding to header title */
+    .heading {
+        margin-bottom: 20px; /* Add some space between the header and table */
+        padding: 15px;
+        font-size: 18px;
+        text-align: center;
+        background-color: #006400;
+        color: white;
+    }
+
+    /* Add padding to table data cells for better readability */
+    td {
+        padding: 8px;
+        text-align: center;
+    }
+
+    /* Optional: Styling for the input fields inside the table */
+    select, input {
+        padding: 5px;
+        font-size: 14px;
+    }
+
+    /* Space for the dropdowns and other form elements */
+    .form-element {
+        margin-bottom: 20px;
+    }
+    
+    .tdnum {
+        text-align: right;
+        padding-right: 10px;
+    }
+    select {
+        width: 200px; /* Adjust based on your desired width */
+    }
+    tr {
+        margin-bottom: 10px;
+    }
+    
+</style>
+
+
+
+<body>
+
+	<div th:insert="headerImage"></div>
+
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+
+	<div align="center">
+
+		<body onload="setval()">
+
+			<form name="f1">
+				<table border="0">
+
+<th class="heading" colspan="2" style="background-color: #006400; color: white; text-align: center;">
+                    Add New Prices And Period
+                </th>
+					
+
+					<tr>
+						<td class="tdnum" width="50%"><b>
+								<font size="2">Crop Year:</font>
+								<font color="red">*</font>
+							</b></td>
+						<td>
+							<select th:id="year" name="year">
+								<option value="">----Select----</option>
+								<option value="2024">2021</option>
+								<option value="2024">2022</option>
+								<option value="2024">2023</option>
+								<option value="2024">2024</option>
+							</select>
+						</td>
+					</tr>
+
+					 <tr>
+        <td class="tdnum"><b>Season:</b></td>
+        <td><select th:id="season" name="season">
+            <option value="">----Select----</option>
+            <option th:each="activeSeasons : ${activeSeason}" th:value="${activeSeasons.season}"
+                    th:text="${activeSeasons.seasonname}"></option>
+        </select></td>
+    </tr>
+    <tr>
+        <td class="tdnum"><b>Seed Variety:</b></td>
+        <td><select th:id="seedName" name="seedName">
+            <option value="">----Select----</option>
+            <option th:each="svariety : ${seedVariety}" th:value="${svariety.varietycode}"
+                    th:text="${svariety.seedname}"></option>
+        </select></td>
+    </tr>
+					<tr>
+						<td colspan="2" align="center">
+							<input type="button" name="Submit" value="SUBMIT" onclick="submitForm()" />
+						</td>
+					</tr>
+
+				</table>
+			</form>
+			<br>
+
+			<table border="1">
+				<thead>
+					<tr>
+						<th><b> Sl.No </b> </th>
+						<th><b>Dist Name</b></th>
+						<th><b>Product Name</b></th>
+						<th><b>Product Price</b></th>
+						<th><b>Subsidy Amount</b></th>
+						<th><b>Non Subsidy Amount</b></th>
+						<th><b>From Date</b></th>
+						<th><b>To Date</b></th>
+						<th><b>Quantity per Bag</b></th>
+						<th><b>Active</b></th>
+						<th><b>Action</b></th>
+					</tr>
+				</thead>
+				<tbody id="agencyDetailsTableBody">
+					<!-- Agency details will be inserted here -->
+				</tbody>
+			</table>
+
+			<script type="text/javascript">
+				function submitForm() {
+
+					var cropYear = document.getElementById('year').value;
+					var seasonCode = document.getElementById('season').value;
+					var seedCode = document.getElementById('seedName').value;
+
+					$.ajax({
+						url: './pricePeriodDetails',   // The endpoint to fetch Agency Details
+						type: 'GET',
+						data: {
+							cropYear: cropYear,
+							seasonCode: seasonCode,
+							seedCode: seedCode
+						},  // Sending the selected mandal code
+						success: function (response) {
+							// Check if the response is an array and contains agency details
+							if (Array.isArray(response) && response.length > 0) {
+								var tableBody = $('#agencyDetailsTableBody'); // Table body where rows will be added
+								tableBody.empty(); // Clear any previous table rows
+
+								// Loop through the response (which is expected to be an array of agency details)
+								$.each(response, function (index, agency) {
+									// Create a new table row
+									var row = $('<tr></tr>');
+
+									// Add columns to the row with the agency details
+									row.append('<td>' + (index + 1) + '</td>');
+									row.append('<td>' + (agency.distName || '') + '</td>');
+									row.append('<td>' + (agency.varietyName || '') + '</td>');
+									row.append('<td>' + (agency.product_price || '') + '</td>');
+									row.append('<td>' + (agency.subsidy_amt || '') + '</td>');
+									row.append('<td>' + (agency.nonsubsidy_amt || '') + '</td>');
+									row.append('<td>' + (agency.fromdate || '') + '</td>');
+									row.append('<td>' + (agency.todate || '') + '</td>');
+									row.append('<td>' + (agency.quantityperbag || '') + '</td>');   
+									row.append('<td>' + (agency.active || '') + '</td>');
+									
+									//row.append('<td align="center"><button onclick="updateAgency(' + agency.index + ')">Update</button></td>');
+									row.append('<td align="center"><button onclick="updateAgency(' + agency.index + ', \'' + agency.distName + '\', \'' 
+									+ agency.varietyName + '\', \'' + agency.product_price + '\', \'' + agency.subsidy_amt + '\', \'' + agency.nonsubsidy_amt + '\', \'' 
+									+ agency.fromdate + '\', \'' + agency.todate + '\', \'' + agency.quantityperbag + '\', \'' + agency.active + '\', \'' + agency.dcode + '\', \'' 
+									+ agency.varietyCode+ '\')">Update</button></td>');
+
+
+									tableBody.append(row);
+								});//(\'' + editUrl + '\')
+							} else {
+								alert("No agency details found for the selected Variety.");
+							}
+						},
+						error: function (xhr, status, error) {
+							console.error("Error fetching agency details:", error);
+							alert("There was an error fetching the agency details.");
+						}
+					});
+				}
+
+
+
+
+function updateAgency(index, distName, varietyName, product_price, subsidy_amt, nonsubsidy_amt, fromdate, todate, quantityperbag, active, distCode, varietyCode) {
+	var cropYear = document.getElementById('year').value;
+					var seasonCode = document.getElementById('season').value;
+					var seedCode = document.getElementById('seedName').value;
+/*
+if (index === undefined) {
+        console.error("Index is undefined!");
+        return;
+    }
+
+const url = `./pricePeriodUpdateDetails?index=${encodeURIComponent(index)}&distname=${encodeURIComponent(distName)}
+&varietyName=${encodeURIComponent(varietyName)}&productPrice=${encodeURIComponent(productPrice)}&subsidyAmt=${encodeURIComponent(subsidyAmt)}&nonsubsidyAmt=${encodeURIComponent(nonsubsidyAmt)}&fromDate=${encodeURIComponent(fromDate)}&toDate=${encodeURIComponent(toDate)}&quantityPerBag=${encodeURIComponent(quantityPerBag)}&cropYear=${encodeURIComponent(cropYear)}&seasonCode=${encodeURIComponent(seasonCode)}&seedCode=${encodeURIComponent(seedCode)}&active=${encodeURIComponent(active)}`;
+
+    // Redirect to the new URL
+    window.location.href = url;
+*/
+	
+    window.location.href = "./pricePeriodUpdateDetails?index=" + index + 
+        "&distname=" + encodeURIComponent(distName) + 
+        "&varietyName=" + encodeURIComponent(varietyName) + 
+        "&productPrice=" + encodeURIComponent(product_price) + 
+        "&subsidyAmt=" + encodeURIComponent(subsidy_amt) + 
+        "&nonsubsidyAmt=" + encodeURIComponent(nonsubsidy_amt) + 
+        "&fromDate=" + encodeURIComponent(fromdate) + 
+        "&toDate=" + encodeURIComponent(todate) + 
+        "&quantityPerBag=" + encodeURIComponent(quantityperbag) + 
+        "&cropYear=" + encodeURIComponent(cropYear) +
+        "&seasonCode=" + encodeURIComponent(seasonCode) +
+        "&seedCode=" + encodeURIComponent(seedCode) +
+        "&active=" + encodeURIComponent(active)+
+        "&dCode=" + encodeURIComponent(distCode) +
+        "&varietyCode=" + encodeURIComponent(varietyCode);
+}
+
+			</script>
+
+
+		</body>
+
+</html>

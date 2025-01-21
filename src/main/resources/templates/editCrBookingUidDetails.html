@@ -1,0 +1,109 @@
+<div class="panel panel-primary">
+
+    <div class="panel-body">
+
+        <table id="ownerGrid" class="table table-bordered table-striped dataTable">
+            <thead class="color-palette" style="background-color: #9494b8;">
+            <tr>
+                <th style="color: white; width:10%;">S.No.</th>
+                <th style="color: white; width:10%;">Booking Id</th>
+                <th style="color: white; width:19%;">Pattadhar Name</th>
+                <th style="color: white; width:19%;">Pattadhar Father Name</th>
+                <th style="color: white; width:19%;">Cultivator Name</th>
+                <th style="color: white; width:19%;">Pattadhar Father Name</th>
+                <th style="color: white; width:7%;">Survey No</th>
+                <th style="color: white; width:7%;">Khata No</th>
+                <th style="color: white; width:8%;">Crop Name</th>
+                <th style="color: white; width:10%;">Variety Name</th>
+<!--                <th style="color: white; width:8%;">Crop Name</th>-->
+<!--                <th style="color: white; width:10%;">Variety Name</th>-->
+                <th style="color: white; width:8%;">Existing Aadhaar No</th>
+                <th style="color: white; width:10%;">New Aadhaar No</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:id="${ebd.bookingid}" th:each="ebd, ebdStat:${ecbdList}">
+                <td style="width:10%;">
+                    <span th:text="${ebdStat.index+1}"></span>
+                </td>
+                <td style="width:10%;">
+                    <span th:text="${ebd.bookingid}"></span>
+                    <input type="hidden" th:value="${ebd.bookingid}" th:id="'bookingid'+${ebdStat.index}">
+                    <input type="hidden" th:value="${ebd.season}" th:id="'season'+${ebdStat.index}">
+                    <input type="hidden" th:value="${ebd.cr_sow_date}" th:id="'cr_sow_date'+${ebdStat.index}">
+                    <input type="hidden" th:value="${ebd.cr_no}" th:id="'cr_no'+${ebdStat.index}">
+                    <input type="hidden" th:value="${ebd.cropyear}" th:id="'cropyear'+${ebdStat.index}">
+                    <input type="hidden" th:value="${ebd.wbdcode}" th:id="'wbdcode'+${ebdStat.index}">
+                </td>
+                <td style="width:10%;">
+                    <span th:text="${ebd.oc_name}"></span>
+                    <input type="hidden" th:value="${ebd.oc_name}" th:id="'oc_name'+${ebdStat.index}">
+                </td>
+                <td style="width:10%;">
+                    <span th:text="${ebd.oc_fname}"></span>
+                    <input type="hidden" th:value="${ebd.oc_fname}"
+                           th:id="'oc_fname'+${ebdStat.index}">
+                </td>
+                <td style="width:13%;">
+                    <span th:text="${ebd.occupname}"></span>
+                    <input type="hidden" th:value="${ebd.occupname}"
+                           th:id="'occupname'+${ebdStat.index}">
+                </td>
+                <td style="width:15%;">
+                    <span th:text="${ebd.occupfname}"></span>
+                    <input type="hidden" th:value="${ebd.occupfname}"
+                           th:id="'occupfname'+${ebdStat.index}">
+                </td>
+                <td style="width:10%;">
+                    <span th:text="${ebd.cr_sno}"></span>
+                    <input type="hidden" th:value="${ebd.cr_sno}"
+                           th:id="'cr_sno'+${ebdStat.index}">
+                </td>
+                <td style="width:10%;">
+                    <span th:text="${ebd.kh_no}"></span>
+                    <input type="hidden" th:value="${ebd.kh_no}"
+                           th:id="'kh_no'+${ebdStat.index}">
+                </td>
+<!--                <td style="width:10%;">-->
+<!--                    <span th:text="${ebd.cr_crop}"></span>-->
+<!--                    <input type="hidden" th:value="${ebd.cr_crop}"-->
+<!--                           th:id="'cr_crop'+${ebdStat.index}">-->
+<!--                </td>-->
+<!--                <td style="width:10%;">-->
+<!--                    <span th:text="${ebd.variety}"></span>-->
+<!--                    <input type="hidden" th:value="${ebd.variety}"-->
+<!--                           th:id="'variety'+${ebdStat.index}">-->
+<!--                </td>-->
+                
+                <td style="width:10%;">
+                    <span th:text="${ebd.cropname}"></span>
+                    <input type="hidden" th:value="${ebd.cropname}"
+                           th:id="'cropname'+${ebdStat.index}">
+                </td>
+                <td style="width:10%;">
+                    <span th:text="${ebd.vareityname}"></span>
+                    <input type="hidden" th:value="${ebd.vareityname}"
+                           th:id="'vareityname'+${ebdStat.index}">
+                </td>
+                <td style="width:10%;">
+                    <span th:text="${ebd.cr_farmeruid}"></span>
+                    <input type="hidden" th:value="${ebd.cr_farmeruid}"
+                           th:id="'cr_farmeruid'+${ebdStat.index}">
+                </td>
+                <td style="width:10%;">
+                    <input type="number" th:id="'newAadharNo'+${ebdStat.index}" name="newAadharNo"
+                           onkeypress="if(this.value.length > 11) return false"/>
+
+                </td>
+            </tr>
+
+            </tbody>
+
+
+        </table>
+
+    </div>
+    <div class="modal-footer d-flex justify-content-center">
+        <a class="btn btn-success" onclick="updateUidDetails()">Update</a>
+    </div>
+</div>

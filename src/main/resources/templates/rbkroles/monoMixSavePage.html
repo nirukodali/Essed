@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <title>Crop Details</title>
+    <style>
+        .webland-container {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 0px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+    </style>
+</head>
+
+<body>
+    <div th:insert="headerImage"></div>
+    <div th:insert="navBarTop"></div>
+    <div th:insert="headerMessage"></div>
+
+    <div class="container-fluid header-design-login">
+        <div class="row justify-content-center align-items-center" style="height: 10vh;">
+            <div class="webland-container">
+                <h5 style="color: black;">Selected Crop Details</h5>
+                <br />
+                    <span th:text="${message}"></span>
+                </div>
+                <div>
+                    <input type="button" id="btnBack" class="action-button" value="Go Back" onclick="goBack()">
+                </div>
+            </div>
+        </div>
+    </div>
+                 
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+       
+        function goBack() {
+            window.location.href = './cropPattern'; 
+        }
+    </script>
+</body>
+
+</html>

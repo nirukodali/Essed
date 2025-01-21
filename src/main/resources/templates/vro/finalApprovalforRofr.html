@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="header">
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ADA Approval </title>
+</head>
+
+<body>
+	<div th:insert="headerImage"></div>
+
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+
+	<div class="container-fluid header-design-login"
+		style=" width: 40%; height: 38vh;">
+		<div class="row justify-content-center align-items-center">
+			<div class="card ecropCard">
+			
+				<form th:action="@{/wrongaadhaarupdationsAda}" method="post"
+						th:object="${dto}"
+						style="width: 100%; padding-right: 0%; margin-left: 0%;">
+
+				<div class="card-title">
+				
+						<h4 th:if="${code == 'ada'}"
+							style="background-color: darkgreen; color: white; width: auto; text-align: center;">Final Approval Of ROFR/Cultivator Wrong Details</h4>
+						<input type="hidden" th:id="district" th:value="${#session.getAttribute('dcode')}">
+						<br />
+				</div>
+
+				<div class="mb-3 form-group">
+					<label for="cropyear"
+						style="padding-left: 10%; text-align: center;">Select Crop
+						Year :</label> <select id="cropyear" name="cropyear"
+						class="form-control custom-select"
+						style="width: 40%; margin-left: 19%;" required>
+						<option value="" disabled selected>Select Crop Year</option>
+						<option th:each="season : ${cropYear}"
+							th:value="${season.seasonvalue}" th:text="${season.seasonvalue}"></option>
+					</select>
+					<!--	 th:field="*{cropyear}"					<div th:if="${#fields.hasErrors('cropyear')}" th:errors="*{cropyear}" class="error-message" style="color:red;"></div>-->
+				</div>
+<div class="mb-3 form-group">
+					<label for="villageNames"
+						style="padding-left: 10%; text-align: center;">Select
+						Mandal :</label> <select id="mandal" name="mandal"
+						class="form-control custom-select"
+						style="width: 40%; margin-left: 23%;" onchange="getVillages()" required>
+						<option value="" disabled selected>Select Mandal</option>
+						<option th:each="list : ${list}" th:value="${list.col1}"
+							th:text="${list.col2}"></option>
+					</select>
+					<!--						 th:field="*{villageNames}"-->
+				</div>
+				<div class="mb-3 form-group">
+					<label for="villageNames"
+						style="padding-left: 10%; text-align: center;">Select
+						Village :</label> <select id="villageNames" name="villageNames"
+						class="form-control custom-select"
+						style="width: 40%; margin-left: 23%;" required>
+						<option value="" disabled selected>Select Village</option>
+					</select>
+					<!--						 th:field="*{villageNames}"-->
+				</div>
+				<button type="submit" class="btn btn-primary"
+					style="margin-right: 30px; margin-left: 40%;">Submit</button>
+				<button type="button" onclick="goBack()" class="btn btn-primary"
+					style="margin-right: 30px;">Go Back</button>
+				</form>
+			</div>
+		</div>
+	</div>
+
+</body>
+<script>
+	window.onload = function() {
+		if (window.performance
+				&& window.performance.navigation.type === window.performance.navigation.TYPE_BACK_FORWARD) {
+			location.reload();
+		}
+	}
+
+	function goBack() {
+		window.location.href = "./home";
+// 		window.history.back();
+	}
+
+	function getVillages() {
+			var district = $("#district").val();
+			var wbmcode = $("#mandal").val();
+			  $("#villageNames").empty();
+			$.ajax({
+				type: "get",
+				url: "./util/getAllVillagesForAdaForRofr?dcode=" + district + "&mcode=" + wbmcode,
+				cache: false,
+				timeout: 600000,
+				success: function (resp) {
+					for (var j = 0; j < resp.length; j++) {
+						var bean = resp[j];
+						$("#villageNames").append('<option value="' + bean.wbvcode + '">' + bean.wbvname + '</option>');
+					}
+				}
+			});
+		}
+</script>
+
+</html>

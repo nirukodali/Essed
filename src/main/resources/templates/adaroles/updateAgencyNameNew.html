@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="header"></head>
+
+<!-- jQuery UI CSS (for datepicker style) -->
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+<!-- jQuery library -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- jQuery UI JavaScript -->
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+
+
+<style>
+	#checkboxContainer {
+		max-height: 200px;
+		/* Adjust the height as needed */
+		overflow-y: scroll;
+		/* Enable vertical scrolling */
+		padding: 10px;
+		border: 1px solid #ccc;
+		/* Add border for clarity */
+		background-color: #f9f9f9;
+		/* Optional background color */
+		margin-top: 10px;
+	}
+
+	label {
+		display: block;
+		margin-bottom: 5px;
+		/* Space between checkboxes */
+	}
+
+	input[type="text"] {
+		width: 180px;
+		padding: 5px;
+		font-size: 14px;
+	}
+
+	#ftime,
+	#ttime,
+	#pstime,
+	#pctime,
+	#dstime,
+	#dctime {
+		background-color: #f4f4f4;
+		/* Light background color for visibility */
+		border: 1px solid #ccc;
+		/* Light border for input fields */
+		padding: 5px;
+	}
+</style>
+
+<body>
+
+	<div th:insert="headerImage"></div>
+
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+
+	<div align="center">
+
+		<FORM name="f1" METHOD=POST>
+			<div align="center">
+				<table>
+					<tr>
+						<td colspan="2" class="heading"><b>Update Agency Name</b></font>
+						</td>
+					</tr>
+
+					<tr>
+						<td class="tdnum" width="50%"> <b>
+								<font size="2">District</font>
+								<font color="red">*</font>
+							</b> </td>
+						<td>
+							<Select id="dcode" name="dcode" style="width:200px">
+								<option value="">----Select----</option>
+
+								<option th:each="district : ${district}" th:value="${district.dcode}"
+									th:text="${district.dname}">
+								</option>
+
+							</select>
+						</td>
+					</tr>
+					<!--                <tr> -->
+					<!--                    <td class="tdnum"> <b> Select Mandal </b> </td>-->
+					<!--                    <td>-->
+					<!--                        <Select id="mcode" name="mcode" onchange="getagencyDetails()" style="width:200px" >-->
+					<!--                            <option value="">----Select----</option>-->
+
+					<!--                        </select>                        -->
+					<!--                    </td>   -->
+
+					<!--                </tr>              -->
+
+					<tr>
+						<td class="tdnum" width="50%"> <b>
+								<font size="2">Agency</font>
+								<font color="red">*</font>
+							</b> </td>
+						<td>
+							<Select id="agencycode" name="agencycode" style="width:200px">
+								<option value="">----Select----</option>
+
+								<option th:each="agencyName : ${agencyName}" th:value="${agencyName.agencycode}"
+									th:text="${agencyName.agencyname}">
+								</option>
+
+							</select>
+						</td>
+					</tr>
+					<br>
+					<tr>
+						<td class="tdnum"><b>Product Name <font color="red">*</font></b> </td>
+						<td width="50%">
+
+							<select name="pcode" id="pcode" onchange="getspcode()" style="width: 200px">
+								<option value="">--Select--</option>
+
+								<option th:each="productname : ${productname}" th:value="${productname.productcode}"
+									th:text="${productname.productname}">
+								</option>
+
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td class="tdnum"><b> Sub Product Name <font color="red">*</font></b></td>
+						<td>
+							<select name="spcode" id="spcode" onchange="VarityName()" style="width: 200px">
+								<option value="">--Select--</option>
+
+							</select>
+						</td>
+					</tr>
+
+					<tr>
+						<td class="tdnum"><b> Seed Variety Name <font color="red">*</font></b></td>
+						<td>
+							<select name="seedVarity" id="seedVarity" style="width: 200px">
+								<option value="">--Select--</option>
+
+							</select>
+						</td>
+					</tr>
+
+
+
+
+
+
+
+					<tr>
+						<td colspan="2" align="center">
+							<input type="button" name="Submit" value="SUBMIT" onclick="addSeedAgency()" />
+						</td>
+					</tr>
+				</table>
+			</div>
+		</FORM>
+
+		<script type="text/javascript">
+
+
+
+			function addSeedAgency() {
+			
+				var dcode = document.getElementById('dcode').value;
+				var pcode = document.getElementById('pcode').value;
+				var spcode = document.getElementById('spcode').value;
+				var agencycode = document.getElementById('agencycode').value;
+				var seedVarity = document.getElementById('seedVarity').value;
+		
+		
+				var formData = {
+					dcode: dcode,
+					productcode: pcode,
+					subproductcode: spcode,
+					agency_code: agencycode,
+					varietycode: seedVarity
+				};
+
+				$.ajax({
+					url: './submitSeedAgency',
+					type: 'POST',
+					contentType: 'application/json', // Sending JSON data
+					dataType: 'json', // Expecting JSON response
+					data: JSON.stringify(formData),
+					success: function (response) {
+						alert('Success: ' + response);
+					},
+					error: function (xhr, status, error) {
+						alert('Error: ' + error);
+					}
+				});
+			}
+
+			function getspcode() {
+				// Get the product code from the select input
+				var productCode = $('#pcode').val();  // Using jQuery to get the value
+
+				// Check if productCode is not empty
+				if (productCode) {
+					// Prepare the AJAX request using jQuery's $.ajax()
+					$.ajax({
+						url: './getSubProductPricesAdditionNew',      // The URL to send the request to
+						type: 'GET',                  // HTTP method (GET)
+						data: {productCode: productCode},  // Send productCode as query parameter
+						success: function (response) {
+							// On success, update the subproduct dropdown
+							var subProductSelect = $('#spcode');
+							subProductSelect.empty();  // Clear existing options
+							subProductSelect.append('<option value="">--Select--</option>'); // Add default option
+
+							// Loop through the response (assumed to be an array of subproducts)
+							$.each(response, function (index, subProduct) {
+								// Create a new option for each subproduct
+								subProductSelect.append('<option value="' + subProduct.subproductcode + '">' + subProduct.subproductname + '</option>');
+							});
+						},
+						error: function (xhr, status, error) {
+							alert('Error: ' + error);
+						}
+					});
+				} else {
+					// If no product code selected, clear the subproduct dropdown
+					$('#spcode').empty().append('<option value="">--Select--</option>');
+				}
+			}
+
+			var varietyCode = '';
+			//VarityName
+			function VarityName() {
+				// Get the product code from the select input
+				var subproductCode = $('#spcode').val();  // Using jQuery to get the value
+
+				// Check if productCode is not empty
+				if (subproductCode) {
+					// Prepare the AJAX request using jQuery's $.ajax()
+					$.ajax({
+						url: './getVatietyNameNew',      // The URL to send the request to
+						type: 'GET',                  // HTTP method (GET)
+						data: {subproductCode: subproductCode},  // Send productCode as query parameter
+						success: function (response) {
+							// On success, update the subproduct dropdown
+							var subProductSelect = $('#seedVarity');
+							subProductSelect.empty();  // Clear existing options
+							subProductSelect.append('<option value="">--Select--</option>'); // Add default option
+
+							// Loop through the response (assumed to be an array of subproducts)
+							$.each(response, function (index, subProduct) {
+								// Create a new option for each subproduct
+								subProductSelect.append('<option value="' + subProduct.varietycode + '">' + subProduct.varietyname + '</option>');
+							});
+							if (response.length > 0) {
+								varietyCode = response[0].varietycode;  // Set the variety code from the first response item
+								console.log('Selected variety code:', varietyCode);
+							}
+						},
+						error: function (xhr, status, error) {
+							// Handle any errors that occur during the request
+							alert('Error: ' + error);
+						}
+					});
+				} else {
+					// If no product code selected, clear the subproduct dropdown
+					$('#spcode').empty().append('<option value="">--Select--</option>');
+				}
+			}
+
+
+
+			function isNumberKey(evt) {
+				var charCode = (evt.which) ? evt.which : evt.keyCode;
+				if (charCode != 46 && charCode > 31
+					&& (charCode < 48 || charCode > 57))
+					return false;
+
+				return true;
+			}
+
+		</script>
+
+
+</body>
+
+</html>

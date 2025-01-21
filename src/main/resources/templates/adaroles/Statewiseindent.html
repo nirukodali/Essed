@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="header">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>eKarshak</title>
+<!--	<link rel="stylesheet" href="./styles/reportstylesheet.css" />-->
+<head th:insert="header"></head>
+<div th:insert="headerImage"></div>
+<div th:insert="navBarTop"></div>
+<div th:insert="headerMessage"></div>
+<script>
+	function CallPrint(strid) {
+		var prtContent = document.getElementById(strid);
+		var mywindow = window
+				.open(
+						'',
+						'',
+						'left=0,top=0,width=950,height=600,toolbar=1,scrollbars=1,status=1,addressbar=0');
+		var is_chrome = Boolean(mywindow.chrome);
+		mywindow.document.write(prtContent.innerHTML);
+		mywindow.document.close(); // necessary for IE >= 10 and necessary before onload for chrome
+
+		if (is_chrome) {
+			mywindow.onload = function() { // wait until all resources loaded 
+				mywindow.focus(); // necessary for IE >= 10
+				mywindow.print(); // change window to mywindow
+				mywindow.close(); // change window to mywindow
+			};
+		} else {
+			mywindow.document.close(); // necessary for IE >= 10
+			mywindow.focus(); // necessary for IE >= 10
+			mywindow.print();
+			mywindow.close();
+		}
+
+		return true;
+	}
+</script>
+<script language="javascript">
+	var tableToExcel = (function() {
+		var uri = 'data:application/vnd.ms-excel;base64,', template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table align="center">{table}</table></body></html>', base64 = function(
+				s) {
+			return window.btoa(unescape(encodeURIComponent(s)))
+		}, format = function(s, c) {
+			return s.replace(/{(\w+)}/g, function(m, p) {
+				return c[p];
+			})
+		}
+		return function(table, name) {
+			if (!table.nodeType)
+				table = document.getElementById(table)
+			var ctx = {
+				worksheet : name || 'Worksheet',
+				table : table.innerHTML
+			}
+			window.location.href = uri + base64(format(template, ctx))
+		}
+	})()
+</script>
+
+</head>
+<style>
+#loading {
+	position: fixed;
+	top: 60%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	padding: 20px;
+	border-radius: 5px;
+}
+</style>
+
+
+<script>
+
+$(document).ready(
+		function() {
+			$.ajax({
+				type : "get",
+				url : "./util/getAllSeason",
+				cache : false,
+				timeout : 600000,
+				success : function(resp) {
+					for (var j = 0; j < resp.length; j++) {
+						var bean = resp[j];
+						$("#cropyear").append(
+								'<option value="' + bean.col1 + '">' + bean.col2 + '</option>');
+					}
+				}
+			});
+		});
+		
+		
+	$(document).ready(
+			function() {
+				$.ajax({
+					type : "get",
+					url : "./util/getseedgroup",
+					cache : false,
+					timeout : 600000,
+					success : function(resp) {
+						for (var j = 0; j < resp.length; j++) {
+							var bean = resp[j];
+							$("#seedgrp").append(
+									'<option value="' + bean.col1 + '">'
+											+ bean.col2 + '</option>');
+						}
+					}
+				});
+			});
+
+	function productdcode() {
+		var seedgrp = $("#seedgrp").val();//alert("seedgrp"+seedgrp)
+		$("#prdcode").empty();
+		$.ajax({
+			type : "get",
+			url : "./util/getprodseedcode?seedgrp=" + seedgrp,
+			cache : false,
+			timeout : 600000,
+			success : function(resp) {
+				for (var j = 0; j < resp.length; j++) {
+					var bean = resp[j];
+					$("#prdcode").append(
+							'<option value="' + bean.col1 + '">' + bean.col2
+									+ '</option>');
+				}
+			}
+		});
+	}
+
+	function subprdcode() {
+		var prdcode = $("#prdcode").val();//alert("prdcode"+prdcode)
+		$("#subcode").empty();
+		$.ajax({
+			type : "get",
+			url : "./util/getcodesubproduct?prdcode=" + prdcode,
+			cache : false,
+			timeout : 600000,
+			success : function(resp) {
+				for (var j = 0; j < resp.length; j++) {
+					var bean = resp[j];
+					$("#subcode").append(
+							'<option value="' + bean.col1 + '">' + bean.col2
+									+ '</option>');
+				}
+			}
+		});
+	}
+
+
+	function getData() {
+		$("#databody").empty();
+		$('#loading').show();
+		var cropyear = $("#cropyear").val();
+		var seedgrp = $("#seedgrp").val();
+		var prdcode = $("#prdcode").val();
+		var subcode = $("#subcode").val();
+		//alert("cropyear" + cropyear)
+		//alert("seedgrp" + seedgrp)
+		//alert("prdcode" + prdcode)
+		alert("subcode" + subcode)
+
+		$.ajax({
+			type : "get",
+			url : "./util/getindent?cropyear=" + cropyear + "&subcode=" + subcode,
+			cache : false,
+			timeout : 600000,
+			success : function(resp) {
+				alert(resp.length)
+				$('#loading').hide();
+				var sno = 0;
+				totallocbag =0;
+
+				for (var j = 0; j < resp.length; j++) {
+					sno = sno + 1;
+					var bean = resp[j];
+					$("#databody").append(
+							'<tr>' + '<td>' + sno + '</td>' +
+							'<td>' + bean.dname + '</td>' +
+							'<td>' + bean.name + '</td>' +
+							'<td>' + bean.quantity + '</td>' +
+							'<td>' + bean.allocatedfarmers + '</td>' +
+							'<td>' + bean.qtyallocated + '</td>' +
+							'<td>' +  + '</td>' +
+							'<td>' + bean.paidfarmers + '</td>' +
+							'<td>' + bean.qtylifted + '</td>' +
+							'<td>' +  + '</td>' +
+							'<td>' + bean.nonsubsidyamt.toFixed(4) + '</td>' +
+							'<td>' + bean.farmerslifted + '</td>' +
+							'<td>' + bean.paidfarmersqty + '</td>' +
+							'<td>' +  + '</td>' +
+							'<td>' + bean.subsidyamt.toFixed(4) + '</td>' +
+							'<td>' + bean.amountpaid.toFixed(4) + '</td>' +
+							'</tr>');
+				}
+			}
+		});
+	}
+
+	function goBack() {
+		window.location.href = "./home";
+	}
+</script>
+
+<body>
+
+	<div class="heading" style="text-align: center; font-size: 25px;">
+		<b> State Wide Indent Abstract On Seed Distribution</b>
+	</div>
+	<p th:text="${msg}"></p>
+
+	<div id="loading" style="display: none;">Loading...</div>
+
+
+	<div align="center">
+		<form>
+			<table id="ObjEntryTable">
+			
+			 	<tr>
+                    <td><b style="padding-left: 12%"> Crop Year <select name="cropyear" id="cropyear" style="width:170px">
+                            <option value="">---- Select ----</option>
+                        </select>
+                    </td>
+                </tr>
+				
+				<tr>
+                    <td> <b style="padding-left: 7%">Seed Group <select name="seedgrp" id="seedgrp" style="width:170px" onchange="return  productdcode();">
+                            <option value="">---- Select ----</option>
+                        </select>
+                    </td>
+                </tr>
+                
+				<tr>
+                    <td> <b >Product Name <select name="prdcode" id="prdcode" style="width:170px" onchange="return  subprdcode();">
+                            <option value="">---- Select ----</option>
+                        </select>
+                    </td>
+                </tr>
+                
+                <tr>
+                    <td><b style="padding-left: 5%">Sub Product <select name="subcode" id="subcode" style="width:170px">
+                            <option value="">---- Select ----</option>
+                        </select>
+                    </td>
+                </tr>
+			</table>
+			<div colspan="3" align="center"
+				style="padding-top: 10px; padding-bottom: 10px;">
+				<button type="button" id="btnSubmit" class="btn btn-success"
+					value="Submit" onclick="return getData();">Submit</button>
+			</div>
+		</form>
+	</div>
+	<div>
+		<form method="post">
+			<div align="center" id="divPrint" class="table table-hover">
+				<table id="tableStkId" align="center"
+					class="table table-striped border border-secondary"
+					style="width: 100%">
+					<thead>
+					  <tr>       
+                        <th  align="center" rowspan="2"> <b> S.No. </b> </th>
+                        <th  align="center" rowspan="2"> <b> District</b> </th>
+                        <!--<th  align="center" rowspan="2"> <b> Mandal</b> </th>-->  
+                        <th  align="center" rowspan="2"> <b> Crop Name</b> </th> 
+                         <th  align="center" rowspan="2"> <b> Indent</b> </th> 
+                        <!--<th  align="center" rowspan="2"> <b> Target By Mao</br>(in Quintals)</b> </th>--> 
+                        <th  class="color1" align="center" rowspan="2"> <b> Allocated</br> Farmers</b> </th>
+                        <th class="color1" align="center" colspan="2"> <b> Qty Allocated</b> </th> 
+
+                        <th class="lavender" align="center" rowspan="2"> <b> Paid </br>Farmers</b> </th>
+                        <th class="lavender" align="center" colspan="2"> <b>  Paid Farmers Qty</b> </th>                        
+                        <th class="lavender" align="center" rowspan="2"> <b>Collected </br>Amount</br>(in Lakhs)</b> </th>                                              
+                        <th class="wood" align="center" rowspan="2"> <b> Farmers </br>Lifted</b> </th>
+                        <th class="wood" align="center" colspan="2"> <b> Qty Lifted </b> </th>
+                        <th  class="wood" align="center" rowspan="2"> <b> Subsidy</br> Amount</br>(in Lakhs)</b> </th>
+                        <!--<th class="wood" align="center" rowspan="2"> <b>  Amount Collected</br> From Lifted Farmers</br>(in Lakhs)</b> </th>-->
+                        <th class="wood" align="center" rowspan="2"> <b>  Non Subsidy </br>Amount</br>(in Lakhs)</b> </th>
+
+
+                    </tr>
+                    <tr>
+
+                        <th class="color1">Bags</th>
+                        <th class="color1">Quintals</th> 
+                        <th class="lavender">Bags</th>
+                        <th class="lavender">Quintals</th>
+                        <th class="wood">Bags</th>
+                        <th class="wood">Quintals</th>
+                    </tr>
+					</thead>
+					<tbody id="databody">
+					</tbody>
+				</table>
+			</div>
+		</form>
+		<div align="center" style="color: black">
+			<input class="btn btn-success"
+				name="ctl00$ContentPlaceHolder1$btnPrint" type="button"
+				id="ctl00_ContentPlaceHolder1_btnPrint"
+				onClick="javascript:CallPrint('divPrint')" value="Print"> <input
+				class="btn btn-success" type="button"
+				onclick="tableToExcel('tableStkId', 'Abstract')" value="Excel">
+			<input class="btn btn-success" type="button" value="Back"
+				onclick="goBack()" />
+		</div>
+	</div>
+	</div>
+</body>
+
+</html>

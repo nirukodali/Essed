@@ -1,0 +1,114 @@
+
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="cultivatorROFRModal" class="container">
+	<div class="modal face" id="cultivatorROFRModal" tabindex="-1"
+		role="dialog" aria-labelledby="cultivatorROFRModal" aria-hidden="true">
+		<div class="modal-dialog" style="max-width: 700px !important;"
+			role="document">
+			<div class="modal-content">
+				<div class="modal-header"
+					style="padding-top: 5px; padding-bottom: 0px; background-color: #d6cbd3;">
+					<label class="modal-title col-sm-4 col-form-label"><b>Add
+							<label id=""></label> Details</label></b> <label
+						for="id" class="col-sm-4 col-form-label">Survey/LP No - <b
+						id="crSnoLabelR"></b></label> <label for="id"
+						class="col-sm-3 col-form-label">Katha No - <b
+						id="khNoLabelR"></b></label>
+
+
+
+					<button type="button" class="close" data-bs-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true"><b>&times;</b></span>
+					</button>
+				</div>
+
+				<div class="modal-body">
+					<div class="container">
+						<table class="table">
+<!-- 							<tr > -->
+<!-- 								<td><label for="id" class="col-form-label">Original Extent</label></td> -->
+<!-- 								<td>-</td> -->
+<!-- 								<td><input type="number" name="orgextentLabelOE" -->
+<!-- 									class="form-control" id="orgextentLabelR" disabled /></td> -->
+<!-- 							</tr> -->
+							<tr>
+								<td style="width: 30%;"><label for="id"
+									class="col-form-label"><label
+										id="cultivatorModalFieldId1OE"></label> Name</label> <input
+									name="ocNameR" type="hidden" id="ocNameR" /> <input
+									name="fatherNameR" type="hidden" id="fatherNameR"> <input
+									name="crSnoR" type="hidden" id="crSnoR" /> <!--								<input name="downloadedOE" type="hidden" id="downloadedOE" />-->
+									<input name="downloaded" type="hidden" id="downloaded" /> <input
+									name="part_keyR" type="hidden" id="part_keyR" /> <input
+									name="cr_vcodeR" type="hidden" id="cr_vcodeR" /> <input
+									name="cr_yearR" type="hidden" id="cr_yearR" /> <input
+									name="cr_seasonR" type="hidden" id="cr_seasonR" /> 
+									<input name="cultivatorIndexR" type="hidden"
+									id="cultivatorIndexR" /> <input name="refBookingIdR"
+									type="hidden" id="refBookingIdR" /> <input name="khNoR"
+									type="hidden" id="khNoR" /> <input name="cultivatorTypeR"
+									type="hidden" id="cultivatorTypeR" /> 
+									<input name="roleTypeR"
+									type="hidden" id="roleTypeR" /> <input type="hidden" id="typeeOfR" name="typeeOfR"> 
+									<input
+									name="bookingIdR" type="hidden" id="bookingIdR" />
+									<input
+									name="aadharNoR" type="hidden" id="aadharNoR" /></td>
+								<td>-</td>
+								<td><b id="ocNameLabelR"></b></td>
+							</tr>
+
+							<tr>
+								<td><label for="id" class="col-form-label">Father
+										Name</label></td>
+								<td>-</td>
+								<td><b id="fatherNameLabelR"></b></td>
+							</tr>
+							<tr>
+								<td><label for="id" class="col-form-label">Aadhaar
+										No</label></td>
+								<td>-</td>
+								<td>
+ 								<input type="hidden" name="aadharNoRofr" class="form-control" id="aadharNoRofr" disabled /> 
+								<b id="aadharNoLabelR"></b>
+<!-- <input type="number" name="aadharNoOE"  id="aadharNoOE" class="form-control aadharInput" /> -->
+								</td>
+									
+									
+							</tr>
+							
+							<tr>
+								<td><label for="id" class="col-form-label">Mobile
+										No</label></td>
+								<td>-</td>
+								<td>
+								<input type="text" name="MobileR" class="form-control" id="MobileR" 
+								 maxlength="10" onkeypress="return (event.charCode >= 48 && event.charCode <= 57)" />
+								</td>
+								</tr>
+							
+							<tr>
+								<td><label for="id" class="col-form-label">OccupantExtent</label>
+								</td>
+								<td>-</td>
+								<td>
+									<b id="ExtentR"></b>
+									</td>
+							</tr>
+						</table>
+
+						<a class="btn btn-success" id="ownerbtnId"
+							onclick="rofrDetails('R')" >Add</a>						
+						<a class="btn btn-danger" data-bs-dismiss="modal">Close</a>
+
+
+
+					</div>
+				</div>
+
+			</div>
+		</div>
+	</div>
+</div>
+</html>

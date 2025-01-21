@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="header"></head>
+
+<body>
+	<div th:insert="headerImage"></div>
+
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+	<div class="row" style="float: inline-end; padding-right: 5px;">
+		<div class="col-md-12">
+			<a th:href="@{/incharge_det}" class="btn btn-primary btn-block" style="width: 290px;">Click for
+				Additional/Incharge Details </a>
+		</div>
+	</div>
+
+	<div class="row justify-content-center align-items-center">
+
+		<form th:object="${rbk}" th:action="@{/rbkSaveprofile}" method="post" id="empFrom" class="align-items-center"
+			onsubmit="return validateForm(this.incharge.value)">
+			<div align="center">
+				<div class="card ecropCard">
+					<div class="card-title">
+						<h5 style="text-align: center;">Mapping Of Employee With
+							village secretariat</h5>
+					</div>
+
+					<div class="card-body" style="padding: 10px;">
+						<div class="form-group row">
+							<label for="empcode" class="col-sm-4 col-form-label">Select
+								Employee</label>
+							<div class="col-sm-8">
+								<select id="employee" name="employee" class="form-select form-control"
+									aria-label="Crop Year">
+									<option value="" th:disabled="true" th:selected="true">---Select
+										Name---</option>
+									<option th:each="emp : ${EmpName}" th:value="${emp.emp_code+'-'+emp.aadhaar_id}"
+										th:text="${emp.emp_name}">Employee Name</option>
+								</select>
+							</div>
+						</div>
+						<div class="form-group row">
+							<label for="empcode" class="col-sm-4 col-form-label">Select
+								Incharge</label>
+							<div class="col-sm-8">
+								<select id="incharge" name="incharge" class="form-select form-control"
+									aria-label="Select Incharge">
+									<option value="" th:disabled="true" th:selected="true">---Select
+										Incharge---</option>
+									<option value="I">Incharge</option>
+									<option value="R">Regular</option>
+								</select>
+							</div>
+						</div>
+						<div class="form-group row">
+							<label for="box" class="col-sm-4 col-form-label">Add
+								Village Secretariat</label>
+							<div class="col-sm-8">
+								<select id="village" name="village" class="form-select form-control"
+									aria-label="Select Village">
+									<option value="" th:disabled="true" th:selected="true">---Select
+										Village---</option>
+									<option th:each="emp : ${villname}" th:value="${emp.vcode}"
+										th:text="${emp.vname +'  ('+ emp.userid +')'}">Village
+										Name</option>
+								</select>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-12">
+								<div style="margin: 0 auto; width: 155px; color: #000;">
+									<button type="submit" class="btn btn-primary" id="searchId"
+										title="Search RSK Details">Add</button>
+									<button type="button" class="btn btn-warning" id="resetId"
+										th:onclick="window.location.href='/home'">Back</button>
+								</div>
+							</div>
+						</div>
+						<div>
+							<B><span th:utext="${msg}" style="color: red;" id="msg"></span></B>
+						</div>
+					</div>
+				</div>
+			</div><br>
+			<div style="text-align:center;">
+			       <div th:replace="maoroles/RegInchDet :: content (showDeactivate=true)"></div>
+			   </div>
+		</form>
+	</div>
+
+	<script>
+		function validateForm(incharge) {
+			var selectedEmployee = document.getElementById("employee").value;
+			var selectedIncharge = document.getElementById("incharge").value;
+			var selectedVillage = document.getElementById("village").value;
+
+			if (selectedEmployee == "" || selectedEmployee == "0") {
+				alert("Please select an employee.");
+				return false;
+			}
+
+			if (selectedIncharge == "") {
+				alert("Please select an incharge type.");
+				return false;
+			}
+
+			if (selectedVillage == "" || selectedVillage == "0") {
+				alert("Please select a village.");
+				return false;
+			}
+			var tit = 'Incharge'
+			if (incharge === 'R') {
+				tit = 'Regular'
+			}
+			var title = "Are you sure want to be added as " + tit;
+			Swal.fire({
+				title: title,
+				showDenyButton: true,
+				showCancelButton: false,
+				confirmButtonText: "Add",
+				denyButtonText: `Cancel`
+			}).then((result) => {
+				if (result.isConfirmed) {
+					document.getElementById("empFrom").submit();
+				}
+				else {
+				}
+			});
+			return false;
+		}
+
+		function hideErrorMessage() {
+			var errorMsg = document.getElementById('msg');
+			if (errorMsg) {
+				errorMsg.style.display = 'none';
+			}
+		}
+
+		setTimeout(hideErrorMessage, 5000);
+		function rbkmapDec(index) {
+			var selectedEmployee = $("#empcode_" + index).val();
+			var selectedIncharge = $("#empsts_" + index).val();
+			var selectedVillage = $("#rbkcode_" + index).val();
+			var aadhaar = $("#aadhaar_id" + index).val();
+
+			var title = "Are You Sure Want to Deactivate "
+			Swal.fire({
+				title: title,
+				showDenyButton: true,
+				showCancelButton: false,
+				confirmButtonText: "Deactivate",
+				denyButtonText: `Cancel`
+			}).then((result) => {
+				if (result.isConfirmed) {
+					window.location.href = "./rbkmapping";
+					$.ajax({
+						type: "post",
+						url: "./rbkmapDec?selectedEmployee=" + selectedEmployee + "&selectedIncharge=" + selectedIncharge + "&selectedVillage=" + selectedVillage + "&aadhaar=" + aadhaar,
+						cache: false,
+						timeout: 600000,
+						success: function (msg) {
+							alert(msg)
+						}
+					});
+				}
+				else {
+				}
+			});
+			return false;
+		}
+
+	</script>
+</body>
+
+</html>

@@ -1,0 +1,133 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="header">
+
+<meta charset="UTF-8">
+<title>Supervisory check Report</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!--	 Your custom styles -->
+<!--<link rel="stylesheet" type="text/css" href="css/style.css">-->
+
+<!--		Bootstrap and related scripts-->
+<!--<link-->
+<!--	href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"-->
+<!--	rel="stylesheet">-->
+
+<!--	 ajax/jquery -->
+<!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>-->
+
+</head>
+
+<body>
+    <div th:insert="header"></div>
+	<div th:insert="headerImage"></div>
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+
+	<div class="container">
+		<div class="row justify-content-center">
+			<div class="col-auto">
+				<div class="card card-body" style="background-color: #e6e2d3;">
+					<form action="#" th:action="@{/getSuperchkrep}" method="post">
+						<div class="card-title">
+							<h4 style="background-color: darkgreen; color: white; width: auto; text-align: center;padding: 7px;border: none;border-radius: 5px;">
+								Supervisory Check Report</h4>
+							<br />
+						</div>
+						<div align="center" id="divPrint">
+							<table align="center" style="width:100%; background-color:  #e6e2d3">
+								<tr>
+									<td class="tdnum" colspan="2" > <b>Crop Year <font color="red">*
+											</font>:</b> </td>
+									<td>
+										<select name="cropyear" id="cropyear" style="width: 200px">
+											<option value='' th:selected="0">------Select Crop Year--------</option>
+											<option th:each="cropyr: ${cropyears}" th:value="${cropyr.seasonvalue}"
+												th:text="${cropyr.cropyear}"></option>
+										</select>
+									</td>
+								</tr>
+
+
+								<tr>
+									<td align="center" colspan="3"> <input type="submit" value="Submit"
+											 class="btn btn-success mt-3"></td>
+								</tr>
+							</table>
+							<br><br>
+							<th class="heading" colspan="3"><b> Supervisory Check Entry Found Incorrect Report
+									&nbsp;&nbsp; &nbsp;&nbsp;</b></th>
+
+							</tr>
+						</div>
+					</form>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	<p id="displayText"></p>
+
+	<div
+			style="display: flex; justify-content: center; width: 100%; margin-top: 10px">
+			<div>
+				<table id="customers" class="table table-striped table-hover">
+		<thead>
+			<tr style="	background-color: #04AA6D;">
+				<th style="padding: 12px 15px; text-align: center; border: 1px solid #ddd;"> <b> S.No </b> </th>
+				<th style="padding: 12px 15px; text-align: center; border: 1px solid #ddd;"> <b>District Name</b> </th>
+				<th style="padding: 12px 15px; text-align: center; border: 1px solid #ddd;"> <b>Mandal Name </b> </th>
+				<th style="padding: 12px 15px; text-align: center; border: 1px solid #ddd;"> <b>Village Name</b> </th>
+				<th style="padding: 12px 15px; text-align: center; border: 1px solid #ddd;"> <b>Booking Id</b> </th>
+				<th style="padding: 12px 15px; text-align: center; border: 1px solid #ddd;"> <b>Occupant Name</b> </th>
+				<th style="padding: 12px 15px; text-align: center; border: 1px solid #ddd;"> <b>Occupant Name Father</b> </th>
+				<th style="padding: 12px 15px; text-align: center; border: 1px solid #ddd;"> <b>Variety Name</b> </th>
+				<th style="padding: 12px 15px; text-align: center; border: 1px solid #ddd;"> <b>Sown Date</b> </th>
+				<th style="padding: 12px 15px; text-align: center; border: 1px solid #ddd;"> <b>Khata No</b> </th>
+				<th style="padding: 12px 15px; text-align: center; border: 1px solid #ddd;"> <b> Survey No</b> </th>
+				<th style="padding: 12px 15px; text-align: center; border: 1px solid #ddd;"> <b>Reason for Entry Found Incorrect</b> </th>
+
+			</tr>
+		</thead>
+
+		<tbody>
+			<tr th:each="crpreport, iterStat : ${cropreport}">
+				<td th:text="${iterStat.count}"></td>
+
+				<td align="right" style="border:1px solid black; padding:7px" th:text="${crpreport.wbdname}"></td>
+				<td align="right" style="border:1px solid black; padding:7px" th:text="${crpreport.wbmname}"></td>
+				<td align="right" style="border:1px solid black; padding:7px" th:text="${crpreport.wbvname}"></td>
+				<td align="right" style="border:1px solid black; padding:7px" th:text="${crpreport.bookingid}"></td>
+				<td align="right" style="border:1px solid black; padding:7px" th:text="${crpreport.occup_name}"></td>
+				<td align="right" style="border:1px solid black; padding:7px" th:text="${crpreport.occup_fname}"></td>
+				<td align="right" style="border:1px solid black; padding:7px" th:text="${crpreport.varietyname}"></td>
+				<td align="right" style="border:1px solid black; padding:7px" th:text="${crpreport.cr_sow_date}"></td>
+				<td align="right" style="border:1px solid black; padding:7px" th:text="${crpreport.kh_no}"></td>
+				<td align="right" style="border:1px solid black; padding:7px" th:text="${crpreport.cr_sno}"></td>
+				<td align="right" style="border:1px solid black; padding:7px" th:text="${crpreport.reason}"></td>
+			</tr>
+		</tbody>
+	</table>
+	</div>
+	</div>
+	
+	 <div><span th:text="${bind}" class="text-danger text-danger d-flex w-100 justify-content-center"></span> </div>
+	 
+	 <script>
+        function submitForm() {
+            var cropyear = $('#cropyear').val();
+            if (cropyear == '') {
+                alert('Please select an option from the crop year.');
+                return false;
+            }
+           
+            $('#myform').submit();
+        }
+    </script>
+	
+</body>
+
+</html>

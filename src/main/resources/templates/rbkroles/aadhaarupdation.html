@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="header">
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aadhar Updation</title>
+
+</head>
+
+<body>
+	<div th:insert="headerImage"></div>
+
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+
+	<br>
+	<form id="updationForm" th:action="@{./aadhaarSearch}" method="get"
+		onsubmit="return validateForm()" >
+		<div
+			style="background-color: green; margin-left: auto; margin-right: auto; width: 100%; text-align: center; font-size: 200%; color: white;">
+			Update of Pattadar Empty Aadhaar No</div>
+
+		<div class="table-wrapper" style="margin: 20px; margin-right: 0;">
+			<div
+				style="background-color: ghostwhite; width: 100%; margin-bottom: 20px;">
+				<table id="myTable"
+					style="border: 1px solid black; border-collapse: separate; border-spacing: 0px;">
+					<thead style="background-color: darkgray; color: white;">
+						<tr>
+							<th style="padding: 10px; text-align: left; padding-left: 90px;"><input
+								id="main" type="checkbox"></th>
+							<th style="padding: 10px; text-align: center; width: 2%;">SNO</th>
+							<th style="padding: 10px; text-align: center; width: 20%;">Pattadar
+								Name</th>
+							<th style="padding: 10px; text-align: center; width: 20%;">Pattadar
+								Father Name</th>
+							<th style="padding: 10px; text-align: center; width: 15%;">Survey
+								No/LP No</th>
+							<th style="padding: 10px; text-align: center; width: 10%;">Khata
+								No</th>
+							<th style="padding: 10px; text-align: center; width: 15%;">Aadhaar
+								No</th>
+
+						</tr>
+
+					</thead>
+					<tbody>
+
+
+						<tr th:each="item : ${list}">
+
+
+							<td><input type="checkbox" class="sub-checkbox"
+								style="margin-left: 42%; padding: 10px;"></td>
+							<td style="padding: 10px; text-align: center;"
+								th:text="${itemStat.index + 1}"></td>
+							<td><input name="ocName"
+								style="text-align: center; font-size: large; width: 100%; height: 4lvh; margin-bottom: 5px; margin-top: 5px;"
+								th:value="${item.getOc_name()}" disabled></td>
+							<td><input name="ocfName"
+								style="text-align: center; font-size: large; width: 100%; height: 4lvh; margin-bottom: 5px; margin-top: 5px;"
+								th:value="${item.getOc_fname()}" disabled></td>
+							<td><input name="sNo"
+								style="text-align: center; font-size: large; width: 100%; height: 4lvh; margin-bottom: 5px; margin-top: 5px;"
+								th:value="${item.getCr_sno()}" disabled></td>
+							<td><input name="khNo"
+								style="text-align: center; font-size: large; width: 100%; height: 4lvh; margin-bottom: 5px; margin-top: 5px;"
+								th:value="${item.getKh_no()}" disabled></td>
+							<td><input class="input-field" name="aadhaar" id="aadhaar"
+								style="text-align: center; font-size: large; width: 100%; height: 4lvh; margin-bottom: 5px; margin-top: 5px;"
+								maxlength="12" onkeypress="return ( event.charCode == 8 || event.charCode == 0) || event.charCode == 46 ? null : event.charCode >= 48 && event.charCode <= 57 "
+								title="please enter 12 digit Aadhaar number" disabled required></td>
+							<td><input type="hidden" name="regno"
+								th:value="${item.getRegno()}"> <input type="hidden"
+								name="sjointoccupant" th:value="${item.getSjointoccupant()}">
+								<input type="hidden" name="cr_vcode"
+								th:value="${item. getCr_vcode()}"> <input type="hidden"
+								name="data_src" th:value="${item.getData_src()}"> <input
+								type="hidden" id="cr_year" name="cr_year"
+								th:value="${item. getCr_year() }"> <input type="hidden"
+								name="cr_season" th:value="${item. getCr_season()}">
+						</tr>
+						<tr>
+<h3 th:text="${empty}" th:value="${empty}"
+							style="text-align: center;"></h3></tr>
+
+					</tbody>
+
+					<tfoot>
+						<tr>
+						
+					
+							<td style="padding-left: 40%;"><input type="submit"
+								class="btn btn-primary" value="Submit"></td>
+							<td style="padding-left: 35%;"><input type="button"
+								class="btn btn-primary" value="Go Back" onclick="goBack()"></td>
+						</tr>
+					</tfoot>
+					
+				</table>
+			</div>
+
+		</div>
+	</form>
+	<script>
+
+
+
+		function mod(num, divisor) {
+			//alert('in mod');
+			return ((num % divisor) + divisor) % divisor;
+		}
+
+		function validateVerhoeff(num) {
+
+			var d = [
+				[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+				[1, 2, 3, 4, 0, 6, 7, 8, 9, 5],
+				[2, 3, 4, 0, 1, 7, 8, 9, 5, 6],
+				[3, 4, 0, 1, 2, 8, 9, 5, 6, 7],
+				[4, 0, 1, 2, 3, 9, 5, 6, 7, 8],
+				[5, 9, 8, 7, 6, 0, 4, 3, 2, 1],
+				[6, 5, 9, 8, 7, 1, 0, 4, 3, 2],
+				[7, 6, 5, 9, 8, 2, 1, 0, 4, 3],
+				[8, 7, 6, 5, 9, 3, 2, 1, 0, 4],
+				[9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
+			];
+
+			// permutation table p
+			var p = [
+				[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+				[1, 5, 7, 6, 2, 8, 3, 0, 9, 4],
+				[5, 8, 0, 3, 7, 9, 6, 1, 4, 2],
+				[8, 9, 1, 6, 0, 4, 3, 5, 2, 7],
+				[9, 4, 5, 3, 1, 2, 6, 8, 7, 0],
+				[4, 2, 8, 6, 5, 7, 3, 9, 0, 1],
+				[2, 7, 9, 3, 8, 0, 6, 4, 1, 5],
+				[7, 0, 4, 6, 9, 1, 3, 2, 5, 8]
+			];
+
+			var c = 0;
+			var myArray = [];
+			myArray = StringToReversedIntArray(num);
+			// alert(myArray);
+			for (var i = 0; i < myArray.length; i++) {
+				c = d[c][p[mod(i, 8)][myArray[i]]];
+				//	alert(c);
+			}
+
+			return (c == 0);
+		}
+		function StringToReversedIntArray(num) {
+			var myArray = [];
+
+			for (var i = 0; i < num.length; i++) {
+				myArray[i] = parseInt(num.substring(i, i + 1));
+			}
+			myArray = Reverse(myArray);
+
+			return myArray;
+
+		}
+		function Reverse(myArray) {
+			var reversed = [];
+
+			for (var i = 0; i < myArray.length; i++) {
+				reversed[i] = myArray[myArray.length - (i + 1)];
+			}
+			return reversed;
+		}
+
+
+
+		function goBack() {
+			window.location.href = './aadhaarSearch';
+			window.history.back();
+		}
+
+
+
+		document.getElementById('main').addEventListener('change', function () {
+
+
+
+			var checkboxes = document.querySelectorAll('.sub-checkbox');
+			checkboxes.forEach(function (checkbox) {
+				checkbox.checked = document.getElementById('main').checked;
+
+				updateInputState(checkbox);
+
+			});
+
+		});
+
+		var checkboxes = document.querySelectorAll('.sub-checkbox');
+		checkboxes.forEach(function (checkbox) {
+			checkbox.addEventListener('change', function () {
+				updateInputState(checkbox);
+			});
+		});
+
+		var inputFields = document.querySelectorAll('.input-field');
+		inputFields.forEach(function (input) {
+			input.addEventListener('input', function () {
+			});
+		});
+
+		function updateInputState(checkbox) {
+			var inputBox = checkbox.closest('tr').querySelector('.input-field');
+			inputBox.disabled = !checkbox.checked;
+		}
+
+		function validateForm() {
+			let checkboxes = document.querySelectorAll('.sub-checkbox:checked');
+			let records = document.querySelectorAll('.sub-checkbox');
+
+			if (records.length === 0 && checkboxes.length === 0) {
+				alert('No data to submit');
+				goBack();
+// 				window.location.href = '/aadhaarSearch';
+			}
+			if (records.length > 0 && checkboxes.length === 0) {
+
+				alert('Please check at least one checkbox');
+				return false;
+			}
+			else {
+				let uidNo = null;
+
+				checkboxes.forEach(function (checkbox) {
+					if (checkbox.checked) {
+						uidNo = checkbox.closest('tr').querySelector('[name="aadhaar"]').value.trim();
+					}
+				});
+				if (uidNo.length === 12) {
+					if (validateVerhoeff(uidNo)) {
+						validation();
+						alert('Data Updated Successfully')
+// 						window.location.href = '/aadhaarSearch';
+						 //   history.go(-1);
+
+					}
+					else if (!validateVerhoeff(uidNo)) {
+						alert('Enter valid AadhaarNo');
+						return false;
+					}
+				}
+				else {
+					alert('Enter 12 digit AadhaarNo');
+					return false;
+				}
+			}
+		}
+		function validation() {
+			var uidNo = document.getElementById('aadhaar').value.trim();
+			if (validateVerhoeff(uidNo)) {
+				document.getElementById('updationForm');
+				//.addEventListener('submit', function (event) {
+				var formDataArray = [];
+				goBack();
+				document.querySelectorAll('tbody tr').forEach(function (row) {
+					var checkbox = row.querySelector('.sub-checkbox');
+					if (checkbox && checkbox.checked) {
+						formDataArray.push({
+							ocName: row.querySelector('[name="ocName"]').value,
+							 ocfName: row.querySelector('[name="ocfName"]').value,
+							sNo: row.querySelector('[name="sNo"]').value,
+							kh_no: row.querySelector('[name="khNo"]').value,
+							regno: row.querySelector('[name="regno"]').value,
+							sjointoccupant: row.querySelector('[name="sjointoccupant"]').value,
+							cr_vcode: row.querySelector('[name="cr_vcode"]').value,
+							data_src: row.querySelector('[name="data_src"]').value,
+							cr_year: row.querySelector('[name="cr_year"]').value,
+							cr_season: row.querySelector('[name="cr_season"]').value,
+							aadhaar: row.querySelector('[name="aadhaar"]').value,
+						});
+					}
+					console.log('Inside forEach loop');
+				});
+
+				console.log('Before fetch');
+
+				$.ajax({
+				    url: './updated',
+				    type: 'POST',
+				    contentType: 'application/json;',
+				    data: JSON.stringify(formDataArray),
+				    success: function (data) {
+				        console.log('Success:', data);
+				        // Handle success response here
+				    },
+				    error: function (error) {
+				        console.error('Error during fetch operation:', error);
+				        // Handle error response here
+				    }
+				});
+				console.log('After fetch');
+				
+			}
+		}
+			
+// 		$(document).ready(function() {
+// 		    $('#updationForm').submit(function(event) {
+		    	
+		  
+// 		        event.preventDefault(); 
+		      
+// 		        // Serialize form data
+// 		        var formDataArray = [];
+// 		        $('tbody tr').each(function() {
+		        
+// 		        	  var uidNo = document.getElementById('aadhaar').value.trim();
+// 		        	  alert(uidNo)
+// 						if (validateVerhoeff(uidNo)) {
+// 		            var formData = {
+// 		                ocName: $(this).find('[name="ocName"]').val(),
+// 		                ocfName: $(this).find('[name="ocfName"]').val(),
+// 		                sNo: $(this).find('[name="sNo"]').val(),
+// 		                kh_no: $(this).find('[name="khNo"]').val(),
+// 		                aadhaar: $(this).find('[name="aadhaar"]').val(),
+// 		                regno: $(this).find('[name="regno"]').val(),
+// 		                sjointoccupant: $(this).find('[name="sjointoccupant"]').val(),
+// 		                data_src: $(this).find('[name="data_src"]').val(),
+// 		                cr_year: $(this).find('[name="cr_year"]').val(),
+// 		                cr_season: $(this).find('[name="cr_season"]').val(),
+// 		                cr_vcode: $(this).find('[name="cr_vcode"]').val()
+// 		            };
+// 					       }
+// 		            formDataArray.push(formData);
+// 		        });
+		       
+// 		        // AJAX request
+// // 		        $(this).attr('action'),
+// //				 $(this).attr('method'),
+// 		         $.ajax({
+//             url: './updated',
+//             type: 'GET',
+//             data: JSON.stringify(formDataArray),
+          
+//             success: function(data) {
+//             	  alert(JSON.stringify(formDataArray))
+//                 console.log('Success:', data);
+//                 // Handle success response here
+//             },
+//             error: function(error) {
+//                 console.error('Error during fetch operation:', error);
+//                 // Handle error response here
+//             }
+//         });
+// 		        alert('hiiii')
+				
+// 		    });
+// 		});
+	</script>
+</body>
+
+</html>

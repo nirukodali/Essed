@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="header">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+<!--	<link rel="stylesheet" href="./styles/reportstylesheet.css" />-->
+<head th:insert="header"></head>
+<div th:insert="headerImage"></div>
+<div th:insert="navBarTop"></div>
+<div th:insert="headerMessage"></div>
+
+<script>
+	function CallPrint(strid) {
+		var prtContent = document.getElementById(strid);
+		var mywindow = window
+				.open(
+						'',
+						'',
+						'left=0,top=0,width=950,height=600,toolbar=1,scrollbars=1,status=1,addressbar=0');
+		var is_chrome = Boolean(mywindow.chrome);
+		mywindow.document.write(prtContent.innerHTML);
+		mywindow.document.close(); // necessary for IE >= 10 and necessary before onload for chrome
+
+		if (is_chrome) {
+			mywindow.onload = function() { // wait until all resources loaded 
+				mywindow.focus(); // necessary for IE >= 10
+				mywindow.print(); // change window to mywindow
+				mywindow.close(); // change window to mywindow
+			};
+		} else {
+			mywindow.document.close(); // necessary for IE >= 10
+			mywindow.focus(); // necessary for IE >= 10
+			mywindow.print();
+			mywindow.close();
+		}
+
+		return true;
+	}
+</script>
+<script language="javascript">
+	var tableToExcel = (function() {
+		var uri = 'data:application/vnd.ms-excel;base64,', template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table align="center">{table}</table></body></html>', base64 = function(
+				s) {
+			return window.btoa(unescape(encodeURIComponent(s)))
+		}, format = function(s, c) {
+			return s.replace(/{(\w+)}/g, function(m, p) {
+				return c[p];
+			})
+		}
+		return function(table, name) {
+			if (!table.nodeType)
+				table = document.getElementById(table)
+			var ctx = {
+				worksheet : name || 'Worksheet',
+				table : table.innerHTML
+			}
+			window.location.href = uri + base64(format(template, ctx))
+		}
+	})()
+</script>
+
+</head>
+<script>
+	$(document).ready(function() {
+				
+		$("#databody").empty();
+		$("#loadingsign").show();
+		var dcode = $("#wbdcode").val();
+		var mcode = $("#wbmcode").val();
+		var role = $("#role").val();
+		
+
+		var data = {};
+
+		data['wbdcode'] = dcode;
+		data['wbmcode'] = mcode;
+		data['role'] = role;
+
+		$.ajax({
+			type : "post",
+			url : "./utilMao/reserveydS",
+			contentType : 'application/json',
+			data : JSON.stringify(data),
+			cache : false,
+			timeout : 600000,
+			success : function(resp) {
+				$("#loadingsign").hide();
+				$("#databody").empty();
+				//alert(JSON.stringify(resp));
+				
+				if(resp.length==0){
+								alert('No Records Found')
+							}
+				var sno = 0;
+
+				for (var j = 0; j < resp.length; j++) {
+					sno = sno + 1;
+		            var bean = resp[j];
+		         //   alert(bean.wbvname)
+
+		            $("#databody").append(
+		            	    '<tr style="fontsize:200px; font-weight: 0;">'
+		            	        + '<td align="center">' + sno + '</td>'
+		            	        + '<td align="left">'  +  bean.wbdname + '</td>'
+		            	        + '<td align="left">'  +  bean.wbmname + '</td>'
+		            	        + '<td align="left">'  +  bean.wbvname + '</td>'
+		            	        + '<td align="left">'  +  bean.wbedname + '</td>'
+		            	        + '<td align="left">'  +  bean.wbemname + '</td>'
+		            	        + '<td align="left">'  +  bean.wbevname + '</td>'
+		            	        + '<td align="center">'+ bean.resurveyed + '</td>' 
+		            	    + '</tr>');
+				}
+			}
+		});
+	});
+	function goBack(){
+		window.location.href="./home";
+		}
+
+</script>
+
+<style>
+#ObjEntryTable {
+	border-collapse: separate;
+	border-spacing: 0 0.5em;
+	margin-right: -3%
+}
+</style>
+
+
+<body>
+	<form method="post">
+		<div class="heading" colspan="20" style="text-align: center;font-size:25px;">
+			<b>
+				<h4> Resurveyed Status</h4>
+			</b>
+		</div>
+		<p th:text="${msg}"></p>
+
+		<input type="hidden" id="role"th:value="${#session.getAttribute('role')}" />  
+ 		<input type="hidden" id="wbdcode" th:value="${#session.getAttribute('wbdcode')}" />  
+ 		<input type="hidden" id="wbmcode" name="wbmcode" th:value="${#session.getAttribute('wbmcode')}" />  
+<!-- 		<input type="hidden"id="inputuserid" th:value="${#session.getAttribute('userid')}" />  -->
+<!-- 		<input type="hidden" id="activeyear" th:value="${#session.getAttribute('ACTIVEYEAR')}" />  -->
+
+		<div id="loadingsign">
+			<div class="d-flex justify-content-center">
+				<div class="spinner-border" role="status">
+					<span class="sr-only">Loading...</span>
+				</div>
+			</div>
+		</div>
+		
+
+			<div align="center" id="divPrint"
+				class="table table-hover table table-striped">
+				<table id="tableStkId" align="center"
+					style="text-align: center; width:90%">
+					<thead>
+						<tr>
+							<th><b> S.No. </b></th>
+							<th align="center"><b>District Name</b></th>
+							<th align="center"><b>Mandal Name</b></th>
+							<th align="center"><b>Village Name</b></th>
+							<th align="center"><b>District English Name</b></th>
+							<th align="center"><b>Mandal English Name </b></th>
+							<th align="center"><b>Village English Name </b></th>
+							<th align="center"><b>Resurveyed <br> Status </b></th>
+							<th><b></b></th>
+						</tr>
+					</thead>
+					<tbody id="databody">
+						<!-- 					 <tr th:each="item : ${list}">  -->
+						<!--  					 <td th:text="${item.lgdvname}">  -->
+					</tbody>
+				</table>
+			</div>
+
+			<div align="center" style="color: black; margin-top: 20px;">
+				<input class="btn btn-success"
+					name="ctl00$ContentPlaceHolder1$btnPrint" type="button"
+					id="ctl00_ContentPlaceHolder1_btnPrint"
+					onClick="javascript:CallPrint('divPrint')" value="Print"> <input
+					class="btn btn-success" type="button"
+					onclick="tableToExcel('tableStkId', 'Abstract')" value="Excel">
+<input  class="btn btn-success" type="button" value="Back" onclick="goBack()" />
+
+			</div>
+		
+		
+	</form>
+</body>
+
+</html>

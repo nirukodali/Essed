@@ -1,0 +1,115 @@
+<div th:fragment="cultivatorModal" class="container">
+	<form th:action="@{/cultivator/save}" method="post"> 
+		<div class=" modal face" id="cultivatorModal" tabindex="-1" role="dialog" aria-labelledby="cultivatorModal"
+			aria-hidden="true">
+			<div class="modal-dialog" style="max-width: 700px!important;" role="document">
+				<div class="modal-content">
+					<div class="modal-header" style="padding-top: 7px;padding-bottom: 0px;background-color: #d6cbd3;">
+						<label class="modal-title col-sm-4 col-form-label"><b>Add <label
+									id="cultivatorModalHeaderId"></label> Details</label></b>
+						<label for="id" class="col-sm-4 col-form-label">Survey/LP No - <b id="crSnoLabel"></b></label>
+
+						<label for="id" class="col-sm-3 col-form-label">Katha No - <b id="khNoLabel"></b></label>
+
+						<button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"> <span
+								aria-hidden="true"><b>&times;</b></span></button>
+					</div>
+
+					<div class="modal-body">
+						<div class="container">
+							<div class="form-group row">
+								<label for="validationCustomUsername" class="col-sm-3 col-form-label">Original Extent - </label>
+								<input style="width: 470px;margin-left: 16px;" type="number" name="orgextentLabelC"
+									class="form-control" id="orgextentLabelC" disabled />
+									</div>
+							<div class="form-group row">
+								<label for="id" class="col-sm-3 col-form-label">Cultivator Name</label>
+								<div class="col-sm-9">
+									<input type="text" name="ocName" class="form-control" id="ocName"
+										placeholder="Please Enter Cultivator Name."  onkeypress="return Validate(event);" maxlength="100">
+									<div class="invalid-feedback">
+										Please Enter Cultivator Name.
+									</div>
+									<input name="part_key" type="hidden" class="form-control" id="part_key" />
+									<input name="cr_vcode" type="hidden" class="form-control" id="cr_vcode" />
+									<input name="cr_year" type="hidden" id="cr_year" />
+									<input name="cr_season" type="hidden" id="cr_season" />
+									<input name="availableExtent" type="hidden" id="availableExtent" />
+									<input name="owner_tenant" type="hidden" id="owner_tenant" />
+									<input name="cultivatorIndex" type="hidden" id="cultivatorIndex" />
+									<input name="crSno" type="hidden" id="crSno" />
+									<input name="downloaded" type="hidden" id="downloaded" />
+									<input name="khNo" type="hidden" id="khNo" />
+									<input name="crSno" type="hidden" id="crSno" />
+									<input name="refBookingId" type="hidden" id="refBookingId" />
+									<input name="cultivatorType" type="hidden" id="cultivatorType" />
+									<input type="hidden" id="typeeOfC" name="typeeOfC"> 
+								</div>
+							</div>
+
+							<div class="form-group row">
+								<label for="validationCustomUsername" class="col-sm-3 col-form-label">Father
+									Name</label>
+								<div class="col-sm-9">
+									<input type="text" name="fatherName" class="form-control" id="fatherName"
+										placeholder="Please Enter Cultivator Father Name." onkeypress="return Validate(event);"  maxlength="100" />
+									<div class="invalid-feedback">
+										Please Enter Cultivator Father Name.
+									</div>
+								</div>
+							</div>
+
+							<div class="form-group row">
+								<label for="id" class="col-sm-3 col-form-label">Aadhaar No</label>
+								<div class="col-sm-9">
+									<input type="text" name="aadharNo" class="form-control" id="aadharNo"
+										placeholder="Please Enter Cultivator Aadhar No"
+										onkeypress="return ValidateNum(event);" maxlength="12" onblur="fetchFarmerMobilenoCulti()"/>
+									<div class="invalid-feedback">
+										Please Enter Cultivator Aadhaar No.
+									</div>
+								</div>
+							</div>
+								<div class="form-group row">
+								<label for="id" class="col-sm-3 col-form-label">Mobile No</label>
+								<div class="col-sm-9">
+									<input type="text" name="MobileC" class="form-control" id="MobileC"
+									 maxlength="10" onkeypress="return (event.charCode >= 48 && event.charCode <= 57)">
+									<div class="invalid-feedback">
+										Please Enter Occupant Extent.
+									</div>
+								</div>
+							</div>
+							
+							
+							<div class="form-group row">
+								<label for="id" class="col-sm-3 col-form-label">Occupant Extent</label>
+								<div class="col-sm-9">
+									<input type="text" name="occupantExtent" class="form-control" id="occupantExtent"
+										placeholder="Please Enter Occupant Extent" maxlength="11" onkeypress="return ( event.charCode == 8 || event.charCode == 0) || event.charCode == 46 ? null : event.charCode >= 48 && event.charCode <= 57 "  
+								pattern="^\d{1,6}(\.\d{0,2})?$">
+									<div class="invalid-feedback">
+										Please Enter Occupant Extent.
+									</div>
+								</div>
+							</div>
+
+							<div class="modal-footer">
+								<a class="btn btn-success" onclick="saveCultivatorData()">Save</a>
+								<a class="btn btn-danger" data-bs-dismiss="modal">Close</a>
+							</div>
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	
+	</form>
+	
+	<script>
+	$('body').bind('copy paste',function(e) {
+    e.preventDefault(); return false; 
+});
+</script>
+</div>

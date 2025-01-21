@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:insert="header">
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>-->
+
+<style>
+.selectedRow {
+	background-color: lightblue;
+}
+</style>
+
+<script
+	src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+<link rel="stylesheet" type="text/css" href="css/style.css">
+<script th:src="@{/js/scripts.js}"></script>
+</head>
+<body>
+	<div th:insert="headerImage"></div>
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+	<div class="container-fluid header-design-login  ">
+		<div class="row justify-content-center align-items-center"
+			style="height: 10vh;">
+			<div class="webland-container" style="padding-top: 20px;">
+				<div class="card-title">
+					<h5 style="text-align: center;">Allocated E-Fish details</h5>
+				</div>
+				<div class="webland-container">
+					<div>
+						<form onsubmit="return checkVal(event)" th:object="${updatebook}"
+							th:action="@{/updateefish}" method="post" id="updateForm">
+							<table class="table mapped" id="absseasondistwise">
+								<thead style="position: sticky">
+									<tr>
+										<th><input type="checkbox" id="selectAll" /></th>
+										<th>S.No</th>
+										<th>Survey No</th>
+										<th>Khatha No</th>
+										<th>Pattadar Name</th>
+										<th>Pattadar Father Name</th>
+										<th>Occupent Name</th>
+										<th>Occupent Father Name</th>
+										<th>Total Extent</th> 
+										<th>Mapped Extent</th>
+										<th>Allowable extent</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr th:each="data, index : ${efishdetails}">
+										<td><input type="checkbox" class="checkSingle"
+											th:id="'checkBoxId'+ ${index.index}" th:value="${data.recid}" /></td>
+										<td th:text="${index.index+1}"></td>
+										<td th:text="${data.cr_sno}"></td>
+										<td th:text="${data.kh_no}"></td>
+										<td th:text="${data.pattadar_name}"></td>
+										<td th:text="${data.pattadar_father_name}"></td>
+										<td th:text="${data.occupant_name}"></td>
+										<td th:text="${data.occupant_father_name}"></td>
+										<td th:text="${data.total_extent}"></td>
+										<td th:text="${data.mapped_extent}"></td>
+										<td class="allowable" th:text="${allowableList[__${index.index}__]}"></td>
+									</tr>
+								</tbody>
+							</table>
+							<input type="submit" class="btn btn-primary "
+								style="margin-left: 45%" value="submit">
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script>
+	$(document).ready(function() {
+	    $('#selectAll').change(function() {
+	        var isChecked = $(this).prop('checked');
+	        $('.checkSingle').prop('checked', isChecked);
+	    });
+
+	    $('.checkSingle').change(function() {
+	        var allChecked = true;
+	        $('.checkSingle').each(function() {
+	            if (!$(this).prop('checked')) {
+	                allChecked = false;
+	                return false; 
+	            }
+	        });
+	        $('#selectAll').prop('checked', allChecked);
+	    });
+	});
+
+	function checkVal(event) {
+	    event.preventDefault(); 
+
+	    var checkedRecids = [];
+	    var checkedAllowable = []; 
+	    
+	    $(".checkSingle:checked").each(function() {
+	        checkedRecids.push($(this).val());
+	        
+	        var allowable = $(this).closest("tr").find(".allowable").text();
+	        checkedAllowable.push(allowable);
+	    });
+		//alert(checkedAllowable);
+	    if (checkedRecids.length === 0) {
+	        alert("Please select the Records.");
+	        return false;
+	    } else {
+	        var recidMessage = "Checked Recids: " + checkedRecids.join(", ");
+	        alert(recidMessage);
+
+	        var confirmation = confirm("Are you sure you want to proceed with the action?");
+	        if (!confirmation) {
+	            return false; 
+	        }
+
+	        $.ajax({
+	            url: '/updateefish',
+	            type: 'POST',
+	            contentType: 'application/json',
+	            data: JSON.stringify({ 
+	                recids: checkedRecids,
+	                allowable: checkedAllowable
+	            }),
+	            success: function(response) {
+	                alert('API call successful.');
+	                document.getElementById("updateForm").submit(); 
+	            },
+	            error: function(xhr, status, error) {
+	                alert('Error occurred while calling API.');
+	            }
+	        });
+	    }
+	}
+
+</script>
+</body>
+</html>

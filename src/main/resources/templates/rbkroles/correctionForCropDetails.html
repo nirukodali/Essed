@@ -1,0 +1,104 @@
+<div class="panel panel-primary">
+
+    <div class="panel-body" style="max-width: 100%;overflow-x: scroll;overflow-y: auto;">
+
+        <table id="ownerGrid" class="table table-bordered table-striped dataTable">
+            <thead class="color-palette" style="background-color: #9494b8; width:98%;white-space: nowrap">
+            <tr>
+                <th style="color: white; width:5%;">S.No.</th>
+                <th style="color: white; width:8%;">Booking Id</th>
+                <th style="color: white; width:19%;">Farming Type</th>
+                <th style="color: white; width:8%;">Crop Name</th>
+                <th style="color: white; width:19%;">Variety Name</th>
+                <th style="color: white; width:10%;">Sown Date</th>
+                <th style="color: white; width:19%;">Irrigation Source</th>
+                <th style="color: white; width:19%;">Irrigation Method</th>
+                <th style="color: white; width:7%;">Ciltivator Name</th>
+                <th style="color: white; width:7%;">Khata No</th>
+                <th style="color: white; width:8%;">Survey No/LP No</th>
+                <th style="color: white; width:5%;">Booked Extent</th>
+                <th style="color: white; width:10%;">Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:id="${ebd.bookingid}" th:each="ebd, ebdStat:${ecbdList}">
+                <td style="width:5%;">
+                    <span th:text="${ebdStat.index+1}"></span>
+                </td>
+                <td style="width:8%;">
+                    <span th:text="${ebd.bookingid}"></span>
+                    <input type="hidden" th:value="${ebd.bookingid}" th:id="'bookingid'+${ebdStat.index}">
+                    <input type="hidden" th:value="${ebd.season}" th:id="'season'+${ebdStat.index}">
+                    <input type="hidden" th:value="${ebd.cropyear}" th:id="'cropyear'+${ebdStat.index}">
+                    <input type="hidden" th:value="${ebd.cr_vcode}" th:id="'cr_vcode'+${ebdStat.index}">
+					<input type="hidden" th:value="${ebd.rec_id}" th:id="'rec_id'+${ebdStat.index}">
+                    
+                </td>
+                <td style="width:19%;">
+                    <select th:id="'cropSeedScheme'+${ebdStat.index}" th:value="${ebd.cropSeedScheme}"  class="form-control">
+                        <option th:each="cropSeed : ${ebd.cropSeedList}" th:value="${cropSeed.key}"
+                                th:text="${cropSeed.value}"></option>
+                    </select>
+                </td>
+                <td style="width:8%;">
+                    <span th:text="${ebd.cropname}"></span>
+                    <input type="hidden" th:value="${ebd.cr_crop}" th:id="'cropname'+${ebdStat.index}">
+                </td>
+                <td style="width:19%;">
+                    <select th:id="'var_new'+${ebdStat.index}" class="form-control">
+                        <option th:each="variety : ${ebd.varietyList}" th:value="${variety.key}"
+                                th:text="${variety.value}"></option>
+                    </select>
+                </td>
+                <td style="width:8%;">
+                    <span th:text="${ebd.cr_sow_date}"></span>
+                    <input type="hidden" th:value="${ebd.cr_sow_date}"
+                           th:id="'cr_sow_date'+${ebdStat.index}">
+                            <input type="hidden" th:value="${ebd.cr_no}"
+                           th:id="'cr_no'+${ebdStat.index}">
+                            <input type="hidden" th:value="${ebd.variety}"
+                           th:id="'var_old'+${ebdStat.index}">
+                </td>
+                <td style="width:19%;">
+                    <select th:id="'waterResId'+${ebdStat.index}"  class="form-control">
+                        <option th:each="waterRes : ${ebd.waterResourcesList}"
+                                th:value="${waterRes.key}" th:text="${waterRes.value}"></option>
+                    </select>
+                </td>
+                <td style="width:19%;">
+                    <select th:id="'irrmethod'+${ebdStat.index}" class="form-control">
+                        <option th:each="irrigMeth : ${ebd.cropIrrigMethodList}"
+                                th:value="${irrigMeth.key}" th:text="${irrigMeth.value}"></option>
+                    </select>
+                </td>
+                <td style="width:13%;">
+                    <span th:text="${ebd.occupname}"></span>
+                    <input type="hidden" th:value="${ebd.occupname}"
+                           th:id="'occupname'+${ebdStat.index}">
+                </td>
+                <td style="width:8%;">
+                    <span th:text="${ebd.kh_no}"></span>
+                    <input type="hidden" th:value="${ebd.kh_no}"
+                           th:id="'kh_no'+${ebdStat.index}">
+                </td>
+                <td style="width:8%;">
+                    <span th:text="${ebd.cr_sno}"></span>
+                    <input type="hidden" th:value="${ebd.cr_sno}"
+                           th:id="'cr_sno'+${ebdStat.index}">
+                </td>
+                <td style="width:8%;">
+                    <span th:text="${ebd.crMixUnmixExt}"></span>
+                    <input type="hidden" th:value="${ebd.crMixUnmixExt}"
+                           th:id="'crMixUnmixExt'+${ebdStat.index}">
+
+                </td>
+					<td><a class="btn btn-success" th:onclick="updateCultivatorCropDetails('[[${ebdStat.index}]]')">Update</a></td>
+            </tr>
+
+            </tbody>
+
+
+        </table>
+
+    </div>
+</div>

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="header"></head>
+
+<body>
+	<div th:insert="headerImage"></div>
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+
+	<div class="container">
+		<section class="content" style="padding-top: 1px;">
+			<div class="row topformcontent">
+				<div class="col-md-12">
+					<div class="box box-solid box-patent" style="margin-top: 5px;margin-bottom: 10px;">
+						<div class="box-header">
+							<div class="row">
+								<div class="col-md-12" style="padding-left: 40%;">
+									<div class="col-md-6">
+										<label class="box-title">
+											<span
+												style="font-size: 16px; color:white;font-weight: bold;padding-top:5px;">Dept Wise Crop Damage Enumeration List</span>
+										</label>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="box-body" style="padding-left: 10px; height: auto;">
+							<div class="row">
+								<div class="col-md-3">
+									<label><b>Select Mandal:</b></label>
+									<div class="form-group" style="margin-bottom: 5px;">
+										<div class="input-group">
+											<select class="form-control" id="mandal" name="mandal" required
+												onchange="fetchVillages()">
+												<option value="" disabled selected>Select Mandal</option>
+												<option th:each="mandal : ${mandal}" th:value="${mandal.mcode}"
+													th:text="${mandal.mname}">
+												</option>
+											</select>
+											<span id="dropdownError" style="color: red;"></span>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-md-3">
+									<label><b>Select Village:</b></label>
+									<div class="form-group" style="margin-bottom: 5px;">
+										<div class="input-group">
+											<select class="form-control" id="village" name="village" required  onchange="updateData()">
+												<option value="" disabled selected>Select Village</option>
+												<!-- Villages will be populated dynamically -->
+											</select>
+											<span id="dropdownError" style="color: red;"></span>
+										</div>
+									</div>
+								</div>
+
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+	</div>
+
+	<div id="contentDivId"></div>
+
+	<script>
+		
+	function fetchVillages() {
+    var mcode = $('#mandal').val();  // Get selected Mandal code
+
+    if (mcode) {
+        $.ajax({
+            type: "GET",
+            url: './getVillagesByMandalDSO',  // Adjust this to your actual endpoint
+            data: {
+                "mcode": mcode
+            },
+            success: function(villages) {
+                $('#village').empty();
+                $('#village').append('<option value="" disabled selected>Select Village</option>');
+                $.each(villages, function(index, village) {
+                    $('#village').append('<option value="' + village.vcode + '">' + village.vname + '</option>');
+                });
+            },
+            error: function() {
+                alert("Error fetching villages. Please try again.");
+            }
+        });
+    }
+}
+
+
+function updateData() {
+    // Ensure both mandal and village have been selected
+    var mcode = $('#mandal').val();
+    var cr_vcode = $('#village').val();
+    alert(mcode);
+    alert(cr_vcode);
+    
+    if (mcode && cr_vcode) {  // Proceed only if both values are selected
+        $.ajax({
+            type: "GET",
+            url: './getDamagedDSO',  // Adjust URL as per your actual endpoint
+            data: {
+                "mcode": mcode, 
+                "cr_vcode": cr_vcode,
+            },
+            success: function(data) {
+                $("#contentDivId").html(data);  // Populate your contentDivId with the returned data
+            },
+            error: function() {
+                alert("Error fetching data. Please try again.");
+            }
+        });
+    } else {
+        alert("Please select both Mandal and Village.");  // Alert if values are not selected
+    }
+}
+
+	</script>
+
+</body>
+
+</html>

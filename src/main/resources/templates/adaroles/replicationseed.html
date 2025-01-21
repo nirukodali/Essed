@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="header">
+	<meta charset="UTF-8">
+	<title>Replication Seed</title>
+	<link rel="stylesheet" type="text/css" href="css/style.css" />
+</head>
+
+<body style="font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0;">
+	<div th:insert="headerImage"></div>
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+	<br>
+
+	<form id="updationForm" th:action="@{/insertData}" method="POST" onsubmit="return validateDistricts();">
+		<div
+			style="width: 80%; margin: auto; background-color: white; padding: 20px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); margin-top: 20px;">
+			<table id="dataTable" style="width: 100%; border-collapse: collapse;">
+				<thead style="background-color: darkgray; color: white;">
+					<tr>
+						<th style="padding: 10px; text-align: center;">From Extent</th>
+						<th style="padding: 10px; text-align: center;">To Extent</th>
+						<th style="padding: 10px; text-align: center;">No Bags Allowed</th>
+						<th style="padding: 10px; text-align: center;">From Date</th>
+						<th style="padding: 10px; text-align: center;">To Date</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="item, iterStat : ${standardsQtyList}">
+						<td style="padding: 10px; text-align: center;" th:text="${item.from_extent}"></td>
+						<td style="padding: 10px; text-align: center;" th:text="${item.to_extent}"></td>
+						<td style="padding: 10px; text-align: center;" th:text="${item.no_bags_allowed}"></td>
+						<td style="padding: 10px; text-align: center;" th:text="${item.fromdate}"></td>
+						<td style="padding: 10px; text-align: center;" th:text="${item.todate}"></td>
+						<input type="hidden" th:value="${item.dcode}" th:name="repdcode">
+					</tr>
+				</tbody>
+			</table>
+			<input type="hidden" th:value="${standardsQtyList[0].varietycode}" th:name="varietycode">
+			<input type="hidden" th:value="${standardsQtyList[0].season}" th:name="season">
+			<input type="hidden" th:value="${standardsQtyList[0].cropyear}" th:name="cropyear">
+		</div>
+
+		<div style="margin-left: auto; width: 60%; padding-top: 20px;">
+			<h5 style="margin-bottom: 15px;">Select Districts</h5>
+			<div th:each="dis, iterStat : ${getDistrictsData}" style="margin-bottom: 10px;">
+				<label>
+					<input type="checkbox" th:id="checkid" th:name="selectedDcodes" th:value="${dis.dcode}"
+						style="margin-right: 10px;">
+					<span th:text="${dis.dname}"></span>
+				</label>
+				<br>
+			</div>
+			<div id="errorMessage" style="color: red; font-size: 14px;"></div>
+		</div>
+
+		<div style="margin-left: auto; width: 60%; padding-top: 20px;">
+			<table>
+				<tr>
+					<td style="padding-right: 10px;">
+						<input type="submit" class="btn" value="Submit"
+							style="background-color: #007bff; color: white; border: none; padding: 10px 20px; cursor: pointer; font-size: 16px;">
+					</td>
+					<td>
+						<input type="button" class="btn" value="Go Back" onclick="back()"
+							style="background-color: #007bff; color: white; border: none; padding: 10px 20px; cursor: pointer; font-size: 16px;">
+					</td>
+				</tr>
+			</table>
+		</div>
+	</form>
+
+	<script>
+		function back() {
+			window.location.href = '/replication';
+		}
+
+		function validateDistricts() {
+			const checkboxes = document.querySelectorAll('input[name="selectedDcodes"]:checked');
+			const errorMessageDiv = document.getElementById('errorMessage');
+
+			// Clear any previous error message
+			errorMessageDiv.innerHTML = '';
+
+			// If no district is selected, show an error message
+			if (checkboxes.length === 0) {
+				errorMessageDiv.innerHTML = 'Please select at least one district.';
+				return false; // Prevent form submission
+			}
+
+			return true; // Allow form submission
+		}
+	</script>
+</body>
+
+</html>

@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="header">
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Edit Uid after Ekyc Details</title>
+</head>
+
+<body>
+	<div th:insert="headerImage"></div>
+
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+
+	<br>
+
+	<form th:id="updation" th:action="@{/updatingaadhaar}" method="post" onsubmit="return validateForm()">
+		<div
+			style="background-color:green; margin-left: auto; margin-right: auto; width: 100%; text-align: center;font-size: 200%;color: white;">
+			Edit Uid after Ekyc Details
+		</div>
+
+		<div class="table-wrapper" style="overflow-y: scroll;margin:20px;margin-right: 0;">
+			<div style="background-color: ghostwhite;  width:100%;margin-bottom: 20px;">
+				<table id="myTable" style="border: 1px solid black;border-collapse: separate ;border-spacing: 0px;">
+					<thead style="background-color: darkgray; color: white;">
+						<tr>
+							<th style="border-right: 1px solid black;"><input id="main" type="checkbox"
+									onchange="toggleAllFields(this)"></th>
+							<th style="border-right: 1px solid black;">S.No. </th>
+							<th
+								style=" text-align: center;padding-left: 10px;padding-right: 10px;border-right: 1px solid black;">
+								Booking Id </th>
+							<th
+								style=" text-align: center;padding-left: 50px;padding-right: 50px;border-right: 1px solid black;">
+								Pattadar Name </th>
+							<th
+								style=" text-align: center;padding-left: 50px;padding-right: 50px;border-right: 1px solid black;">
+								Pattadar Father Name </th>
+							<th
+								style=" text-align: center;padding-left: 50px;padding-right: 50px;border-right: 1px solid black;">
+								Cultivator Name </th>
+							<th
+								style=" text-align: center;padding-left: 50px;padding-right: 50px;border-right: 1px solid black;">
+								Cultivator Father Name </th>
+							<th
+								style=" text-align: center;padding-left: 10px;padding-right: 10px; border-right: 1px solid black;">
+								Survey No/LP No </th>
+							<th
+								style=" text-align: center;padding-left: 10px;padding-right: 10px;border-right: 1px solid black;">
+							 Khata No  </th>
+							<th
+								style=" text-align: center;padding-left: 20px;padding-right: 20px;border-right: 1px solid black;">
+								Crop Name </th>
+							<th
+								style=" text-align: center;padding-left: 10px;padding-right: 10px;border-right: 1px solid black;">
+								 Variety  Name</th>
+							<th
+								style=" text-align: center;padding-left: 20px;padding-right: 20px;border-right: 1px solid black;">
+								Existing  Aadhaar No </th>
+							<th
+								style=" text-align: center;padding-left: 30px;padding-right: 30px;border-right: 1px solid black;">
+								New  Aadhaar No  </th>
+						</tr>
+					</thead>
+					<tbody>
+
+						<tr th:each="item : ${list}"
+							style="padding-top: 10px;border-bottom: 5px dotted black;border-spacing: 0px;">
+							<td style="border-right: 1px solid black;border-bottom: 1px solid black;">
+								<input type="checkbox" class="sub-checkbox" onchange="enableInputs(event)">
+								<input type="hidden" name="cr_no" th:value="${item.getCr_no()}">
+								<input type="hidden" name="cr_sow_date" th:value="${item.getCr_sow_date()}">
+								<input type="hidden" name="selectedValue" id="selectedValue" th:value="${selectedValue}" />
+								<input type="hidden" name="value" id="value" th:value="${value}" disabled />
+								<input type="hidden" name="vcode" id="vcode" th:value="${vcode}" >
+								<input type="hidden" name="cropyear" id="cropyear" th:value="${cropyear}" >
+							</td>
+							<td th:text="${itemStat.index + 1}"
+								style="border-bottom: 1px solid black;border-right: 1px solid black;"></td>
+							<td
+								style="border-bottom: 1px solid black; text-align: center;border-right: 1px solid black;">
+								<input name="bookingid"
+									style=" text-align: center;font-size: small; width: 100%;height: 4lvh;"
+									th:value="${item.getBookingid()}" disabled>
+							</td>
+							<td
+								style=" text-align: center;border-bottom: 1px solid black;border-right: 1px solid black;">
+								<input name="occupname"
+									style=" text-align: center;font-size: small; width: 100%;height: 4lvh; "
+									th:value="${item.getOccupname()}" disabled>
+							</td>
+							<td
+								style="border-bottom: 1px solid black; text-align: center;border-right: 1px solid black;">
+								<input name="occupfname"
+									style=" text-align: center;font-size: small; width: 100%;height: 4lvh; "
+									th:value="${item.getOccupfname()}" disabled>
+							</td>
+							<td
+								style="border-bottom: 1px solid black; text-align: center;border-right: 1px solid black;">
+								<input name="ocname"
+									style=" text-align: center;font-size: small; width: 100%;height: 4lvh; "
+									th:value="${item.getOc_name()}" disabled>
+									
+							</td>
+							<td
+								style="border-bottom: 1px solid black; text-align: center;border-right: 1px solid black;">
+								<input name="ocfname"
+									style=" text-align: center;font-size: small; width: 100%;height: 4lvh; "
+									th:value="${item.getOc_fname()}" disabled>
+							</td>
+							<td
+								style=" text-align: center;border-bottom: 1px solid black;border-right: 1px solid black;">
+								<input name="cr_sno"
+									style=" text-align: center;font-size: small; width: 100%;height: 4lvh; "
+									th:value="${item.getCr_sno()}" disabled>
+							</td>
+							<td
+								style="border-bottom: 1px solid black; text-align: center;border-right: 1px solid black;">
+								<input name="kh_no"
+									style=" text-align: center;font-size: small; width: 100%;height: 4lvh; "
+									th:value="${item.getKh_no()}" disabled>
+							</td>
+							<td
+								style="border-bottom: 1px solid black; text-align: center;border-right: 1px solid black;">
+								<input name="crop"
+									style=" text-align: center;font-size: small; width: 100%;height: 4lvh; "
+									th:value="${item.getCr_crop()}" disabled>
+							</td>
+							<td
+								style="border-bottom: 1px solid black; text-align: center;border-right: 1px solid black;">
+								<input name="variety"
+									style=" text-align: center;font-size: small; width: 100%;height: 4lvh; "
+									th:value="${item.getVariety()}" disabled>
+							</td>
+							<td
+								style="border-bottom: 1px solid black; text-align: center;border-right: 1px solid black;">
+								<input name="farmeruid"
+									style=" text-align: center;font-size: small; width: 100%;height: 4lvh; "
+									th:value="${item.getCr_farmeruid()}" disabled>
+							</td>
+							<td style="border-bottom: 1px solid black;border-right: 1px solid black;">
+								<input type="text" name="aadhaar" class="input-field" id="aadhaar"  pattern="\d{12}" title="Please enter 12 digits"
+									style=" text-align: center;font-size: small; width: 100%;height: 4lvh;" required disabled>
+							</td>
+
+						</tr>
+						
+					</tbody>
+					
+				</table>
+				<br>
+				<h2 style="text-align: center;"><span th:text="${empty}"></span></h2>
+			</div>
+		</div>
+		<div style="margin-top: 15px; display: flex; justify-content: center;" class="button-container">
+			<input style="margin-left: 10%;width: fit-content;height:fit-content;" type="submit"
+				class=" btn btn-primary" value="Submit"></input>
+			<input style="margin-left: 5%;width: fit-content;height: fit-content;" type="button"
+				class=" btn btn-primary" value="Go Back" onclick="goBack()"></input>
+							
+
+		</div>
+	</form>
+</body>
+
+<script defer>
+	  function enableInputs(event) {
+        var checkbox = event.target;
+        var row = checkbox.closest('tr');
+        var inputFields = row.querySelectorAll('input[type="text"], select');
+        inputFields.forEach(function (inputField) {
+            inputField.disabled = !checkbox.checked;
+        });
+    }
+
+    function toggleAllFields(main) {
+        var checkboxes = document.querySelectorAll('.sub-checkbox');
+        checkboxes.forEach(function (checkbox) {
+            checkbox.checked = main.checked;
+            enableInputs({ target: checkbox }); // Call enableInputs manually
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        document.getElementById('main').addEventListener('change', function () {
+            toggleAllFields(this);
+        });
+
+        var checkboxes = document.querySelectorAll('.sub-checkbox');
+        checkboxes.forEach(function (checkbox) {
+            checkbox.addEventListener('change', function (event) {
+                enableInputs(event);
+            });
+        });
+    });
+    
+    
+		function mod(num, divisor) {
+			//alert('in mod');
+			return ((num % divisor) + divisor) % divisor;
+		}
+
+		function validateVerhoeff(num) {
+
+			var d = [
+				[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+				[1, 2, 3, 4, 0, 6, 7, 8, 9, 5],
+				[2, 3, 4, 0, 1, 7, 8, 9, 5, 6],
+				[3, 4, 0, 1, 2, 8, 9, 5, 6, 7],
+				[4, 0, 1, 2, 3, 9, 5, 6, 7, 8],
+				[5, 9, 8, 7, 6, 0, 4, 3, 2, 1],
+				[6, 5, 9, 8, 7, 1, 0, 4, 3, 2],
+				[7, 6, 5, 9, 8, 2, 1, 0, 4, 3],
+				[8, 7, 6, 5, 9, 3, 2, 1, 0, 4],
+				[9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
+			];
+
+			// permutation table p
+			var p = [
+				[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+				[1, 5, 7, 6, 2, 8, 3, 0, 9, 4],
+				[5, 8, 0, 3, 7, 9, 6, 1, 4, 2],
+				[8, 9, 1, 6, 0, 4, 3, 5, 2, 7],
+				[9, 4, 5, 3, 1, 2, 6, 8, 7, 0],
+				[4, 2, 8, 6, 5, 7, 3, 9, 0, 1],
+				[2, 7, 9, 3, 8, 0, 6, 4, 1, 5],
+				[7, 0, 4, 6, 9, 1, 3, 2, 5, 8]
+			];
+
+			var c = 0;
+			var myArray = [];
+			myArray = StringToReversedIntArray(num);
+			// alert(myArray);
+			for (var i = 0; i < myArray.length; i++) {
+				c = d[c][p[mod(i, 8)][myArray[i]]];
+				//	alert(c);
+			}
+
+			return (c == 0);
+		}
+		function StringToReversedIntArray(num) {
+			var myArray = [];
+
+			for (var i = 0; i < num.length; i++) {
+				myArray[i] = parseInt(num.substring(i, i + 1));
+			}
+			myArray = Reverse(myArray);
+
+			return myArray;
+
+		}
+		function Reverse(myArray) {
+			var reversed = [];
+
+			for (var i = 0; i < myArray.length; i++) {
+				reversed[i] = myArray[myArray.length - (i + 1)];
+			}
+			return reversed;
+		}
+
+
+	function validateForm() {
+			let checkboxes = document.querySelectorAll('.sub-checkbox:checked');
+			let records = document.querySelectorAll('.sub-checkbox');
+
+			if (records.length === 0 && checkboxes.length === 0) {
+				alert('No data to submit');
+				goBack();
+// 				window.location.href = '/aadhaarSearch';
+			}
+			if (records.length > 0 && checkboxes.length === 0) {
+
+				alert('Please check at least one checkbox');
+				return false;
+			}
+			else {
+				let uidNo = null;
+
+				checkboxes.forEach(function (checkbox) {
+					if (checkbox.checked) {
+						uidNo = checkbox.closest('tr').querySelector('[name="aadhaar"]').value.trim();
+					}
+				});
+				if (uidNo.length === 12) {
+					if (validateVerhoeff(uidNo)) {
+						validation();
+						alert('Data Updated Successfully')
+						window.location.href='/edituid';
+					}
+					else if (!validateVerhoeff(uidNo)) {
+						alert('Enter valid AadhaarNo');
+						return false;
+					}
+				}
+				else {
+					alert('Enter 12 digit AadhaarNo');
+					return false;
+				}
+			}
+		}
+		
+
+
+	function goBack() {
+	//	var form = document.getElementById('updation');
+	//	form.action = document.referrer;
+		//form.method = 'post';
+	//	form.submit();
+			window.history.back();
+	}
+
+
+
+function validation(){
+	document.getElementById('updationForm');
+//		event.preventDefault();
+		var formDataArray = [];
+		document.querySelectorAll('tbody tr').forEach(function (row) {
+			var checkbox = row.querySelector('.sub-checkbox');
+			///var inputField = row.querySelector('.input-field');
+goBack();
+			if (checkbox && checkbox.checked) {
+				formDataArray.push({
+					bookingid: row.querySelector('[name="bookingid"]').value,
+					occupname: row.querySelector('[name="occupname"]').value,
+					occupfname: row.querySelector('[name="occupfname"]').value,
+					oc_name: row.querySelector('[name="ocname"]').value,
+					oc_fname: row.querySelector('[name="ocfname"]').value,
+					cr_sno: row.querySelector('[name="cr_sno"]').value,
+					kh_no: row.querySelector('[name="kh_no"]').value,
+					cr_crop: row.querySelector('[name="crop"]').value,
+					variety: row.querySelector('[name="variety"]').value,
+					farmeruid :row.querySelector('[name="farmeruid"]').value,
+					aadhaar: row.querySelector('[name="aadhaar"]').value,
+					cr_sow_date : row.querySelector('[name="cr_sow_date"]').value,
+					cr_no : row.querySelector('[name="cr_no"]').value,
+					selectedValue : row.querySelector('[name="selectedValue"]').value,
+					value : row.querySelector('[name="value"]').value,
+					vcode : row.querySelector('[name="vcode"]').value,
+				});
+			}
+		});
+
+			$.ajax({
+				    url: './updatingaadhaar',
+				    type: 'POST',
+				    contentType: 'application/json;',
+				    data: JSON.stringify(formDataArray),
+				    success: function (data) {
+				        console.log('Success:', data);
+				        // Handle success response here
+				    },
+				    error: function (error) {
+				        console.error('Error during fetch operation:', error);
+				        // Handle error response here
+				    }
+				});
+}
+
+</script>
+
+</html>

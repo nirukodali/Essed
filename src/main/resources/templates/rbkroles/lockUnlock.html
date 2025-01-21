@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head  th:insert="header">
+	
+
+
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	
+	<title>Extent entry to Lock</title>
+</head>
+
+<body>
+	<div th:insert="headerImage"></div>
+
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+
+	<br>
+
+	<form id="updation" th:action="@{/lockentryext}" method="post" onsubmit="validateForm()">
+		<div
+			style="background-color:green; margin-left: auto; margin-right: auto; width: 100%; text-align: center;font-size: 200%;color: white;">
+			Extent entry to Lock
+		</div>
+
+		<div class="table-wrapper" style="margin:20px;margin-right: 0; overflow-x: scroll;">
+			<div style="background-color: ghostwhite;  width:100%;margin-bottom: 20px;">
+				<table id="myTable" style="border: 1px solid black;border-collapse: separate ;border-spacing: 0px;">
+					<thead style="background-color: darkgray; color: white;">
+						<tr>
+							<th style="border-right: 1px solid black;">S.No. </th>
+							<th
+								style=" text-align: center;padding-left: 10px;padding-right: 10px;border-right: 1px solid black;">
+								Booking Id </th>
+							<th
+								style=" text-align: center;padding-left: 50px;padding-right: 50px;border-right: 1px solid black;">
+								Farmer Name </th>
+							<th
+								style=" text-align: center;padding-left: 50px;padding-right: 50px;border-right: 1px solid black;">
+								Father Name </th>
+							<th
+								style=" text-align: center;padding-left: 20px;padding-right: 20px;border-right: 1px solid black;">
+								Existing Aadhaar No </th>
+							<th
+								style=" text-align: center;padding-left: 10px;padding-right: 10px;border-right: 1px solid black;">
+								Pattadar/ Tenant Farmer/ Cultivator </th>
+							<th
+								style=" text-align: center;padding-left: 10px;padding-right: 10px;border-right: 1px solid black;">
+								Khata No </th>
+							<th
+								style=" text-align: center;padding-left: 10px;padding-right: 10px; border-right: 1px solid black;">
+								Survey No/LP No </th>
+							<th
+								style=" text-align: center;padding-left: 20px;padding-right: 20px;border-right: 1px solid black;">
+								Crop Name </th>
+							<th
+								style=" text-align: center;padding-left: 10px;padding-right: 10px;border-right: 1px solid black;">
+								Variety Name</th>
+							<th
+								style=" text-align: center;padding-left: 10px;padding-right: 10px;border-right: 1px solid black;">
+								Farming Type</th>
+							<th
+								style=" text-align: center;padding-left: 10px;padding-right: 10px;border-right: 1px solid black;">
+								Crop Pattern</th>
+							<th
+								style=" text-align: center;padding-left: 10px;padding-right: 10px;border-right: 1px solid black;">
+								Crop No</th>
+							<th
+								style=" text-align: center;padding-left: 10px;padding-right: 10px;border-right: 1px solid black;">
+								Booked Extent</th>
+							<th
+								style=" text-align: center;padding-left: 10px;padding-right: 10px;border-right: 1px solid black;">
+								Unlocked Extent</th>
+							<th
+								style=" text-align: center;padding-left: 10px;padding-right: 10px;border-right: 1px solid black;">
+								Reason for Locking</th>
+							<th
+								style=" text-align: center;padding-left: 30px;padding-right: 30px;border-right: 1px solid black;">
+								Extent to Lock </th>
+						</tr>
+					</thead>
+					<tbody>
+
+						<tr th:each="item : ${list}"
+							style="padding-top: 10px;border-bottom: 5px dotted black;border-spacing: 0px;">
+
+							<td th:text="${itemStat.index + 1}"
+								style="border-bottom: 1px solid black;border-right: 1px solid black;">
+							</td>
+							<td
+								style="border-bottom: 1px solid black; text-align: center;border-right: 1px solid black;">
+								<input name="bookingid"
+									style=" text-align: center;font-size: small; width: 100%;height: 4lvh;"
+									th:value="${item.getBookingid()}" disabled>
+								<input name="cr_crop" type="hidden" th:value="${item.getCr_crop()}">
+								<input name="uid" type="hidden" th:value="${item.getUid()}">
+								<input name="lock" type="hidden" th:value="${lock}">
+							</td>
+							<td
+								style=" text-align: center;border-bottom: 1px solid black;border-right: 1px solid black;">
+								<input name="occupname"
+									style=" text-align: center;font-size: small; width: 100%;height: 4lvh; "
+									th:value="${item.getOccupname()}" disabled>
+							</td>
+							<td
+								style="border-bottom: 1px solid black; text-align: center;border-right: 1px solid black;">
+								<input name="occupfname"
+									style=" text-align: center;font-size: small; width: 100%;height: 4lvh; "
+									th:value="${item.getOccupfname()}" disabled>
+							</td>
+							<td
+								style=" text-align: center;border-bottom: 1px solid black;border-right: 1px solid black;">
+								<input name="farmeruid"
+									style=" text-align: center;font-size: small; width: 100%;height: 4lvh; "
+									th:value="${item.getCr_farmeruid()}" disabled>
+							</td>
+							<td
+								style="border-bottom: 1px solid black; text-align: center;border-right: 1px solid black;">
+								<input name="cultdesc"
+									style=" text-align: center;font-size: small; width: 100%;height: 4lvh; "
+									th:value="${item.getCultdesc()}" disabled>
+							</td>
+							<td
+								style="border-bottom: 1px solid black; text-align: center;border-right: 1px solid black;">
+								<input name="kh_no"
+									style=" text-align: center;font-size: small; width: 100%;height: 4lvh; "
+									th:value="${item.getKh_no()}" disabled>
+							</td>
+							<td
+								style="border-bottom: 1px solid black; text-align: center;border-right: 1px solid black;">
+								<input name="cr_sno"
+									style=" text-align: center;font-size: small; width: 100%;height: 4lvh; "
+									th:value="${item.getCr_sno()}" disabled>
+							</td>
+							<td
+								style="border-bottom: 1px solid black; text-align: center;border-right: 1px solid black;">
+								<input name="cropname"
+									style=" text-align: center;font-size: small; width: 100%;height: 4lvh; "
+									th:value="${item.getCropname()}" disabled>
+							</td>
+							<td
+								style="border-bottom: 1px solid black; text-align: center;border-right: 1px solid black;">
+								<input name="variety"
+									style=" text-align: center;font-size: small; width: 100%;height: 4lvh; "
+									th:value="${item.getVariety()}" disabled>
+							</td>
+							<td
+								style=" text-align: center;border-bottom: 1px solid black;border-right: 1px solid black;">
+								<input name="ftype"
+									style=" text-align: center;font-size: small; width: 100%;height: 4lvh; "
+									th:value="${item.getFtype_short()}" disabled>
+							</td>
+							<td
+								style="border-bottom: 1px solid black; text-align: center;border-right: 1px solid black;">
+								<input name="nature"
+									style=" text-align: center;font-size: small; width: 100%;height: 4lvh; "
+									th:value="${item.getNaturedesc()}" disabled>
+							</td>
+							<td
+								style=" text-align: center;border-bottom: 1px solid black;border-right: 1px solid black;">
+								<input name="cr_no"
+									style=" text-align: center;font-size: small; width: 100%;height: 4lvh; "
+									th:value="${item.getCr_no()}" disabled>
+							</td>
+							<td
+								style="border-bottom: 1px solid black; text-align: center;border-right: 1px solid black;">
+								<input name="mix"
+									style=" text-align: center;font-size: small; width: 100%;height: 4lvh; "
+									th:value="${item.getCr_mix_unmix_ext()}" disabled>
+							</td>
+							<td
+								style="border-bottom: 1px solid black; text-align: center;border-right: 1px solid black;">
+								<input name="unlock"
+									style=" text-align: center;font-size: small; width: 100%;height: 4lvh; "
+									th:value="${item.getUnlockedext()}" disabled>
+							</td>
+							<td
+								style="border-bottom: 1px solid black; text-align: center;border-right: 1px solid black;">
+								<select  id="reason" name="reason" style="width: 100px" >
+									<option value="" selected >---Select---</option>
+									<option th:each="drop : ${drop}" th:value="${drop.concat}" th:text="${drop.concat}">
+									</option>
+								</select>
+							</td>
+							<td
+								style="border-bottom: 1px solid black; text-align: center;border-right: 1px solid black;">
+								<input name="extlock"
+									style=" text-align: center;font-size: small; width: 100%;height: 4lvh; ">
+							</td>
+						</tr>
+
+					</tbody>
+
+				</table>
+				<br>
+				<h2 style="text-align: center;"><span th:text="${empty}"></span></h2>
+			</div>
+		</div>
+		<div style="margin-top: 15px; display: flex; justify-content: center;" class="button-container">
+			<input style="margin-left: 10%;width: fit-content;height:fit-content;" type="submit"
+				class=" btn btn-primary" value="Submit"></input>
+			<!--			<button type="submit">Submit</button>-->
+			<input style="margin-left: 5%;width: fit-content;height: fit-content;" type="button"
+				class=" btn btn-primary" value="Go Back" onclick="goBack()"></input>
+
+
+		</div>
+	</form>
+	<script defer>
+
+		//			
+
+
+		function goBack() {
+			window.history.back();
+		}
+	function validateForm() {
+		  var reasonSelect = document.getElementById('reason');
+        var extlockInput = document.querySelector('[name="extlock"]');
+         event.preventDefault();
+        // Get the values of the elements
+        var reasonValue = reasonSelect.value;
+        var extlockValue = extlockInput.value;
+        if (reasonValue !== "" && extlockValue === "") {
+			alert('Please enter extent')
+            extlockInput.required = true;
+            return false;
+        } else {
+            extlockInput.required = false;
+        }
+        
+        if (extlockValue !== "" && reasonValue == "") {
+			alert('Please select reason')
+            reasonSelect.required = true;
+            return false;
+        } else {
+            reasonSelect.required = false;
+        }
+			document.getElementById('updation'); // I assume this line is for some purpose, otherwise, it can be removed
+window.history.back();
+alert('Data Updated Successfully')
+						window.location.href='/unlockSearch';
+			var formDataArray = [];
+			var rows = document.querySelectorAll('#myTable tbody tr');
+			rows.forEach(function (row) {
+				formDataArray.push({
+					bookingid: row.querySelector('[name="bookingid"]').value,
+					occupname: row.querySelector('[name="occupname"]').value,
+					occupfname: row.querySelector('[name="occupfname"]').value,
+					farmeruid: row.querySelector('[name="uid"]').value,
+					cultdesc: row.querySelector('[name="cultdesc"]').value,
+					kh_no: row.querySelector('[name="kh_no"]').value,
+					cr_sno: row.querySelector('[name="cr_sno"]').value,
+					cropname: row.querySelector('[name="cropname"]').value,
+					variety: row.querySelector('[name="variety"]').value,
+					ftype: row.querySelector('[name="ftype"]').value,
+					nature: row.querySelector('[name="nature"]').value,
+					cr_no: row.querySelector('[name="cr_no"]').value,
+					mix: row.querySelector('[name="mix"]').value,
+					unlock: row.querySelector('[name="unlock"]').value,
+					reason: row.querySelector('[name="reason"]').value ? row.querySelector('[name="reason"]').value : "",
+					extlock: row.querySelector('[name="extlock"]').value ? row.querySelector('[name="extlock"]').value : "",
+					lock: row.querySelector('[name="lock"]').value,
+					cr_crop: row.querySelector('[name="cr_crop"]').value,
+				});
+			});
+
+				$.ajax({
+				    url: './lockentryext',
+				    type: 'POST',
+				    contentType: 'application/json;',
+				    data: JSON.stringify(formDataArray),
+				    success: function (data) {
+				        console.log('Success:', data);
+				        // Handle success response here
+				    },
+				    error: function (error) {
+				        console.error('Error during fetch operation:', error);
+				        // Handle error response here
+				    }
+				});
+		}
+
+
+	</script>
+
+</body>
+
+<!--<script defer>-->
+
+
+
+<!--	function validateForm() {-->
+<!--		alert("Submitted Successfully");-->
+<!--		//	window.history.back();-->
+<!--	}-->
+
+<!--	function goBack() {-->
+<!--		var form = document.getElementById('updation');-->
+<!--		form.action = document.referrer;-->
+<!--		form.method = 'post';-->
+<!--		form.submit();-->
+<!--	}-->
+
+
+<!--	document.getElementById('updation').addEventListener('submit', function (event) {-->
+<!--		event.preventDefault();-->
+
+
+<!--		function submitForm(button) {-->
+<!--			var formDataArray = [];-->
+<!--			var row = button.closest('tr');-->
+
+<!--			formDataArray.push({-->
+<!--				bookingid: row.querySelector('[name="bookingid"]').value,-->
+<!--				occupname: row.querySelector('[name="occupname"]').value,-->
+<!--				occupfname: row.querySelector('[name="occupfname"]').value,-->
+<!--				farmeruid: row.querySelector('[name="farmeruid"]').value,-->
+<!--				cultdesc: row.querySelector('[name="cultdesc"]').value,-->
+<!--				kh_no: row.querySelector('[name="kh_no"]').value,-->
+<!--				cr_sno: row.querySelector('[name="cr_sno"]').value,-->
+<!--				cropname: row.querySelector('[name="cropname"]').value,-->
+<!--				variety: row.querySelector('[name="variety"]').value,-->
+<!--				ftype: row.querySelector('[name="ftype"]').value,-->
+<!--				nature: row.querySelector('[name="nature"]').value,-->
+<!--				cr_no: row.querySelector('[name="cr_no"]').value,-->
+<!--				mix: row.querySelector('[name="mix"]').value,-->
+<!--				unlock: row.querySelector('[name="unlock"]').value,-->
+<!--			});-->
+
+
+<!--			fetch('/lockentryext', {-->
+<!--				method: 'POST',-->
+<!--				headers: {-->
+<!--					'Content-Type': 'application/json',-->
+<!--				},-->
+<!--				body: JSON.stringify(formDataArray),-->
+<!--			})-->
+<!--				.then(response => response.json())-->
+<!--				.then(data => {-->
+<!--					console.log('Success:', data);-->
+<!--					// Optionally, perform actions after successful submission-->
+<!--				})-->
+<!--				.catch(error => {-->
+<!--					console.error('Error during fetch operation:', error);-->
+<!--				});-->
+<!--	}-->
+
+<!--</script>-->
+
+</html>

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Product List</title>
+<style>
+body {
+	font-family: Arial, sans-serif;
+	margin: 20px;
+	background-color: #f9f9f9;
+}
+
+h1 {
+	color: #333;
+	text-align: center;
+}
+
+a {
+	text-decoration: none;
+	color: white;
+	background-color: #4CAF50;
+	padding: 5px 10px;
+	border-radius: 5px;
+	font-size: 14px;
+}
+
+a:hover {
+	background-color: #45a049;
+}
+
+table {
+	width: 100%;
+	border-collapse: collapse;
+	margin-top: 20px;
+}
+
+table, th, td {
+	border: 1px solid #ddd;
+}
+
+th {
+	background-color: #4CAF50;
+	color: white;
+	text-align: left;
+	padding: 8px;
+}
+
+td {
+	padding: 8px;
+	text-align: left;
+}
+
+tr:nth-child(even) {
+	background-color: #f2f2f2;
+}
+
+tr:hover {
+	background-color: #ddd;
+}
+
+.actions a {
+	margin-right: 5px;
+}
+
+.add-product {
+	margin-bottom: 10px;
+	display: inline-block;
+}
+</style>
+</head>
+<body>
+	<h1>Employee List</h1>
+	<a href="/employee/new" class="add-product"> Add New Product</a>
+	<table>
+	<thead>
+	<tr>
+	<th> Id</th>
+	<th> Name</th>
+<!-- 	<th> Description</th> -->
+<!-- 	<th>Price</th> -->
+	<th>Actions</th>
+	</tr>
+	</thead>
+	</tbody>
+	<tr th:each="product:${employee}">
+	<td th:text="${product.id}"></td>
+	<td th:text="${product.name}"></td>
+<!-- 	<td th:text="${product.description}"></td> -->
+<!-- 	<td th:text="${product.price}"></td> -->
+	<td class="actins">
+	<a th:href="@{/employee/edit/{id}(id=${product.id})}">Edit</a>
+	<a th:href="@{/employee/delete/{id}(id=${product.id})}" style="background-color: #f44336;">Delete</a>
+	
+	</td>
+	
+	</tr>
+	
+	</tbody>
+	</table>
+	
+	
+</body>
+</html>

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pattadhar Information</title>
+<style>
+body {
+	font-family: Arial, sans-serif;
+	background-color: #f4f4f4;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100vh;
+}
+
+table {
+	border-collapse: collapse;
+	width: 80%;
+	margin-top: 20px;
+	background-color: #fff;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+th, td {
+	border: 1px solid #ddd;
+	padding: 12px;
+	text-align: left;
+}
+
+th {
+	background-color: #f2f2f2;
+}
+
+input[type="checkbox"] {
+	margin-right: 5px;
+}
+</style>
+</head>
+<body>
+	<form th:action="@{/saveSelection}" method="post">
+		<table>
+			<thead>
+				<tr>
+<!-- 				    <th><input type="checkbox" id="selectAll" /></th> <th><input type="checkbox" id="selectAll" /></th> -->
+<!-- 				    <th></th>  -->
+				    <th></th>
+				       <th></th>  
+					<th>Sno</th>
+					<th>Data Source</th>
+					<th>Whole Survey No</th>
+					<th>Survey No</th>
+					<th>Khata No</th>
+					<th>Total Extent</th>
+				</tr>
+			</thead>
+			<tbody>
+
+				<tr th:each="pattadhar, rowStat : ${pattadharDetails}">
+					<td><input type="checkbox" name="selectedBkIds" th:value="${pattadhar.bkid}" /></td>
+				<td><input type="hidden" name="dataSrc" th:value="${pattadhar.datasrc}" /></td>
+					<td th:text="${rowStat.index + 1}">1</td>
+					<td th:text="${pattadhar.datasrc}">KH123
+					<input type="text" name="dataSrc" th:value="${pattadhar.datasrc}"></td>
+					<td th:text="${pattadhar.wholesurveyno}">KH123</td>
+					<td th:text="${pattadhar.surveyno}">KH123</td>
+					<td th:text="${pattadhar.khathano}">John Doe</td>
+					<td th:text="${pattadhar.totalextent}">SN001</td>
+					<td><input type="hidden" th:id="'bkId' + ${rowStat.index}" name="bkId${rowStat.index}" th:value="${pattadhar.bkid}" /></td>
+				  
+
+
+				</tr>
+			</tbody>
+
+		</table>
+		 <input type="hidden" id="vcodes" name="vcodes" th:value="${vcode}" />
+		 <input type="hidden" id="rbkcodes" name="rbkcodes" th:value="${rbkcode}" /> 
+	     <input type="hidden" id="empCode" name="empCode" th:value="${empcode}" /> 
+	     <input type="hidden" id="pcropyear" name="pcropyear" th:value="${cropyear}"/>
+	     <input type="hidden" id="pcropseason" name="pcropseason" th:value="${season}"/> 
+	      <input type="hidden" id="ppartkey"name="ppartkey" th:value="${partkey}" />
+		<button type="submit">Save Selection</button>
+	</form>
+  <script>
+        document.getElementById('selectAll').addEventListener('change', function () {
+            var checkboxes = document.getElementsByName('selectedBkIds');
+            for (var i = 0; i < checkboxes.length; i++) {
+                checkboxes[i].checked = this.checked;
+            }
+        });
+    </script>
+</body>
+
+</html>

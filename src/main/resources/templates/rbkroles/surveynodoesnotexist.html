@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="header">
+
+</head>
+
+<body>
+	<div th:insert="headerImage"></div>
+
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+
+	<div class="container-fluid header-design-login">
+		<div class="row justify-content-center align-items-center" style="height: 10vh;">
+			<div class="webland-container" style="padding-top:10px;">
+				<div class="card ecropCard">
+
+					<div class="card-title">
+						
+							<h2 align="center">Non Web Land Farmers Data Entry</h2><br></br>
+					</div>
+
+					<!-- 					<div class="card-body" style="padding: 10px;"> -->
+
+
+					<div id="survey" align="center">
+						
+
+						<form id="myForm" th:action="@{/postdata}" method="post" th:object="${nonWebLandDto}"
+							class="form-horizontal" onsubmit="return validateForm()">
+							<div class="form-group row">
+
+								<label for="vcode" class="col-sm-4 col-form-label">Village</label>
+								<span id="villageName" th:text="${villagecode}"></span><br><br>
+								<div class="col-sm-8">
+									<input type="hidden" id="vcode" name="vcode" class="form-select form-control"
+										th:value="${village}">
+
+								</div>
+							</div>
+							<div class="form-group row">
+
+								<label class="col-sm-4 col-form-label">Khata No</label>
+
+
+								<div class="col-sm-8">
+
+<!--									<input id="khataNo" type="text" class="form-select form-control" name="kh_no"-->
+<!--										th:field="*{kh_no}" pattern="[0-9]+" title="Please enter numbers only"-->
+<!--										onkeypress="return ( event.charCode == 8 || event.charCode == 0) || event.charCode == 46 ? null : event.charCode >= 48 && event.charCode <= 57 "-->
+<!--										maxlength="10">-->
+
+										<input id="khataNo" type="text" class="form-select form-control" name="kh_no"
+										th:field="*{kh_no}"  th:value="888888" placeholder="888888" disabled>
+									<div th:if="${#fields.hasErrors('kh_no')}" th:errors="*{kh_no}" style="color:red;">
+									</div>
+								</div>
+							</div>
+							
+							<div class="form-group row">
+    <label for="surveyNo" class="col-sm-4 col-form-label">Survey No/LP No</label>
+    <div class="col-sm-8">
+        <input type="text" id="surveyNo" class="form-control" name="cr_sno" th:value="${psurveyno}" placeholder="Enter Survey Number" disabled  onkeypress="return ValidateSrno(event)">
+    </div>
+    <div th:if="${#fields.hasErrors('cr_sno')}" th:errors="*{cr_sno}"
+										style="color:red;"></div>
+								
+</div>
+		<input type="hidden" id="surveyNo" name="cr_sno" th:value="${psurveyno}">					
+							
+							
+							<div class="form-group row">
+
+								<label class="col-sm-4 col-form-label">PattadharName</label>
+								<div class="col-sm-8">
+
+									<input id="oc_name" type="text" name="oc_name" class="form-select form-control"
+										th:field="*{oc_name}" onkeypress="return Validate(event);" maxlength="100">
+
+									<div th:if="${#fields.hasErrors('oc_name')}" th:errors="*{oc_name}"
+										style="color:red;"></div>
+								</div>
+							</div>
+							<div class="form-group row">
+
+								<label class="col-sm-4 col-form-label">PattadharFname</label>
+								<div class="col-sm-8">
+									<input id="oc_fname" type="text" name="oc_fname" class="form-select form-control"
+										th:field="*{oc_fname}" onkeypress="return Validate(event);" maxlength="100">
+									<div th:if="${#fields.hasErrors('oc_fname')}" th:errors="*{oc_fname}"
+										style="color:red;"></div>
+								</div>
+							</div>
+							<div class="form-group row">
+
+								<label class="col-sm-4 col-form-label">CultivatorName</label>
+								<div class="col-sm-8">
+									<input id="occupname" type="text" name="occupname" class="form-select form-control"
+										th:field="*{occupname}" onkeypress="return Validate(event);" maxlength="100">
+									<div th:if="${#fields.hasErrors('occupname')}" th:errors="*{occupname}"
+										style="color:red;"></div>
+								</div>
+							</div>
+							<div class="form-group row">
+
+								<label class="col-sm-4 col-form-label">CultivatorFName </label>
+								<div class="col-sm-8">
+									<input id="occupfname" type="text" name="occupfname"
+										class="form-select form-control" th:field="*{occupfname}"
+										onkeypress="return Validate(event);" maxlength="100">
+									<div th:if="${#fields.hasErrors('occupfname')}" th:errors="*{occupfname}"
+										style="color:red;"></div>
+								</div>
+							</div>
+							<div class="form-group row">
+
+								<label class="col-sm-4 col-form-label">Total Extent</label>
+
+								<div class="col-sm-8">
+									<input id="tot_extent" type="text" name="tot_extent"
+										class="form-select form-control" th:field="*{tot_extent}" required
+										maxlength="11" onkeypress="return ( event.charCode == 8 || event.charCode == 0) || event.charCode == 46 ? null : event.charCode >= 48 && event.charCode <= 57 "  
+								pattern="^\d{1,6}(\.\d{0,2})?$">
+									<div th:if="${#fields.hasErrors('tot_extent')}" th:errors="*{tot_extent}"
+										style="color:red;"></div>
+								</div>
+							</div>
+							<div class="form-group row">
+
+								<label class="col-sm-4 col-form-label">Cultivator Extent</label>
+								<div class="col-sm-8">
+									<input id="occupant_extent" type="text" class="form-select form-control"
+										name="occupant_extent" th:field="*{occupant_extent}" maxlength="11" onkeypress="return ( event.charCode == 8 || event.charCode == 0) || event.charCode == 46 ? null : event.charCode >= 48 && event.charCode <= 57 "  
+								pattern="^\d{1,6}(\.\d{0,2})?$">
+									<div th:if="${#fields.hasErrors('occupant_extent')}" th:errors="*{occupant_extent}"
+										style="color:red;"></div>
+								</div>
+							</div>
+							<div class="form-group row">
+
+								<label class="col-sm-4 col-form-label">Aadhar No</label>
+								<div class="col-sm-8">
+									<input id="cr_farmeruid" type="text" name="cr_farmeruid"
+										class="form-select form-control" th:field="*{cr_farmeruid}"
+										input="addSpaces(event)" onkeypress="if (this.value.length > 11) return false">
+									<p id="validationMessage"></p>
+
+									<div th:if="${#fields.hasErrors('cr_farmeruid')}" th:errors="*{cr_farmeruid}"
+										style="color:red;"></div>
+								</div>
+							</div>
+							<div class="form-group row">
+
+								<label class="col-sm-4 col-form-label">Mobile No</label>
+								<div class="col-sm-8">
+									<input id="mobileno" type="text" class="form-select form-control"
+										title="Please enter a 10-digit number" name="mobileno" th:field="*{mobileno}"
+										onkeypress="return isNumber(event)" maxlength="10">
+
+
+									<div th:if="${#fields.hasErrors('mobileno')}" th:errors="*{mobileno}"
+										style="color:red;"></div>
+
+								</div>
+							</div>
+							<div class="form-group row">
+
+								<label class="col-sm-4 col-form-label">Gender</label>
+								<div class="col-sm-8">
+									<select id="gender" name="gender" th:field="*{gender}"
+										class="form-select form-control"><br>
+										<option value="">---Select---</option>
+										<option value="M">Male</option>
+										<option value="F">Female</option>
+										<option value="T">Transgender</option>
+									</select>
+									<div th:if="${#fields.hasErrors('gender')}" th:errors="*{gender}"
+										style="color:red;"></div>
+								</div>
+							</div>
+							<div class="form-group row">
+
+								<label for="rson" class="col-sm-4 col-form-label">Reason</label>
+								<div class="col-sm-8">
+									<select id="rson" name="rson" th:field="*{rson}" class="form-select form-control">
+										<option value="">----Select----</option>
+										<option th:each="ri : ${reasons}" th:value="${ri.code}" th:text="${ri.reason}">
+										</option>
+									</select>
+									<div th:if="${#fields.hasErrors('rson')}" th:errors="*{rson}" style="color:red;">
+									</div>
+
+								</div>
+							</div>
+							<div align="center">
+								<button align="center" id="sub" type="button" onclick="validateAndSubmit()"
+									style="background-color:rgb(0, 128, 0);">Submit</button>
+
+								<input id="sub" type="reset" value="Reset" style="background-color:rgb(0, 128, 0);"
+									onclick="goToReset()">
+
+								<input id="sub" type="button" value="Back" onclick="goToLogin()"
+									style="background-color:rgb(0, 128, 0);">
+
+							</div>
+						</form>
+					</div>
+						
+
+					<script>
+					
+					function goToLogin(){
+						window.location.href='nonweblandfarmersdata'
+					}
+					
+					
+						function mod(num, divisor) {
+							return ((num % divisor) + divisor) % divisor;
+						}
+
+						function validateVerhoeff(num) {
+							
+							var d = [
+								[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+								[1, 2, 3, 4, 0, 6, 7, 8, 9, 5],
+								[2, 3, 4, 0, 1, 7, 8, 9, 5, 6],
+								[3, 4, 0, 1, 2, 8, 9, 5, 6, 7],
+								[4, 0, 1, 2, 3, 9, 5, 6, 7, 8],
+								[5, 9, 8, 7, 6, 0, 4, 3, 2, 1],
+								[6, 5, 9, 8, 7, 1, 0, 4, 3, 2],
+								[7, 6, 5, 9, 8, 2, 1, 0, 4, 3],
+								[8, 7, 6, 5, 9, 3, 2, 1, 0, 4],
+								[9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
+							];
+
+							// permutation table p
+							var p = [
+								[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+								[1, 5, 7, 6, 2, 8, 3, 0, 9, 4],
+								[5, 8, 0, 3, 7, 9, 6, 1, 4, 2],
+								[8, 9, 1, 6, 0, 4, 3, 5, 2, 7],
+								[9, 4, 5, 3, 1, 2, 6, 8, 7, 0],
+								[4, 2, 8, 6, 5, 7, 3, 9, 0, 1],
+								[2, 7, 9, 3, 8, 0, 6, 4, 1, 5],
+								[7, 0, 4, 6, 9, 1, 3, 2, 5, 8]
+							];
+
+							var c = 0;
+							var myArray = [];
+							myArray = StringToReversedIntArray(num);
+							for (var i = 0; i < myArray.length; i++) {
+								c = d[c][p[mod(i, 8)][myArray[i]]];
+							}
+
+							return (c == 0);
+						}
+						function StringToReversedIntArray(num) {
+							var myArray = [];
+
+							for (var i = 0; i < num.length; i++) {
+								myArray[i] = parseInt(num.substring(i, i + 1));
+							}
+							myArray = Reverse(myArray);
+
+							return myArray;
+
+						}
+						function Reverse(myArray) {
+							var reversed = [];
+
+							for (var i = 0; i < myArray.length; i++) {
+								reversed[i] = myArray[myArray.length - (i + 1)];
+							}
+							return reversed;
+						}
+
+						
+						function validateAndSubmit() {
+							
+
+							// Perform frontend validation
+							if (fetchData()) {
+								// If validation succeeds, submit the form
+								document.getElementById("myForm").submit();
+							}
+						}
+
+						function Validate(e) {
+							var keyCode = e.keyCode || e.which;
+							var errorMsg = document.getElementById("oc_name");
+							var errorMsg = document.getElementById("oc_fname");
+							var errorMsg = document.getElementById("occupname");
+							var errorMsg = document.getElementById("occupfname");
+							errorMsg.innerHTML = "";
+
+							//Regex to allow only Alphabets Numbers Dash Underscore and Space
+							var pattern = /^[a-zd A-Z.s]+$/i;
+
+							//Validating the textBox value against our regex pattern.
+							var isValid = pattern.test(String.fromCharCode(keyCode));
+							if (!isValid) {
+								errorMsg.innerHTML = "Only alphanumeric,dot and space are allowed.";
+							}
+
+							return isValid;
+						}
+
+						function Validate2(e) {
+							var keyCode = e.keyCode || e.which;
+							var errorMsg = document.getElementById("tot_extent");
+
+							errorMsg.innerHTML = "";
+
+							//Regex to allow only Alphabets Numbers Dash Underscore and Space
+							var pattern = "^\d{1,10}(\.\d{0,4})?$";
+
+							//Validating the textBox value against our regex pattern.
+							var isValid = pattern.test(String.fromCharCode(keyCode));
+							if (!isValid) {
+								errorMsg.innerHTML = "Only alphanumeric,dot and space are allowed.";
+							}
+
+							return isValid;
+						}
+
+						function fetchData() {
+							
+							
+							var khataNo = 888888;
+							if (khataNo === "") {
+								alert("Please Enter KhataNo ");
+								return false;
+							}					
+							var surveyNo = document.getElementById('surveyNo').value;
+							if (surveyNo === '' || surveyNo === null) {
+								alert("Please Enter Polam No");
+								document.getElementById('surveyNo').focus();
+								return false;
+							}
+							var patfarmerName = document.getElementById('oc_name').value;
+							if (patfarmerName === '' || patfarmerName === null) {
+								document.getElementById('oc_name').focus();
+								alert("Please Enter Farmer Name");
+								return false;
+							}
+							var patfatherName = document.getElementById('oc_fname').value
+							if (patfatherName === '' || patfatherName === null) {
+								document.getElementById('oc_fname').focus();
+								alert("Please Enter  Father Name");
+								return false;
+							}
+							var cultfarmerName = document.getElementById('occupname').value;
+							if (cultfarmerName === '' || cultfarmerName === null) {
+								document.getElementById('occupname').focus();
+								alert("Please Enter Cultivator Farmer Name");
+								return false;
+							}
+							var cultfatherName = document.getElementById('occupfname').value
+							if (cultfatherName === '' || cultfatherName === null) {
+								document.getElementById('occupfname').focus();
+								alert("Please Enter Cultivator Father Name");
+								return false;
+							}
+							
+							var text = document.getElementById('tot_extent').value
+							if (parseFloat(text) === 0 || text === null || text === '' || parseFloat(text)>10.0000) {
+								document.getElementById('tot_extent').focus();
+								alert("Please Enter Valid Total Extent");
+								return false;
+							}
+							var ocpext = document.getElementById('occupant_extent').value
+
+							if (parseFloat(ocpext) === 0 || ocpext === null || ocpext === '' ||   parseFloat(ocpext)>10.0000) {
+								document.getElementById('occupant_extent').focus();
+								alert("Please Enter Valid Occupant Extent");
+								return false;
+							}
+							var isValid = true;
+							var inputField = document.getElementById('tot_extent').value;
+						
+					
+							var pattern = /^\d{1,6}(?:\.\d{1,4})?$/;
+
+							if (!pattern.test(inputField)) {
+								alert('Please enter valid TotalExtent');
+								isValid = false;
+							} 
+                            var ocupant_extent = document.getElementById('occupant_extent').value;
+						
+						
+							var pattern = /^\d{1,6}(?:\.\d{1,4})?$/;
+
+							if (!pattern.test(ocupant_extent)) {
+								alert('Please enter  valid OccupantExtent');
+								isValid = false;
+							} 
+							if (parseFloat(ocpext) > parseFloat(text)) {
+								document.getElementById('occupant_extent').focus();
+								alert("Cultivator Extent Should Not More Than Total Extent ")
+								return false;
+							}
+
+
+							var fuid = document.getElementById('cr_farmeruid').value;
+							if (fuid === '' || fuid === null) {
+								alert("Please Enter Aadhaar No");
+								return false;
+							}
+
+							if (fuid.length === 12) {
+							
+								if (validateVerhoeff(fuid)) {
+									//alert('valid Aadhaar');
+									flag = true;
+								} else {
+									alert('Enter Valid  Aadhaar No');
+									$("#cr_farmeruid").focus();
+									return false;
+								}
+							} else {
+								alert("Invalid Aadhar Format");
+								return false;
+							}
+							
+							var objMobileno = document.getElementById('mobileno').value
+							if (objMobileno === '' || objMobileno === null) {
+								alert("Mobile Number cannot be empty");
+								return false;
+							}
+							if (objMobileno.length != 10) {
+								alert("Mobile Number Should be 10 digits");
+								return false;
+							}
+							if (parseInt(objMobileno) === 0) {
+								alert("Mobile Number Should not be 0");
+								return false;
+							}
+							if (parseInt(objMobileno) <= 6000000000) {
+								alert("Mobile Number Should not start with 5 or less");
+								return false;
+							}
+							if (parseInt(objMobileno) === 1000000000 || parseInt(objMobileno) === 2000000000 || parseInt(objMobileno) === 3000000000 || parseInt(objMobileno) === 4000000000
+								|| parseInt(objMobileno) === 5000000000 || parseInt(objMobileno) === 6000000000 || parseInt(objMobileno) === 7000000000 || parseInt(objMobileno) === 8000000000
+								|| parseInt(objMobileno) === 9000000000) {
+								alert("Invalid Mobile Number");
+								return false;
+							}
+							if (parseInt(objMobileno) === 6666666666 || parseInt(objMobileno) === 7777777777 || parseInt(objMobileno) === 8888888888 || parseInt(objMobileno) === 9999999999) {
+								alert("Mobile Number Should not have same 10 digits");
+								return false;
+							}
+
+							var objGender = document.getElementById('gender').value
+
+							if (objGender === '' || objGender === null) {
+								alert("Please Select Gender");
+								return false;
+							}
+							var reason = document.getElementById('rson').value
+
+							if (reason === '' || reason === null) {
+								alert("Please Select reason");
+								return false;
+							}
+							//rson
+
+
+							if ( khataNo === "" || surveyNo === "" || patfarmerName === "" || patfatherName === "" ||
+								cultfarmerName === "" || cultfatherName === "" || text === "" || ocpext === "" ||
+								fuid === "" || objMobileno === "" || objGender === "" || reason === "") {
+								alert("Please fill in all required fields.");
+								return false;
+							}
+							return true;
+						}
+						function goToHome() {
+							window.location.href = 'home.html';
+						}
+						function goToReset() {
+			window.location.href = "/surveyno";
+		}
+
+						
+						function ValidateSrno(e) {
+							var keyCode = e.keyCode || e.which;
+							var errorMsg = document.getElementById("survyNo");
+						
+							errorMsg.innerHTML = "";
+
+							//Regex to allow only Alphabets Numbers Dash Underscore and Space
+							var pattern = /^[a-zdA-Z.\d/\-]+$/i;
+
+							//Validating the textBox value against our regex pattern.
+							var isValid = pattern.test(String.fromCharCode(keyCode));
+							if (!isValid) {
+								errorMsg.innerHTML = "Only alphanumeric,dot and slashes are allowed.";
+							}
+
+							return isValid;
+						}
+					</script>
+
+
+</body>
+
+</html>

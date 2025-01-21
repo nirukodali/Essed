@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Search by AadharNo and eKYC Details - VAA/VHA/VSA </title>
+	<script>
+		function CallPrint(strid) {
+			var prtContent = document.getElementById(strid);
+			var mywindow = window.open('', '', 'left=0,top=0,width=950,height=600,toolbar=1,scrollbars=1,status=1,addressbar=0');
+			var is_chrome = Boolean(mywindow.chrome);
+			mywindow.document.write(prtContent.innerHTML);
+			mywindow.document.close(); // necessary for IE >= 10 and necessary before onload for chrome
+
+			if (is_chrome) {
+				mywindow.onload = function () { // wait until all resources loaded 
+					mywindow.focus(); // necessary for IE >= 10
+					mywindow.print(); // change window to mywindow
+					mywindow.close(); // change window to mywindow
+				};
+			} else {
+				mywindow.document.close(); // necessary for IE >= 10
+				mywindow.focus(); // necessary for IE >= 10
+				mywindow.print();
+				mywindow.close();
+			}
+
+			return true;
+		}
+
+	
+		var tableToExcel = (function () {
+			var uri = 'data:application/vnd.ms-excel;base64,'
+				, template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table align="center">{table}</table></body></html>'
+				, base64 = function (s) {
+					return window.btoa(unescape(encodeURIComponent(s)))
+				}
+				, format = function (s, c) {
+					return s.replace(/{(\w+)}/g, function (m, p) {
+						return c[p];
+					})
+				}
+			return function (table, name) {
+				if (!table.nodeType)
+					table = document.getElementById(table)
+				var ctx = {worksheet: name || 'Worksheet', table: table.innerHTML}
+				window.location.href = uri + base64(format(template, ctx))
+			}
+		})()
+	
+			function validateForm() {
+			var cropyear = document.getElementById("crYear").value;
+		    var  aNum = $('#aNo').val();
+
+
+			// Check if both fields are selected
+			if (cropyear == 0 && aNum === "") {
+				alert("Please select Crop Year and enter Aadhar No.");
+				return false; // Prevent form submission
+			}
+			else if (cropyear == 0) {
+				alert("Please Select Crop Year");
+				return false;
+			}
+			else if (aNum === "") {
+				alert("Please Enter Aadhar No");
+				return false;
+			}
+			else {
+				return true;
+			}
+			
+		}
+		
+	</script>
+</head>
+
+<body>
+	<div th:insert="header"></div>
+<div th:insert="headerImage"></div>
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+
+	<div class="container">
+		<form id="searchKhsnoForm" name="searchKhsnoForm" method="post" th:action="@{/RepsearchByUID}" style="margin-bottom: 0%;height: 40%;">
+			<br>
+						<div class="ecropCardRbk2">
+		<h5 style="background-color:#006400;color: white;font-weight:bolder;font-size:large;margin-left:20%;text-align: center;width:80%"  >
+					Search by AadharNo and eKYC Details - VAA/VHA/VSA</h5>							
+						
+			<div class="mb-3" style="margin-left:35%;margin-top:7%">
+				<label for="name" style="width:30%">Crop Year:</label>
+				<select id="crYear" name="crYear" class="form-select" aria-label="Crop Year" style="width:50%">
+					<option value="0">---Select---</option>
+					<option th:each="emp : ${activeseason}" th:value="${emp.seasonvalue}" th:text="${emp.cropyear}">
+					</option>
+				</select>
+			</div>
+			<div class="mb-3" id="tr_aNo" style="width:60%;margin-left:35%;">
+				<label for="aNo" style="width:40%">Aadhar NO: </label>
+				<input type="text" id="aNo" name="aNo" aria-label="Crop Year"  style="width:50%"><br><br>
+			</div>
+
+			<div align="center" style="margin-left:20%;">
+				<button type="submit" class="btn btn-success" onclick="return validateForm()">Submit</button>
+<!--				<button type="button" class="btn btn-primary btn-block">Back</button>-->
+			</div>
+			</div>
+<!--			<h5 style="font-size:20px" colspan="20" class="heading" align="center">Search by AadharNo and eKYC Details - VAA/VHA/VSA</h5>-->
+
+			<div align="center" id="divPrint" style="margin-top: 2%;" >
+				<table id="tableStkId" align="center" class="table table-striped border border-secondary">
+					<thead>
+						
+				<h5 style="font-size:20px;background-color: #dfffe1;" colspan="20" class="heading1" align="center">
+			CropYear: <span th:text=${cropyear}></span>&numsp;&numsp;     Season: <span th:text="${season} == 'K' ? 'Kharif' : (${season} == 'R' ? 'Rabi' : (${season} == 'S' ? 'Summer' : ' '))"></span>&numsp;&numsp;  </h5>	
+						
+						<tr>
+			            <th rowspan="2"> <b> S.No </b> </th>
+                        <th rowspan="2"> <b> Village Name </b> </th>
+                        <th rowspan="2"> <b> Aadhar No </b> </th>
+                        <th rowspan="2"> <b> Farmer Name </b> </th>             
+                        <th rowspan="2"> <b> Survey No/LP No.</b> </th>
+                        <th rowspan="2"> <b> Khata No.</b> </th>                       
+                        <th rowspan="2"> <b> Crop Name </b> </th>
+                        <th rowspan="2"> <b> Variety </b> </th>
+                        <th rowspan="2"> <b> Extent Sown </b> </th>
+                        <th colspan="3"> <b> Authentication </b> </th>
+						</tr>
+						<tr>
+							<th> VAA & Date </th>
+							<th> VRO & Date </th>
+							<th> eKYC & Date </th>
+						</tr>
+					</thead>
+					<tbody id="databody">
+						<tr th:each="bean,row: ${list}">
+							<td th:text="${row.index+1}" />
+							<td th:text="${bean.Wbvname}" />
+							<td th:text="${bean.Cr_farmeruid}" />
+							<td th:text="${bean.Occupname}" />
+							<td th:text="${bean.Cr_sno}" />
+							<td th:text="${bean.Kh_no}" />
+							<td th:text="${bean.Cropname}" />
+							<td th:text="${bean.Varietyname}" />
+							<td th:text="${bean.Cr_mix_unmix_ext}" />
+
+
+							<td th:if="${bean.Vaaauth == 'Y'}" style="text-align:center">Yes, <span
+									th:text="${bean.Dt_vaaauth}"></span></td>
+							<td th:if="${bean.Vaaauth == 'N'}">Pending Due to Correction</td>
+							<td th:if="${bean.Vaaauth != 'Y' && bean.Vaaauth != 'N'}" style="text-align:center">No</td>
+						
+						<td th:if="${bean.Vroauth == 'Y'}" style="text-align:center">Yes, <span
+									th:text="${bean.Dt_vroauth}"></span></td>
+							<td th:if="${bean.Vroauth == 'N'}">Pending Due to Correction</td>
+							<td th:if="${bean.Vroauth != 'Y' && bean.Vroauth != 'N'}" style="text-align:center">No</td>
+	
+						<td th:if="${bean.Ekyc == 'Y'}" style="text-align:center">Yes, <span
+									th:text="${bean.Dt_ekyc}"></span></td>
+							<td th:if="${bean.Ekyc == 'N'}">Pending Due to Correction</td>
+							<td th:if="${bean.Ekyc != 'Y' && bean.Ekyc != 'N'}" style="text-align:center">No</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div th:if="${NoRecordsFound}" align="center">
+				<b style="font-size:18px;">---- No Records found-----</b>
+			</div>
+			
+		
+		<div align="center" style="color:black">
+			<input class="btn btn-success" name="ctl00$ContentPlaceHolder1$btnPrint" type="button"
+				id="ctl00_ContentPlaceHolder1_btnPrint" onClick="javascript:CallPrint('divPrint')" value="Print">
+			<input class="btn btn-success" type="button" onclick="tableToExcel('tableStkId', 'Abstract')" value="Excel">
+			<!--  <input  class="btn btn-primary" type="button" value="Back" onclick="goBack()" /> -->
+
+		</div>
+		</form>
+		</div>	
+</body>
+
+</html>

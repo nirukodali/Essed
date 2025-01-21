@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="header"></head>
+
+<body>
+	<div th:insert="headerImage"></div>
+
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+
+<title>VroRejectReasons</title>
+
+<div>
+    	<span th:utext="${noRecords}"></span>
+    </div>
+
+<style>
+table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+table, th, td {
+	border: 1px solid black;
+}
+
+th {
+	background-color: #e8e8e8;
+	color: black;
+	text-align: center;
+	font-weight: bold; /* Set font weight to bold */
+}
+
+td {
+	text-align: center;
+}
+
+.table-heading {
+	background-color: #3498db;
+	text-align: center;
+	width: 90%; /* Set the same width as the table */
+	margin: 0 auto; /* Center the paragraph */
+	padding: 10px; /* Add some padding for better appearance */
+	color: white; /* Set text color to white */
+	font-weight: bold; /* Set font weight to bold */
+}
+</style>
+<script>
+	$(document).ready(function() {
+		$("#checkedAll").change(function() {
+			if (this.checked) {
+				$(".checkSingle").each(function() {
+					this.checked = true;
+				})
+			} else {
+				$(".checkSingle").each(function() {
+					this.checked = false;
+				})
+			}
+		});
+
+		$(".checkSingle").click(function() {
+			if ($(this).is(":checked")) {
+				var isAllChecked = 0;
+				$(".checkSingle").each(function() {
+					if (!this.checked)
+						isAllChecked = 1;
+				})
+				if (isAllChecked == 0) {
+					$("#checkedAll").prop("checked", true);
+				}
+			} else {
+				$("#checkedAll").prop("checked", false);
+			}
+		});
+	});
+	
+	$(document).ready(function() {
+	    function populateReasonsForObjection(selectedRow, isEnabled) {
+	        var selectElement = $(selectedRow).find('select');
+	        $(selectElement).prop('disabled', !isEnabled);
+	    }
+	  
+	    $('#mroVerifyForm').submit(function(e) {
+	        e.preventDefault();
+	        var selectedBookingIds = "";
+	        var selectedKhathaNumbers = "";
+	        var selectedTotalExtent = "";
+	        var selectedSurveyNumbers = "";
+	        var selectedCropCodes = "";
+	        var selectedFarmerNames = "";
+	        var selectedFarmerFatherNames = "";
+	        var selectedCropNumbers = "";
+	        var selectedVarietyNames = "";
+	        var selectedAadhaarNumbers = "";
+	        var selectedSownDates = "";
+	        var selectedReasons = "";
+	        
+	        var isFlagSet = true;
+	        
+	        var checkboxes = document.querySelectorAll('.checkSingle');
+	    	var numberOfCheckboxes = checkboxes.length;
+	    	
+	    	for(var i=0;i<numberOfCheckboxes;i++){
+	    		if(document.getElementById("checkbox"+i).checked==true){
+	    			isFlagSet = false;
+	    			if (selectedBookingIds === "" || selectedKhathaNumbers === "" || selectedTotalExtent.length === "" || selectedSurveyNumbers === "" || selectedCropCodes === "" ||
+	    					selectedFarmerNames === "" || selectedFarmerFatherNames === "" || selectedCropNumbers === "" || selectedVarietyNames === "" || 
+	    					selectedAadhaarNumbers === "" || selectedSownDates === "" || selectedReasons === "") {
+	    				
+	    				selectedBookingIds = selectedBookingIds+document.getElementById("bookingId"+i).value;
+	    	   			selectedKhathaNumbers = selectedKhathaNumbers+document.getElementById("khathaNo"+i).value;
+	    	   			selectedTotalExtent = selectedTotalExtent+document.getElementById("totalExtent"+i).value;
+	    	   			selectedSurveyNumbers = selectedSurveyNumbers+document.getElementById("surveyNo"+i).value;
+	    	   			selectedCropCodes = selectedCropCodes+document.getElementById("cropName"+i).value;
+	    	   			selectedFarmerNames = selectedFarmerNames+document.getElementById("farmerName"+i).value;
+	    	   			selectedFarmerFatherNames = selectedFarmerFatherNames+document.getElementById("farmerFatherName"+i).value;
+	    	   			selectedCropNumbers = selectedCropNumbers+document.getElementById("cropNumber"+i).value;
+	    	   			selectedVarietyNames = selectedVarietyNames+document.getElementById("varietyName"+i).value;
+	    	   			selectedAadhaarNumbers = selectedAadhaarNumbers+document.getElementById("aadhaarNo"+i).value;
+	    	   			selectedSownDates = selectedSownDates+document.getElementById("sownDate"+i).value;
+	    	   			selectedReasons = selectedReasons+$("#selectedItems"+i).val();
+	    			} 
+	    			else {
+	    				selectedBookingIds = selectedBookingIds+","+document.getElementById("bookingId"+i).value;
+	    	   			selectedKhathaNumbers = selectedKhathaNumbers+","+document.getElementById("khathaNo"+i).value;
+	    	   			selectedTotalExtent = selectedTotalExtent+","+document.getElementById("totalExtent"+i).value;
+	    	   			selectedSurveyNumbers = selectedSurveyNumbers+","+document.getElementById("surveyNo"+i).value;
+	    	   			selectedCropCodes = selectedCropCodes+","+document.getElementById("cropName"+i).value;
+	    	   			selectedFarmerNames = selectedFarmerNames+","+document.getElementById("farmerName"+i).value;
+	    	   			selectedFarmerFatherNames = selectedFarmerFatherNames+","+document.getElementById("farmerFatherName"+i).value;
+	    	   			selectedCropNumbers = selectedCropNumbers+","+document.getElementById("cropNumber"+i).value;
+	    	   			selectedVarietyNames = selectedVarietyNames+","+document.getElementById("varietyName"+i).value;
+	    	   			selectedAadhaarNumbers = selectedAadhaarNumbers+","+document.getElementById("aadhaarNo"+i).value;
+	    	   			selectedSownDates = selectedSownDates+","+document.getElementById("sownDate"+i).value;
+	    	   			selectedReasons = selectedReasons+"$"+$("#selectedItems"+i).val();
+
+	    			}
+	    			
+	    		}}
+	    	
+	    		if (isFlagSet) {
+	    			alert("Please select at least one checkbox !!!!!!!!!");
+	    			return;
+	    		}
+	    		
+	    		if (selectedReasons == ""){
+	    			alert("Please select at least one Reason !!!!!!!!!");
+	    			return;
+	    		}
+	    		
+	    		document.getElementById("bookingIdLst").value = selectedBookingIds;
+	    		document.getElementById("khathaNoLst").value = selectedKhathaNumbers;
+	    		document.getElementById("totalExtentLst").value = selectedTotalExtent;
+	    		document.getElementById("surveyNoLst").value = selectedSurveyNumbers;
+	    		document.getElementById("cropCodeLst").value = selectedCropCodes;
+	    		document.getElementById("farmerNameLst").value = selectedFarmerNames;
+	    		document.getElementById("farmerFatherNameLst").value = selectedFarmerFatherNames;
+	    		document.getElementById("cropNumberLst").value = selectedCropNumbers;
+	    		document.getElementById("varietyCodeLst").value = selectedVarietyNames;
+	    		document.getElementById("aadhaarNoLst").value = selectedAadhaarNumbers;
+	    		document.getElementById("sownDateLst").value = selectedSownDates;
+	    		document.getElementById("selectedItemList").value = selectedReasons;
+	    		
+	        var sendData = {
+	            bookingIdLst: selectedBookingIds,
+	            khathaNoLst: selectedKhathaNumbers,
+	            totalExtentLst: selectedTotalExtent,
+	            surveyNoLst: selectedSurveyNumbers,
+	            cropCodeLst: selectedCropCodes,
+	            farmerNameLst: selectedFarmerNames,
+	            farmerFatherNameLst: selectedFarmerFatherNames,
+	            cropNumberLst: selectedCropNumbers,
+	            varietyCodeLst: selectedVarietyNames,
+	            aadhaarNoLst: selectedAadhaarNumbers,
+	            sownDateLst: selectedSownDates,
+	            selectedItemList: selectedReasons,
+	        };
+	        $.ajax({
+	            type: 'POST',
+	            url: './saveSelection', 
+	            data: sendData,
+	            success: function(response) {
+	                alert('Data Inserted and Updated successfully');
+	                window.location.reload();
+	            },
+	            error: function(error) {
+	                console.error('Error sending data:', error);
+	            }
+	        });
+	    });
+
+ 
+	    $(".checkSingle").each(function() {
+	        var isChecked = $(this).is(":checked");
+	        var selectedRow = $(this).closest('tr');
+	        populateReasonsForObjection(selectedRow, isChecked);
+	    });
+
+	    var checkedAll = $("#checkedAll").is(":checked");
+	    $(".checkSingle").prop('checked', checkedAll).trigger('change');
+
+	    $("#checkedAll").change(function() {
+	        var isCheckedAll = $(this).is(":checked");
+	        $(".checkSingle").prop('checked', isCheckedAll).trigger('change');
+
+	        if (isCheckedAll) {
+	            var selectElements = $(".checkSingle:checked").closest('tr').find('select');
+	            selectElements.prop('disabled', false);
+	        } else {
+	            var selectElements = $(".checkSingle").closest('tr').find('select');
+	            selectElements.prop('disabled', true);
+	        }
+	    });
+
+	    $(".checkSingle").click(function() {
+	        var isChecked = $(this).is(":checked");
+	        var selectedRow = $(this).closest('tr');
+	        populateReasonsForObjection(selectedRow, isChecked);
+	    });
+	});
+
+function submit(){
+	
+}
+	
+</script>
+<style>
+.centered-button {
+	display: block;
+	margin: 0 auto;
+	text-align: center;
+	background-color: #3498db; /* Change background color to blue */
+	color: white; /* Set text color to white */
+	padding: 10px 20px; /* Add padding for better appearance */
+	border: none; /* Remove default button border */
+	border-radius: 5px; /* Add some border radius for a rounded look */
+	cursor: pointer; /* Show pointer cursor on hover */
+	font-weight: bold
+}
+/* Additional style for hover effect */
+.centered-button:hover {
+	background-color: darkblue; /* Change background color on hover */
+}
+</style>
+
+</head>
+<body style="background-color: #e8e8e8;">
+<!--	<div th:replace="home :: content"></div>-->
+	<p class="table-heading">VRO Edit And Updation of Reasons for Objections in CropBooking</p>
+
+	<form id="mroVerifyForm" name="mroVerifyForm" th:action="@{/saveSelection}" method="post" >
+		<table id="tableStkId" style="width: 90%; margin: 0 auto;">
+			<!-- Your table content -->
+			<thead>
+
+				<tr>
+					<th><input type="checkbox" id="checkedAll" /></th>
+					<th><b>S.No.</b></th>
+					<th style="text-align: center;">Booking Id</th>
+					<th style="text-align: center;">Khatha No</th>
+					<th style="text-align: center;">Survey No</th>
+					<th style="text-align: center;">Total Extent</th>
+					<th style="text-align: center;">Crop Name</th>
+					<th style="text-align: center;">Farmer Name</th>
+					<th style="text-align: center;">Farmer Father Name</th>
+					<th style="text-align: center;">Crop Number</th>
+					<th style="text-align: center;">Variety Name</th>
+					<th style="text-align: center;">Aadhaar No</th>
+					<th style="text-align: center;">Reasons for Objection</th>
+				</tr>
+			</thead>
+			</tbody>
+				 
+            <tr th:each="data, rowstat : ${dataList}">
+                <td align="center">
+                    <input type="checkbox" class="checkSingle"
+                           name="checkClosureAlloc" value="${data.bookingId}" th:id="'checkbox' + ${rowstat.index}">
+                </td>
+                
+                <td th:text="${rowstat.index + 1}"></td>
+				
+				<td   th:text="${data.bookingId}"></td>
+				<input type="hidden" th:id="'bookingId'+${rowstat.index}" th:name="bookingId" th:value="${data.bookingId}">
+                
+				<td th:text="${data.khathaNo}"></td>
+				<input type="hidden" th:id="'khathaNo' + ${rowstat.index}" name="khathaNo" th:value = "${data.khathaNo}" />
+				
+				<td  th:text="${data.surveyNo}" ></td>
+				<input type="hidden" th:id="'surveyNo' + ${rowstat.index}" name="surveyNo" th:value="${data.surveyNo}"/>
+				
+				<td th:text="${data.totalExtent}" ></td>
+				<input type="hidden" th:id="'totalExtent' + ${rowstat.index}" name="totalExtent" th:value="${data.totalExtent}"/>
+				
+				<td th:text="${data.cropName}" ></td>
+				<input type="hidden" th:id="'cropName' + ${rowstat.index}" name="cropName" th:value="${data.cropCode}"/>
+				
+				<td th:text="${data.farmerName}" ></td>
+				<input type="hidden" th:id="'farmerName' + ${rowstat.index}" name="farmerName" th:value="${data.farmerName}"/>
+				
+				<td th:text="${data.farmerFatherName}" ></td>
+				<input type="hidden" th:id="'farmerFatherName' + ${rowstat.index}" name="farmerFatherName" th:value="${data.farmerFatherName}"/>
+				
+				
+				<td th:if="${data.cropNumber == '888_0'}" >NA</td>
+				<td th:if="${data.cropNumber != '888_0'}" th:text="${data.cropNumber}" ></td>
+				<input type="hidden" th:id="'cropNumber' + ${rowstat.index}" name="cropNumber" th:value="${data.cropNumber}"/>
+				
+				<td th:text="${data.varietyName}" ></td>
+				<input type="hidden" th:id="'varietyName' + ${rowstat.index}" name="varietyName" th:value="${data.varietyCode}"/>
+				
+				<td th:text="${data.aadhaarNo}" ></td>
+				<input type="hidden" th:id="'aadhaarNo' + ${rowstat.index}" name="aadhaarNo" th:value="${data.aadhaarNo}"/>
+				
+				<input type="hidden" th:id="'sownDate' + ${rowstat.index}" name="sownDate" th:value="${data.sownDate}"/>
+				
+				<th style="text-align: center;">
+				
+    <select th:multiple="multiple" th:id="'selectedItems' + ${rowstat.index}" name="selectedItems">
+        <option value="" disabled selected>--------select---------</option>
+        <th:block th:each="item : ${rejectionList}">
+            <option th:value="${item.code}" th:text="${item.reason}"></option>
+        </th:block>
+    </select>
+
+</th>
+</tr>
+
+		</tbody>
+		</table>
+		       <input type="hidden" id="bookingIdLst" name="bookingIdLst"  />
+				
+				<input type="hidden" id="khathaNoLst" name="khathaNoLst"  />
+				
+				<input type="hidden" id="surveyNoLst" name="surveyNoLst"  />
+				
+				<input type="hidden" id="totalExtentLst" name="totalExtentLst"  />
+				
+				<input type="hidden" id="cropCodeLst" name="cropCodeLst"  />
+				
+				<input type="hidden" id="farmerNameLst" name="farmerNameLst"  />
+				
+				<input type="hidden" id="farmerFatherNameLst" name="farmerFatherNameLst"  />
+				
+				<input type="hidden" id="cropNumberLst" name="cropNumberLst"  />
+				
+				<input type="hidden" id="varietyCodeLst" name="varietyCodeLst"  />
+				
+				<input type="hidden" id="aadhaarNoLst" name="aadhaarNoLst"  />
+				
+				<input type="hidden" id="sownDateLst" name="sownDateLst" />
+				
+				<input type="hidden" id="selectedItemList" name="selectedItemList"  /> <br>
+				
+				
+    <button type="submit" class="centered-button blue-button">Save Selection</button>
+    
+    <div>
+    	<span th:utext="${msg}"></span>
+    </div>
+    
+</form>
+
+</body>
+
+</html>
+
+
+
+

@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="header"></head>
+
+<style>
+    /* Add padding to table headers for spacing */
+    th {
+        padding: 10px;
+        text-align: center;
+        background-color: #006400;
+        color: white;
+    }
+
+    /* Add margin or padding to header title */
+    .heading {
+        margin-bottom: 20px; /* Add some space between the header and table */
+        padding: 15px;
+        font-size: 18px;
+        text-align: center;
+        background-color: #006400;
+        color: white;
+    }
+
+    /* Add padding to table data cells for better readability */
+    td {
+        padding: 8px;
+        text-align: center;
+    }
+
+    /* Optional: Styling for the input fields inside the table */
+    select, input {
+        padding: 5px;
+        font-size: 14px;
+    }
+
+    /* Space for the dropdowns and other form elements */
+    .form-element {
+        margin-bottom: 20px;
+    }
+
+    .error {
+        color: red;
+        font-size: 12px;
+    }
+</style>
+
+<body>
+
+    <div th:insert="headerImage"></div>
+    <div th:insert="navBarTop"></div>
+    <div th:insert="headerMessage"></div>
+
+ <div align="center">
+    <form id="f1" name="f1" method="POST">
+        <div align="center">
+            <table>
+                <thead>
+                    <tr>
+                        <th class="heading" colspan="2" style="background-color: #006400; color: white; text-align: center;">
+                            Stock Entry
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Product Name Dropdown -->
+                   
+
+                    <!-- Season Dropdown -->
+                    <tr>
+                        <td class="tdnum"><b>Season <font color="red">*</font></b></td>
+                        <td>
+                            <select name="season" id="season" style="width: 200px" required>
+                                <option value="">--Select--</option>
+                                <option th:each="seasonValues : ${seasonValues}" th:value="${seasonValues.season}" th:text="${seasonValues.seasonname}"></option>
+                            </select>
+                            <span id="seasonError" class="error"></span>
+                        </td>
+                    </tr>
+
+                    <!-- Crop Year Dropdown -->
+                    <tr>
+                        <td class="tdnum"><b>Crop Year <font color="red">*</font></b></td>
+                        <td>
+                            <select name="cropYear" id="cropYear" onchange="getMandal()" style="width: 200px" required>
+                                <option value="">--Select--</option>
+                                <option th:each="cropYear : ${cropYear}" th:value="${cropYear.cropyear}" th:text="${cropYear.cropyear}"></option>
+                            </select>
+                            <span id="cropYearError" class="error"></span>
+                        </td>
+                    </tr>
+                    <tr>
+     <td class="tdnum"><b>Mandal <font color="red">*</font></b></td>
+    <td>
+        <select name="mcode" id="mcode" onchange="getVillage()" style="width: 200px" required>
+            <option value="">--Select--</option>
+        </select>
+        <span id="mandalError" class="error"></span> <!-- Error message span -->
+    </td>
+    </tr>
+    
+    <tr>
+    <td class="tdnum"><b>Village <font color="red"></font></b></td>
+    <td>
+       <select name="vcode" id="vcode" style="width: 200px" >
+            <option value="">--Select--</option>
+        </select>
+        <span id="villageError" class="error"></span> <!-- Error message span -->
+    </td>
+</tr>
+    
+    
+    
+    
+                     <tr>
+                        <td class="tdnum"><b>Product Name <font color="red"></font></b></td>
+                        <td>
+                            <select name="pcode" id="pcode" onchange="getspcode()" style="width: 200px" >
+                                <option value="">--Select--</option>
+                                <option th:each="productname : ${productname}" th:value="${productname.productcode}" th:text="${productname.productname}"></option>
+                            </select>
+                            <span id="productNameError" class="error"></span>
+                        </td>
+                    </tr>
+
+                    <!-- Sub Product Name Dropdown -->
+                    <tr>
+                        <td class="tdnum"><b>Sub Product Name <font color="red"></font></b></td>
+                        <td>
+                            <select name="spcode" id="spcode" style="width: 200px" >
+                                <option value="">--Select--</option>
+                            </select>
+                            <span id="subProductError" class="error"></span>
+                        </td>
+                    </tr>
+
+                    <!-- Submit Button -->
+                    <tr>
+                        <td colspan="2" align="center">
+                            <input type="button" name="Submit" value="SUBMIT" onclick="submitForm()" />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </form>
+</div>
+
+    <script type="text/javascript">
+    
+    function getVillage() {
+        var mcode = document.f1.mcode.value;  // Get the selected mandal code
+  //alert(mcode);
+        // Make the AJAX GET request to the Spring Boot backend
+        $.ajax({
+            url: './getVillages',  // The Spring Boot endpoint
+            type: 'GET',
+            data: { mcode: mcode },  // Sending the district code as a parameter
+            success: function(data, status) {
+                // Build the select dropdown for villages
+                var selectVillage = "<select>";
+                selectVillage += "<option value=''>--Select--</option>";
+
+                // Check if the response data is empty
+                if (data.length === 0) {
+                    alert("No Records");
+                    selectVillage += "</select>";  // Close the select tag
+                } else {
+                    // Iterate through the list of villages and append to the dropdown
+                    for (var i = 0; i < data.length; i++) {
+                        selectVillage += "<option value='" + data[i].vcode + "'>" + data[i].vname + "</option>";
+                    }
+                    selectVillage += "</select>";  // Close the select tag
+                }
+
+                // Append the village dropdown to the #vcode element in the DOM
+                $("#vcode").html(selectVillage);
+            },
+            error: function(xhr, status, error) {
+                alert('Error fetching villages. Please try again later.');
+                console.error('Error:', error);
+            }
+        });
+    }
+
+    
+    function getMandal() {
+        $.ajax({
+            url: '/getMandals',  // Spring Boot endpoint without dcode
+            type: 'GET',
+            success: function(data, status) {
+                var selectMandal = "<td class=\"tdnum\"><b>  Mandal <font color=\"#FF0000\">*</font></b></td><td><select name=\"mcode\" id=\"mcode\" style=\"width:250px\" >";
+                selectMandal += "<option value=>--Select--</option>";
+
+                if (data.length === 0) {
+                    alert("No Records");
+                    selectMandal += "</select></td>";
+                    $("#mcode").html(selectMandal);
+                } else {
+                    // Start building the dropdown list with the returned mandals
+                    selectMandal = "<select name=\"mcode\" id=\"mcode\" style=\"width:250px\" >";
+                    selectMandal += "<option value=>--Select--</option>";
+
+                    // Loop through the returned mandals and populate the dropdown
+                    data.forEach(function(mandal) {
+                        selectMandal += "<option value=\"" + mandal.mcode + "\">" + mandal.mname + "</option>";
+                    });
+
+                    selectMandal += "</select>";
+                    $("#mcode").html(selectMandal);
+                }
+            },
+            error: function(xhr, status, error) {
+                alert('Error: ' + error);
+            }
+        });
+    }
+        function getspcode() {
+            var productCode = $('#pcode').val();
+            //alert(productCode);
+            if (productCode) {
+                $.ajax({
+                    url: './getSubProducts',
+                    type: 'GET',
+                    data: {productCode: productCode},
+                    success: function (response) {
+                        var subProductSelect = $('#spcode');
+                        subProductSelect.empty();
+                   //     subProductSelect.append('<option value="">--Select--</option>');
+                        $.each(response, function (index, subProduct) {
+
+                            subProductSelect.append('<option value="' + subProduct.subproductcode + '">' + subProduct.subproductname + '</option>');
+                        });
+                    },
+                    error: function (xhr, status, error) {
+                        alert('Error: ' + error);
+                    }
+                });
+            } else {
+                $('#spcode').empty().append('<option value="">--Select--</option>');
+            }
+        }
+
+        function validateForm() {
+            var isValid = true;
+
+            // Reset error messages
+            $('.error').text('');
+
+            // Validate Season
+            if (document.getElementById('season').value == "") {
+                document.getElementById('seasonError').textContent = "Season is required.";
+                isValid = false;
+            }
+
+            // Validate Crop Year
+            if (document.getElementById('cropYear').value == "") {
+                document.getElementById('cropYearError').textContent = "Crop Year is required.";
+                isValid = false;
+            }
+
+            // Validate Mandal
+            if (document.getElementById('mcode').value == "") {
+                document.getElementById('mandalError').textContent = "Mandal is required.";
+                isValid = false;
+            }
+
+          /*   // Validate Village
+            if (document.getElementById('vcode').value == "") {
+                document.getElementById('villageError').textContent = "Village is required.";
+                isValid = false;
+            }
+
+            // Validate Product Name (pcode)
+            if (document.getElementById('pcode').value == "") {
+                document.getElementById('productNameError').textContent = "Product Name is required.";
+                isValid = false;
+            }
+
+            // Validate Sub Product Name (spcode)
+            if (document.getElementById('spcode').value == "") {
+                document.getElementById('subProductError').textContent = "Sub Product Name is required.";
+                isValid = false;
+            } */
+
+            return isValid;
+        }
+
+        function submitForm() {
+            // Only submit if form is valid
+            
+             event.preventDefault();
+            if (validateForm()) {
+                // Collect all the form data
+                var season = document.getElementById('season').value;
+                var cropYear = document.getElementById('cropYear').value;
+                var mcode = document.getElementById('mcode').value;
+                var vcode = document.getElementById('vcode').value;
+                var pcode = document.getElementById('pcode').value;
+                var spcode = document.getElementById('spcode').value;
+
+                var formData = {
+                    season: season,
+                    cropYear: cropYear,
+                    mcode: mcode,
+                    vcode: vcode,
+                    pcode: pcode,
+                    spcode: spcode
+                };
+
+                // Submit the data via AJAX
+                $.ajax({
+                    url: '/submitstockentry',  // Ensure this is the correct URL for form submission
+                    type: 'POST',
+                    data: formData,
+                    success: function(response) {
+                        console.log('Form submitted successfully:', response);
+                        document.getElementById('f1').reset();  // Reset the form
+
+                        // Redirect to another page (with the form data as query params)
+                      window.location.href = '/getstockentryintf?season=' + season + '&cropYear=' + cropYear + 
+                                                '&mcode=' + mcode + '&vcode=' + vcode + 
+                                                '&pcode=' + pcode + '&spcode=' + spcode; 
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error:', error);
+                        alert('Error: ' + error);
+                    }
+                });
+            } else {
+                // If validation fails, show an alert
+                alert("Please fill all required fields.");
+            }
+        }
+
+
+    </script>
+
+</body>
+
+</html>

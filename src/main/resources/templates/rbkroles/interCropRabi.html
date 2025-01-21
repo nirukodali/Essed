@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Social Audit Grievance Redressal</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+	<style>
+		.webland-container-new {
+			text-align: center;
+			margin-bottom: 5px;
+		}
+
+		.box-container {
+			border: 1px solid #007bff;
+			border-radius: 4px;
+			padding: 15px;
+			box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+			cursor: pointer;
+		}
+
+		h5 {
+			color: #007bff;
+			margin-bottom: 5px;
+		}
+
+		label {
+			font-weight: bold;
+			display: block;
+			margin-bottom: 5px;
+		}
+
+		select,
+		input {
+			width: 50%;
+			padding: 10px;
+			margin-bottom: 10px;
+			box-sizing: border-box;
+			border: 1px solid #ced4da;
+			border-radius: 1px;
+			background-color: #fff;
+		}
+
+		.mb-3 {
+			margin-bottom: 5px;
+		}
+
+		input[type="button"] {
+			background-color: #007bff;
+			color: #fff;
+			font-size: 14px;
+		}
+
+		.heading-container {
+			background-color: #007bff;
+			color: #fff;
+			font-weight: bold;
+			padding: 10px;
+		}
+
+		.action-button {
+			background-color: #007bff;
+			color: #fff;
+			font-size: 14px;
+			padding: 10px;
+			cursor: pointer;
+		}
+
+		#btnRefresh {
+			background-color: #28a745;
+			color: #fff;
+			font-size: 14px;
+			padding: 10px;
+			cursor: pointer;
+		}
+	</style>
+</head>
+
+<body>
+
+
+	<div th:insert="headerImage"></div>
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+
+
+	<div class="webland-container-new box-container">
+		<form id="myform" name="editCrBookingForm" th:action="@{./SocialAuditInterCropViewDetailsRabi}" method="post">
+			<table style="margin: 0 auto;">
+				<tr>
+					<td colspan="6" class="heading-container">Rabi 2022-23 Social Audit Grievance Redressal(Mixed to
+						Inter Crop)</td>
+				</tr>
+				<tr id="tr_msg">
+					<td colspan="3" align="center">
+						<font style="color: green;"></font>
+					</td>
+				</tr>
+				<tr>
+					<td class="tdnum" width="30%"><b>Crop Year <font color="red">*</font></b></td>
+					<td>
+						<select id="cropyear" name="cropyear"  style="width: 200px">
+							<option value="">---Select---</option>
+						</select>
+<!-- 						<div th:if="${#fields.hasErrors('cropyear')}" th:errors="*{cropyear}" class="error-message" -->
+<!-- 							style="color: red"></div> -->
+					</td>
+				</tr>
+				<tr>
+					<td class="tdnum" width="30%"> <b> Village <font color="red">*</font></b> </td>
+					<td>
+						<select id="vcode" name="vcode"  style="width:200px">
+							<option value="">----Select----</option>
+						</select>
+<!-- 						<div th:if="${#fields.hasErrors('vcode')}" th:errors="*{vcode}" class="error-message" -->
+<!-- 							style="color: red"></div> -->
+
+					</td>
+				</tr>
+				<!-- Applicant Name -->
+				<tr>
+					<td class="tdnum" width="30%"><b>Applicant Name </b>
+						<font color="red">*</font>
+					</td>
+					<td>
+						<input type="text" name="appName" id="appName"    maxlength="20"
+							required />
+<!-- 							<div th:if="${#fields.hasErrors('appName')}" th:errors="*{appName}" class="error-message" -->
+<!-- 							style="color: red"></div> -->
+					</td>
+				</tr>
+				<!-- Applicant Mobile No -->
+				<tr>
+					<td class="tdnum" width="30%"><b>Applicant Mobile No</b>
+						<font color="red">*</font>
+					</td>
+					<td>
+						<input type="text" name="appMob" id="appMob"  maxlength="10" required />
+<!-- 						<div th:if="${#fields.hasErrors('appMob')}" th:errors="*{appMob}" class="error-message" -->
+<!-- 							style="color: red"></div> -->
+					</td>
+					
+				</tr>
+				<!-- Application Serial No -->
+				<tr>
+					<td class="tdnum" width="50%"><b>Application Serial No </b>
+						<font color="red">*</font>
+					</td>
+					<td>
+						<input type="number" name="appId" id="appId"   maxlength="50" required />
+<!-- 						<div th:if="${#fields.hasErrors('appId')}" th:errors="*{appId}" class="error-message" -->
+<!-- 							style="color: red"></div> -->
+					</td>
+				</tr>
+				<!-- Search By -->
+				<tr>
+					<td class="tdnum" width="50%"> <b>Search By <font color="red">*</font></b> </td>
+					<td>
+						<select id="searchParam" name="searchParam" style="width: 200px"
+							onchange="show_hide_textfield()">
+							<option value="4">Booking Id</option>
+						</select>
+					</td>
+				</tr>
+				<!-- Booking Id -->
+				<tr id="tr_bookingid">
+					<td class="tdnum" width="50%"><b>Enter Booking Id <font color="red">*</font></b></td>
+					<td>
+						<input type="text" name="bookingid" id="bookingid"  style="width: 200px" maxlength="50" required />
+<!-- 						<div th:if="${#fields.hasErrors('bookingid')}" th:errors="*{bookingid}" class="error-message" -->
+<!-- 							style="color: red"></div> -->
+					</td>
+				</tr>
+				<tr>
+					<td><input type="hidden" name="applicaId" id="applicaId"></td>
+				</tr>
+				<tr>
+					<td><input type="hidden" name="applicaMobile" id="applicaMobile"></td>
+				</tr>
+				<tr>
+					<td><input type="hidden" name="applicaName" id="applicaName"></td>
+				</tr>
+
+				<tr>
+					<td align="center" colspan="2">
+<!-- 						<button type="submit" id="searchButton" class="btn btn-primary btn-block" >Search</button> -->
+						<input type="submit" id="searchButton" value="Search" class="btn btn-primary btn-block" onclick="fetchData()" />
+					</td>
+				</tr>
+				<tr>
+					<td align="center" colspan="2">
+						<button type="button" id="btnRefresh" onclick="refreshPage()"
+							class="btn btn-primary btn-block">Refresh</button>
+					</td>
+				</tr>
+			</table>
+		</form>
+	</div>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+
+	<script>
+		function fetchCropYears() {
+			$.get('/rest/api/interSocial/getSeasonCropYears')
+				.done(function (response) {
+					var options = '<option value="">---Select---</option>';
+					response.forEach(function (cropYear) {
+						options += '<option value="' + cropYear.seasonvalue + '">' + cropYear.cropyear + '</option>';
+					});
+					$('#cropyear').html(options);
+				})
+				.fail(function (xhr, status, error) {
+					console.error('Error fetching crop years:', error);
+				});
+		}
+
+		function fetchVillages(selectedCropYear) {
+			$.get('/rest/api/interSocial/getVillages',
+			 {cropyear: selectedCropYear})
+				.done(function (response) {
+					var options = '<option value="">----Select----</option>';
+					response.forEach(function (village) {
+						options += '<option value="' + village.vcode + '">' + village.wbvname + '</option>';
+					});
+					$('#vcode').html(options);
+				})
+				.fail(function (xhr, status, error) {
+					console.error('Error fetching villages:', error);
+				});
+		}
+
+		$(document).ready(function () {
+			fetchCropYears();
+
+			$('#cropyear').on('change', function () {
+				var selectedCropYear = $(this).val();
+				fetchVillages(selectedCropYear);
+			});
+
+			$('#searchButton').on('click', function (event) {
+				event.preventDefault();
+
+
+				$('#myform').submit();
+			});
+		});
+		///////
+		
+		function fetchData() {
+
+                if ($('#cropyear').val() === "") {
+                    alert("Please Select CropYear");
+                    return false;
+                }
+                if ($('#vcode').val() === "") {
+                    alert("Please Select Village");
+                    return false;
+                }
+
+
+                var searchParam = $('#searchParam').val();
+//                var surveyno = $('#surveyno').val();
+                var applictionId=document.getElementById("appId").value;
+                if (applictionId === null || applictionId === "") {
+                        alert("Please Enter Applicant Id");
+                        return false;
+                    } else if (applictionId === "0") {
+                        alert("Applicant Id cannot be empty ");
+                        return false;
+                    }
+                var applictionMob=document.getElementById("appMob").value;
+                 if (applictionMob === null || applictionMob === "") {
+                        alert("Please Enter Applicant Mobile No");
+                        return false;
+                    } else if (applictionMob === "0") {
+                        alert("Applicant Mobile No cannot be empty ");
+                        return false;
+                    }
+                   if(applictionMob == ""){
+                            alert("Mobile Number cannot be empty");
+                            return false;
+                        } else if(applictionMob.length != 10){
+                            alert("Mobile Number Should be 10 digits");
+                            return false;
+                        } else if(parseInt(applictionMob) == 0){
+                            alert("Mobile Number Should not be 0");
+                            return false;
+                        } else if(parseInt(applictionMob) <= 6000000000){
+                            alert("Mobile Number Should not start with 5 or less");
+                            return false;
+                        } else if(parseInt(applictionMob) == 6666666666 || parseInt(applictionMob) == 7777777777 || parseInt(applictionMob) == 8888888888 || parseInt(applictionMob) == 9999999999){
+                            alert("Mobile Number Should not have same 10 digits");
+                            return false;
+                        } 
+                var applictionName=document.getElementById("appName").value;
+                if (applictionName === null || applictionName === "") {
+                        alert("Please Enter Applicant Name ");
+                        return false;
+                    } else if (applictionName === "0") {
+                        alert("Applicant Name  cannot be empty ");
+                        return false;
+                    }
+                //alert(searchParam);
+//                var khno_bkid = $('#khno_bkid').val();
+//                var aadharno = $('#aadharno').val();
+                var booking_id = $('#bookingid').val();
+//                if (searchParam === "1") {
+//                    if (surveyno === null || surveyno === "") {
+//                        alert("Please Enter SurveyNo");
+//                        return false;
+//                    } else if (surveyno === "0") {
+//                        alert("Survey Number cannot be 0");
+//                        return false;
+//                    }
+//                } else if (searchParam === "2") {
+//                    if (khno_bkid === null || khno_bkid === "") {
+//                        alert("Please Enter Khata Number");
+//                        return false;
+//                    } else if (khno_bkid === "0") {
+//                        alert("Khata Number cannot be 0");
+//                        return false;
+//                    }
+//                } else if (searchParam === "3") {
+//                    if (aadharno === null || aadharno === "") {
+//                        alert("Please Enter Aadhaar Number");
+//                        return false;
+//                    } else if (aadharno === "0") {
+//                        alert("Aadhar Number cannot be 0");
+//                        return false;
+//                    }
+//                } else 
+                if (searchParam === "4") {
+                    if (booking_id === null || booking_id === "") {
+                        alert("Please Enter Booking Id");
+                        return false;
+                    } else if (booking_id === "0") {
+                        alert("Booking Id cannot be 0");
+                        return false;
+                    }
+
+        }
+        return true;
+		}
+		function refreshPage() {
+			window.location.href = './getGrivanceRed';
+		}
+		
+	</script>
+</body>
+
+</html>

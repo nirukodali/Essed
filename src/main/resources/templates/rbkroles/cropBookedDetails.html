@@ -1,0 +1,1267 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="header">
+
+</head>
+
+<body>
+	<div th:insert="headerImage"></div>
+
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+</body>
+
+<title>cropBookedDetails</title>
+
+<div align="center" style="color: red;">
+	<h2>
+		<span th:text="${message}"></span>
+	</h2>
+</div>
+
+<style>
+	.form-container {
+		display: flex;
+		align-items: center;
+		justify-content: flex-end;
+		margin-bottom: 15px;
+		position: relative;
+	}
+
+	.table-heading {
+		background-color: rgb(0, 151, 0);
+		text-align: center;
+		width: 100%;
+		margin: 0 auto;
+		padding: 5px;
+		color: white;
+		font-weight: bold;
+	}
+</style>
+<body style="background-color: #e8e8e8;">
+	<p class="table-heading">Updation Of Social Audit Grievances
+		Received</p>
+</body>
+
+<head>
+	<style>
+		body {
+			background-color: #f0f0f0;
+			width: 90%;
+			margin: 0 auto;
+			color: black;
+		}
+
+		table {
+			width: 100%;
+			border-collapse: collapse;
+		}
+
+		th,
+		td {
+			border: 1px;
+			padding: 8px;
+			text-align: center;
+		}
+
+		th:first-child {
+			background-color: gray;
+		}
+
+		th:nth-child(2),
+		th:nth-child(3) {
+			color: rgb(103, 206, 0);
+			background-color: #C0C0C0;
+		}
+
+		th:last-child {
+			background-color: #C0C0C0;
+		}
+
+		input[type="checkbox"][disabled] {
+			cursor: not-allowed;
+		}
+
+		input[type="checkbox"].light-gray {
+			background-color: #f0f0f0;
+			margin-right: 5px;
+		}
+
+		input[type="text"][disabled] {
+			background-color: #d8d8d8;
+			width: 101.6%;
+			border: none;
+		}
+
+		.centered-button {
+			display: block;
+			margin: 0 auto;
+			text-align: center;
+			background-color: rgb(203, 254, 254);
+			color: white;
+			padding: 10px 20px;
+			border: none;
+			border-radius: 5px;
+			cursor: pointer;
+			font-weight: bold
+		}
+
+		.centered-button:hover {
+			background-color: darkblue;
+		}
+	</style>
+</head>
+
+<body>
+	<form method="post">
+		<table>
+			<tbody th:each="data, rowstat : ${viewData}">
+				<tr>
+					<th><input type="checkbox" th:id="'masterCheckbox' + ${rowstat.index}" th:name="masterCheckboxName"
+							th:onclick="'return master_check('+${rowstat.index}+')'"></th>
+					<th colspan="2" style="color:rgb(255, 255, 166)">Crop Booking Details</th>
+					<th colspan="1" style="color:rgb(255, 255, 166)">Edit Crop Booking Details</th>
+					<th><label for="editCheckbox"> <input type="checkbox" th:id="'editCheckbox' + ${rowstat.index}"
+								th:onclick="'return edit_check('+${rowstat.index}+')'" disabled>
+							Select to Edit
+						</label> <label for="deleteCheckbox"> <input type="checkbox"
+								th:id="'deleteCheckbox' + ${rowstat.index}"
+								th:onclick="'return delete_check('+${rowstat.index}+')'" disabled>
+							Select to Delete
+						</label> <select th:id="'deleteDropdown' + ${rowstat.index}" style="display: none;">
+							<option value="">-- Select --</option>
+							<th:block th:each="cropDeleteReason : ${cropDeleteReason}">
+								<option th:value="${cropDeleteReason.code}" th:text="${cropDeleteReason.reason}">
+								</option>
+							</th:block>
+						</select></th>
+				</tr>
+
+				<tr>
+					<td style="background-color: #d8d8d8;"><input type="checkbox" class="grayishCheckbox" disabled></td>
+					<td style="background-color: #C0C0C0;"><strong>Khatha
+							No</strong></td>
+					<td style="background-color: #f0f0f0;"><input type="text" class="non-editable"
+							th:id="'khathaNo' + ${rowstat.index}" th:value="${data.khathaNo}" disabled></td>
+				</tr>
+
+				<tr>
+					<td style="background-color: #d8d8d8;"><input type="checkbox" class="grayishCheckbox" disabled></td>
+					<td style="background-color: #C0C0C0;"><strong>Survey
+							No/LP No</strong></td>
+					<td style="background-color: #f0f0f0;"><input type="text" class="non-editable"
+							th:id="'surveyNo' + ${rowstat.index}" th:value="${data.surveyNo}" disabled></td>
+				</tr>
+
+				<tr>
+					<td style="background-color: #d8d8d8;"><input type="checkbox" class="grayishCheckbox" disabled></td>
+					<td style="background-color: #C0C0C0;"><strong>Booking
+							Id</strong></td>
+					<td style="background-color: #f0f0f0;"><input type="text" class="non-editable"
+							th:id="'bookingId' + ${rowstat.index}" th:value="${data.bookingId}" disabled></td>
+				</tr>
+
+				<tr>
+					<td style="background-color: #d8d8d8;"><input type="checkbox" class="grayishCheckbox" disabled></td>
+					<td style="background-color: #C0C0C0;"><strong>Aadhaar
+							No</strong></td>
+					<td style="background-color: #f0f0f0;"><input type="text" class="non-editable"
+							th:id="'farmerid' + ${rowstat.index}" th:value="${data.farmerid}" disabled></td>
+				</tr>
+
+				<tr>
+					<td style="background-color: #d8d8d8;"><input type="checkbox" class="grayishCheckbox" disabled></td>
+					<td style="background-color: #C0C0C0;"><strong>Mobile
+							Number</strong></td>
+					<td style="background-color: #f0f0f0;"><input type="text" class="non-editable"
+							th:id="'totExtent' + ${rowstat.index}" th:value="${data.totExtent}" disabled></td>
+				</tr>
+
+				<tr>
+					<td style="background-color: #d8d8d8;"><input type="checkbox" class="grayishCheckbox" disabled></td>
+					<!--							th:id="'SownDateCheckbox' + ${rowstat.index}"-->
+					<!--							th:onclick="'return SownDate_check('+${rowstat.index}+')'" disabled></td>-->
+					<td style="background-color: #C0C0C0;"><strong>Sown
+							Date</strong></td>
+					<td style="background-color: #f0f0f0;"><input type="text" class="non-editable"
+							th:id="'SownDateTextbox' + ${rowstat.index}" th:value="${data.sowDt}" disabled></td>
+					<!--					<td>-->
+					<!--						<input type="date" style="display: none;" th:id="'SownDateTextboxOrg' + ${rowstat.index}"-->
+					<!--							class="date-picker">-->
+					<!--					</td>-->
+				</tr>
+
+				<tr>
+					<td style="background-color: #d8d8d8;"><input type="checkbox" class="grayishCheckbox" disabled></td>
+					<!--							th:id="'CropingPatternCheckbox' + ${rowstat.index}"-->
+					<!--							th:onclick="'return CropingPattern_check('+${rowstat.index}+')'" disabled></td>-->
+					<td style="background-color: #C0C0C0;"><strong>Croping
+							Pattern</strong></td>
+					<td style="background-color: #f0f0f0;"><input type="text" class="non-editable"
+							th:id="'CropingPatternTextbox' + ${rowstat.index}" th:value="${data.cropNature}" disabled>
+					</td>
+					<!--					<td> <input type="hidden" th:id="'CropingPatternDatabox' + ${rowstat.index}"-->
+					<!--							th:value="${data.cropNatId}"> <select th:id="'CropingPatternDropdown' + ${rowstat.index}"-->
+					<!--							class="non-editable" disabled style="float: left; width: 125px; display: none;">-->
+					<!--							<option value="">--Select--</option>-->
+					<!--							<th:block th:each="cropPattern : ${cropNature}">-->
+					<!--								<option th:value="${cropPattern.id}" th:text="${cropPattern.naturedesc}"></option>-->
+					<!--							</th:block>-->
+					<!--						</select></td>-->
+
+
+				</tr>
+
+				<tr>
+					<td style="background-color: #d8d8d8;"><input type="checkbox" class="grayishCheckbox" disabled></td>
+					<!--							th:id="'farmerCheckbox' + ${rowstat.index}"-->
+					<!--							th:onclick="'return farmer_check('+${rowstat.index}+')'" disabled></td>-->
+					<td style="background-color: #C0C0C0;"><strong>Farmer
+							Name</strong></td>
+					<td style="background-color: #f0f0f0;"><input type="text" class="non-editable"
+							th:id="'farmerTextbox' + ${rowstat.index}" th:value="${data.farmerName}" disabled> </td>
+
+					<!--					<td> <input type="text" style="display: none;" class="non-editable"-->
+					<!--							th:id="'farmerTextboxOrg' + ${rowstat.index}"></td>-->
+				</tr>
+
+				<tr>
+					<td style="background-color: #d8d8d8;"><input type="checkbox" class="grayishCheckbox" disabled></td>
+					<!--							th:id="'farmerfatherCheckbox' + ${rowstat.index}"-->
+					<!--							th:onclick="'return farmerFather_check('+${rowstat.index}+')'" disabled></td>-->
+					<td style="background-color: #C0C0C0;"><strong>Farmer
+							Father Name</strong></td>
+					<td style="background-color: #f0f0f0;"><input type="text" class="non-editable"
+							th:id="'farmerfatherTextbox' + ${rowstat.index}" th:value="${data.farmerFatherName}"
+							disabled> </td>
+					<!--					<td> <input type="text" style="display: none;" class="non-editable"-->
+					<!--							th:id="'farmerfatherTextboxOrg' + ${rowstat.index}">-->
+					<!--					</td>-->
+				</tr>
+
+				<tr>
+					<td style="background-color: #d8d8d8;"><input type="checkbox" class="grayishCheckbox"
+							th:id="'CropNameCheckbox' + ${rowstat.index}"
+							th:onclick="'return CropName_check('+${rowstat.index}+')'" disabled></td>
+					<td style="background-color: #C0C0C0;"><strong>Crop
+							Name</strong></td>
+					<td style="background-color: #f0f0f0;"><input type="text" class="non-editable"
+							th:id="'CropNameTextbox' + ${rowstat.index}" th:value="${data.cropName}" disabled> </td>
+
+					<td> <input type="hidden" th:id="'CropNameDatabox' + ${rowstat.index}">
+						<select th:id="'CropNameDropdown' + ${rowstat.index}" class="non-editable"
+							style="float: left; width: 125px; display: none;"
+							th:onchange="'getVarietyByCrop(this.value, '+${rowstat.index}+')'" disabled>
+							<!-- 		th:onchange="getVarietyByCrop(this.value,'VarietyNameDropdown' + ${rowstat.index})"  -->
+							<option value="">--Select--</option>
+							<th:block th:each="cropName : ${cropNames}">
+								<option th:value="${cropName.cropid}" th:text="${cropName.cropname}"></option>
+							</th:block>
+						</select>
+					</td>
+				</tr>
+
+				<tr>
+					<td style="background-color: #d8d8d8;"><input type="checkbox" class="grayishCheckbox"
+							th:id="'VarietyNameCheckbox' + ${rowstat.index}"
+							th:onclick="'return VarietyName_check('+${rowstat.index}+')'" disabled></td>
+					<td style="background-color: #C0C0C0;"><strong>Variety
+							Name</strong></td>
+					<td style="background-color: #f0f0f0;"><input type="text" class="non-editable"
+							th:id="'VarietyNameTextbox' + ${rowstat.index}" th:value="${data.varietyName}" disabled>
+					</td>
+					<td> <input type="hidden" th:id="'VarietyNameDatabox' + ${rowstat.index}"
+							th:value="${data.variety}"> <select th:id="'VarietyNameDropdown' + ${rowstat.index}"
+							class="non-editable" disabled style="float: left; width: 125px; display: none;">
+							<option value="">--Select--</option>
+							<th:block th:each="varietyName : ${cropVariety}">
+								<option th:value="${varietyName.varietycode}" th:text="${varietyName.varietyname}">
+								</option>
+							</th:block>
+						</select></td>
+				</tr>
+
+
+				<tr>
+					<td style="background-color: #d8d8d8;"><input type="checkbox" class="grayishCheckbox"
+							th:id="'AreaSownCheckbox' + ${rowstat.index}"
+							th:onclick="'return SownArea_check('+${rowstat.index}+')'" disabled></td>
+					<td style="background-color: #C0C0C0;"><strong>Area
+							Sown</strong></td>
+					<td style="background-color: #f0f0f0;"><input type="text" class="non-editable"
+							th:id="'AreaSownTextbox' + ${rowstat.index}" th:value="${data.totalExtent}" disabled> </td>
+					<td> <input type="text" style="display: none;" class="non-editable"
+							th:id="'AreaSownTextboxOrg' + ${rowstat.index}"></td>
+				</tr>
+
+				<tr>
+					<td style="background-color: #d8d8d8;"><input type="checkbox" class="grayishCheckbox"
+							th:id="'SourceofIrrigationCheckbox' + ${rowstat.index}"
+							th:onclick="'return SourceofIrrigation_check('+${rowstat.index}+')'" disabled></td>
+					<td style="background-color: #C0C0C0;"><strong>Source
+							of Irrigation</strong></td>
+					<td style="background-color: #f0f0f0;"><input type="text" class="non-editable"
+							th:id="'SourceofIrrigationTextbox' + ${rowstat.index}" th:value="${data.waterSource}"
+							disabled> </td>
+					<td> <input type="hidden" th:id="'SourceofIrrigationDatabox' + ${rowstat.index}"
+							th:value="${data.waterid}"> <select th:id="'SourceofIrrigationDropdown' + ${rowstat.index}"
+							class="non-editable" style="float: left; width: 125px; display: none;"
+							th:onchange="'getIrrMethodBySource(this.value, '+${rowstat.index}+')'" disabled>
+							<option value="">--Select--</option>
+							<th:block th:each="sourceofIrrigation : ${waterResources}">
+								<option th:value="${sourceofIrrigation.wsrcid}"
+									th:text="${sourceofIrrigation.wsrcdesc}"></option>
+							</th:block>
+						</select></td>
+				</tr>
+
+				<tr>
+					<td style="background-color: #d8d8d8;"><input type="checkbox" class="grayishCheckbox"
+							th:id="'IrrigationMethodCheckbox' + ${rowstat.index}"
+							th:onclick="'return IrrigationMethod_check('+${rowstat.index}+')'" disabled></td>
+					<td style="background-color: #C0C0C0;"><strong>Irrigation
+							Method</strong></td>
+					<td style="background-color: #f0f0f0;"><input type="text" class="non-editable"
+							th:id="'IrrigationMethodTextbox' + ${rowstat.index}" th:value="${data.irrMethodDesc}"
+							disabled> </td>
+					<td> <input type="hidden" th:id="'IrrigationMethodDatabox' + ${rowstat.index}"
+							th:value="${data.cr_w_draw}"> <select th:id="'IrrigationMethodDropdown' + ${rowstat.index}"
+							class="non-editable" disabled style="float: left; width: 125px; display: none;">
+							<option value="">--Select--</option>
+							<th:block th:each="cropIrrg : ${cropIrrg}">
+								<option th:value="${cropIrrg.irgcode}" th:text="${cropIrrg.irgdesc}"></option>
+							</th:block>
+						</select></td>
+
+				</tr>
+
+				<tr>
+					<td style="background-color: #d8d8d8;"><input type="checkbox" class="grayishCheckbox"
+							th:id="'FarmingTypeCheckbox' + ${rowstat.index}"
+							th:onclick="'return FarmingType_check('+${rowstat.index}+')'" disabled></td>
+					<td style="background-color: #C0C0C0;"><strong>Farming
+							Type</strong></td>
+					<td style="background-color: #f0f0f0;"><input type="text" class="non-editable"
+							th:id="'FarmingTypeTextbox' + ${rowstat.index}" th:value="${data.farmingType}" disabled>
+					</td>
+					<td> <input type="hidden" th:id="'FarmingTypeDatabox' + ${rowstat.index}"
+							th:value="${data.cropseedid}"> <select th:id="'FarmingTypeDropdown' + ${rowstat.index}"
+							class="non-editable" disabled style="float: left; width: 125px; display: none;">
+							<option value="">--Select--</option>
+							<th:block th:each="farmingType : ${cropSeedScheme}">
+								<option th:value="${farmingType.cropschtype}" th:text="${farmingType.cropschdesc}">
+								</option>
+							</th:block>
+						</select></td>
+				</tr>
+
+				<tr>
+					<td> <input type="hidden" th:id="'khathaNoOrg' + ${rowstat.index}" name="khathaNoOrg"
+							th:value="${data.khathaNo}" />
+						<input type="hidden" th:id="'surveyNoOrg' + ${rowstat.index}" name="surveyNoOrg"
+							th:value="${data.surveyNo}" />
+						<input type="hidden" th:id="'bookingIdOrg' + ${rowstat.index}" name="bookingIdOrg"
+							th:value="${data.bookingId}" />
+						<input type="hidden" th:id="'farmeridOrg' + ${rowstat.index}" name="farmeridOrg"
+							th:value="${data.farmerid}" />
+						<input type="hidden" th:id="'totExtentOrg' + ${rowstat.index}" name="totExtentOrg"
+							th:value="${data.totExtent}" />
+						<input type="hidden" th:id="'farmerNameOrg' + ${rowstat.index}" name="farmerNameOrg"
+							th:value="${data.farmerName}" />
+						<input type="hidden" th:id="'farmerFatherNameOrg' + ${rowstat.index}" name="farmerFatherNameOrg"
+							th:value="${data.farmerFatherName}" />
+						<input type="hidden" th:id="'cropNameOrg' + ${rowstat.index}" name="cropNameOrg"
+							th:value="${data.crcrop}" />
+						<input type="hidden" th:id="'varietyNameOrg' + ${rowstat.index}" name="varietyNameOrg"
+							th:value="${data.variety}" />
+						<input type="hidden" th:id="'SourceofIrrigationOrg' + ${rowstat.index}"
+							name="SourceofIrrigationOrg" th:value="${data.waterid}" />
+
+						<input type="hidden" th:id="'waterSourceOrg' + ${rowstat.index}" name="waterSourceOrg"
+							th:value="${data.waterid}" />
+						<input type="hidden" th:id="'cropNatureOrg' + ${rowstat.index}" name="cropNatureOrg"
+							th:value="${data.cropNatId}" />
+						<input type="hidden" th:id="'sowDtOrg' + ${rowstat.index}" name="sowDtOrg"
+							th:value="${data.sowDt}" />
+						<input type="hidden" th:id="'farmingTypeOrg' + ${rowstat.index}" name="farmingTypeOrg"
+							th:value="${data.cropseedid}" />
+						<input type="hidden" th:id="'cropNoOrg' + ${rowstat.index}" name="cropNoOrg"
+							th:value="${data.cropid}" />
+
+						<input type="hidden" id="rbk" name="rbk" th:value="${rbk}" />
+						<input type="hidden" th:id="applID" name="applID" th:value="${applID}" />
+						<input type="hidden" th:id="mobId" name="mobId" th:value="${mobId}" />
+						<input type="hidden" th:id="applName" name="applName" th:value="${applName}" />
+						<input type="hidden" th:id="season" name="season" th:value="${season}" />
+						<input type="hidden" th:id="year" name="year" th:value="${year}" />
+					</td>
+				</tr>
+
+			</tbody>
+
+		</table>
+
+
+		<input type="hidden" id="khathaNoLst" name="khathaNoLst" />
+		<input type="hidden" id="surveyNoLst" name="surveyNoLst" />
+		<input type="hidden" id="bookingIdLst" name="bookingIdLst" />
+		<input type="hidden" id="aadhaarNoLst" name="aadhaarNoLst" />
+		<input type="hidden" id="totExtentLst" name="totExtentLst" />
+		<input type="hidden" id="farmerNameLst" name="farmerNameLst" />
+		<input type="hidden" id="farmerFatherNameLst" name="farmerFatherNameLst" />
+		<input type="hidden" id="cropNameLst" name="cropNameLst" />
+		<input type="hidden" id="varietyNameLst" name="varietyNameLst" />
+		<input type="hidden" id="waterSourceLst" name="waterSourceLst" />
+		<input type="hidden" id="cropingPatternLst" name="cropingPatternLst" />
+		<input type="hidden" id="sownDateLst" name="sownDateLst" />
+		<input type="hidden" id="farmingTypeLst" name="farmingTypeLst" />
+		<input type="hidden" id="areaSownLst" name="areaSownLst" />
+		<input type="hidden" id="irrMethodDescLst" name="irrMethodDescLst" />
+
+		<input type="hidden" id="applIDOrg" name="applIDOrg" />
+		<input type="hidden" id="mobIdOrg" name="mobIdOrg" />
+		<input type="hidden" id="applNameOrg" name="applNameOrg" />
+		<input type="hidden" id="seasonOrg" name="seasonOrg" />
+		<input type="hidden" id="yearOrg" name="yearOrg" />
+
+
+		<input type="hidden" id="khathaNoOrgLst" name="khathaNoOrgLst" />
+		<input type="hidden" id="surveyNoOrgLst" name="surveyNoOrgLst" />
+		<input type="hidden" id="bookingIdOrgLst" name="bookingIdOrgLst" />
+		<input type="hidden" id="aadhaarNoOrgLst" name="aadhaarNoOrgLst" />
+		<input type="hidden" id="totExtentOrgLst" name="totExtentOrgLst" />
+		<input type="hidden" id="farmerNameOrgLst" name="farmerNameOrgLst" />
+		<input type="hidden" id="farmerFatherNameOrgLst" name="farmerFatherNameOrgLst" />
+		<input type="hidden" id="cropNameOrgLst" name="cropNameOrgLst" />
+		<input type="hidden" id="varietyNameOrgLst" name="varietyNameOrgLst" />
+		<input type="hidden" id="waterSourceOrgLst" name="waterSourceOrgLst" />
+		<input type="hidden" id="cropingPatternOrgLst" name="cropingPatternOrgLst" />
+		<input type="hidden" id="irrMethodDescOrgLst" name="irrMethodDescOrgLst" />
+		<input type="hidden" id="sownDateOrgLst" name="sownDateOrgLst" />
+		<input type="hidden" id="farmingTypeOrgLst" name="farmingTypeOrgLst" />
+		<input type="hidden" id="cropNoOrgLst" name="cropNoOrgLst" />
+
+		<input type="hidden" id="actionTypeLst" name="actionTypeLst" />
+		<input type="hidden" id="delReasonLst" name="delReasonLst" />
+
+		<h3 th:text="${empty}" th:value="${empty}" style="text-align: center;"></h3>
+		</tr>
+		<!-- Display the message -->
+		<div style="display: flex; justify-content: center; margin-bottom: 10px;">
+			<h2 <span th:utext="${msg}"></span>></h2>
+		</div>
+
+		<!-- Conditionally show the buttons -->
+		<div class="mb-3" style="display: flex; flex-direction: column; align-items: center;">
+
+			<!-- Save Selection button -->
+			<div th:if="${msg == null or msg == ''}" <div class="mb-3"
+				style="display: flex; flex-direction: column; align-items: center;">
+				<div style="display: flex; justify-content: center; margin-bottom: 10px;">
+					<button type="submit" class="btn btn-primary" th:onclick="return submitButton();">Save</button>
+
+					<button type="button" class="btn btn-primary" th:onclick="window.location.href='home'"
+						style="margin-left: 10px;">Back</button>
+				</div>
+			</div>
+
+			<!-- Back button -->
+			<div th:if="${msg != null and msg != ''}"
+				style="display: flex; justify-content: center; margin-bottom: 10px;">
+				<button type="button" class="btn btn-primary" th:onclick="window.location.href='home'">Back</button>
+			</div>
+		</div>
+
+
+
+
+	</form>
+
+	<script>
+
+		function getVarietyByCrop(a, b) {
+			document.getElementById("VarietyNameCheckbox" + b).checked == true;
+			var dropdownselect = '<option value="">-----select------</option>';
+			$
+				.ajax({
+					type: "get",
+					url: "./getCropVariety?rbkCode=" + a,
+					cache: false,
+					success: function (data) {
+						jQuery
+							.each(
+								data,
+								function (index, item) {
+									dropdownselect += "<option value='" + item.varietycode + " '>"
+										+ item.varietyname + "";
+								});
+						document.getElementById("VarietyNameDropdown" + b).innerHTML = dropdownselect
+					},
+					error: function (e) {
+					}
+
+				});
+
+		}
+
+		function getIrrMethodBySource(a, b) {
+			document.getElementById("IrrigationMethodCheckbox" + b).checked == true;
+			var dropdownselect = '<option value="">-----select------</option>';
+			$
+				.ajax({
+					type: "get",
+					url: "./getIrrMethodBySource?wsrccode=" + a,
+					cache: false,
+					success: function (data) {
+						jQuery
+							.each(
+								data,
+								function (index, item) {
+									dropdownselect += "<option value='" + item.irgcode + " '>"
+										+ item.irgdesc + "";
+								});
+						document.getElementById("IrrigationMethodDropdown"
+							+ b).innerHTML = dropdownselect
+					},
+					error: function (e) {
+					}
+
+				});
+
+		}
+
+		function master_check(a) {
+			if (document.getElementById("masterCheckbox" + a).checked == true) {
+				document.getElementById("deleteCheckbox" + a).disabled = false;
+				document.getElementById("editCheckbox" + a).disabled = false;
+			} else {
+				document.getElementById("deleteDropdown" + a).style.display = 'none';
+				document.getElementById("deleteCheckbox" + a).disabled = true;
+				document.getElementById("deleteCheckbox" + a).checked = false;
+
+				document.getElementById("editCheckbox" + a).disabled = true;
+				document.getElementById("editCheckbox" + a).checked = false;
+
+				document.getElementById("AreaSownCheckbox" + a).disabled = true;
+				document.getElementById("AreaSownCheckbox" + a).checked = false;
+				document.getElementById("AreaSownTextbox" + a).disabled = true;
+				document.getElementById("AreaSownTextbox" + a).style.display = 'block';
+				document.getElementById("AreaSownTextboxOrg" + a).style.display = 'none';
+
+				document.getElementById("VarietyNameCheckbox" + a).disabled = true;
+				document.getElementById("VarietyNameCheckbox" + a).checked = false;
+				document.getElementById("VarietyNameDropdown" + a).style.display = 'none';
+				document.getElementById("VarietyNameTextbox" + a).style.display = 'block';
+
+				document.getElementById("farmerfatherTextbox" + a).disabled = true;
+
+				document.getElementById("IrrigationMethodCheckbox" + a).disabled = true;
+				document.getElementById("IrrigationMethodCheckbox" + a).checked = false;
+				document.getElementById("IrrigationMethodDropdown" + a).style.display = 'none';
+				document.getElementById("IrrigationMethodTextbox" + a).style.display = 'block';
+
+				document.getElementById("CropNameCheckbox" + a).disabled = true;
+				document.getElementById("CropNameCheckbox" + a).checked = false;
+				document.getElementById("CropNameDropdown" + a).style.display = 'none';
+				document.getElementById("CropNameTextbox" + a).style.display = 'block';
+
+				document.getElementById("SourceofIrrigationCheckbox" + a).disabled = true;
+				document.getElementById("SourceofIrrigationCheckbox" + a).checked = false;
+				document.getElementById("SourceofIrrigationTextbox" + a).style.display = 'block';
+				document.getElementById("SourceofIrrigationDropdown" + a).style.display = 'none';
+				document.getElementById("SourceofIrrigationTextbox" + a).style.display = 'block';
+
+				//document.getElementById("CropingPatternCheckbox" + a).disabled = true;
+				//document.getElementById("CropingPatternCheckbox" + a).checked = false;
+				//document.getElementById("CropingPatternDropdown" + a).style.display = 'none';
+				document.getElementById("CropingPatternTextbox" + a).style.display = 'block';
+
+				document.getElementById("FarmingTypeCheckbox" + a).disabled = true;
+				document.getElementById("FarmingTypeCheckbox" + a).checked = false;
+				document.getElementById("FarmingTypeDropdown" + a).style.display = 'none';
+				document.getElementById("FarmingTypeTextbox" + a).style.display = 'block';
+
+				//document.getElementById("SownDateCheckbox" + a).disabled = true;
+				//document.getElementById("SownDateCheckbox" + a).checked = false;
+				document.getElementById("SownDateTextbox" + a).disabled = true;
+				document.getElementById("SownDateTextbox" + a).disabled = true;
+				document.getElementById("SownDateTextbox" + a).style.display = 'block';
+				//document.getElementById("SownDateTextboxOrg" + a).style.display = 'none';
+
+				document.getElementById("farmerTextbox" + a).disabled = true;
+				document.getElementById("farmerTextbox" + a).style.display = 'block';
+				document.getElementById("farmerfatherTextbox" + a).style.display = 'block';
+
+				document.getElementById("CropNameDropdown" + a).value = "";
+				document.getElementById("VarietyNameDropdown" + a).value = "";
+				$('#AreaSownTextboxOrg' + a).val("");
+				document.getElementById("SourceofIrrigationDropdown" + a).value = "";
+				document.getElementById("IrrigationMethodDropdown" + a).value = "";
+				//document.getElementById("CropingPatternDropdown" + a).value = "";
+				//$('#SownDateTextboxOrg' + a).val("");
+				document.getElementById("FarmingTypeDropdown" + a).value = "";
+			}
+
+		}
+
+		function edit_check(a) {
+			if (document.getElementById("editCheckbox" + a).checked == true) {
+
+				document.getElementById("deleteCheckbox" + a).disabled = true;
+				document.getElementById("deleteCheckbox" + a).checked = false;
+
+
+				document.getElementById("CropNameCheckbox" + a).disabled = false;
+
+				document.getElementById("AreaSownCheckbox" + a).disabled = false;
+
+				document.getElementById("SourceofIrrigationCheckbox" + a).disabled = false;
+
+				//document.getElementById("CropingPatternCheckbox" + a).disabled = false;
+
+				document.getElementById("FarmingTypeCheckbox" + a).disabled = false;
+
+				//document.getElementById("SownDateCheckbox" + a).disabled = false;
+
+			} else {
+
+				document.getElementById("deleteCheckbox" + a).disabled = false;
+
+				document.getElementById("CropNameCheckbox" + a).disabled = true;
+				document.getElementById("CropNameCheckbox" + a).checked = false;
+				document.getElementById("CropNameDropdown" + a).style.display = 'none';
+				document.getElementById("CropNameTextbox" + a).style.display = 'block';
+
+				document.getElementById("VarietyNameCheckbox" + a).disabled = true;
+				document.getElementById("VarietyNameCheckbox" + a).checked = false;
+				document.getElementById("VarietyNameDropdown" + a).style.display = 'none';
+				document.getElementById("VarietyNameTextbox" + a).style.display = 'block';
+
+				document.getElementById("AreaSownCheckbox" + a).disabled = true;
+				document.getElementById("AreaSownCheckbox" + a).checked = false;
+				document.getElementById("AreaSownTextbox" + a).disabled = true;
+				document.getElementById("AreaSownTextbox" + a).style.display = 'block';
+				document.getElementById("AreaSownTextboxOrg" + a).style.display = 'none';
+
+				document.getElementById("SourceofIrrigationCheckbox" + a).disabled = true;
+				document.getElementById("SourceofIrrigationCheckbox" + a).checked = false;
+				document.getElementById("SourceofIrrigationTextbox" + a).style.display = 'block';
+				document.getElementById("SourceofIrrigationDropdown" + a).style.display = 'none';
+				document.getElementById("SourceofIrrigationTextbox" + a).style.display = 'block';
+
+				document.getElementById("IrrigationMethodCheckbox" + a).disabled = true;
+				document.getElementById("IrrigationMethodCheckbox" + a).checked = false;
+				document.getElementById("IrrigationMethodDropdown" + a).style.display = 'none';
+				document.getElementById("IrrigationMethodTextbox" + a).style.display = 'block';
+
+				//document.getElementById("CropingPatternCheckbox" + a).disabled = true;
+				//document.getElementById("CropingPatternCheckbox" + a).checked = false;
+				//document.getElementById("CropingPatternDropdown" + a).style.display = 'none';
+				document.getElementById("CropingPatternTextbox" + a).style.display = 'block';
+
+				document.getElementById("FarmingTypeCheckbox" + a).disabled = true;
+				document.getElementById("FarmingTypeCheckbox" + a).checked = false;
+				document.getElementById("FarmingTypeDropdown" + a).style.display = 'none';
+				document.getElementById("FarmingTypeTextbox" + a).style.display = 'block';
+
+				document.getElementById("farmerfatherTextbox" + a).disabled = true;
+
+				//document.getElementById("SownDateCheckbox" + a).disabled = true;
+				//document.getElementById("SownDateCheckbox" + a).checked = false;
+				document.getElementById("SownDateTextbox" + a).disabled = true;
+				document.getElementById("SownDateTextbox" + a).disabled = true;
+				document.getElementById("SownDateTextbox" + a).style.display = 'block';
+				//document.getElementById("SownDateTextboxOrg" + a).style.display = 'none';
+
+				document.getElementById("farmerTextbox" + a).disabled = true;
+				document.getElementById("farmerTextbox" + a).style.display = 'block';
+				document.getElementById("farmerfatherTextbox" + a).style.display = 'block';
+
+				document.getElementById("CropNameDropdown" + a).value = "";
+				document.getElementById("VarietyNameDropdown" + a).value = "";
+				$('#AreaSownTextboxOrg' + a).val("");
+				document.getElementById("SourceofIrrigationDropdown" + a).value = "";
+				document.getElementById("IrrigationMethodDropdown" + a).value = "";
+				//document.getElementById("CropingPatternDropdown" + a).value = "";
+				//$('#SownDateTextboxOrg' + a).val("");
+				document.getElementById("FarmingTypeDropdown" + a).value = "";
+
+			}
+		}
+
+		function delete_check(a) {
+			if (document.getElementById("deleteCheckbox" + a).checked == true) {
+				alert("Are you sure you want to delete ?");
+				document.getElementById("editCheckbox" + a).disabled = true;
+				document.getElementById("editCheckbox" + a).checked = false;
+
+				document.getElementById("deleteDropdown" + a).style.display = 'block';
+			} else {
+				$('#deleteDropdown' + a).val("");
+				document.getElementById("editCheckbox" + a).disabled = false;
+				document.getElementById("deleteDropdown" + a).style.display = 'none';
+
+			}
+		}
+
+
+		function CropName_check(a) {
+			if (document.getElementById("CropNameCheckbox" + a).checked == true) {
+				document.getElementById("VarietyNameCheckbox" + a).disabled = false;
+				document.getElementById("CropNameDropdown" + a).disabled = false;
+				document.getElementById("CropNameDropdown" + a).style.display = 'block';
+			} else {
+				document.getElementById("VarietyNameCheckbox" + a).disabled = true;
+				document.getElementById("VarietyNameCheckbox" + a).checked = false;
+				document.getElementById("CropNameDropdown" + a).style.display = 'none';
+				document.getElementById("VarietyNameTextbox" + a).style.display = 'block';
+				document.getElementById("VarietyNameDropdown" + a).style.display = 'none';
+				document.getElementById("CropNameDropdown" + a).value = "";
+				document.getElementById("VarietyNameDropdown" + a).value = "";
+			}
+		}
+		function VarietyName_check(a) {
+			if (document.getElementById("VarietyNameCheckbox" + a).checked == true) {
+				document.getElementById("VarietyNameDropdown" + a).style.display = 'block';
+				document.getElementById("VarietyNameDropdown" + a).disabled = false;
+			} else {
+				document.getElementById("VarietyNameDropdown" + a).style.display = 'none';
+				document.getElementById("VarietyNameDropdown" + a).value = "";
+			}
+		}
+		function SownArea_check(a) {
+			if (document.getElementById("AreaSownCheckbox" + a).checked == true) {
+				document.getElementById("AreaSownTextboxOrg" + a).style.display = 'block';
+			} else {
+				document.getElementById("AreaSownTextbox" + a).disabled = true;
+				document.getElementById("AreaSownTextboxOrg" + a).style.display = 'none';
+				$('#AreaSownTextboxOrg' + a).val("");
+			}
+		}
+		function SourceofIrrigation_check(a) {
+			if (document.getElementById("SourceofIrrigationCheckbox" + a).checked == true) {
+				document.getElementById("IrrigationMethodCheckbox" + a).disabled = false;
+				document.getElementById("SourceofIrrigationDropdown" + a).disabled = false;
+				document.getElementById("SourceofIrrigationDropdown" + a).style.display = 'block';
+			} else {
+				document.getElementById("IrrigationMethodCheckbox" + a).disabled = true;
+				document.getElementById("IrrigationMethodCheckbox" + a).checked = false;
+				document.getElementById("SourceofIrrigationDropdown" + a).style.display = 'none';
+				document.getElementById("SourceofIrrigationTextbox" + a).style.display = 'block';
+				document.getElementById("IrrigationMethodDropdown" + a).style.display = 'none';
+				document.getElementById("SourceofIrrigationDropdown" + a).value = "";
+				document.getElementById("IrrigationMethodDropdown" + a).value = "";
+			}
+		}
+		function IrrigationMethod_check(a) {
+			if (document.getElementById("IrrigationMethodCheckbox" + a).checked == true) {
+				document.getElementById("IrrigationMethodDropdown" + a).style.display = 'block';
+				document.getElementById("IrrigationMethodDropdown" + a).disabled = false;
+			} else {
+				document.getElementById("IrrigationMethodDropdown" + a).style.display = 'none';
+				document.getElementById("IrrigationMethodDropdown" + a).value = "";
+			}
+		}
+
+		function goBack() {
+			window.location.href = "./socialAudit";
+			window.history.back();
+		}
+
+		/*function CropingPattern_check(a) {
+			if (document.getElementById("CropingPatternCheckbox" + a).checked == true) {
+				document.getElementById("CropingPatternDropdown" + a).disabled = false;
+				document.getElementById("CropingPatternDropdown" + a).style.display = 'block';
+			} else {
+				document.getElementById("CropingPatternDropdown" + a).style.display = 'none';
+				document.getElementById("CropingPatternDropdown" + a).value = "";
+			}
+		}
+		function SownDate_check(a) {
+			if (document.getElementById("SownDateCheckbox" + a).checked == true) {
+				document.getElementById("SownDateTextboxOrg" + a).style.display = 'block';
+			} else {
+				document.getElementById("SownDateTextboxOrg" + a).style.display = 'none';
+				$('#SownDateTextboxOrg' + a).val("");
+			}
+		}*/
+		function FarmingType_check(a) {
+			if (document.getElementById("FarmingTypeCheckbox" + a).checked == true) {
+				document.getElementById("FarmingTypeDropdown" + a).disabled = false;
+				document.getElementById("FarmingTypeDropdown" + a).style.display = 'block';
+			} else {
+				document.getElementById("FarmingTypeDropdown" + a).style.display = 'none';
+				document.getElementById("FarmingTypeDropdown" + a).value = "";
+			}
+		}
+
+		$(function () {
+			var today = new Date();
+			var year = today.getFullYear();
+
+			var startDate = new Date(year, 5, 1); // June 1st (months are zero-indexed)
+			var endDate = new Date(year, 9, 31); // October 31st (months are zero-indexed)
+
+			var startDateFormatted = startDate.toISOString().slice(0, 10);
+			var endDateFormatted = endDate.toISOString().slice(0, 10);
+
+			$('.date-picker').attr('min', startDateFormatted);
+			$('.date-picker').attr('max', endDateFormatted);
+		});
+
+
+		function submitButton() {
+			var khathaNo = "", khathaNoOrg = "";
+			var surveyNo = "", surveyNoOrg = "";
+			var bookingId = "", bookingIdOrg = "";
+			var farmerid = "", aadhaarNoOrg = "";
+			var totExtent = "", totExtentOrg = "";
+			var farmerNameOrg = "";
+			var farmerFatherNameOrg = "";
+			var cropName = "", cropNameOrg = "";
+			var varietyName = "", varietyNameOrg = "";
+			var totalExtent = "", applName = "";
+			var irrMethodDesc = "", cropNoOrg = "";
+			var waterSource = "", waterSourceOrg = "";
+			var cropingPatternOrg = "";
+			var sownDateOrg = "";
+			var farmingType = "", farmingTypeOrg = "";
+			var actionType = "", applicatonId = "";
+			var delReason = "", appMobId = "";
+			var season = "", year = "";
+			var irrMethodDescOrg = "";
+
+			var checkFarmerName = "";
+			var checkFarmerFatherName = "";
+			var checkCropName = "";
+			var checkVarietyName = "";
+			var checkIrrMethodDesc = "";
+			var checkWaterSource = "";
+			var checkCropNature = "";
+			var checkFarmingType = "";
+			var rbk = "";
+			var sourceIrr = "";
+
+			var isFlagSet = true;
+			var masterName = "masterCheckboxName";
+			var checkboxes = document
+				.querySelectorAll('input[type="checkbox"][name="'
+					+ masterName + '"]');
+			var numberOfCheckboxes = checkboxes.length;
+
+			applicatonId = document.getElementById("applID").value;
+			appMobId = document.getElementById("mobId").value;
+			applName = document.getElementById("applName").value;
+
+			season = document.getElementById("season").value;
+			year = document.getElementById("year").value;
+			rbk = document.getElementById("rbk").value;
+			for (var i = 0; i < numberOfCheckboxes; i++) {
+				if (document.getElementById("masterCheckbox" + i).checked == true) {
+					isFlagSet = false;
+					if (document.getElementById("deleteCheckbox" + i).checked === true) {
+						if ($("#deleteDropdown" + i).val() === "") {
+							alert('Please select deleted reason to submit');
+							return false;
+
+						}
+					}
+					if (document.getElementById("editCheckbox" + i).checked == true) {
+						if ($('#CropNameDropdown' + i).val() === ""
+							&& $('#VarietyNameDropdown' + i).val() === "" && $('#AreaSownTextboxOrg' + i).val() === "" && $('#SourceofIrrigationDropdown' + i).val() === "" &&
+							$('#IrrigationMethodDropdown' + i).val() === "" && $('#FarmingTypeDropdown' + i).val() === "") {
+							alert('Please select atleast one option to submit');
+							return false;
+						}
+					}
+					if (khathaNo === "" || surveyNo === "" || bookingId === ""
+						|| farmerid === "" || totExtent === ""
+						|| cropName === "" || varietyName === ""
+						|| totalExtent === "" || irrMethodDesc === ""
+						|| waterSource === ""
+						|| farmingType === "") {
+
+						khathaNo = khathaNo + document.getElementById("khathaNo" + i).value + ",";
+						surveyNo = surveyNo + document.getElementById("surveyNo" + i).value + ",";
+						bookingId = bookingId + document.getElementById("bookingId" + i).value + ",";
+						farmerid = farmerid + document.getElementById("farmerid" + i).value + ",";
+						totExtent = totExtent + document.getElementById("totExtent" + i).value + ",";
+
+						if (document.getElementById("deleteCheckbox" + i).checked == true) {
+							actionType = actionType + "del";
+							delReason = delReason + document.getElementById("deleteDropdown" + i).value;
+						} else {
+							actionType = actionType + "edit";
+						}
+
+						if (document.getElementById("CropNameCheckbox" + i).checked == true) {
+							cropName = cropName + document.getElementById("CropNameDropdown" + i).value;
+						} else {
+							cropName = cropName + "";
+						}
+
+						if (document.getElementById("VarietyNameCheckbox" + i).checked == true) {
+							varietyName = varietyName + document.getElementById("VarietyNameDropdown" + i).value;
+						} else {
+							varietyName = varietyName + "";
+						}
+						if (document.getElementById("AreaSownCheckbox" + i).checked == true) {
+							totalExtent = totalExtent + document.getElementById("AreaSownTextboxOrg" + i).value;
+						} else {
+							totalExtent = totalExtent + "";
+						}
+
+						if (document.getElementById("SourceofIrrigationCheckbox" + i).checked == true) {
+							irrMethodDesc = irrMethodDesc + document.getElementById("SourceofIrrigationDropdown" + i).value;
+						} else {
+							irrMethodDesc = irrMethodDesc + "";
+						}
+
+						if (document.getElementById("IrrigationMethodCheckbox" + i).checked == true) {
+							waterSource = waterSource + document.getElementById("IrrigationMethodDropdown" + i).value;
+						} else {
+							waterSource = waterSource + "";
+						}
+
+						/*if (document.getElementById("CropingPatternCheckbox" + i).checked == true) {
+							cropNature = cropNature + document.getElementById("CropingPatternDropdown" + i).value;
+						} else {
+							cropNature = cropNature + "";
+						}
+
+						if (document.getElementById("SownDateCheckbox" + i).checked == true) {
+							sowDt = sowDt + document.getElementById("SownDateTextbox" + i).value;
+						} else {
+							sowDt = sowDt + "";
+						}*/
+						if (document.getElementById("FarmingTypeCheckbox" + i).checked == true) {
+							farmingType = farmingType + document.getElementById("FarmingTypeDropdown" + i).value;
+						} else {
+							farmingType = farmingType + "";
+						}
+
+						khathaNoOrg = khathaNoOrg + document.getElementById("khathaNoOrg" + i).value;
+						surveyNoOrg = surveyNoOrg + document.getElementById("surveyNoOrg" + i).value;
+						bookingIdOrg = bookingIdOrg + document.getElementById("bookingIdOrg" + i).value;
+						aadhaarNoOrg = aadhaarNoOrg + document.getElementById("farmeridOrg" + i).value;
+						totExtentOrg = totExtentOrg + document.getElementById("totExtentOrg" + i).value;
+
+						farmerNameOrg = farmerNameOrg + document.getElementById("farmerTextbox" + i).value;
+						farmerFatherNameOrg = farmerFatherNameOrg + document.getElementById("farmerfatherTextbox" + i).value;
+						cropNameOrg = cropNameOrg + document.getElementById("cropNameOrg" + i).value;
+						varietyNameOrg = varietyNameOrg + document.getElementById("varietyNameOrg" + i).value;
+						cropNoOrg = cropNoOrg + document.getElementById("cropNoOrg" + i).value;
+						waterSourceOrg = waterSourceOrg + document.getElementById("waterSourceOrg" + i).value;
+						irrMethodDescOrg = irrMethodDescOrg + document.getElementById("SourceofIrrigationOrg" + i).value;
+						cropingPatternOrg = cropingPatternOrg + document.getElementById("cropNatureOrg" + i).value;
+						sownDateOrg = sownDateOrg + document.getElementById("sowDtOrg" + i).value;
+						farmingTypeOrg = farmingTypeOrg + document.getElementById("farmingTypeOrg" + i).value;
+
+						if (document.getElementById("CropNameCheckbox" + i).checked == true && cropName === "") {
+							alert("Please Change the CropName");
+							return false;
+						}
+
+						if (document.getElementById("SourceofIrrigationCheckbox" + i).checked == true && irrMethodDesc === "") {
+							alert("Please Change the Source of Irrigation");
+							return false;
+						}
+
+						if (document.getElementById("CropNameCheckbox" + i).checked == true) {
+							if ((cropName != cropNameOrg || cropName === "")
+								&& (varietyName === varietyNameOrg || varietyName === "")) {
+								alert("Please Change the Variety");
+								return false;
+							}
+						}
+
+						if (document.getElementById("SourceofIrrigationCheckbox" + i).checked == true) {
+							if ((irrMethodDesc != irrMethodDescOrg || irrMethodDesc === "") && (waterSource === waterSourceOrg || waterSource === "")) {
+								alert("Please Change the WaterSource of the IrrMethod as IrrMethod is Changed for selected Record");
+								return false;
+							}
+						}
+						/*if ((document.getElementById("CropingPatternCheckbox" + i).checked == true)
+							&& (cropNature === cropingPatternOrg || cropNature === "")) {
+							alert("Please Change the Croping Pattern");
+							return false;
+						}*/
+						if ((document.getElementById("FarmingTypeCheckbox" + i).checked == true)
+							&& (farmingType === farmingTypeOrg || farmingType === "")) {
+							alert("Please Change the FarmingType");
+							return false;
+						}
+						if (document.getElementById("AreaSownTextboxOrg" + i).value < 0) {
+							alert("Area Sown Should not be in negative values");
+							return false;
+						} else if (document.getElementById("AreaSownTextboxOrg" + i).value > document
+							.getElementById("AreaSownTextbox" + i).value) {
+							alert("Requested extent should not be greater then area booked");
+							return false;
+						}
+						if (document.getElementById("AreaSownTextboxOrg" + i).value < 0 || document.getElementById("AreaSownTextboxOrg" + i).value === '0') {
+							alert("Area Sown Should not be in negative values or equal to zero");
+							return false;
+						} else if (document.getElementById("AreaSownTextboxOrg" + i).value > document
+							.getElementById("AreaSownTextbox" + i).value) {
+							alert("Requested extent should not be greater then area booked");
+							return false;
+						}
+
+					}
+
+					else {
+
+
+						khathaNo = khathaNo + "," + document.getElementById("khathaNo" + i).value;
+						surveyNo = surveyNo + "," + document.getElementById("surveyNo" + i).value;
+						bookingId = bookingId + "," + document.getElementById("bookingId" + i).value;
+						farmerid = farmerid + "," + document.getElementById("farmerid" + i).value;
+						totExtent = totExtent + "," + document.getElementById("totExtent" + i).value;
+
+						if (document.getElementById("deleteCheckbox" + i).checked == true) {
+							actionType = actionType + "," + "del";
+							delReason = delReason + "," + document.getElementById("deleteDropdown" + i).value;
+						} else {
+							actionType = actionType + "," + "edit";
+						}
+
+						if (document.getElementById("CropNameCheckbox" + i).checked == true) {
+							cropName = cropName + "," + document.getElementById("CropNameDropdown" + i).value;
+							checkCropName = document.getElementById("CropNameDropdown" + i).value;
+						} else {
+							checkCropName = document.getElementById("CropNameDatabox" + i).value;
+							cropName = cropName + "";
+						}
+
+						if (document.getElementById("VarietyNameCheckbox" + i).checked == true) {
+							varietyName = varietyName + "," + document.getElementById("VarietyNameDropdown" + i).value;
+							checkVarietyName = document.getElementById("VarietyNameDropdown" + i).value;
+						} else {
+							checkVarietyName = document.getElementById("VarietyNameDatabox" + i).value;
+							varietyName = varietyName + "";
+						}
+
+						if (document.getElementById("AreaSownCheckbox" + i).checked == true) {
+							totalExtent = totalExtent + "," + document.getElementById("AreaSownTextbox" + i).value;
+						} else {
+							totalExtent = totalExtent + "" + ",";
+						}
+
+						if (document.getElementById("SourceofIrrigationCheckbox" + i).checked == true) {
+							irrMethodDesc = irrMethodDesc + "," + document.getElementById("SourceofIrrigationDropdown" + i).value;
+							checkIrrMethodDesc = document.getElementById("SourceofIrrigationDropdown" + i).value;
+						} else {
+							irrMethodDesc = irrMethodDesc + "";
+							checkIrrMethodDesc = document.getElementById("SourceofIrrigationDatabox" + i).value;
+						}
+
+						if (document.getElementById("IrrigationMethodCheckbox" + i).checked == true) {
+							waterSource = waterSource + "," + document.getElementById("IrrigationMethodDropdown" + i).value;
+							checkWaterSource = document.getElementById("IrrigationMethodDropdown" + i).value;
+						} else {
+							checkWaterSource = document.getElementById("IrrigationMethodDatabox" + i).value;
+							waterSource = waterSource + "";
+						}
+
+						/*if (document.getElementById("CropingPatternCheckbox" + i).checked == true) {
+							cropNature = cropNature + "," + document.getElementById("CropingPatternDropdown" + i).value;
+							checkCropNature = document.getElementById("CropingPatternDropdown" + i).value;
+						} else {
+							checkCropNature = document.getElementById("CropingPatternDatabox" + i).value;
+							cropNature = cropNature + "";
+						}
+
+						if (document.getElementById("SownDateCheckbox" + i).checked == true) {
+							sowDt = sowDt + "," + document.getElementById("SownDateTextbox" + i).value;
+						} else {
+							sowDt = sowDt + "," + "";
+						}*/
+
+
+						if (document.getElementById("FarmingTypeCheckbox" + i).checked == true) {
+							farmingType = farmingType + "," + document.getElementById("FarmingTypeDropdown" + i).value;
+							checkFarmingType = document.getElementById("FarmingTypeDropdown" + i).value;
+						} else {
+							checkFarmingType = document.getElementById("FarmingTypeDatabox" + i).value;
+							farmingType = farmingType + "";
+						}
+
+						khathaNoOrg = khathaNoOrg + "," + document.getElementById("khathaNoOrg" + i).value;
+						surveyNoOrg = surveyNoOrg + "," + document.getElementById("surveyNoOrg" + i).value;
+						bookingIdOrg = bookingIdOrg + "," + document.getElementById("bookingIdOrg" + i).value;
+						aadhaarNoOrg = aadhaarNoOrg + "," + document.getElementById("farmeridOrg" + i).value;
+						totExtentOrg = totExtentOrg + "," + document.getElementById("totExtentOrg" + i).value;
+						farmerNameOrg = farmerNameOrg + "," + document.getElementById("farmerNameOrg" + i).value;
+						farmerFatherNameOrg = farmerFatherNameOrg + "," + document.getElementById("farmerFatherNameOrg" + i).value;
+						cropNameOrg = cropNameOrg + "," + document.getElementById("cropNameOrg" + i).value;
+						varietyNameOrg = varietyNameOrg + "," + document.getElementById("varietyNameOrg" + i).value;
+						cropNoOrg = cropNoOrg + "," + document.getElementById("cropNoOrg" + i).value;
+						waterSourceOrg = waterSourceOrg + "," + document.getElementById("waterSourceOrg" + i).value;
+						irrMethodDescOrg = irrMethodDescOrg + document.getElementById("SourceofIrrigationOrg" + i).value;
+						cropingPatternOrg = cropingPatternOrg + "," + document.getElementById("cropNatureOrg" + i).value;
+						sownDateOrg = sownDateOrg + "," + document.getElementById("sowDtOrg" + i).value;
+						farmingTypeOrg = farmingTypeOrg + "," + document.getElementById("farmingTypeOrg" + i).value;
+
+						if (document.getElementById("CropNameCheckbox" + i).checked == true && cropName === "") {
+							alert("Please Change the CropName");
+							return false;
+						}
+
+						if (document.getElementById("SourceofIrrigationCheckbox" + i).checked == true && irrMethodDesc === "") {
+							alert("Please Change the Source of Irrigation");
+							return false;
+						}
+
+						if ((checkFarmerName != document.getElementById("farmerNameOrg" + i).value || checkFarmerName === "")
+							&& (checkFarmerFatherName === document.getElementById("farmerFatherNameOrg" + i).value || checkFarmerFatherName === "")) {
+							alert("Please Change the Father Name");
+							return false;
+						}
+						if ((checkCropName != document.getElementById("cropNameOrg" + i).value || checkCropName === "")
+							&& (checkVarietyName === document.getElementById("varietyNameOrg" + i).value || checkVarietyName === "")) {
+							alert("Please Change the Variety");
+							return false;
+						}
+						if (document.getElementById("AreaSownTextboxOrg" + i).value < 0 || document.getElementById("AreaSownTextboxOrg" + i).value === '0') {
+							alert("Area Sown Should not be in negative values or equal to zero");
+							return false;
+						} else if (document.getElementById("AreaSownTextboxOrg" + i).value > document
+							.getElementById("AreaSownTextbox" + i).value) {
+							alert("Requested extent should not be greater then area booked");
+							return false;
+						}
+						if ((checkIrrMethodDesc != document.getElementById("SourceofIrrigationOrg" + i).value || checkIrrMethodDesc === "")
+							&& (checkWaterSource === document.getElementById("waterSourceOrg" + i).value || checkWaterSource === "")) {
+							alert("Please Change the WaterSource");
+							return false;
+						}
+						/*if ((document.getElementById("CropingPatternCheckbox" + i).checked == true)
+							&& (checkCropNature === document.getElementById("cropNatureOrg" + i).value || checkCropNature === "")) {
+							alert("Please Change the Croping Pattern");
+							return false;
+						}*/
+						if ((document.getElementById("FarmingTypeCheckbox" + i).checked == true)
+							&& (checkFarmingType === document.getElementById("farmingTypeOrg" + i).value || checkFarmingType === "")) {
+							alert("Please Change the FarmingType");
+							return false;
+						}
+					}
+
+				}
+				if ((document.getElementById("masterCheckbox" + i).checked == true) &&
+					((document.getElementById("editCheckbox" + i).checked == false) &&
+						(document.getElementById("deleteCheckbox" + i).checked == false))) {
+					alert("Please select atleast one Record to edit or Delete");
+					return false;
+				}
+			}
+
+			if (isFlagSet) {
+				alert("Please select at least one Record");
+				return false;
+			}
+			document.getElementById("khathaNoLst").value = khathaNo;
+			document.getElementById("surveyNoLst").value = surveyNo;
+			document.getElementById("bookingIdLst").value = bookingId;
+			document.getElementById("aadhaarNoLst").value = farmerid;
+			document.getElementById("totExtentLst").value = totExtent;
+			document.getElementById("cropNameLst").value = cropName;
+			document.getElementById("varietyNameLst").value = varietyName;
+			document.getElementById("areaSownLst").value = totalExtent;
+			document.getElementById("irrMethodDescLst").value = irrMethodDesc;
+			document.getElementById("waterSourceLst").value = waterSource;
+			//document.getElementById("cropingPatternLst").value = cropNature;
+			//document.getElementById("sownDateLst").value = sowDt;
+			document.getElementById("farmingTypeLst").value = farmingType;
+			document.getElementById("actionTypeLst").value = actionType;
+			document.getElementById("delReasonLst").value = delReason;
+
+			document.getElementById("khathaNoOrgLst").value = khathaNoOrg;
+			document.getElementById("surveyNoOrgLst").value = surveyNoOrg;
+			document.getElementById("bookingIdOrgLst").value = bookingIdOrg;
+			document.getElementById("aadhaarNoOrgLst").value = aadhaarNoOrg;
+			document.getElementById("totExtentOrgLst").value = totExtentOrg;
+			document.getElementById("farmerNameOrgLst").value = farmerNameOrg;
+			document.getElementById("farmerFatherNameOrgLst").value = farmerFatherNameOrg;
+			document.getElementById("cropNameOrgLst").value = cropNameOrg;
+			document.getElementById("varietyNameOrgLst").value = varietyNameOrg;
+			document.getElementById("waterSourceOrgLst").value = waterSourceOrg;
+			document.getElementById("cropingPatternOrgLst").value = cropingPatternOrg;
+			document.getElementById("sownDateOrgLst").value = sownDateOrg;
+			document.getElementById("farmingTypeOrgLst").value = farmingTypeOrg;
+			document.getElementById("cropNoOrgLst").value = cropNoOrg;
+			document.getElementById("irrMethodDescOrgLst").value = irrMethodDescOrg;
+
+			document.getElementById("applIDOrg").value = applicatonId;
+			document.getElementById("mobIdOrg").value = appMobId;
+			document.getElementById("applNameOrg").value = applName;
+
+			document.getElementById("seasonOrg").value = season;
+			document.getElementById("yearOrg").value = year;
+			var sendData = {
+
+				applIDOrg: applicatonId,
+				mobIdOrg: appMobId,
+				applNameOrg: applName,
+
+				seasonOrg: season,
+				yearOrg: year,
+				
+				//irrMethodDescOrg
+
+				khathaNoOrgLst: khathaNoOrg,
+				surveyNoOrgLst: surveyNoOrg,
+				bookingIdOrgLst: bookingIdOrg,
+				aadhaarNoOrgLst: aadhaarNoOrg,
+				totExtentOrgLst: totExtentOrg,
+				sownDateOrgLst: sownDateOrg,
+				cropingPatternOrgLst: cropingPatternOrg,
+				farmerNameOrgLst: farmerNameOrg,
+				farmerFatherNameOrgLst: farmerFatherNameOrg,
+				cropNameOrgLst: cropNameOrg,
+				varietyNameOrgLst: varietyNameOrg,
+				irrMethodDescOrgLst : irrMethodDescOrg,
+				//<input type="hidden" id="irrMethodDescOrgLst" name="irrMethodDescOrgLst" />
+				
+				waterSourceOrgLst: waterSourceOrg,
+				farmingTypeOrgLst: farmingTypeOrg,
+				cropNoOrgLst: cropNoOrg,
+
+				khathaNoLst: khathaNo,
+				surveyNoLst: surveyNo,
+				bookingIdLst: bookingId,
+				aadhaarNoLst: farmerid,
+				totExtentLst: totExtent,
+				cropNameLst: cropName,
+				varietyNameLst: varietyName,
+				areaSownLst: totalExtent,
+				irrMethodDescLst: irrMethodDesc,
+				waterSourceLst: waterSource,
+				//cropingPatternLst: cropNature,
+				//sownDateLst: sowDt,
+				farmingTypeLst: farmingType,
+				actionTypeLst: actionType,
+				delReasonLst: delReason,
+				rbk: rbk,
+			};
+			alert('Data is Updated Successfully');
+			goBack();
+			$.ajax({
+				type: 'POST',
+				url: './saveSocialAudit',
+				contentType: 'application/json',
+				data: JSON.stringify(sendData),
+				success: function (response) {
+					//					alert(response);
+					window.location.reload();
+				},
+				error: function (error) {
+					console.error('Error sending data:', error);
+				}
+			});
+		}
+	</script>
+
+</body>

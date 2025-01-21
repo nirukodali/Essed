@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- <title>Land Summary Report</title> -->
+<!--    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">-->
+<!--    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>-->
+<!--    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>-->
+<!--    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>-->
+
+    <script>
+        function CallPrint(strid) {
+            var prtContent = document.getElementById(strid);
+            var mywindow = window.open('', '', 'left=0,top=0,width=950,height=600,toolbar=1,scrollbars=1,status=1');
+            mywindow.document.write('<html><head><title>Print</title></head><body>');
+            mywindow.document.write(prtContent.innerHTML);
+            mywindow.document.write('</body></html>');
+            mywindow.document.close();
+
+            mywindow.focus();
+            mywindow.onload = function () {
+                mywindow.print();
+                mywindow.close();
+            };
+
+            return true;
+        }
+
+        var tableToExcel = (function () {
+            var uri = 'data:application/vnd.ms-excel;base64,',
+                template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>',
+                base64 = function (s) { return window.btoa(unescape(encodeURIComponent(s))) },
+                format = function (s, c) { return s.replace(/{(\w+)}/g, function (m, p) { return c[p]; }) };
+            return function (table, name) {
+                if (!table.nodeType) table = document.getElementById(table);
+                var ctx = { worksheet: name || 'Worksheet', table: table.innerHTML };
+                window.location.href = uri + base64(format(template, ctx));
+            }
+        })();
+
+       
+
+        function getData() {
+    		$("#databody").empty();
+    		var cropyear = $("#cropyear").val();
+    		if(cropyear == "" || cropyear == null){
+    			alert("Please Select Cropyear");
+    			return false;
+    		}
+    		
+    		
+    		var wbedname = $("#wbedname").val();
+    		var wbemname = $("#wbemname").val();
+    		
+//    			var chkbox = document.getElementById("chkbox");
+//    			var withPhoto = false;
+//    			if (chkbox.checked) {
+//    					withPhoto = true;
+//    			    } else {
+//    			    	withPhoto = false;
+//    			    }
+    		
+
+    		$("#loadingsign").show();
+    		var inputwbdcode = $("#inputwbdcode").val(); 
+    		var inputwbmcode = $("#inputwbmcode").val(); 
+    		var cropYear = $("#cropyear").val();//alert("cropYear========="+cropYear);
+    		var role = $("#role").val();//alert("role========="+role);
+
+    		var data = {};
+    		data['wbdcode'] = inputwbdcode;
+    		data['wbmcode'] = inputwbmcode;
+    		data['cropyear'] = cropyear;
+    		data['role'] = role;
+
+               $.ajax({
+                   type: "post",
+                   url: "./utilMao/LandSumMao",
+                   contentType: 'application/json',
+                   data: JSON.stringify(data),
+                   cache: false,
+                   timeout: 600000,
+                   success: function (resp) {
+                       var sno = 0;
+
+                       var totalCultivableextent = 0,
+                           totalObjectionalextent = 0,
+                           totalCcrcextent = 0,
+                           totalRofrextent = 0,
+                           totalNonwbextent = 0,
+                           totalEfishext = 0,
+                           totalMaoallocated = 0,
+                           totalVaaselected = 0,
+                           totalCultivatorextent = 0,
+                           totalBookedextent = 0;
+
+                       for (var j = 0; j < resp.length; j++) {
+                           var bean = resp[j];
+                           sno++;
+
+                           var cultivableextent = parseFloat(bean.cultivableextent || 0).toFixed(2);
+                           totalCultivableextent += parseFloat(cultivableextent);
+
+                           var objectionalextent = parseFloat(bean.objectionalextent || 0).toFixed(2);
+                           totalObjectionalextent += parseFloat(objectionalextent);
+
+                           var ccrcextent = parseFloat(bean.ccrcextent || 0).toFixed(2);
+                           totalCcrcextent += parseFloat(ccrcextent);
+
+                           var rofrextent = parseFloat(bean.rofrextent || 0).toFixed(2);
+                           totalRofrextent += parseFloat(rofrextent);
+
+                           var nonwbextent = parseFloat(bean.nonwbextent || 0).toFixed(2);
+                           totalNonwbextent += parseFloat(nonwbextent);
+
+                           var efishext = parseFloat(bean.efishext || 0).toFixed(2);
+                           totalEfishext += parseFloat(efishext);
+
+                           var maoallocated = parseFloat(bean.maoallocated || 0).toFixed(2);
+                           totalMaoallocated += parseFloat(maoallocated);
+
+                           var vaaselected = parseFloat(bean.vaaselected || 0).toFixed(2);
+                           totalVaaselected += parseFloat(vaaselected);
+
+                           var cultivatorextent = parseFloat(bean.cultivatorextent || 0).toFixed(2);
+                           totalCultivatorextent += parseFloat(cultivatorextent);
+
+                           var bookedextent = parseFloat(bean.bookedextent || 0).toFixed(2);
+                           totalBookedextent += parseFloat(bookedextent);
+
+                           $("#databody").append(
+                               '<tr style="font-size:14px; font-weight:0;">' +
+                                   '<td align="center">' + sno + '</td>' +
+//                                    '<td align="left">' + bean.wbedname + '</td>' +
+//                                    '<td align="left">' + bean.wbemname + '</td>' +
+                                   '<td align="left">' + bean.wbevname + '</td>' +
+                                   '<td align="right">' + cultivableextent + '</td>' +
+                                   '<td align="right">' + objectionalextent + '</td>' +
+                                   '<td align="right">' + ccrcextent + '</td>' +
+                                   '<td align="right">' + rofrextent + '</td>' +
+                                   '<td align="right">' + nonwbextent + '</td>' +
+                                   '<td align="right">' + efishext + '</td>' +
+                                   '<td align="right">' + maoallocated + '</td>' +
+                                   '<td align="right">' + vaaselected + '</td>' +
+                                   '<td align="right">' + cultivatorextent + '</td>' +
+                                   '<td align="right">' + bookedextent + '</td>' +
+                               '</tr>'
+                           );
+                       }
+
+                       $("#databody").append(
+                           '<tr style="font-size:14px; font-weight: bold;">' +
+                               '<td colspan="2" align="center">TOTAL</td>' +
+                               '<td align="right">' + totalCultivableextent.toFixed(2) + '</td>' +
+                               '<td align="right">' + totalObjectionalextent.toFixed(2) + '</td>' +
+                               '<td align="right">' + totalCcrcextent.toFixed(2) + '</td>' +
+                               '<td align="right">' + totalRofrextent.toFixed(2) + '</td>' +
+                               '<td align="right">' + totalNonwbextent.toFixed(2) + '</td>' +
+                               '<td align="right">' + totalEfishext.toFixed(2) + '</td>' +
+                               '<td align="right">' + totalMaoallocated.toFixed(2) + '</td>' +
+                               '<td align="right">' + totalVaaselected.toFixed(2) + '</td>' +
+                               '<td align="right">' + totalCultivatorextent.toFixed(2) + '</td>' +
+                               '<td align="right">' + totalBookedextent.toFixed(2) + '</td>' +
+                           '</tr>'
+                       );
+                   }
+               });
+           }
+
+//         function validateCropYear() {
+//             var cropyear = $("#cropyear").val();
+//             if (!cropyear || cropyear === '--------select--------') {
+//                 alert("Please Select CropYear");
+//                 return false;
+//             }
+//             return true;
+//         }
+
+
+function goBack(){
+window.location.href="./home";
+}
+
+    </script>
+
+
+</head>
+
+<body>
+    <div th:insert="header"></div>
+    <div th:insert="headerImage"></div>
+    <div th:insert="navBarTop"></div>
+    <div th:insert="headerMessage"></div>
+
+   <div style="text-align: center; font-size: 25px;">
+    <b>Land Summary Report</b>
+</div>
+    
+    	<input type="hidden" id="inputwbdcode" name="inputwbdcode" th:value="${#session.getAttribute('wbdcode')}" />
+    	<input type="hidden" id="inputwbmcode" name="inputwbmcode" th:value="${#session.getAttribute('wbmcode')}" />
+	<input type="hidden" id="dcodee" name="dcodee"th:value="${#session.getAttribute('dcode')}" />
+	<input type="hidden" id="inputuserid"  name="inputuserid"th:value="${#session.getAttribute('userid')}" />
+	<input type="hidden" id="role"  name="role"th:value="${#session.getAttribute('role')}" />
+    
+    <p th:text="${msg}"></p>
+
+    <form onsubmit="return validateCropYear();">
+ <div align="center">
+	
+			<table id="ObjEntryTable">
+				<tr>
+					<td colspan="3"></td>
+				</tr>
+				<tr>
+					<td align="right" width="30%"><b>Crop Year</b></td>
+					
+					<td align="left">
+						<select id="cropyear" name="cropyear" style="width: 200px" >
+						<option value="">-----Select------</option>
+						</select>
+					</td>
+				</tr>
+			</table>
+			<div colspan="3" align="center" style="padding-top:10px;padding-bottom:10px;">
+				<button type="button" id="btnSubmit" class="btn btn-success" value="Submit"
+					onclick="return getData();">Submit</button>
+			</div>
+		
+	</div>
+    </form>
+
+    <form id="unlockreport" name="unlockreport" method="post">
+       <div id="divPrint" class="text-center">
+    <table id="tableExl" class="table table-striped table-hover mx-auto" style="width:70%;">
+        <thead class="thead-secondary" style="background-color: #006600; color: white">
+           <tr>
+						<th>S.No.</th>
+<!-- 						<th>District Name</th> -->
+<!-- 						<th>Mandal Name</th> -->
+						<th  style="width: 20%;">Village Name</th>
+						<th>Cultivable Extent</th>
+						<th>Objectional Extent</th>
+						<th>CCRC Extent</th>
+						<th>ROFR Extent</th>
+						<th>Non Webland Extent</th>
+						<th>E-fish Extent</th>
+						<th>MAO Allocated</th>
+						<th>VAA Selected</th>
+						<th>Cultivator Extent</th>
+						<th>Booked Extent</th>
+					</tr>
+        </thead>
+        <tbody id="databody"></tbody>
+    </table>
+</div>
+
+    </form>
+
+    <div class="text-center mt-4">
+        <button class="btn btn-success" onclick="CallPrint('divPrint')">Print</button>
+        <button class="btn btn-success" onclick="tableToExcel('tableExl', 'Abstract')">Excel</button>
+        <input  class="btn btn-success" type="button" value="Back" onclick="goBack()" />
+    </div>
+<script>
+	 $(document).ready(function () {
+            $.ajax({
+                type: "get",
+                url: "./util/getAllSeason",
+                cache: false,
+                timeout: 600000,
+                success: function (resp) {
+                    for (var j = 0; j < resp.length; j++) {
+                        var bean = resp[j];
+                        $("#cropyear").append('<option value="' + bean.col1 + '">' + bean.col2 + '</option>');
+                    }
+                }
+            });
+        });
+</script>
+</body>
+</html>

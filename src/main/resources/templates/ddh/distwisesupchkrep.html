@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="header">
+    <meta charset="UTF-8">
+    <title>District Wise Super Check Report</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Your custom styles -->
+<!--    <link rel="stylesheet" type="text/css" href="css/style.css">-->
+
+    <!-- Bootstrap and related scripts -->
+<!--    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">-->
+
+    <!-- ajax/jquery -->
+<!--    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>-->
+</head>
+
+<body>
+	<div th:insert="header"></div>
+    <div th:insert="headerImage"></div>
+    <div th:insert="navBarTop"></div>
+    <div th:insert="headerMessage"></div>
+
+    <!-- Display the table only if data is available -->
+    <div style="display: flex; justify-content: center; width: 100%; margin-top: 20px;">
+        <div style="width: 100%; max-width: 1200px; border-radius: 8px; box-shadow: 0 0 15px rgba(0, 0, 0, 0.2); overflow: hidden;">
+            <table id="customers" style="width: 100%; border-collapse: collapse; border: 1px solid #ddd;">
+                <thead>
+                    <tr style="background-color: #04AA6D;">
+                        <th colspan="8" style="text-align: center; padding: 15px; background-color: #028E5B; border: 1px solid #ddd;">
+                            <font color="white" size="4pt">HORTICULTURE</font>
+                        </th>
+                    </tr>
+                    <tr style="background-color: #04AA6D;">
+                        <th colspan="2" style="text-align: center; padding: 10px; color: white; border: 1px solid #ddd;">Supervisory Officer</th>
+                        <th colspan="3" style="text-align: center; padding: 10px; color: white; border: 1px solid #ddd;">DHO</th>
+                        <th colspan="3" style="text-align: center; padding: 10px; color: white; border: 1px solid #ddd;">HO</th>
+                    </tr>
+                    <tr style="background-color: #04AA6D;">
+                        <th style="text-align: center; padding: 12px; color: white; border: 1px solid #ddd;">S.No.</th>
+                        <th style="text-align: center; padding: 12px; color: white; border: 1px solid #ddd;">District</th>
+                        <th style="text-align: center; padding: 12px; color: white; border: 1px solid #ddd;">Allotted</th>
+                        <th style="text-align: center; padding: 12px; color: white; border: 1px solid #ddd;">Found<br>Correct</th>
+                        <th style="text-align: center; padding: 12px; color: white; border: 1px solid #ddd;">Found<br>Incorrect</th>
+                        <th style="text-align: center; padding: 12px; color: white; border: 1px solid #ddd;">Allotted</th>
+                        <th style="text-align: center; padding: 12px; color: white; border: 1px solid #ddd;">Found<br>Correct</th>
+                        <th style="text-align: center; padding: 12px; color: white; border: 1px solid #ddd;">Found<br>Incorrect</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="distwisesupch, iterStat : ${distwisesupchk}" style="background-color: #f9f9f9;">
+                        <td th:text="${iterStat.count}" style="text-align: right; padding: 12px; border: 1px solid #ddd;"></td>
+                        <td th:text="${distwisesupch.dname}" style="text-align: left; padding: 12px; border: 1px solid #ddd;"></td>
+                        <td th:text="${distwisesupch.dho_allotted}" style="text-align: right; padding: 12px; border: 1px solid #ddd;"></td>
+                        <td th:text="${distwisesupch.dho_approved}" style="text-align: right; padding: 12px; border: 1px solid #ddd;"></td>
+                        <td th:text="${distwisesupch.dho_rejected}" style="text-align: right; padding: 12px; border: 1px solid #ddd;"></td>
+                        <td th:text="${distwisesupch.ho_allotted}" style="text-align: right; padding: 12px; border: 1px solid #ddd;"></td>
+                        <td th:text="${distwisesupch.ho_approved}" style="text-align: right; padding: 12px; border: 1px solid #ddd;"></td>
+                        <td th:text="${distwisesupch.ho_rejected}" style="text-align: right; padding: 12px; border: 1px solid #ddd;"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div th:if="${message != null}"
+        style="display: flex; justify-content: center; align-items: center; padding: 15px; margin-top: 20px; font-family: Arial, sans-serif; font-size: 14px; text-align: center; width: 100%;">
+        <span th:text="${message}" style="color: red;"></span>
+    </div>
+
+</body>
+
+</html>

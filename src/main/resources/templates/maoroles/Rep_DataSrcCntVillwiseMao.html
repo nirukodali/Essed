@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="header">
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<!-- 	<script src="js/jquery.js"></script> -->
+	<!-- 	<script src="js/jquery-ui.js"></script> -->
+	<!-- 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"> -->
+	<!-- 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script> -->
+	<!-- 	<link rel="stylesheet" type="text/css" href="css/style.css"> -->
+
+	<title>Report On Records on Data Source Village Wise </title>
+
+	
+	<!--	<script>-->
+	<!--        function back()-->
+
+	<!--        {-->
+	<!--        document.forms[0].action = 'VSRibbon.html';-->
+	<!--        document.forms[0].submit();-->
+	<!--        }-->
+	<!--    </script>	-->
+
+	<style>
+	 thead {
+   
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+	</style>
+</head>
+<script>
+function goBack(){
+	window.location.href="./home";
+	}
+</script>
+<body>
+	<div th:insert="headerImage"></div>
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+	<div class=" ">
+		<form id="myform" name="myform" method="post" th:action="@{/RepDataSrcVillWiseCntMao}"
+			style="margin-bottom: 0%;height: 40%;">
+			<br>
+		
+		
+<h5 style="color: black;font-weight:bolder;text-align: center;font-size:25px;padding-bottom:25px;"  >
+					Report on Records Village wise Data Source Count  </h5>
+				<div align="center">
+					<label for="name"style="align:center" ><b>Crop Year:</b></label>
+					<select id="crYear" name="crYear" class="form-select" aria-label="Crop Year" style="width: 200px" >
+<!-- 						<option value="0">---Select---</option> -->
+						<option th:each="emp : ${activeseason}" th:value="${emp.getSeasonvalue()}"
+							th:text="${emp.getCropyear()}">
+						</option>		
+					</select>
+			
+
+
+				<div class="row" style="display: flex; justify-content: center; margin: 0;">
+    <button type="submit" class="btn btn-success" onclick="return validateForm()">Submit</button>
+  
+</div>
+
+			</div>
+
+
+<div align="center" style="font-weight:bold;">
+  CropYear: <span th:text="${cropyear}"></span>&nbsp;&nbsp;
+                Season: <span th:text="${season == 'K' ? 'Kharif' : (season == 'R' ? 'Rabi' : (season == 'S' ? 'Summer' : ' '))}"></span>&nbsp;&nbsp;
+</div>
+  
+              
+          
+			<div align="center" id="divPrint" 
+				style="">
+				<table id="tableStkId" align="center" class="table table-striped border border-secondary">
+					<thead  style="position: sticky;top: 1%;">
+						<tr>
+							<th style="font-size: 10pt; text-align:center;"><b>S.No</b></th>
+<!-- 							<th ><b>RBK Name </b></th> -->
+
+<!--                               <th th:if="${role == 17}" ><b>District Name </b></th> -->
+<!--                              <th th:if="${role == 5  || role == 9 || role == 17}" ><b> Mandal Name </b></th> -->
+<!--							<th ><b>District  </b></th>-->
+<!--						   <th ><b>Mandal  </b></th>-->
+						   <th ><b>Village  </b></th>
+						   
+							  <th><b>Total Villages</b></th>
+                            
+                      <th ><b>No of Villages from efish Downloaded</b></th>
+                             <th ><b>No of Villages from efish Not Downloaded</b></th>
+                     <th ><b>No of Records from efish</b></th>
+                            
+                            
+                            <th ><b>No of Villages from Webland Downloaded</b></th>
+                             <th ><b>No of Villages from Webland Not Downloaded</b></th>
+                            <th ><b>No of Records from Webland</b></th>
+                            
+                            
+                             <th ><b>No of Villages from CCRC Downloaded</b></th>
+                             <th ><b>No of Villages from CCRC Not Downloaded</b></th>
+                            <th ><b>No of Records from CCRC</b></th>
+                            
+                             
+                          <th ><b>No of Villages from ROFR Downloaded</b></th>
+                             <th ><b>No of Villages from ROFR Not Downloaded</b></th>
+                            <th ><b>No of Records from ROFR</b></th> 
+                            
+                            
+                        <th ><b>No of Villages from Perennial Downloaded</b></th>
+                             <th ><b>No of Villages from Perennial Not Downloaded</b></th>
+                             <th ><b>No of Records from Perennial Data</b></th> 
+                            
+				
+						</tr>
+					</thead>
+					<tbody id="databody">
+				
+						<tr th:each="bean,row: ${list}">
+				  <td  th:text="${row.index+1}" ></td>
+<!--                  	<td  th:text="${bean.Dname}"> </td>-->
+<!--                  <td  style=" text-align: center;" th:text="${bean.Mname}"></td>-->
+                     <td  th:text="${bean.Wbevname}"></td>
+                                   <td style=" text-align: left;" th:text="${bean.Totvillages}"></td>
+                 
+						
+                             <td style=" text-align: center;" th:text="${bean.Efishdownloaded}"></td>
+                           <td style=" text-align: center;" th:text="${bean.Efishnotdownloaded}"></td>
+                           	 <td style=" text-align: center;" th:text="${bean.Efish_cnt}"></td>
+                           
+                          
+                             <td style=" text-align: center;" th:text="${bean.Weblanddownloaded}"></td>
+                             <td style=" text-align: center;" th:text="${bean.Weblandnotdownloaded}"></td>
+                               <td style=" text-align: center;" th:text="${bean.Wb_cnt}"></td>
+                             
+                            
+                            
+                            <td style=" text-align: center;" th:text="${bean.Ccrcdownloaded}"></td>
+                        <td style=" text-align: center;" th:text="${bean.Ccrcnotdownloaded}"></td>
+                        <td style=" text-align: center;" th:text="${bean.Ccrc_cnt}"></td>
+                            
+                   
+                            
+                          <td style=" text-align: center;" th:text="${bean.Rofrdownloaded}"></td>
+                             <td style=" text-align: center;" th:text="${bean.Rofrnotdownloaded}"></td>
+                              <td style=" text-align: center;" th:text="${bean.Rofr_cnt}"></td> 
+                       
+                            
+                  <td style=" text-align: center;" th:text="${bean.Perennialdownloaded}"></td>
+       <td style=" text-align: center;" th:text="${bean.Perennialnotdownloaded}"></td>
+        <td style=" text-align: center;" th:text="${bean.Peri_cnt}"></td> 
+                 
+					 <tr>
+<!-- <td> </td>-->
+<!--<td> </td>-->
+<td> </td>
+<td style=" font-weight: bold;"> <center>Total</center> </td>
+
+             <td style=" font-weight: bold;">
+                               <center> <span th:text="${totvill}"></span></cener>
+                            </td>
+                            
+                      
+                         
+                            <td style=" font-weight: bold;">
+                                <center> <span th:text="${ Efishdwn}"></span></cener>
+                            </td>
+                            <td style=" font-weight: bold;">
+                                <center> <span th:text=" ${EfishNotdwn}"></span></cener>
+                            </td>
+                               <td style=" font-weight: bold;">
+                                <center> <span th:text="${Efishcnt}"></span></cener>
+                            </td>
+                            
+                            
+                           
+                            <td style=" font-weight: bold;">
+                                <center> <span th:text="${WbCntdwn}"></span></cener>
+                            </td>
+                            <td style=" font-weight: bold;">
+                                 <center><span th:text="${WbCntNotdwn}"></span></cener>
+                            </td>
+                             <td style=" font-weight: bold;">
+                                 <center><span th:text="${Wbcnt}"></span></cener>
+                            </td>
+                            
+                            
+                            <td style=" font-weight: bold;">
+                                <center> <span th:text="${CcrcCntDwn}"></span></cener>
+                            </td>
+                            <td style=" font-weight: bold;">
+                                 <center><span th:text=" ${CcrcCntNotDwn}"></span></cener>
+                            </td>
+                             <td style=" font-weight: bold;">
+                                <center> <span th:text=" ${CcrcCnt}"></span></cener>
+                            </td>
+                                                 
+                            <td style=" font-weight: bold;">
+                                <center> <span th:text="${RofrCntDwn}"></span></cener>
+                            </td>
+                            <td style=" font-weight: bold;">
+                                <center> <span th:text=" ${RofrCntNotDwn}"></span></cener>
+                            </td>
+                               <td style=" font-weight: bold;"> 
+                                 <center> <span th:text="${RofrCnt}"></span> </cener>
+                             </td> 
+                     
+                            
+                           
+
+                            <td style=" font-weight: bold;">
+                                <center> <span th:text="${PeriCntDwn}"></span></cener>
+                            </td>
+                            <td style=" font-weight: bold;">
+                                 <center><span th:text=" ${PeriCntNotDwn}"></span></cener>
+                            </td>  
+                             <td style=" font-weight: bold;"> 
+                                <cener> <span th:text="${PeriCnt}"></span> </cener>
+                             </td> 
+
+                       
+        </tr>		
+		
+					</tbody>
+				</table>
+				<div th:if="${NoRecordsFound}" align="center">
+					<b style="font-size:18px;">-- No Records found--</b>
+				</div>
+			</div>
+		</form>
+
+			<div align="center" style="color:black;margin-top: 20px;">
+			<input class="btn btn-success" name="ctl00$ContentPlaceHolder1$btnPrint" type="button"
+				id="ctl00_ContentPlaceHolder1_btnPrint" onClick="javascript:CallPrint('divPrint')" value="Print">
+			<input class="btn btn-success" type="button" onclick="tableToExcel('tableStkId', 'Abstract')" value="Excel">
+ <input  class="btn btn-success" type="button" value="Back" onclick="goBack()" />
+		</div>
+	</div>
+
+</body>
+<script>
+		function validateForm() {
+			var cropyear = document.getElementById("crYear").value;
+           
+			if (cropyear == 0 || cropyear == null) {
+				alert("Please select Crop Year");
+				return false; 
+			}
+			
+	
+		}
+
+	</script>
+	
+	<script>
+
+		function CallPrint(strid) {			
+			var prtContent = document.getElementById(strid);
+			var mywindow = window.open('', '', 'left=0,top=0,width=950,height=600,toolbar=1,scrollbars=1,status=1,addressbar=0');
+			var is_chrome = Boolean(mywindow.chrome);
+			mywindow.document.write(prtContent.innerHTML);
+			mywindow.document.close(); // necessary for IE >= 10 and necessary before onload for chrome
+
+			if (is_chrome) {
+				mywindow.onload = function () { // wait until all resources loaded 
+					mywindow.focus(); // necessary for IE >= 10
+					mywindow.print(); // change window to mywindow
+					mywindow.close(); // change window to mywindow
+				};
+			} else {
+				mywindow.document.close(); // necessary for IE >= 10
+				mywindow.focus(); // necessary for IE >= 10
+				mywindow.print();
+				mywindow.close();
+			}
+
+			return true;
+		}
+
+	</script>
+		<script language="javascript">
+		var tableToExcel = (function () {
+			var uri = 'data:application/vnd.ms-excel;base64,'
+				, template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table align="center">{table}</table></body></html>'
+				, base64 = function (s) {
+					return window.btoa(unescape(encodeURIComponent(s)))
+				}
+				, format = function (s, c) {
+					return s.replace(/{(\w+)}/g, function (m, p) {
+						return c[p];
+					})
+				}
+			return function (table, name) {
+				if (!table.nodeType)
+					table = document.getElementById(table)
+				var ctx = {worksheet: name || 'Worksheet', table: table.innerHTML}
+				window.location.href = uri + base64(format(template, ctx))
+			}
+		})()
+	</script>
+
+	
+</html>

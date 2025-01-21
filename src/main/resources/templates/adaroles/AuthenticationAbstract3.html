@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="header"></head>
+
+<body>
+<script>
+function goBack(){
+	window.location.href="./home";
+	}
+	
+	
+	
+function calculateTotals() {
+    var table = document.getElementById('tableStkId');
+    var rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+    
+    var totalcount = 0;
+    var totalQty_recd = 0;
+    var totalUbsidyamt = 0;
+   
+    
+    for (var i = 0; i < rows.length; i++) {
+        var cells = rows[i].getElementsByTagName('td');
+        
+        totalcount += parseFloat(cells[2].innerText.replace(/,/g, '')) || 0;
+        totalQty_recd += parseFloat(cells[3].innerText.replace(/,/g, '')) || 0;
+        totalUbsidyamt += parseFloat(cells[4].innerText.replace(/,/g, '')) || 0;
+       
+    }
+    
+    document.getElementById('totalcount').innerText = totalcount.toFixed(2);
+    document.getElementById('totalQty_recd').innerText = totalQty_recd.toFixed(2);
+    document.getElementById('totalUbsidyamt').innerText = totalUbsidyamt.toFixed(2);
+   
+}
+
+// Call the function when the page loads
+window.onload = function() {
+    calculateTotals();
+};
+</script>
+	<div th:insert="headerImage"></div>
+
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+	
+
+</head>
+<body>
+	<div class="heading" style="text-align:center;font-size: 25px;"><b> Abstract on Distribution Done by Family Member Authentication</b>
+	</div>
+<br>
+
+<div id="loading" style="display: none;">
+       	Loading...
+		</div>
+		
+	<div>
+		<form  name="unlockreport" method="post">
+			<div align="center" id="divPrint" class="table table-hover">
+				<table id="tableStkId" align="center" style="width: 70%;" class="table table-striped border border-secondary">
+					<thead>
+			<tr>	
+			<th align="center">S.No</th>
+			<th align="center">Name</th>
+            <th style="text-align:center">No.of Farmers<br>Lifted</th>
+            <th style="text-align:center">Quantity Lifted<br>in Bags</th>
+            <th style="text-align:center">Subsidy Amount<br>(in Lakhs)</th>
+            </tr>
+					</thead>
+					<tbody>
+						<tr th:each="item ,stat: ${list}">
+
+<!-- <td align="left">  -->
+<!--     <a th:href="@{'/getAuthAbs3?mcode=' + ${item.mcode} + '&cropyear=' + ${cropyear} + '&season=' + ${season} + '&status=2'}"  -->
+<!--        th:text="${item.mname}"> -->
+<!--     </a> -->
+<!-- </td> -->
+<td align="center" th:text="${stat.index + 1}">1</td>
+                            <td align="left" th:text="${item.name}"></td>
+							<td align="center" th:text="${item.cnt}"></td>
+							<td align="center" th:text="${item.qtyrecd}"></td>
+							<td align="center" th:text="${item.subsidyamt}"></td>
+							 
+						</tr>
+					</tbody>
+					
+					<tfoot>
+                        <tr>
+                            <td  colspan="2"  align="center"><b>Total:</b></td>
+                            <td id="totalcount" align="center" style="font-weight: bold;"></td>
+                            <td id="totalQty_recd" align="center" style="font-weight: bold;" ></td>
+                            <td id="totalUbsidyamt" align="center" style="font-weight: bold;"></td>
+                        </tr>
+                    </tfoot>
+					
+				</table>
+			</div>
+		</form>
+		<div align="center" style="color:black">
+			<input class="btn btn-primary" name="ctl00$ContentPlaceHolder1$btnPrint" type="button"
+				id="ctl00_ContentPlaceHolder1_btnPrint" onClick="javascript:CallPrint('divPrint')" value="Print">
+			<input class="btn btn-primary" type="button" onclick="tableToExcel('tableStkId', 'Abstract')" value="Excel">
+			<input  class="btn btn-success" type="button" value="Back" onclick="goBack()" />
+		</div>
+	</div>
+</body>
+
+</html>

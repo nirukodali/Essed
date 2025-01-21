@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+<!--	<TITLE>EMPLIST</TITLE>-->
+
+	<head th:insert="header"></head>
+	<div th:insert="headerImage"></div>
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+<!--	<script src="./js/jquery.js"></script>-->
+<!--	<script src="./js/jquery-ui.js"></script>-->
+<!--	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>-->
+<!--	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">-->
+<!--	<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.slim.min.js"></script>-->
+<!--	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>-->
+<!--	<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>-->
+<!--	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>-->
+
+	<script>
+
+		function CallPrint(strid) {
+			var prtContent = document.getElementById(strid);
+			var mywindow = window.open('', '', 'left=0,top=0,width=950,height=600,toolbar=1,scrollbars=1,status=1,addressbar=0');
+			var is_chrome = Boolean(mywindow.chrome);
+			mywindow.document.write(prtContent.innerHTML);
+			mywindow.document.close(); // necessary for IE >= 10 and necessary before onload for chrome
+
+			if (is_chrome) {
+				mywindow.onload = function () { // wait until all resources loaded 
+					mywindow.focus(); // necessary for IE >= 10
+					mywindow.print(); // change window to mywindow
+					mywindow.close(); // change window to mywindow
+				};
+			} else {
+				mywindow.document.close(); // necessary for IE >= 10
+				mywindow.focus(); // necessary for IE >= 10
+				mywindow.print();
+				mywindow.close();
+			}
+
+			return true;
+		}
+
+	</script>
+	<script language="javascript">
+		var tableToExcel = (function () {
+			var uri = 'data:application/vnd.ms-excel;base64,'
+				, template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table align="center">{table}</table></body></html>'
+				, base64 = function (s) {
+					return window.btoa(unescape(encodeURIComponent(s)))
+				}
+				, format = function (s, c) {
+					return s.replace(/{(\w+)}/g, function (m, p) {
+						return c[p];
+					})
+				}
+			return function (table, name) {
+				if (!table.nodeType)
+					table = document.getElementById(table)
+				var ctx = {worksheet: name || 'Worksheet', table: table.innerHTML}
+				window.location.href = uri + base64(format(template, ctx))
+			}
+		})()
+	</script>
+
+</head>
+<script>
+	$(document).ready(function () {
+		$.ajax({
+			type: "get",
+			url: "./util/getActiveSeason",
+			cache: false,
+			timeout: 600000,
+			success: function (resp) {
+				//alert(JSON.stringify(resp));
+					$("#cropyear").append('<option value="">------Select-------</option>');
+				for (var j = 0; j < resp.length; j++) {
+					var bean = resp[j];
+					$("#cropyear").append('<option value="' + bean.seasonvalue + '">' + bean.seasonname + bean.cropyear + '</option>');
+				}
+			}
+		});	
+	});
+	
+	
+	function getData(){
+		$("#databody").empty();
+		var cropyear = $("#cropyear").val();
+		if(cropyear == "" || cropyear == null){
+			alert("Please Select Cropyear");
+			return false;
+		}
+		var inputmcode = $("#inputmcode").val();
+		var userid = $("#userid").val();
+		var inputdcode = $("#inputdcode").val();
+		var cropyear = $("#cropyear").val();
+		
+		var rbody={};
+		rbody['dcode']= inputdcode;
+		rbody['mcode']= inputmcode;
+		rbody['cropyear']= cropyear;
+		
+		
+		$.ajax({
+			type: "Post",
+			url: "./utilMao/emplist",
+			contentType:"application/json",
+			data:JSON.stringify(rbody),
+			cache: false,
+			timeout: 600000,
+			success: function (resp) {
+				if(resp.length == 0){
+						 alert(" No Records Found");
+					}
+				$("#databody").empty();
+//				alert("success============>"+JSON.stringify(resp));
+				var sno = 0;
+				for (var j = 0; j < resp.length; j++) {
+					sno = sno + 1;
+					if(resp.length == 0){
+						 alert(" No Records Found");
+					}
+					var bean = resp[j];
+					$("#databody").append('<tr style="fontsize:200px;">'
+						+ '<td align="center">' + sno + '</td>'
+						+ '<td align="left">' + bean.vname + '('+ bean.rbkuserid+')</td>'
+						+ '<td align="center">' + bean.emp_code + '</td>'
+						+ '<td align="left">' + bean.emp_name + '</td>'
+						+ '<td align="center">' + bean.designation + '</td>'
+						+ '<td align="center">' + bean.mobile + '</td>'
+						+ '<td align="left">' + bean.email + '</td>'
+						+ '<td align="center">' + bean.aadhaar_id + '</td>'
+						+ '<td align="center">' + bean.status + '</td>'
+						+ '</tr>');
+				}
+			}
+		});	
+	}
+	
+	function goBack(){
+		window.location.href="./home";
+		}
+
+</script>
+<style>
+	#ObjEntryTable {
+		border-collapse: separate;
+		border-spacing: 0 0.5em;
+	}
+</style>
+
+<body>
+
+	<div class="heading" colspan="20" style="text-align:center;font-size: 25px;"><b> Report On Employee List</b> </div>
+	<p th:text="${msg}"></p>
+
+	<input type="hidden" id="inputdcode" th:value="${#session.getAttribute('dcode')}" />
+	<input type="hidden" id="inputmcode" th:value="${#session.getAttribute('mcode')}" />
+	<input type="hidden" id="inputuserid" th:value="${#session.getAttribute('userid')}" />
+<div align="center">
+		<form>
+			<table id="ObjEntryTable">
+				<tr>
+					<td colspan="3"></td>
+				</tr>
+				<tr>
+					<td align="right" width="30%"><b>Crop Year</b></td>
+					<td align="left">
+						<select id="cropyear" name="cropyear" style="width: 200px">
+						</select>
+					</td>
+				</tr>
+			</table>
+			<div colspan="3" align="center" style="padding-top:10px;padding-bottom:50px;">
+				<button type="button" id="btnSubmit" class="btn btn-success" value="Submit"
+					onclick="return getData();">Submit</button>
+			</div>
+		</form>
+	</div>
+	<div class="container">
+		<form id="unlockreport" name="unlockreport" method="post">
+			<div align="center" id="divPrint" class="table table-hover table table-striped">
+				<table id="tableStkId" align="center" style=" text-align: center;">
+					<thead>
+						<tr>
+							<th> <b> S.No. </b> </th>
+							<th> <b> RSK Name </b> </th>
+							<th> <b> Employee Code </b> </th>
+							<th> <b>Employee Name </b> </th>
+							<th> <b> Designation </b> </th>
+							<th> <b> Mobile </b> </th>
+							<th> <b> e-Mail Id </b> </th>
+							<th> <b> Aadhaar Id </b> </th>
+							<th> <b>Status</b> </th>
+						</tr>
+					</thead>
+					<tbody id="databody">
+					</tbody>
+				</table>
+			</div>
+		</form>
+		<div align="center" style="color:black;margin-top: 20px;">
+			<input class="btn btn-primary" name="ctl00$ContentPlaceHolder1$btnPrint" type="button"
+				id="ctl00_ContentPlaceHolder1_btnPrint" onClick="javascript:CallPrint('divPrint')" value="Print">
+			<input class="btn btn-primary" type="button" onclick="tableToExcel('tableStkId', 'Abstract')" value="Excel">
+<input  class="btn btn-success" type="button" value="Back" onclick="goBack()" />
+		</div>
+	</div>
+	</div>
+</body>
+
+</html>

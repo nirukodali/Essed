@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+	<title>SuperCheckUserIntf</title>
+
+	<style>
+		.webland-container-new {
+			background-color: #fff;
+			border-radius: 8px;
+			box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+			padding: 40px;
+			max-width: 400px;
+			margin: 0 auto;
+			text-align: center;
+			margin-bottom: 5px;
+		}
+
+
+		h5 {
+			color: #007bff;
+			margin-bottom: 5px;
+		}
+
+		label {
+			font-weight: bold;
+			display: block;
+			margin-bottom: 5px;
+		}
+
+		select,
+		input {
+			width: 50%;
+			padding: 10px;
+			margin-bottom: 15px;
+			box-sizing: border-box;
+			border: 1px solid #ced4da;
+			border-radius: 4px;
+			background-color: #fff;
+		}
+
+		.mb-3 {
+			margin-bottom: 5px;
+		}
+	</style>
+</head>
+
+<body>
+	<div th:insert="headerImage"></div>
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+	<div class="container-fluid header-design-login">
+		<form name="f1" class="mb-3" th:action="@{./getDataSuperCheckUserIntf}" method="post">
+			<div class="webland-container-new">
+				<h5>Supervisory Check</h5>
+				<br>
+				<div class="mb-3">
+					<label for="cropyear" class="form-label">Select Season: <span style="color: red;">*</span></label>
+					<select id="cropyear" name="cropyear" class="form-control custom-select">
+						<option value="" disabled selected>---Select Cropyear---</option>
+					</select>
+				</div>
+				<div class="mb-3" id="mandalDiv" style="display: none;">
+					<label for="mcode" class="form-label">Select Mandal: <span style="color: red;">*</span></label>
+					<select id="mcode" name="mcode" class="form-select">
+						<option value="" disabled selected></option>
+					</select>
+				</div>
+				<div class="mb-3">
+					<label for="vcode" class="form-label">Select Village: <span style="color: red;">*</span></label>
+					<select id="vcode" name="vcode" class="form-select">
+						<option value="" disabled selected></option>
+					</select>
+				</div>
+
+				<div class="mb-3">
+					<button type="submit" class="btn btn-primary btn-block" onclick="submitme()"
+						style="margin-right: 15px;">Submit</button>
+					<button type="button" class="btn btn-info btn-block" onclick="resetForm()">Refresh</button>
+				</div>
+			</div>
+			<input type="hidden" name="params" value="" />
+			<input type="hidden" id="role" name="role" th:value="${role}">
+			<input type="hidden" id="sesdcode" name="sesdcode" th:value="${sesdcode}">
+			<input type="hidden" id="sesmcode" name="sesmcode" th:value="${sesmcode}">
+		</form>
+	</div>
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+	<script th:inline="javascript">
+
+
+
+		function submitme() {
+			var cropyear = document.f1.cropyear.value;
+			var mandal = document.f1.mcode.value;
+			var vill = document.f1.vcode.value;
+
+			if (!cropyear || cropyear === '') {
+				alert("Please select Crop Year.");
+				document.f1.cropyear.focus();
+				event.preventDefault();
+				return false;
+			}
+
+			//if (!mandal || mandal === '') {
+			//	alert("Please select Mandal.");
+			//	document.f1.mcode.focus();
+			//	event.preventDefault();
+			//	return false;
+			//}
+
+			if (!vill || vill === '') {
+				alert("Please select Village.");
+				document.f1.vcode.focus();
+				event.preventDefault();
+				return false;
+			}
+
+			return true;
+		}
+
+		$(document).ready(function () {
+			var role = $('#role').val();
+			// Function to check if the role requires displaying the mandal option
+			function showMandalOption(role) {
+				return role === "44" || role === "45" || role === "9" || role === "19" || role === "46" || role === "31";
+			}
+			// Show or hide mandal select based on the role
+			if (showMandalOption(role)) {
+				$('#mandalDiv').show();
+			} else {
+				$('#mandalDiv').hide();
+				$('#cropyear').on('change', function () {
+					fetchVillageListWithoutMandalSelect();
+				});
+			}
+
+			// Initial fetching of crop years
+			$.get('./rest/api/superCheckUsers/getSeasonCropYears', function (response) {
+				var options = '<option value="">Select Season</option>';
+				response.forEach(function (cropYear, index) {
+					options += '<option value="' + cropYear.seasonvalue + '">' + cropYear.cropyear + '</option>';
+				});
+				$('#cropyear').html(options);
+			}).fail(function (xhr, status, error) {
+				console.error('Error fetching crop years:', error);
+			});
+
+			$('#cropyear').on('change', function () {
+				if (showMandalOption(role)) {
+					fetchMandalList();
+				}
+			});
+
+			$('#mcode').on('change', function () {
+				fetchVillageListWithMandalSelect();
+			});
+		});
+
+		function fetchMandalList() {
+			var selectedCropYear = $('#cropyear').val();
+			var sesmcode = $('#sesmcode').val();
+
+			if (selectedCropYear === '' || sesmcode === '') {
+				$('#mcode').empty().append('<option value="" disabled selected></option>');
+				return;
+			}
+
+			$.ajax({
+				url: './rest/api/superCheckUsers/getSuperUserMandals',
+				method: 'GET',
+				data: {cropyear: selectedCropYear},
+				dataType: 'json',
+				success: function (response) {
+					var data = response;
+					var str = '<option value="">Select Mandal</option>';
+					$.each(data, function (index, obj) {
+						str += '<option value="' + obj.mcode + '">' + obj.mname + '</option>';
+					});
+					$('#mcode').html(str);
+				},
+				error: function (xhr, status, error) {
+					console.error('Technical error:', error);
+				}
+			});
+		}
+
+		function fetchVillageListWithMandalSelect() {
+			var selectedMcode = $('#mcode').val();
+			var selectedCropYear = $('#cropyear').val();
+
+			if (selectedMcode === '') {
+				$('#vcode').empty().append('<option value="" disabled selected></option>');
+				return;
+			}
+
+			$.ajax({
+				url: './rest/api/superCheckUsers/getVillagesWithMcode',
+				method: 'GET',
+				data: {mcode: selectedMcode, cropyear: selectedCropYear},
+				dataType: 'json',
+				success: function (response) {
+					var data = response;
+					var str = '<option value="">Select Village</option>';
+					$.each(data, function (index, obj) {
+						str += '<option value="' + obj.wbvcode + '">' + obj.wbvname + '</option>';
+					});
+					$('#vcode').html(str);
+				},
+				error: function (xhr, status, error) {
+					console.error('Technical error:', error);
+				}
+			});
+		}
+
+
+		function fetchVillageListWithoutMandalSelect() {
+			var selectedCropYear = $('#cropyear').val();
+
+			if (selectedCropYear === '') {
+				$('#vcode').empty().append('<option value="" disabled selected></option>');
+				return;
+			}
+
+			$.ajax({
+				url: './rest/api/superCheckUsers/getVillagesWithoutMcode',
+				method: 'GET',
+				data: {cropyear: selectedCropYear},
+				dataType: 'json',
+				success: function (response) {
+					var data = response;
+					var str = '<option value="">Select Village</option>';
+					$.each(data, function (index, obj) {
+						str += '<option value="' + obj.wbvcode + '">' + obj.wbvname + '</option>';
+					});
+					$('#vcode').html(str);
+				},
+				error: function (xhr, status, error) {
+					console.error('Technical error:', error);
+				}
+			});
+		}
+
+		function resetForm() {
+			window.location.href = './superCheckUserIntf';
+		}
+
+	</script>
+</body>
+
+</html>

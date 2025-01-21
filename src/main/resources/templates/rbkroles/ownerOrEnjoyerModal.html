@@ -1,0 +1,122 @@
+
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="ownerOrEnjoyerModal" class="container">
+	<div class="modal face" id="ownerOrEnjoyerModal" tabindex="-1"
+		role="dialog" aria-labelledby="ownerOrEnjoyerModal" aria-hidden="true">
+		<div class="modal-dialog" style="max-width: 700px !important;"
+			role="document">
+			<div class="modal-content">
+				<div class="modal-header"
+					style="padding-top: 5px; padding-bottom: 0px; background-color: #d6cbd3;">
+					<label class="modal-title col-sm-4 col-form-label"><b>Add
+							<label id="cultivatorModalHeaderIdOE"></label> Details</label></b> <label
+						for="id" class="col-sm-4 col-form-label">Survey/LP No - <b
+						id="crSnoLabelOE"></b></label> <label for="id"
+						class="col-sm-3 col-form-label">Katha No - <b
+						id="khNoLabelOE"></b></label>
+
+
+
+					<button type="button" class="close" data-bs-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true"><b>&times;</b></span>
+					</button>
+				</div>
+
+				<div class="modal-body">
+					<div class="container">
+						<table class="table">
+							<tr >
+								<td><label for="id" class="col-form-label">Original Extent</label></td>
+								<td>-</td>
+								<td><input type="number" name="orgextentLabelOE"
+									class="form-control" id="orgextentLabelOE" disabled /></td>
+							</tr>
+							<tr>
+								<td style="width: 30%;"><label for="id"
+									class="col-form-label"><label
+										id="cultivatorModalFieldId1OE"></label> Name</label> <input
+									name="ocNameOE" type="hidden" id="ocNameOE" /> <input
+									name="fatherNameOE" type="hidden" id="fatherNameOE"> <input
+									name="crSnoOE" type="hidden" id="crSnoOE" /> <!--								<input name="downloadedOE" type="hidden" id="downloadedOE" />-->
+									<input name="downloaded" type="hidden" id="downloaded" /> <input
+									name="part_keyOE" type="hidden" id="part_keyOE" /> <input
+									name="cr_vcodeOE" type="hidden" id="cr_vcodeOE" /> <input
+									name="cr_yearOE" type="hidden" id="cr_yearOE" /> <input
+									name="cr_seasonOE" type="hidden" id="cr_seasonOE" /> <input
+									name="availableExtentOE" type="hidden" id="availableExtentOE" />
+									<input name="cultivatorIndexOE" type="hidden"
+									id="cultivatorIndexOE" /> <input name="refBookingIdOE"
+									type="hidden" id="refBookingIdOE" /> <input name="khNoOE"
+									type="hidden" id="khNoOE" /> <input name="cultivatorTypeOE"
+									type="hidden" id="cultivatorTypeOE" /> <input
+									name="bookingIdOE" type="hidden" id="bookingIdOE" />
+									</td>
+								<td>-</td>
+								<td><b id="ocNameLabelOE"></b></td>
+							</tr>
+
+							<tr>
+								<td><label for="id" class="col-form-label">Father
+										Name</label></td>
+								<td>-</td>
+								<td><b id="fatherNameLabelOE"></b></td>
+							</tr>
+							<tr>
+								<td><label for="id" class="col-form-label">Aadhaar
+										No</label></td>
+								<td>-</td>
+								<td>
+								<input type="hidden" name="aadharNo1OE" class="form-control" id="aadharNo1OE" />
+								<span name="aadharNo2OE"  id="aadharNo2OE" class="aadharDisplay" style="display: none;"></span>
+<!--<input type="number" name="aadharNoOE"  id="aadharNoOE" class="form-control aadharInput" onclick="fetchFarmerMobilenoEn()" />-->
+<input type="text" maxlength="12" name="aadharNoOE" id="aadharNoOE" class="form-control aadharInput" onkeypress="return ValidateNum(event);" onblur="fetchFarmerMobilenoEn()" />
+								</td>
+									
+									
+							</tr>
+							<tr>
+								<td><label for="id" class="col-form-label">Mobile
+										No</label></td>
+								<td>-</td>
+								<td>
+								<input type="text" name="MobileOE" class="form-control" id="MobileOE" 
+								 maxlength="10" onkeypress="return (event.charCode >= 48 && event.charCode <= 57)" />
+								</td>
+								</tr>
+							<tr>
+								<td><label for="id" class="col-form-label">OccupantExtent</label>
+								</td>
+								<td>-</td>
+								<td>
+									<div class="col-sm-9" style="padding-left: 0px;">
+										<input type="number" name="occupantExtentOE"
+											class="form-control" id="occupantExtentOE"
+											placeholder="Please Enter Occupant Extent"  />
+										<div class="invalid-feedback">Please Enter Occupant
+											Extent.</div>
+									</div>
+								</td>
+							</tr>
+						</table>
+<input type="hidden" id="typeeOf" name="typeeOf"> 
+						<a class="btn btn-success" id="ownerbtnId"
+							onclick="updateOwnerOrEnjoerDetails('OE')">Owner Update</a>
+						<a class="btn btn-success"  id="ccrcbtnId" onclick="ccrcDetails('OE')" style="width: fit-content;">Add Ccrc</a>
+						<a class="btn btn-danger" data-bs-dismiss="modal">Close</a>
+
+
+
+					</div>
+				</div>
+
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+	$('body').bind('copy paste',function(e) {
+    e.preventDefault(); return false; 
+});
+</script>
+</html>

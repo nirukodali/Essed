@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<!--     <title>Damaged Extent Report</title> -->
+    
+    <!-- Optionally include stylesheets -->
+    <!-- <link rel="stylesheet" href="./styles/reportstylesheet.css" /> -->
+
+    <!-- Thymeleaf template includes -->
+    <head th:insert="header"></head>
+</head>
+
+<body>
+    <div th:insert="headerImage"></div>
+    <div th:insert="navBarTop"></div>
+    <div th:insert="headerMessage"></div>
+
+    <form method="post">
+        <div class="heading" colspan="20" style="text-align: center; font-size: 25px;">
+            <b>
+                <h4>Abstract On Crop Damage Particulars Due to Flood/Heavy Rains in October, 2024</h4>
+            </b>
+        </div>
+        <p th:text="${msg}"></p>
+
+        <input type="hidden" id="role" th:value="${#session.getAttribute('role')}" />
+        <input type="hidden" id="wbdcode" th:value="${#session.getAttribute('wbdcode')}" />
+        <input type="hidden" id="mcode" th:if="${role == '5'}" th:value="${#session.getAttribute('mcode')}"/>
+        
+        <!-- Loading Sign -->
+        <div id="loadingsign" style="display: none;">
+            <div class="d-flex justify-content-center">
+                <div class="spinner-border" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Table -->
+        <div align="center" id="divPrint" class="table table-hover table table-striped">
+            <table id="tableStkId" align="center" style="text-align: center; width: 90%;">
+                <thead>
+                    <tr>
+                        <th><b>S.No.</b></th>
+                        <th align="center" th:if="${role != '5'}"><b>Mandal Name</b></th>
+                        <th align="center" th:if="${role == '5'}"><b>Village Name</b></th>
+                        <th align="center"><b>No Of Farmers</b></th>
+                        <th align="center"><b>Booked Extent</b></th>
+                        <th align="center"><b>Damaged Extent</b></th>
+                        <th><b></b></th>
+                    </tr>
+                </thead>
+                <tbody id="databody">
+                    <!-- Data will be appended here by JavaScript -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Action Buttons -->
+        <div align="center" style="color: black; margin-top: 20px;">
+            <input class="btn btn-success" type="button" id="ctl00_ContentPlaceHolder1_btnPrint" onclick="CallPrint('divPrint')" value="Print">
+            <input class="btn btn-success" type="button" onclick="tableToExcel('tableStkId', 'Abstract')" value="Excel">
+            <input class="btn btn-success" type="button" onclick="goBack()" value="Back">
+        </div>
+    </form>
+
+    <!-- JavaScript -->
+    
+    <script>
+        $(document).ready(function() {
+            $("#databody").empty();
+            $("#loadingsign").show();
+
+            var role = $("#role").val();
+            var wbdcodee = $("#wbdcode").val();
+            if (role ==  '5'){
+				wbdcodee =  $("#mcode").val();
+			}
+
+            var data = {
+                'role': role,
+                'wbdcode': wbdcodee
+            };
+
+            $.ajax({
+                type: "post",
+                url: "./utilMao/damagedextdao",
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                cache: false,
+                timeout: 600000,
+                success: function(resp) {
+                    $("#loadingsign").hide();
+                    $("#databody").empty();
+
+                    if (!Array.isArray(resp) || resp.length === 0) {
+                        $("#databody").append('<tr><td colspan="6" align="center">No Records Found</td></tr>');
+                        return;
+                    }
+
+                    var sno = 0;
+                    var TotalNoOfFarmers = 0,
+                        totalBookedextent = 0,
+                        totaldamagedextent = 0;
+
+                    for (var j = 0; j < resp.length; j++) {
+                        sno += 1;
+                        var bean = resp[j];
+
+                        var nooffarmers = parseFloat(bean.no_of_farmers || 0);
+                        TotalNoOfFarmers += nooffarmers;
+
+                        var bookedextent = parseFloat(bean.booked_ext || 0);
+                        totalBookedextent += bookedextent;
+
+                        var damagedextent = parseFloat(bean.damaged_ext || 0);
+                        totaldamagedextent += damagedextent;
+
+                        $("#databody").append(
+                            '<tr>' +
+                                '<td align="center">' + sno + '</td>' +
+                                '<td align="left">' + bean.wbemname + '</td>' +
+                                '<td align="right">' + nooffarmers + '</td>' +
+                                '<td align="right">' + bookedextent.toFixed(2) + '</td>' +
+                                '<td align="right">' + damagedextent.toFixed(2) + '</td>' +
+                            '</tr>'
+                        );
+                    }
+
+                    $("#databody").append(
+                        '<tr style="font-size:14px; font-weight: bold;">' +
+                            '<td colspan="2" align="center">TOTAL</td>' +
+                            '<td align="right">' + TotalNoOfFarmers + '</td>' +
+                            '<td align="right">' + totalBookedextent.toFixed(2) + '</td>' +
+                            '<td align="right">' + totaldamagedextent.toFixed(2) + '</td>' +
+                        '</tr>'
+                    );
+                },
+                error: function() {
+                    $("#loadingsign").hide();
+                    $("#databody").empty();
+                    $("#databody").append('<tr><td colspan="6" align="center">An error occurred while fetching data.</td></tr>');
+                }
+            });
+        });
+
+        function CallPrint(strid) {
+            var prtContent = document.getElementById(strid);
+            var mywindow = window.open('', '', 'left=0,top=0,width=950,height=600,toolbar=1,scrollbars=1,status=1,addressbar=0');
+            var is_chrome = Boolean(mywindow.chrome);
+            mywindow.document.write('<html><head><title>Print</title></head><body>' + prtContent.innerHTML + '</body></html>');
+            mywindow.document.close(); // necessary for IE >= 10 and necessary before onload for chrome
+
+            if (is_chrome) {
+                mywindow.onload = function() {
+                    mywindow.focus(); // necessary for IE >= 10
+                    mywindow.print(); // change window to mywindow
+                    mywindow.close(); // change window to mywindow
+                };
+            } else {
+                mywindow.document.close(); // necessary for IE >= 10
+                mywindow.focus(); // necessary for IE >= 10
+                mywindow.print();
+                mywindow.close();
+            }
+
+            return true;
+        }
+
+        var tableToExcel = (function() {
+            var uri = 'data:application/vnd.ms-excel;base64,';
+            var template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table align="center">{table}</table></body></html>';
+            var base64 = function(s) {
+                return window.btoa(unescape(encodeURIComponent(s)));
+            };
+            var format = function(s, c) {
+                return s.replace(/{(\w+)}/g, function(m, p) {
+                    return c[p];
+                });
+            };
+            return function(table, name) {
+                if (!table.nodeType) table = document.getElementById(table);
+                var ctx = {
+                    worksheet: name || 'Worksheet',
+                    table: table.innerHTML
+                };
+                window.location.href = uri + base64(format(template, ctx));
+            };
+        })();
+
+        function goBack() {
+            window.location.href = "./home";
+        }
+    </script>
+
+    <!-- Include your CSS styles here -->
+    <style>
+        #ObjEntryTable {
+            border-collapse: separate;
+            border-spacing: 0 0.5em;
+            margin-right: -3%;
+        }
+   

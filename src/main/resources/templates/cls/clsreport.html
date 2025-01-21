@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="header"></head>
+
+<style>
+.row {
+	display: flex;
+	flex-wrap: wrap;
+	margin-bottom: 20px;
+}
+
+.dashboard {
+	flex: 1;
+	margin-right: 20px;
+	padding: 10px;
+	background-color: #f9f9f9;
+	border: 1px solid #ccc;
+}
+
+.dashboard h2 {
+	margin-top: 0;
+}
+
+table {
+	width: 100%;
+}
+</style>
+
+<body>
+	<div th:insert="headerImage"></div>
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+</body>
+
+	<!-- 	<div class="heading" style="text-align: center; font-size: 150%;">
+		<b> Welcome To <span th:text="${loginName}"></span></b>
+	</div> -->
+
+	<form style="padding-left: 10%; margin-top: 5%;">
+		<div class="row" style="width: 80%; padding-left: 20%">
+			<div class="dashboard me-2">
+				<h2 align="center">Total Images</h2>
+				<table>
+					<tr align="center">
+						<td>Total Photos: <span
+							th:text="${nutrientImages.totalDrcRejectedNutrientDeficiencyImagesNo + nutrientImages.totalDrcApprovedNutrientDeficiencyImagesNo + nutrientImages.totalDrcPendingNutrientDeficiencyImagesNo +pestImages.totalDrcRejectedPestImagesNo + pestImages.totalDrcApprovedPestImagesNo + pestImages.totalDrcPendingPestImagesNo + lifespanImages.totalDrcRejectedLifespanImagesNo + lifespanImages.totalDrcApprovedLifespanImagesNo + lifespanImages.totalDrcPendingLifespanImagesNo + diseaseImages.gettotalDrcRejectedDiseaseImagesNo + diseaseImages.gettotalDrcaprrovedDiseaseImagesNo + diseaseImages.gettotalDrcpendingDiseaseImagesNo}"></span></td>
+					</tr>
+					<tr align="center">
+						<td>Diseases: <span
+							th:text="${diseaseImages.gettotalDrcRejectedDiseaseImagesNo + diseaseImages.gettotalDrcaprrovedDiseaseImagesNo + diseaseImages.gettotalDrcpendingDiseaseImagesNo}"></span></td>
+					</tr>
+					<tr align="center">
+						<td>Crop Life Stages: <span
+							th:text="${lifespanImages.totalDrcRejectedLifespanImagesNo + lifespanImages.totalDrcApprovedLifespanImagesNo + lifespanImages.totalDrcPendingLifespanImagesNo}"></span></td>
+					</tr>
+					<tr align="center">
+						<td>Pests: <span
+							th:text="${pestImages.totalDrcRejectedPestImagesNo + pestImages.totalDrcApprovedPestImagesNo + pestImages.totalDrcPendingPestImagesNo}"></span></td>
+					</tr>
+					<tr align="center">
+						<td>Nutrient Deficiency: <span
+							th:text="${nutrientImages.totalDrcRejectedNutrientDeficiencyImagesNo + nutrientImages.totalDrcApprovedNutrientDeficiencyImagesNo + nutrientImages.totalDrcPendingNutrientDeficiencyImagesNo}"></span></td>
+					</tr>
+				</table>
+			</div>
+			<div class="dashboard">
+				<h2 align="center">Pending Images</h2>
+				<table>
+					<tr align="center">
+						<td>Pending Photos (To Be Accepted/Rejected): <span
+							th:text="${diseaseImages.gettotalDrcpendingDiseaseImagesNo + lifespanImages.totalDrcPendingLifespanImagesNo + pestImages.totalDrcPendingPestImagesNo + nutrientImages.totalDrcPendingNutrientDeficiencyImagesNo}"></span></td>
+					</tr>
+					<tr align="center">
+						<td>Diseases: <span
+							th:text="${diseaseImages.gettotalDrcpendingDiseaseImagesNo}"></span></td>
+					</tr>
+					<tr align="center">
+						<td>Crop Life Stages: <span
+							th:text="${lifespanImages.totalDrcPendingLifespanImagesNo}"></span></td>
+					</tr>
+					<tr align="center">
+						<td>Pests: <span
+							th:text="${pestImages.totalDrcPendingPestImagesNo}"></span></td>
+					</tr>
+					<tr align="center">
+						<td>Nutrient Deficiency: <span
+							th:text="${nutrientImages.totalDrcPendingNutrientDeficiencyImagesNo}"></span></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+		<div class="row" style="width: 80%; padding-left: 20%">
+			<div class="dashboard">
+				<h2 align="center">Accepted Images</h2>
+				<table>
+					<tr align="center">
+						<td>Total Accepted Photos: <span
+							th:text="${nutrientImages.totalDrcApprovedNutrientDeficiencyImagesNo +diseaseImages.gettotalDrcaprrovedDiseaseImagesNo + lifespanImages.totalDrcApprovedLifespanImagesNo + pestImages.totalDrcApprovedPestImagesNo}"></span></td>
+					</tr>
+					<tr align="center">
+						<td>Diseases: <span
+							th:text="${diseaseImages.gettotalDrcaprrovedDiseaseImagesNo}"></span></td>
+					</tr>
+					<tr align="center">
+						<td>Crop Life Stages: <span
+							th:text="${lifespanImages.totalDrcApprovedLifespanImagesNo}"></span></td>
+					</tr>
+					<tr align="center">
+						<td>Pests: <span
+							th:text="${pestImages.totalDrcApprovedPestImagesNo}"></span></td>
+					</tr>
+					<tr align="center">
+						<td>Nutrient Deficiency: <span
+							th:text="${nutrientImages.totalDrcApprovedNutrientDeficiencyImagesNo}"></span></td>
+					</tr>
+				</table>
+			</div>
+			<div class="dashboard">
+				<h2 align="center">Rejected Images</h2>
+				<table>
+					<tr align="center">
+						<td>Total Rejected Photos: <span
+							th:text="${pestImages.totalDrcRejectedPestImagesNo + nutrientImages.totalDrcRejectedNutrientDeficiencyImagesNo + lifespanImages.totalDrcRejectedLifespanImagesNo + diseaseImages.gettotalDrcRejectedDiseaseImagesNo}"></span></td>
+					</tr>
+					<tr align="center">
+						<td>Diseases: <span
+							th:text="${diseaseImages.gettotalDrcRejectedDiseaseImagesNo}"></span></td>
+					</tr>
+					<tr align="center">
+						<td>Crop Life Stages: <span
+							th:text="${lifespanImages.totalDrcRejectedLifespanImagesNo}"></span></td>
+					</tr>
+					<tr align="center">
+						<td>Pests: <span
+							th:text="${pestImages.totalDrcRejectedPestImagesNo}"></span></td>
+					</tr>
+					<tr align="center">
+						<td>Nutrient Deficiency: <span
+							th:text="${nutrientImages.totalDrcRejectedNutrientDeficiencyImagesNo}"></span></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+	</form>
+	
+
+
+</html>

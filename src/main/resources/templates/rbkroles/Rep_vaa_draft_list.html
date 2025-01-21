@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title></title>
+	<script>
+		/*
+		function CallPrint(strid) {
+			var prtContent = document.getElementById(strid);
+			var mywindow = window.open('', '', 'left=0,top=0,width=950,height=600,toolbar=1,scrollbars=1,status=1,addressbar=0');
+			var is_chrome = Boolean(mywindow.chrome);
+			mywindow.document.write(prtContent.innerHTML);
+			mywindow.document.close(); // necessary for IE >= 10 and necessary before onload for chrome
+
+			if (is_chrome) {
+				mywindow.onload = function () { // wait until all resources loaded 
+					mywindow.focus(); // necessary for IE >= 10
+					mywindow.print(); // change window to mywindow
+					mywindow.close(); // change window to mywindow
+				};
+			} else {
+				mywindow.document.close(); // necessary for IE >= 10
+				mywindow.focus(); // necessary for IE >= 10
+				mywindow.print();
+				mywindow.close();
+			}
+ 
+			return true;
+		}
+*/
+
+function CallPrint(divName) {
+  var printContents = document.getElementById(divName).innerHTML;
+  var originalContents = document.body.innerHTML;
+
+  document.body.innerHTML = printContents;
+  window.print();
+  document.body.innerHTML = originalContents;
+}
+
+
+		var tableToExcel = (function () {
+			var uri = 'data:application/vnd.ms-excel;base64,'
+				, template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table align="center">{table}</table></body></html>'
+				, base64 = function (s) {
+					return window.btoa(unescape(encodeURIComponent(s)))
+				}
+				, format = function (s, c) {
+					return s.replace(/{(\w+)}/g, function (m, p) {
+						return c[p];
+					})
+				}
+			return function (table, name) {
+				if (!table.nodeType)
+					table = document.getElementById(table)
+				var ctx = {worksheet: name || 'Worksheet', table: table.innerHTML}
+				window.location.href = uri + base64(format(template, ctx))
+			}
+		})()
+
+		function validateForm() {
+			var cropyear = document.getElementById("crYear").value;
+			var vcode = document.getElementById("vcode").value;
+			// Check if both fields are selected
+			if (cropyear == 0 && vcode == 0) {
+				alert("Please select Crop Year and Village.");
+				return false; // Prevent form submission
+			} else if (cropyear == 0) {
+				alert("Please Select Crop Year");
+				return false;
+			} else if (vcode == 0) {
+				alert("Please Select Village");
+				return false;
+			}
+			else {
+				return true;
+			}
+
+			// If both fields are selected, allow form submission
+			return true;
+		}
+
+	</script>
+
+	<style>
+		thead {
+			position: sticky;
+			top: 0;
+			z-index: 1;
+			background-color: white;
+		}
+	</style>
+
+
+	<style>
+		#tableStkId {
+			border-collapse: collapse;
+			width: 100%;
+		}
+
+		#tableStkId th,
+		#tableStkId td {
+			border: 1px solid black;
+			/* Add borders around the cells */
+			padding: 8px;
+			text-align: left;
+		}
+
+		#tableStkId th {
+			background-color: #f2f2f2;
+		}
+		
+		@media print {
+			
+			thead {
+    position: static; /* Remove sticky positioning for print */
+    top: auto;
+  }
+  table, th, td {
+    border: 1px solid black;
+  }
+}
+
+	</style>
+
+
+</head>
+
+<body>
+	<div th:insert="header"></div>
+	<div th:insert="headerImage"></div>
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+	<div class="container">
+		<form id="f1" name="f1" method="post" th:action="@{/RepVaadraftlist}">
+			<br>
+			<div class="ecropCardRbk2">
+
+				<h5
+					style="background-color:#006400;color: white;font-weight:bolder;font-size:large;margin-left:30%;text-align: center;width:70%">
+					e-పంట - సామాజిక తనిఖీ కొరకు ముసాయిదా జాబితా &nbsp;&nbsp; &nbsp;&nbsp;</h5>
+
+
+
+				<div class="mb-3" style="margin-left:35%;margin-top:5%;">
+					<label for="name" style="width:30%">Crop Year:</label>
+					<select id="crYear" name="crYear" style="width:50%" class="form-select" aria-label="Crop Year">
+						<option value="0">-----Select-----</option>
+						<option th:each="emp : ${activeseason}" th:value="${emp.seasonvalue}" th:text="${emp.cropyear}">
+						</option>
+					</select>
+				</div>
+				<div class="mb-3" style="margin-left:35%;">
+					<label for="name" style="width:40%"> Select Village:</label>
+					<select id="vcode" name="vcode" style="width:40%" class="form-select" aria-label="Select Village">
+						<option value="0">--Select--</option>
+						<option th:each="village : ${villname}" th:value="${village.vcode}"
+							th:text="${village.wbvname}">
+							Village Name</option>
+					</select>
+				</div>
+				<div align="center" style="margin-left:20%;">
+					<button type="submit" class="btn btn-success " onclick="return validateForm()">Submit</button>
+					<!-- 				<button type="button" class="btn btn-primary btn-block">Back</button> -->
+				</div>
+			</div>
+			<!-- 			<h5 style="font-size:20px" colspan="20" class="heading" align="center">e-క్రాప్ - సామాజిక తనిఖీ కొరకు ముసాయిదా జాబితా &nbsp;&nbsp; &nbsp;&nbsp;</h5> -->
+
+
+			<div id="divPrint"
+				style="overflow-x: scroll; overflow-y: scroll;max-width: 100%;max-height: 100lvh;margin-top:5%">
+				<table id="tableStkId" class="table table-striped border border-secondary">
+					<thead>
+						<tr style="margin-left: 50%;">
+							<th colspan="100%">
+								<h2 style="text-align: center;background-color: #006400;">e-పంట - సామాజిక తనిఖీ కొరకు ముసాయిదా జాబితా</h2>
+								
+								<h5
+									style="font-size: 20px; background-color: #dfffe1; text-align: center;color: black;">
+									
+									
+									CropYear: <span th:text="${cropyear}"></span>&nbsp;&nbsp;
+									
+									Season: <span
+										th:text="${season} == 'K' ? 'Kharif' : (${season} == 'R' ? 'Rabi' : (${season} == 'S' ? 'Summer' : ' '))"></span>&nbsp;&nbsp;
+									District: <span th:text="${Dname}"></span>&nbsp;&nbsp;							
+									
+									Mandal: <span th:text="${Mname}"></span>&nbsp;&nbsp;
+									
+									RSK : <span th:text="${Vname}"></span>&nbsp;&nbsp;
+									
+									Village: <span th:text="${vname}"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+									
+									<b>Report Time:</b> <span id="theDate"></span>
+								</h5>
+							</th>
+						</tr>
+						<tr>
+							<th width="2%" rowspan="2" style="font-size: 13pt;color: black;"><b>క్రమ సంఖ్య</b></th>
+							<th width="6%" rowspan="2" style="font-size: 13pt;color: black;"><b>బుకింగ్ ID</b></th>
+							<th rowspan="2" style="font-size: 13pt; width:120px;color: black;"><b>రైతు పేరు</b></th>
+							<th rowspan="2" style="font-size:13pt;color: black;"><b>తండ్రి పేరు</b></th>
+							<th rowspan="2" style="font-size: 13pt;color: black;"><b>ఆధార్</b></th>
+							<th rowspan="2" style="font-size: 13pt;color: black;"><b>మొబైల్</b></th>
+							<th rowspan="2" style="font-size: 13p;color: black"><b>పట్టాదారు/</br> కౌలుదారు/</br> సాగుదారు </b></th>
+							<th rowspan="2" style="font-size: 13pt;color: black;"><b>ఖాతా నంబర్</b></th>
+							<th rowspan="2" style="font-size: 13pt;color: black;"><b>సర్వే నంబర్</b></th>
+							<th rowspan="2" style="font-size: 13pt;color: black;"><b>సాగు విస్తీర్ణం</b></th>
+							<th rowspan="2" style="font-size: 13pt;color: black;"><b>పంట పేరు</b></th>
+							<th rowspan="2" style="font-size:13pt;color: black;"><b>రకము</b></th>
+							<th rowspan="2" style="font-size:13pt;color: black;"><b>సాగు పద్ధతి</b></th>
+							<th rowspan="2" style="font-size:13pt;color: black;"><b>పంట సరళి</b></th>
+							<th rowspan="2" style="font-size:13pt;color: black;"><b>జలా<br>ధారం/పద్ధతి</b></th>
+							<th rowspan="2" style="font-size:13pt;color: black;"><b>విత్తిన/నాటిన తేదీ</b></th>
+							<th colspan="3" style="font-size:13pt;color: black;" align="center"> <b>ప్రమాణీకరణ e-KYC</b>
+						</tr>
+
+						<tr>
+							<th align="center" style="font-size: 12pt;color: black;"><b>VAA</b></th>
+							<th align="center" style="font-size: 12pt;color: black;"><b>VRO</b></th>
+							<th align="center" style="font-size: 12pt;color: black;"><b>రైతు</b></th>
+						</tr>
+					</thead>
+					<tbody id="databody">
+						<tr th:each="bean,row: ${list}">
+							<td th:text="${row.index+1}" />
+							<td style="text-align:right;" th:text="${bean.Bookingid}" />
+							<!--                             <td  th:text="${bean.Sclength}" />  -->
+							<td th:text="${bean.Occupname}" />
+							<td th:text="${bean.Occupfname}" />
+							<td th:text="${bean.Cr_farmeruid}" />
+							<td th:text="${bean.Smsmobileno}" />
+							<td th:text="${bean.Cultdesc}" />
+							<td th:text="${bean.Kh_no}" />
+							<td th:text="${bean.Cr_sno}" />
+							<td th:text="${bean.Cr_mix_unmix_ext}" />
+							<td th:text="${bean.Cropname}" />
+							<td th:text="${bean.Varietyname}" />
+							<td th:text="${bean.Ftype_short}" />
+							<td th:text="${bean.Naturedesc}" />
+							<td th:text="${bean.Wsrcdesc +'/'+ bean.irrmethoddesc}" />
+							<td th:text="${bean.Sdate}" />
+							<td style="text-align:center;" th:text="${bean.Vaaauth}=='Y' ? 'Yes' : 'No'" />
+							<td style="text-align:center;" th:text="${bean.Vroauth}=='Y' ? 'Yes' : 'No'" />
+							<td style="text-align:center;" th:text="${bean.Ekyc}=='Y' ? 'Yes' : 'No'" />
+
+							<!--							<td  th:text="${bean.Vaaauth}" />-->
+							<!--                             <td  th:text="${bean.Vroauth}" />-->
+							<!--                             <td  th:text="${bean.Ekyc}" />-->
+						
+						</tr>
+					</tbody>
+						
+				</table>
+				<br>
+				<b>Note:</b> <br>
+				<b>CF</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-> Conventional Farming  <br>
+				<b>NF S2S </b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-> Natural Farming (S2S) <br>
+				<b>NF PDMS </b> &nbsp;&nbsp;-> Natural Farming (PDMS) <br>
+				<b>OF </b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -> Organic Farming <br>
+				
+<h1 style="text-align: center;"> ---End of the Report--- </h1>
+			</div>
+			<div th:if="${NoRecordsFound}" align="center">
+				<b style="font-size:18px;">---- No Records found-----</b>
+			</div>
+		</form>
+		<div align="center" style="color:black">
+			<input class="btn btn-success" name="ctl00$ContentPlaceHolder1$btnPrint" type="button"
+				id="ctl00_ContentPlaceHolder1_btnPrint" onClick="javascript:CallPrint('divPrint')" value="Print">
+			<input class="btn btn-success" type="button" onclick="tableToExcel('tableStkId', 'Abstract')" value="Excel">
+			<!--  <input  class="btn btn-primary" type="button" value="Back" onclick="goBack()" /> -->
+
+		</div>
+	</div>
+	
+	
+	<script>
+		$(document).ready(function () {
+    var currentDate = new Date();
+    var day = currentDate.getDate();
+    var month = currentDate.getMonth() + 1; // Months are zero-indexed, so we add 1
+    var year = currentDate.getFullYear();
+    
+    var hours = currentDate.getHours();
+    var minutes = currentDate.getMinutes();
+    var seconds = currentDate.getSeconds();
+    
+    // Format the date and time as day-month-year hours:minutes:seconds
+    var formattedDate = day + '-' + month + '-' + year + ' ' + hours + ':' + minutes + ':' + seconds;
+    $("#theDate").text(formattedDate);
+});
+
+	</script>
+
+</body>
+
+</html>

@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="header"></head>
+
+<style>
+    /* Add padding to table headers for spacing */
+    th {
+        padding: 10px;
+        text-align: center;
+        background-color: #006400;
+        color: white;
+    }
+
+    /* Add margin or padding to header title */
+    .heading {
+        margin-bottom: 20px; /* Add some space between the header and table */
+        padding: 15px;
+        font-size: 18px;
+        text-align: center;
+        background-color: #006400;
+        color: white;
+    }
+
+    /* Add padding to table data cells for better readability */
+    td {
+        padding: 8px;
+        text-align: center;
+    }
+
+    /* Optional: Styling for the input fields inside the table */
+    select, input {
+        padding: 5px;
+        font-size: 14px;
+    }
+
+    /* Space for the dropdowns and other form elements */
+    .form-element {
+        margin-bottom: 20px;
+    }
+
+    .error {
+        color: red;
+        font-size: 12px;
+    }
+    .centered-text {
+            text-align: center;
+            font-size: larger;           
+             font-weight: bold;
+            background-color: #dfffe1;
+            padding: 0px;  /* Optional: adds some padding for better appearance */
+        }
+    
+</style>
+
+<body>
+
+    <div th:insert="headerImage"></div>
+    <div th:insert="navBarTop"></div>
+    <div th:insert="headerMessage"></div>
+    
+    <form id="agencyAllocForm" name="agencyAllocForm" method="post" th:action="@{/submitForm}">
+    <table align="center">
+        <tr>
+            <td class="tdnum">
+                <b> Vehicle No:</b>&nbsp;
+                <input type="text" name="PvehicleTxt" id="PvehicleId" >
+                <b> Driver Mobile No: </b>&nbsp;
+                <input type="text" id="Pmobno" name="Pmobno" 
+                       onkeypress="return isNumberKey(event)" maxlength="12">
+                <b> Date Of Dispatch:</b>&nbsp;
+                <input type="date" name="PosDtId" id="PosDtId" >
+            </td>                
+        </tr>
+    </table> <br>
+
+    <div style="overflow-x: scroll;width: 100%">
+		
+	<div class="centered-text" >
+        Stock Entry
+    </div>
+    
+    <br>
+        <table id="tableStkId">
+            <thead>
+               
+                <tr>
+                    <th rowspan="2">
+                        <input type="checkbox" id="checkedAll" />
+                    </th>
+                    <th rowspan="2">SNo</th>
+                    <th rowspan="2">Mandal</th>
+                    <th rowspan="2">Village Secretariat Id</th>
+                    <th rowspan="2">Village Secretariat Name</th>
+                    <th rowspan="2">Seed Variety</th>
+                    <th rowspan="2">Total Quantity Allocated<br>(in Bags)</th>
+                    <th rowspan="2">Total Quantity paid for<br>(in Bags)</th>               
+                    <th colspan="2">Previously <br>Positioned Quantity (in Bags)</th>
+                    <th rowspan="2">Quantity to be<br> Positioned (in Bags)</th>
+                    <th rowspan="2">Lot Number</th>
+                    <th rowspan="2">Vehicle No</th>
+                    <th rowspan="2">Driver Mobile No</th>
+                    <th rowspan="2">Date Of Dispatch</th>
+                    <!--<th rowspan="2">Agency</th>-->
+                </tr>
+                <tr>
+                    <th>Self</th>
+                    <th>Other Agency</th>
+                </tr>
+            </thead>
+            <tbody>
+            
+<tr th:each="cluster, iterStat : ${clusters}">
+    <!-- Hidden input for the total number of clusters -->
+    <input type="hidden" id="param" th:value="${#lists.size(clusters)}" />
+                
+    <!-- Checkbox input for selecting clusters -->
+    <td><input type="checkbox" class="checkSingle" th:id="'checkboxId' + ${iterStat.index + 1}" name="checkClosureAlloc" th:value="${iterStat.index + 1}"></td>
+
+    <!-- Index Column -->
+    <td th:text="${iterStat.index + 1}"></td>
+
+    <!-- Cluster MName -->
+    <td th:id="'mname' + ${iterStat.index + 1}" th:text="${cluster.mname}"></td>
+
+    <!-- Cluster CID -->
+    <td><input type="text" th:id="'cid' + ${iterStat.index + 1}" th:value="${cluster.cid}" style="text-align:center; border: none" readonly></td>
+
+    <!-- Cluster CName -->
+    <td th:id="'cname' + ${iterStat.index + 1}" th:text="${cluster.cname}"></td>
+
+    <!-- Seed Variety -->
+<td><input type="text" th:id="'seedvariety' + ${iterStat.index + 1}" th:value="${cluster.seedvariety}" style="text-align:center; border:none" readonly></td>
+
+    <!-- Quantity Bags -->
+    <td><input th:id="'qtyBags' + ${iterStat.index + 1}" type="text" th:value="${cluster.qtyBags}" style="text-align:center; border:none" readonly></td>
+
+    <!-- Quantity Amt Paid For -->
+    <td><input th:id="'qtyAmtPaidFor' + ${iterStat.index + 1}" type="text" th:value="${cluster.qtyAmtPaidFor}" style="text-align:center; border:none" readonly></td>
+
+    <!-- Previous Quantity Self -->
+    <td><input th:id="'prevQtySelfs' + ${iterStat.index + 1}" type="text" th:value="${cluster.prevQtySelf}" style="text-align:center; border:none" readonly></td>
+
+    <!-- Previous Quantity Other -->
+    <td><input th:id="'prevQtyOther' + ${iterStat.index + 1}" type="text" th:value="${cluster.prevQtyOther}" style="text-align:center; border:none" readonly></td>
+
+    <!-- Quantity Allocated (disabled input) -->
+    <td><input th:id="'qtyalloc' + ${iterStat.index + 1}" type="text" th:value="${cluster.qtyAlloc}" style="text-align:center" disabled></td>
+
+    <!-- Lot Number -->
+    <td><input type="text" th:id="'lotno' + ${iterStat.index + 1}" disabled></td>
+
+    <!-- Vehicle ID -->
+    <td><input type="text" th:id="'vehicleId' + ${iterStat.index + 1}" disabled></td>
+
+    <!-- Driver Mobile Number -->
+    <td><input type="text" th:id="'mobno' + ${iterStat.index + 1}" onkeypress="return isNumberKey(event)" maxlength="12" disabled></td>
+
+    <!-- Positioning Date -->
+    <td><input type="date" th:id="'PosDt' + ${iterStat.index + 1}" disabled></td>
+    
+    <!-- Hidden input for mcode -->
+    <input type="hidden" th:id="'mcode' + ${iterStat.index + 1}" th:value="${cluster.mcode}" />
+
+    <!-- Hidden input for vcode -->
+    <input type="hidden" th:id="'vcode' + ${iterStat.index + 1}" th:value="${cluster.vcode}" />
+</tr>
+
+
+    
+     
+            </tbody>
+            
+             
+        </table>
+        
+           
+    </div>
+    
+  <div style="display: flex; justify-content: center; align-items: center; height: 100px;">
+    <button type="button" onclick="return checkVal();">Submit</button>
+</div>
+
+    
+    
+</form>
+    
+    <script type="text/javascript">
+    
+    
+    
+    function isNumberKey(evt)
+    {
+        var charCode = (evt.which) ? evt.which : evt.keyCode;
+        if (charCode != 46 && charCode > 31
+            && (charCode < 48 || charCode > 57))
+            return false;
+
+        return true;
+    }
+    $(document).ready(function () {
+    
+    	$("#checkedAll").change(function () {
+    	    var driver_No = $("#Pmobno").val();
+    	    var vehicle_No = $("#PvehicleId").val(); 
+    	    var date_of_Pos = document.getElementById("PosDtId").value;
+    	  //  alert(date_of_Pos);
+
+    	    if (this.checked) {
+    	        $(".checkSingle").each(function () {
+    	            var id = $(this).prop("id").replace("checkboxId", "");  // Get the row id after replacing 'checkboxId'
+    	           // alert("id---------------------------->" + id);
+    	         //   qtyAlloc
+    	            // Enable all the fields
+    	            $("#qtyalloc" + id).prop("disabled", false);
+    	            $("#lotno" + id).prop("disabled", false);
+    	            $("#vehicleId" + id).prop("disabled", false);
+    	            $("#mobno" + id).prop("disabled", false);                        
+    	            $("#PosDt" + id).prop("disabled", false);
+
+    	            // Set values
+    	            $("#mobno" + id).val(driver_No);
+    	            $("#vehicleId" + id).val(vehicle_No);
+    	            var posDtElement = $("#PosDt" + id);
+    	            if (posDtElement.length) {
+    	                posDtElement.val(date_of_Pos);
+    	            }
+
+    	            this.checked = true;
+    	        });
+    	    } else {
+    	        $(".checkSingle").each(function () {
+    	            var id = $(this).prop("id").replace("checkboxId", "");  // Get the row id after replacing 'checkboxId'
+    	            //alert("id---------------------------->" + id);
+
+    	            // Disable all fields
+    	            $("#qtyalloc" + id).prop("disabled", true);
+    	            $("#lotno" + id).prop("disabled", true);
+    	            $("#vehicleId" + id).prop("disabled", true);
+    	            $("#mobno" + id).prop("disabled", true);
+    	            $("#PosDt" + id).prop("disabled", true);
+
+    	            // Clear values
+    	            $("#mobno" + id).val('');
+    	            $("#vehicleId" + id).val('');
+    	            var posDtElement = $("#PosDt" + id);
+    	            if (posDtElement.length) {
+    	                posDtElement.val('');  // Clear the date
+    	            }
+
+    	            this.checked = false;
+    	        });
+    	    }
+    	});
+
+
+    $(".checkSingle").click(function () {
+    	
+        var id = $(this).prop("id").replace("checkboxId", "");  // Get the row id after replacing 'checkboxId'
+        var driver_No=$("#Pmobno").val();
+        var vehicle_No=$("#PvehicleId").val(); 
+        var date_of_Pos= document.getElementById("PosDtId").value;    
+        
+        
+        
+        if ($(this).is(":checked")) {
+            var isAllChecked = 0;
+            $(".checkSingle").each(function () {
+                if (!this.checked){
+                    isAllChecked = 1;
+                } else{
+                    $("#qtyalloc"+id).prop("disabled", false);
+                    $("#lotno"+id).prop("disabled", false);
+                    $("#vehicleId"+id).prop("disabled", false);
+                    $("#mobno"+id).prop("disabled", false);
+                    $("#PosDt"+id).prop("disabled", false);
+                    
+                    $("#vehicleId"+id).prop("disabled", false);
+                    $("#mobno"+id).prop("disabled", false);                        
+                    $("#PosDt"+id).prop("disabled", false);
+                   $("#mobno"+id).val(driver_No);
+                   $("#vehicleId"+id).val(vehicle_No);
+                 $("#PosDt"+id).val(date_of_Pos);
+                 //  document.getElementById("PosDt"+id).value=date_of_Pos;
+                }
+            })
+            if (isAllChecked == 0) {
+                $("#checkedAll").prop("checked", true);
+            }
+        } else {
+            $("#qtyalloc"+id).prop("disabled", true);
+            $("#lotno"+id).prop("disabled", true);
+            $("#vehicleId"+id).prop("disabled", true);
+            $("#mobno"+id).prop("disabled", true);
+            $("#PosDt"+id).prop("disabled", true);
+            $("#checkedAll").prop("checked", false);
+            $("#mobno"+id).val('');
+            $("#vehicleId"+id).val('');
+        //    document.getElementById("PosDt"+id).value='';
+             $("#PosDt"+id).val('');
+        }
+    });
+    });
+    
+
+function checkVal() {
+    var selopt = document.getElementsByName("checkClosureAlloc");                
+    var flag = false;
+    for (var i = 0; i < selopt.length; i++)
+    {                    
+        if (selopt[i].checked) {
+            flag = true;
+        }              
+    }
+    if (flag)
+    {
+        return submitClosure();
+    } else {
+        alert('Select atleast one Record to Submit');
+        return false;
+    }
+}
+
+function submitClosure() {
+ 
+    // Arrays to collect the values
+    var totVehicles = [], totMobileNos = [], totqtyalloc = [], totcid = [], totlotno = [], villages = [], totqtyreq = [], mcodes = [], totPosDts = [], totQtyPaidFor = [], totVarietyCodes = [];
+
+    // Collecting the data
+    for (var i = 1; i <= $("#param").val(); i++) {
+        if ($("#checkboxId" + i).is(":checked")) {
+
+            // Collecting values in arrays instead of concatenating them
+            totcid.push($("#cid" + i).val());
+            var preqty_self = parseFloat($("#prevQtySelfs" + i).val());
+         //   alert(preqty_self);
+            var preqty_other = parseFloat($("#prevQtyOther" + i).val());
+       //     alert(preqty_other);
+
+            // Validation for quantity allocation
+            var qtyAlloc = parseInt($("#qtyalloc" + i).val());
+            if (qtyAlloc == 0) {
+                alert("Quantity Allocated value should not be 0");
+                $("#qtyalloc" + i).focus();
+                return false;
+            }
+          /*   else if (qtyAlloc + preqty_self + preqty_other > parseInt($("#qtyAmtPaidFor" + i).val())) {
+                alert("Quantity Allocated value should not exceed " + (parseInt($("#qtyAmtPaidFor" + i).val()) - preqty_self - preqty_other));
+                $("#qtyAmtPaidFor" + i).focus();
+                return false;
+            } */
+
+            // Validate LOT Number
+            if ($("#lotno" + i).val() === "") {
+                alert("Enter LOT Number");
+                $("#lotno" + i).focus();
+                return false;
+            } else {
+                totlotno.push($("#lotno" + i).val());
+            }
+
+            // Validate Vehicle ID
+            if ($("#vehicleId" + i).val() === "") {
+                alert("Enter Vehicle ID");
+                $("#vehicleId" + i).focus();
+                return false;
+            } else {
+                totVehicles.push($("#vehicleId" + i).val());
+            }
+            
+
+
+
+            // Validate Driver Mobile No
+            if ($("#mobno" + i).val() === "") {
+                alert("Enter Driver Mobile No");
+                $("#mobno" + i).focus();
+                return false;
+            } else {
+                totMobileNos.push($("#mobno" + i).val());
+            }
+
+            // Validate Positioning Date
+            if ($("#PosDt" + i).val() === "") {
+                alert("Enter Positioning Date");
+                $("#PosDt" + i).focus();
+                return false;
+            } else {
+                totPosDts.push($("#PosDt" + i).val());
+            }
+
+           // alert("djhhgujis--------->"+$("#cname" + i).val());
+        //   alert("fgfgfdgfd--------->"+$("#seedvariety" + i).val());
+
+            // Push remaining values to arrays
+            totqtyalloc.push($("#qtyalloc" + i).val());
+            villages.push($("#vcode" + i).val());
+            totqtyreq.push($("#qtyBags" + i).val());
+            mcodes.push($("#mcode" + i).val());
+            totQtyPaidFor.push($("#qtyAmtPaidFor" + i).val());
+            totVarietyCodes.push($("#seedvariety" + i).val());
+        }
+    }
+
+    
+    // Preparing data to send to the Spring Boot controller (as JSON)
+    var data = {
+        totcid: totcid,
+        totqtyalloc: totqtyalloc,
+        totlotno: totlotno,
+        totVehicles: totVehicles,
+        totMobileNos: totMobileNos,
+        villages: villages,
+        totqtyreq: totqtyreq,
+        mcodes: mcodes,
+        totPosDts: totPosDts,
+        totQtyPaidFor: totQtyPaidFor,
+        totVarietyCodes: totVarietyCodes
+    };
+
+    // Send data via AJAX
+    $.ajax({
+        url: "./submitDataforstock",   // The endpoint where you want to send data
+        type: "POST",
+        contentType: "application/json;charset=UTF-8",  // The type of content you're sending
+        data: JSON.stringify(data),  // Stringify the data object
+        success: function(response) {
+            alert("Data submitted successfully");
+          
+           window.location.href = "./getstock";  // Redirect after success
+        },
+        error: function(xhr, status, error) {
+            console.error("An error occurred: " + error);
+            alert("An error occurred while submitting the data. Please try again.");
+        }
+    });
+
+    return false; // Prevent form submission
+}
+
+
+    
+    
+    
+    
+    
+    </script>
+    </body>
+
+</html>
+    

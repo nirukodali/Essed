@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="header">
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Village Normal Areas Updation</title>
+</head>
+
+<body>
+	<div th:insert="headerImage"></div>
+
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+	<br>
+	<div class="container-fluid header-design-login"
+		style=" width: 40%; height: 38vh;">
+		<div class="row justify-content-center align-items-center">
+			<div class="card ecropCard">
+				<form th:action="@{/updation}" method="post">
+				
+				<div class="card-title">
+					<h4 style="background-color: darkgreen; color: white; width:100%">Village Normal Areas Updation
+						(Current Season)</h4>
+						
+						</div>
+					<br />
+
+					<div class="mb-3 form-group">
+						<label for="cropyear" style="padding-left: 11%;">Select Crop Year :</label>
+						<select id="cropyear" name="cropyear" class="form-control custom-select" style="width: 50%;"
+							required>
+<!-- 							<option value="" disabled selected>Select Crop Year</option> -->
+							<option th:each="season : ${cropYear}" th:value="${season}" th:text="${season}" selected="selected"></option>
+						</select>
+					</div>
+
+					<div  th:if="${session.userType == 22}" class="mb-3 form-group">
+						<label for="mand" style="padding-left: 8%;">Select Mandal :</label>
+						<select id="mand" name="selectedMand" class="form-control custom-select" 
+						style="width: 50%;" required>
+							<option value="" disabled selected>Select Mandal</option>
+							<option th:each="season : ${mand}" th:value="${season.getMname()}" th:text="${season.getMname()}"></option>
+						</select>
+					</div>
+
+					<div class="mb-3 form-group">
+						<label for="cropNames" style="padding-left: 17%;">Select Crop :</label>
+						<select id="cropNames" name="selectedCrop" class="form-control custom-select"
+							style="width: 50%;  " required>
+							<option value="" disabled selected>Select Crop</option>
+							<option th:each="names : ${cropNames}" th:text="${names.getCropname()}" th:value="${names.getCropname()+'-'+names.getCropid()}"></option>
+						</select>
+					</div>
+
+					<button type="submit" class="btn btn-primary"
+						style="margin-right: 30px; margin-left: 40%;">Submit</button>
+					<!--                    <button type="button" onclick="goBack()" class="btn btn-primary" style="margin-right: 30px;">Go Back</button>-->
+				
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<script>
+		window.onload = function () {
+			if (window.performance && window.performance.navigation.type === window.performance.navigation.TYPE_BACK_FORWARD) {
+				location.reload();
+			}
+		}
+	</script>
+
+</body>
+
+</html>

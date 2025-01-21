@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+ <head th:insert="header"> 
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script type="text/javascript" th:src="@{/js/jquery.js}"></script>
+<style>
+    @media print {
+        .no-print {
+            display: none;
+        }
+    }
+</style>
+</head>
+<body>
+	<div th:insert="headerImage"></div>
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+
+	<div class="container-fluid header-design-login">
+		<div class="row justify-content-center align-items-center"
+			style="height: 10vh;">
+			<div class="webland-container">
+				<div class="card-title">
+					<h5 style="text-align: center;">UnMapping of HO Jurisdictions</h5>
+				</div>
+				<div style="text-align: center; font-size: 20px;" class="error"
+					id="success"></div>
+
+				<div id="messageContainer" style="color:#006400" th:text="${message}"></div>
+				<!-- 				<form id="deleteForm"> -->
+			<div id="deleteForm">
+				<table class="table table-bordered" id="absseasondistwise">
+					<thead>
+						<tr>
+							<th>S.no</th>
+							<th>Head Quarter</th>
+							<th>Mandal</th>
+							<th>Delete</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="item, rowStat : ${unmap}">
+							<td th:text="${rowStat.index + 1}"></td>
+							<td th:text="${item.hqname}"></td>
+							<td th:text="${item.mname}"></td>
+							<td>
+								 <button class="button no-print" th:data-hqcode="${item.hqcode}"
+									th:data-mcode="${item.mcode}" data-toggle="form"
+									data-target="#display" onclick="deleteRow(this)">Delete</button> 
+									<!-- <button class="button no-print" th:data-delete-hqcode="${item.hqcode}" th:data-delete-mcode="${item.mcode}"  onclick="deleteRow(this)">Delete</button> -->
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+				<!-- 				</form> -->
+				<div align="center" style="margin-top: 10px">
+					<button style="color: white" class="button"
+						name="ctl00$ContentPlaceHolder1$btnPrint"
+						id="ctl00_ContentPlaceHolder1_btnPrint"
+						onClick="printPage()" value="Print">Print</button>
+					<button style="color: white" class=" button"
+						onclick="tableToExcel('absseasondistwise', 'Abstract')"
+						value="Excel">Excel</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script>
+		 function deleteRow(button) {
+			if (confirm("Are your sure you want to delete.")) {
+// 				alert("hi "+$(button).data('hqcode'));
+				var hqcode = $(button).data('hqcode');
+				var mcode = $(button).data('mcode');
+// 				alert("mcode",mcode);
+				if (hqcode == mcode) {
+					alert("Unable to delete Head Quarter")
+				} else {
+					$.ajax({
+						url : '/deleteunmap?hqcode=' + hqcode + '&mcode='
+								+ mcode,
+						type : 'POST',
+						cache : false,
+						success : function(response) {
+							// alert('response------>'+response);
+							$('#success').html(response);
+
+							var row = button.parentNode.parentNode;
+
+							// Remove the row from the table
+							row.parentNode.removeChild(row);
+
+						},
+						error : function(error) {
+							console.error(error);
+						}
+					});
+				}
+			} else {
+				return false;
+
+			}
+		}
+		
+		/* function deleteRow(button) {
+			  if (confirm("Are your sure you want to delete?")) {
+			    // Assuming the button has a 'data-delete-hqcode' attribute
+			   var hqcode = button.dataset.deleteHqcode;
+				var mcode = button.dataset.deleteMcode;
+
+			    if (hqcode == mcode) {
+			      alert("Unable to delete Head Quarter");
+			    } else {
+			      $.ajax({
+			        url: './deleteunmap?hqcode=' + hqcode + '&mcode=' + mcode,
+			        type: 'POST',
+			        cache: false,
+			        success: function (response) {
+			          $('#success').html(response);
+			          var row = button.parentNode.parentNode;
+			          row.parentNode.removeChild(row);
+			        },
+			        error: function (error) {
+			          console.error(error);
+			        }
+			      });
+			    }
+			  } else {
+			    return false;
+			  }
+			} */
+		 function printPage() {
+		        // Apply print-specific styles
+		        var style = document.createElement('style');
+		        style.type = 'text/css';
+		        style.innerHTML = '@media print { .button { display: none; } }';
+		        document.head.appendChild(style);
+
+		        // Print the page
+		        window.print();
+
+		        // Remove the print-specific styles after printing
+		        style.parentNode.removeChild(style);
+		    }
+
+
+		var tableToExcel = (function() {
+			var uri = 'data:application/vnd.ms-excel;base64,', template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table align="center">{table}</table></body></html>', base64 = function(
+					s) {
+				return window.btoa(unescape(encodeURIComponent(s)))
+			}, format = function(s, c) {
+				return s.replace(/{(\w+)}/g, function(m, p) {
+					return c[p];
+				})
+			}
+			return function(table, name) {
+				if (!table.nodeType)
+					table = document.getElementById(table)
+				var ctx = {
+					worksheet : name || 'Worksheet',
+					table : table.innerHTML
+				}
+				window.location.href = uri + base64(format(template, ctx))
+			}
+		})()
+	</script>
+</body>
+</html>

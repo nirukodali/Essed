@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="ISO-8859-1">
+	<title>Insert title here</title>
+</head>
+
+<body>
+
+	<div class="panel panel-primary" style="max-width: 100%;overflow-x: scroll;overflow-y: auto;">
+		<div class="panel-heading"
+			style="text-align: center; background-color: honeydew; padding: 8px; margin: 0 auto; display: table;">
+			<b>Updaton of Bank Details</b>
+		</div>
+		<div class="panel-body">
+
+			<input type="hidden" th:value="${type}" id="type" name="type">
+			<table id="ownerGrid" class="table table-bordered table-striped dataTable">
+				<thead class="color-palette" style="background-color: #9494b8;">
+					<tr>
+						<th style="color: white; width: 5%; background-color: #9494b8;"> <input type="checkbox"
+								id="masterCheckbox" onclick="toggleAllCheckboxes(this)" /></th>
+						<th style="color: white; width: 7%; background-color: #9494b8;"><b>District Name</b></th>
+						<th style="color: white; width: 7%; background-color: #9494b8;"><b>Mandal Name</b></th>
+						<th style="color: white; width: 19%; background-color: #9494b8;"><b>Village Name</b></th>
+						<th style="color: white; width: 8%; background-color: #9494b8;" align="cener"> <b>Aadhaar</b>
+						</th>
+						<th style="color: white; width: 25%; background-color: #9494b8;"><b>Farmer Name</b></th>
+						<th style="color: white; width: 25%; background-color: #9494b8;"><b>Father/husband Name</b></th>
+						<th style="color: white; width: 8%; background-color: #9494b8;"><b>Bank account</b></th>
+						<th style="color: white; width: 8%; background-color: #9494b8;"><b>Bank name</b></th>
+						<th style="color: white; width: 8%; background-color: #9494b8;"><b>Bank branch</b></th>
+						<th style="color: white; width: 8%; background-color: #9494b8;"><b>Type of account</b></th>
+						<th style="color: white; width: 8%; background-color: #9494b8;"><b>IFSC code</b></th>
+					</tr>
+				</thead>
+				<tbody>
+
+					<tr th:each="cultivator, iterStat : ${ownersList}" th:attr="data-index=${iterStat.index}">
+						<input type="hidden" th:id="'wbdcode' + ${iterStat.index}"
+							th:value="${cultivator.cr_dist_code}">
+						<input type="hidden" th:id="'wbmcode' + ${iterStat.index}"
+							th:value="${cultivator.cr_mand_code}">
+						<input type="hidden" th:id="'wbvcode' + ${iterStat.index}" th:value="${cultivator.cr_vcode}">
+						<td><input type="checkbox" th:id="'checkbox' + ${iterStat.index}"
+								th:onchange="'toggleFields(' + ${iterStat.index} + ')'" /></td>
+						<td style="width: 10%;" th:text="${dname}">
+						</td>
+						<td style="width: 10%;" th:text="${mname}">
+						</td>
+						<td style="width: 10%;" th:text="${vname}">
+						</td>
+						<td><span th:text="${cultivator.cr_farmeruid}"></span>
+							<input type="hidden" th:id="'aadhaar'+${iterStat.index}"
+								th:value="${cultivator.cr_farmeruid}">
+						</td>
+						<td style="width: 25%;"><span th:text="${cultivator.occupname}"></span>
+							<input type="hidden" th:id="'ocname'+${iterStat.index}" th:value="${cultivator.occupname}">
+						</td>
+						<td style="width: 15%;"><span th:text="${cultivator.occupfname}"></span>
+							<input type="hidden" th:id="'ocfname'+${iterStat.index}"
+								th:value="${cultivator.occupfname}">
+						</td>
+						<td style="width: 10%;"><input type="text" th:id="'bankaccount'+${iterStat.index}"
+								disabled="disabled" required maxlength="20" onkeypress="return isAlphanumeric(event)">
+						</td>
+						<td>
+							<select th:id="'bankname' + ${iterStat.index}"
+								th:onchange="'getBranch(' + ${iterStat.index} + ', this.value)'" required="required"
+								disabled="disabled">
+								<option value="">--Select--</option>
+								<th:block th:each="bank : ${bankList}">
+									<option th:value="${bank.bnk_ifsc_cod}" th:text="${bank.bnk_name}"></option>
+								</th:block>
+							</select>
+						</td>
+						<td>
+							<select th:id="'bankbranch' + ${iterStat.index}"
+								th:onchange="'getIfsc(' + ${iterStat.index} + ', this.value)'" disabled="disabled"
+								required="required">
+								<option value="">--Select--</option>
+							</select>
+						</td>
+						<td>
+							<select th:id="'banktype'+${iterStat.index}" required="required" disabled="disabled">
+								<option value="">--Select type--</option>
+								<option value="C">CURRENT ACCOUNT</option>
+								<option value="S">SAVING ACCOUNT</option>
+							</select>
+						</td>
+						<td style="width: 10%;"><input th:id="'ifscCode'+${iterStat.index}" disabled="disabled"
+								readonly="readonly"></td>
+					</tr>
+
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<br><br>
+	<input type="button" class="btn btn-success" value="Submit" style="text-align: center;margin-left: 50%;"
+		onclick=" return saveBankDet()">
+
+
+</html>

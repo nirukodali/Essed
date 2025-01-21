@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="header">
+<meta charset="UTF-8">
+<title>Crop Insurance Certificate Details</title>
+</head>
+
+<body>
+	<div th:insert="headerImage"></div>
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+
+	<div style="text-align: center; font-size: 25px;" class="heading">Crop
+		Insurance Certificate Details</div>
+	<br>
+
+	<!-- District Table -->
+	<div id="districtDiv" align="center"
+		class="table table-hover table table-striped">
+		<table id="districtTable" style="width: 50%">
+			<thead style="background-color: #006400; color: white;">
+				<tr>
+					<th style="text-align: center;"><b>S.No</b></th>
+					<th style="text-align: center;"><b>District Name</b></th>
+					<th style="text-align: center;"><b>Count</b></th>
+				</tr>
+			</thead>
+			<tbody>
+    <tr th:each="dist, stat : ${district}">
+        <td th:text="${stat.index + 1}" style="text-align: center;"></td>
+        <td style="text-align: center;">
+            <a th:text="${dist.wbedname}"
+               href="javascript:void(0);"
+               th:onclick="|fetchMandals(${dist.dcode}); return false;|">
+            </a>
+        </td>
+        <td th:text="${dist.count}" style="text-align: center;"></td>
+    </tr>
+</tbody>
+
+		</table>
+	</div>
+
+	<br>
+	<br>
+
+	<!-- Mandal Table (Initially hidden) -->
+	<div id="mandalDiv" align="center"
+		class="table table-hover table table-striped" style="display: none;">
+		<table id="mandalTable" style="width: 50%">
+			<thead style="background-color: #006400; color: white;">
+				<tr>
+					<th style="text-align: center;"><b>S.No</b></th>
+					<th style="text-align: center;"><b>Mandal Name</b></th>
+					<th style="text-align: center;"><b>Count</b></th>
+				</tr>
+			</thead>
+			<tbody id="mandalBody">
+				<!-- Mandal rows will be dynamically populated -->
+			</tbody>
+		</table>
+	</div>
+
+	<!-- Villages Table (Initially hidden) -->
+	<div id="villagesDiv" align="center"
+		class="table table-hover table table-striped" style="display: none;">
+		<table id="villagesTable" style="width: 50%">
+			<thead style="background-color: #006400; color: white;">
+				<tr>
+					<th style="text-align: center;"><b>S.No</b></th>
+					<th style="text-align: center;"><b>Village Name</b></th>
+					<th style="text-align: center;"><b>Count</b></th>
+				</tr>
+			</thead>
+			<tbody id="customers">
+				<!-- Village rows will be dynamically populated -->
+			</tbody>
+		</table>
+	</div>
+
+	<br>
+
+	<div align="center">
+		<input type="button" onclick="CallPrint('districtDiv')"
+			value="Print Districts" class="btn btn-success"> <input
+			type="button" onclick="CallPrint('mandalDiv')" value="Print Mandals"
+			class="btn btn-success"> <input type="button" value="Back"
+			onclick="goBack()" class="btn btn-success">
+	</div>
+
+	<script>
+        // Function to handle printing
+        function CallPrint(divId) {
+            var printWindow = window.open('', '', 'height=600,width=800');
+            printWindow.document.write('<html><head><title>Print</title></head><body >');
+            printWindow.document.write(document.getElementById(divId).innerHTML);
+            printWindow.document.write('</body></html>');
+            printWindow.document.close();
+            printWindow.focus();
+            printWindow.print();
+        }
+
+        // Function to fetch Mandals by district
+        function fetchMandals(districtCode) {
+            console.log("Fetching mandals for district code:", districtCode); // Debug log
+            $.ajax({
+                url: '/getmandals/' + districtCode,
+                type: 'GET',
+                success: function(response) {
+                    console.log("Mandals fetched successfully:", response); // Debug log
+                    populateMandals(response);
+                },
+                error: function(error) {
+                    console.error("Error fetching mandals:", error);
+                    alert("Failed to fetch mandals. Please try again.");
+                }
+            });
+        }
+
+        // Function to populate Mandals table dynamically and show it
+        function populateMandals(mandals) {
+            let tableBody = $('#mandalBody');
+            tableBody.empty(); // Clear previous rows
+
+            if (!mandals || mandals.length === 0) {
+                tableBody.append('<tr><td colspan="3" style="text-align:center;">No mandals found.</td></tr>');
+            } else {
+                $.each(mandals, function(index, mandal) {
+                    tableBody.append(`
+                        <tr>
+                            <td style="text-align: center;">${index + 1}</td>
+                            <td style="text-align: center;">
+                                <a href="javascript:void(0);" onclick="fetchVillages(${mandal.wbvcode})">${mandal.wbemname}</a>
+                            </td>
+                            <td style="text-align: center;">${mandal.count}</td>
+                        </tr>
+                    `);
+                });
+            }
+
+            // Show the Mandal Table and hide the District Table
+            $('#districtDiv').hide();
+            $('#mandalDiv').show();
+        }
+
+        // Function to fetch Villages by Mandal code
+        function fetchVillages(wbvcode) {
+            console.log("Fetching villages for Mandal code:", wbvcode); // Debug log
+            $.ajax({
+                url: '/getvillages/' + wbvcode, // Backend endpoint
+                type: 'GET',
+                success: function(response) {
+                    console.log("Villages fetched successfully:", response); // Debug log
+                    populateVillages(response);  // Ensure the response is passed to populateVillages function
+                },
+                error: function(error) {
+                    console.error("Error fetching villages:", error);
+                    $('#mandalBody').html('<tr><td colspan="3" style="text-align:center; color:red;">Error loading data</td></tr>');
+                }
+            });
+        }
+
+        // Function to populate Village table dynamically and show it
+        function populateVillages(villages) {
+            let tableBody = $('#customers');
+            tableBody.empty(); // Clear previous rows
+
+            if (!villages || villages.length === 0) {
+                tableBody.append('<tr><td colspan="3" style="text-align:center;">No villages found.</td></tr>');
+            } else {
+                $.each(villages, function(index, village) {
+                    tableBody.append(`
+                        <tr>
+                            <td style="text-align: center;">${index + 1}</td>
+                            <td style="text-align: center;">${village.wbevname}</td>
+                            <td style="text-align: center;">${village.count}</td>
+                        </tr>
+                    `);
+                });
+            }
+
+            // Show the Villages Table and hide the Mandal Table
+            $('#mandalDiv').hide();
+            $('#villagesDiv').show();
+        }
+
+        // Function to navigate back to home page
+        function goBack() {
+            window.location.href = "./home";
+        }
+    </script>
+</body>
+
+</html>

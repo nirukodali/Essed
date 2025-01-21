@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="header">
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Replication</title>
+	<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+	<div th:insert="headerImage"></div>
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+
+	<div class="container-fluid" style="margin-top: 30px;">
+		<div class="row justify-content-center">
+			<div class="col-md-6" style="margin-left: 25%;">
+				<div class="card"
+					style="border-radius: 5px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); padding: 20px; background-color: white;width: 40%;">
+					<form th:action="@{/replicationdata}" method="post" onsubmit="return validateForm()">
+						<div class="form-group" style="margin-bottom: 20px;">
+							<label for="district" style="font-weight: 500;">Select District:</label>
+							<select id="district" name="district" class="form-control"
+								style="border-radius: 5px;width: 100%; font-size: 16px;">
+								<option value="0">Select District</option>
+								<option th:each="district : ${district}" th:value="${district.dcode}"
+									th:text="${district.dname}"></option>
+							</select>
+						</div>
+						<button type="submit" class="btn btn-primary"
+							style="border-radius: 5px; padding: 12px 25px; font-size: 16px; font-weight: bold; width: 100%; background-color: #006400; border: none; color: white;">
+							Submit
+						</button>
+					</form>
+
+					<div id="successMessage" th:if="${successMessage}"
+						style="color: green; font-weight: bold; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 20px; border-radius: 5px; z-index: 1000; text-align: center;">
+						<p th:text="${successMessage}"></p>
+					</div>
+
+					<div id="errorMessage" th:if="${error}"
+						style="color: red; font-weight: bold; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 20px; border-radius: 5px; z-index: 1000; text-align: center;">
+						<p th:text="${error}"></p>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="table-container" style="margin-top: 30px; width: 100%;">
+			<table id="dataTable" th:if="${list != null and !list.isEmpty()}"
+				style="width: 100%; border-collapse: collapse; display: none;">
+				<thead>
+					<tr style="background-color: #333; color: white;">
+						<th style="padding: 12px 20px; text-align: center;">Seed Variety</th>
+						<th style="padding: 12px 20px; text-align: center;">Crop Year / Season</th>
+						<th style="padding: 12px 20px; text-align: center;">Price</th>
+						<th style="padding: 12px 20px; text-align: center;">Subsidy Amount</th>
+						<th style="padding: 12px 20px; text-align: center;">Non-Subsidy Amount</th>
+						<th style="padding: 12px 20px; text-align: center;">From Date</th>
+						<th style="padding: 12px 20px; text-align: center;">To Date</th>
+						<th style="padding: 12px 20px; text-align: center;">Active</th>
+						<th style="padding: 12px 20px; text-align: center;">Replication</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="item, iterStat : ${list}">
+						<td style="padding: 12px 20px; text-align: center;" th:text="${item.varietyname}"></td>
+						<td style="padding: 12px 20px; text-align: center;">
+							<span th:text="${item.cropyear} + ' / ' + (${#strings.trim(item.season) == 'R' ? 'Rabi' : 
+    											  (#strings.trim(item.season) == 'K' ? 'Kharif' : 
+    											  (#strings.trim(item.season) == 'S' ? 'Summer' : 'Unknown Season'))})"></span>
+						</td>
+						<td style="padding: 12px 20px; text-align: center;" th:text="${item.productprice}"></td>
+						<td style="padding: 12px 20px; text-align: center;" th:text="${item.subsidy_amt}"></td>
+						<td style="padding: 12px 20px; text-align: center;" th:text="${item.nonsubsidy_amt}"></td>
+						<td style="padding: 12px 20px; text-align: center;"
+							th:text="${#dates.format(item.fromdate, 'dd-MM-yyyy')}"></td>
+						<td style="padding: 12px 20px; text-align: center;"
+							th:text="${#dates.format(item.todate, 'dd-MM-yyyy')}"></td>
+						<td style="padding: 12px 20px; text-align: center;" th:text="${item.active}"></td>
+						<td style="padding: 12px 20px; text-align: center;">
+							<button class="btn btn-info" th:data-varietycode="${item.varietycode}"
+								th:data-dcode="${item.dcode}" th:data-cropyear="${item.cropyear}"
+								th:data-season="${item.season}" onclick="SendToReplication(this)"
+								style="border-radius: 5px; padding: 10px 15px; font-size: 14px; background-color: #007bff; border: none; color: white;">
+								Click
+							</button>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+	<script>
+		window.onload = function () {
+			const table = document.getElementById('dataTable');
+			if (table && table.rows.length > 1) {
+				table.style.display = 'table';
+			}
+			var successMessage = document.getElementById('successMessage');
+			if (successMessage) {
+				setTimeout(function () {
+					successMessage.style.display = 'none';
+				}, 5000);
+			}
+			var errorMessage = document.getElementById('errorMessage');
+			if (errorMessage) {
+				setTimeout(function () {
+					errorMessage.style.display = 'none';
+				}, 5000);
+			}
+		};
+
+		function validateForm() {
+			var district = document.getElementById("district").value;
+
+			if (district === "0" || district === "") {
+				alert("Please select a district.");
+				return false;
+			}
+			return true;
+		}
+
+		function SendToReplication(button) {
+			var varietycode = button.getAttribute('data-varietycode');
+			var dcode = button.getAttribute('data-dcode');
+			var cropyear = button.getAttribute('data-cropyear');
+			var season = button.getAttribute('data-season');
+
+			$.ajax({
+				url: '/getStandardsQtyData',
+				method: 'GET',
+				data: {
+					dcode: dcode,
+					varietycode: varietycode,
+					season: season,
+					cropyear: cropyear
+				},
+				success: function (response) {
+					window.location.href = "/getStandardsQtyData?dcode=" + dcode + "&varietycode=" + varietycode + "&season=" + season + "&cropyear=" + cropyear;
+				},
+				error: function (xhr, status, error) {
+					console.log('Error fetching data: ' + error);
+				}
+			});
+		}
+	</script>
+</body>
+
+</html>

@@ -1,0 +1,281 @@
+
+</html><!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="header"></head>
+
+<body>
+	<div th:insert="headerImage"></div>
+
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+	
+
+</head>
+<script>
+		function CallPrint(strid) {
+			var prtContent = document.getElementById(strid);
+			var mywindow = window.open('', '', 'left=0,top=0,width=950,height=600,toolbar=1,scrollbars=1,status=1,addressbar=0');
+			var is_chrome = Boolean(mywindow.chrome);
+			mywindow.document.write(prtContent.innerHTML);
+			mywindow.document.close(); // necessary for IE >= 10 and necessary before onload for chrome
+
+			if (is_chrome) {
+				mywindow.onload = function () { // wait until all resources loaded 
+					mywindow.focus(); // necessary for IE >= 10
+					mywindow.print(); // change window to mywindow
+					mywindow.close(); // change window to mywindow
+				};
+			} else {
+				mywindow.document.close(); // necessary for IE >= 10
+				mywindow.focus(); // necessary for IE >= 10
+				mywindow.print();
+				mywindow.close();
+			}
+
+			return true;
+		}
+
+		
+		var tableToExcel = (function () {
+			var uri = 'data:application/vnd.ms-excel;base64,'
+				, template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table align="center">{table}</table></body></html>'
+				, base64 = function (s) {
+					return window.btoa(unescape(encodeURIComponent(s)))
+				}
+				, format = function (s, c) {
+					return s.replace(/{(\w+)}/g, function (m, p) {
+						return c[p];
+					})
+				}
+			return function (table, name) {
+				if (!table.nodeType)
+					table = document.getElementById(table)
+				var ctx = {worksheet: name || 'Worksheet', table: table.innerHTML}
+				window.location.href = uri + base64(format(template, ctx))
+			}
+		})()
+		</script>
+			<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+    var rows = document.querySelectorAll('#tableStkId tbody tr');
+    console.log('Total rows found:', rows.length); // Debugging line
+    
+    var 
+    //sc_conventional_farmers_total = 0, sc_conventional_ext_total = 0,
+        //st_conventional_farmers_total = 0, st_conventional_ext_total = 0,
+        //bc_conventional_farmers_total = 0, bc_conventional_ext_total = 0,
+        //gen_conventional_farmers_total = 0, gen_conventional_ext_total = 0;
+    
+    var sc_dripirr_farmers_total = 0, sc_dripirr_ext_total = 0,
+        st_dripirr_farmers_total = 0, st_dripirr_ext_total = 0,
+        bc_dripirr_farmers_total = 0, bc_dripirr_ext_total = 0,
+        gen_dripirr_farmers_total = 0, gen_dripirr_ext_total = 0;
+    
+    var sc_sprinkler_farmers_total = 0, sc_sprinkler_ext_total = 0,
+        st_sprinkler_farmers_total = 0, st_sprinkler_ext_total = 0,
+        bc_sprinkler_farmers_total = 0, bc_sprinkler_ext_total = 0,
+        gen_sprinkler_farmers_total = 0, gen_sprinkler_ext_total = 0;
+
+    rows.forEach(function (row) {
+        console.log('Processing row:', row); // Debugging line
+        
+        //sc_conventional_farmers_total += parseFloat(row.children[4].textContent) || 0;
+        //sc_conventional_ext_total += parseFloat(row.children[5].textContent) || 0;
+        
+        //st_conventional_farmers_total += parseFloat(row.children[6].textContent) || 0;
+        //st_conventional_ext_total += parseFloat(row.children[7].textContent) || 0;
+
+        //bc_conventional_farmers_total += parseFloat(row.children[8].textContent) || 0;
+        //bc_conventional_ext_total += parseFloat(row.children[9].textContent) || 0;
+
+       // gen_conventional_farmers_total += parseFloat(row.children[10].textContent) || 0;
+        //gen_conventional_ext_total += parseFloat(row.children[11].textContent) || 0;
+        
+        sc_dripirr_farmers_total += parseFloat(row.children[12].textContent) || 0;
+        sc_dripirr_ext_total += parseFloat(row.children[13].textContent) || 0;
+        
+        st_dripirr_farmers_total += parseFloat(row.children[14].textContent) || 0;
+        st_dripirr_ext_total += parseFloat(row.children[15].textContent) || 0;
+
+        bc_dripirr_farmers_total += parseFloat(row.children[16].textContent) || 0;
+        bc_dripirr_ext_total += parseFloat(row.children[17].textContent) || 0;
+
+        gen_dripirr_farmers_total += parseFloat(row.children[18].textContent) || 0;
+        gen_dripirr_ext_total += parseFloat(row.children[19].textContent) || 0;
+        
+        sc_sprinkler_farmers_total += parseFloat(row.children[20].textContent) || 0;
+        sc_sprinkler_ext_total += parseFloat(row.children[21].textContent) || 0;
+        
+        st_sprinkler_farmers_total += parseFloat(row.children[22].textContent) || 0;
+        st_sprinkler_ext_total += parseFloat(row.children[23].textContent) || 0;
+
+        bc_sprinkler_farmers_total += parseFloat(row.children[24].textContent) || 0;
+        bc_sprinkler_ext_total += parseFloat(row.children[25].textContent) || 0;
+
+        gen_sprinkler_farmers_total += parseFloat(row.children[26].textContent) || 0;
+        gen_sprinkler_ext_total += parseFloat(row.children[27].textContent) || 0;
+    });
+
+    console.log('SC Conventional Farmers Total:', sc_conventional_farmers_total); // Debugging line
+    console.log('SC Conventional Ext Total:', sc_conventional_ext_total); // Debugging line
+    // Repeat for other totals as needed
+
+   // document.getElementById('totalscfarcon').textContent = sc_conventional_farmers_total;
+    //document.getElementById('totalscextcon').textContent = sc_conventional_ext_total.toFixed(4);
+    //document.getElementById('totalstfarcon').textContent = st_conventional_farmers_total;
+    //document.getElementById('totalstextcon').textContent = st_conventional_ext_total.toFixed(4);
+    //document.getElementById('totalbcfarcon').textContent = bc_conventional_farmers_total;
+    //document.getElementById('totalbcextcon').textContent = bc_conventional_ext_total.toFixed(4);
+    //document.getElementById('totalgenfarcon').textContent = gen_conventional_farmers_total;
+    //document.getElementById('totalgenextcon').textContent = gen_conventional_ext_total.toFixed(4);
+    
+    document.getElementById('totalscfardrip').textContent = sc_dripirr_farmers_total;
+    document.getElementById('totalscextdrip').textContent = sc_dripirr_ext_total.toFixed(4);
+    document.getElementById('totalstfardrip').textContent = st_dripirr_farmers_total;
+    document.getElementById('totalstextdrip').textContent = st_dripirr_ext_total.toFixed(4);
+    document.getElementById('totalbcfardrip').textContent = bc_dripirr_farmers_total;
+    document.getElementById('totalbcextdrip').textContent = bc_dripirr_ext_total.toFixed(4);
+    document.getElementById('totalgenfardrip').textContent = gen_dripirr_farmers_total;
+    document.getElementById('totalgenextdrip').textContent = gen_dripirr_ext_total.toFixed(4);
+    
+    document.getElementById('totalscfarsprink').textContent = sc_sprinkler_farmers_total;
+    document.getElementById('totalscextsprink').textContent = sc_sprinkler_ext_total.toFixed(4);
+    document.getElementById('totalstfarsprink').textContent = st_sprinkler_farmers_total;
+    document.getElementById('totalstextsprink').textContent = st_sprinkler_ext_total.toFixed(4);
+    document.getElementById('totalbcfarsprink').textContent = bc_sprinkler_farmers_total;
+    document.getElementById('totalbcextsprink').textContent = bc_sprinkler_ext_total.toFixed(4);
+    document.getElementById('totalgenfarsprink').textContent = gen_sprinkler_farmers_total;
+    document.getElementById('totalgenextsprink').textContent = gen_sprinkler_ext_total.toFixed(4);
+});
+		</script>
+<body>
+	<div class="heading" colspan="20" style="text-align:center;background-color: white;font-size: 20px;"><b> Report On District/Mandal/Village/Category Wise Drip/Sprinkler Extent(in acres)</b>
+	</div>
+<br>
+	<div>
+		<form  name="unlockreport" method="post">
+			<div align="center" id="divPrint" class="table table-hover">
+				<table id="tableStkId" align="center" class="table table-striped border border-secondary" style="width: 70%">
+					<thead>
+					<tr>       
+                        <th  align="center" rowspan="2"> <b> S.No. </b> </th>
+                        <th  align="center" rowspan="2"> <b> District  </b> </th>  
+                        <th  align="center" rowspan="2"> <b> Mandal  </b> </th> 
+                        <th  align="center" rowspan="2"> <b> Village  </b> </th> 
+
+<!--                         <th  style="padding-left: 10%" colspan="8" >Conventional</th>-->
+                        <th  style="color:black; padding-left: 10%;background: #dfffe1" colspan="8" >Drip</th>
+                        <th  style="padding-left: 10%" colspan="8">Sprinkler</th>
+                    </tr>
+                    <tr>
+<!--                        <th> <b> SC Farmer Total </b></th>-->
+<!--                        <th> <b> SC Ext Total </b></th> -->
+<!--                        <th> <b> ST Farmer Total </b></th> -->
+<!--                        <th> <b> ST Ext Total </b></th> -->
+<!--                        <th> <b> BC Farmer Total </b></th> -->
+<!--                        <th> <b> BC Ext Total </b></th> -->
+<!--                        <th> <b> Gen Farmer Total </b></th> -->
+<!--                        <th> <b> Gen Ext Total </b></th>-->
+                        
+                        <th style="color:black;background: #dfffe1"> <b> SC Farmer Total </b></th>
+                        <th style="color:black;background: #dfffe1"> <b> SC Ext Total </b></th> 
+                        <th style="color:black;background: #dfffe1"> <b> ST Farmer Total </b></th> 
+                        <th style="color:black;background: #dfffe1"> <b> ST Ext Total </b></th> 
+                        <th style="color:black;background: #dfffe1"> <b> BC Farmer Total </b></th> 
+                        <th style="color:black;background: #dfffe1"> <b> BC Ext Total </b></th> 
+                        <th style="color:black;background: #dfffe1"> <b> Gen Farmer Total </b></th> 
+                        <th style="color:black;background: #dfffe1"> <b> Gen Ext Total </b></th>
+                        
+                        <th> <b> SC Farmer Total </b></th>
+                        <th> <b> SC Ext Total </b></th> 
+                        <th> <b> ST Farmer Total </b></th> 
+                        <th> <b> ST Ext Total </b></th> 
+                        <th> <b> BC Farmer Total </b></th> 
+                        <th> <b> BC Ext Total </b></th> 
+                        <th> <b> Gen Farmer Total </b></th> 
+                        <th> <b> Gen Ext Total </b></th> 
+                         
+                       
+                    </tr>
+					</thead>
+					<tbody>
+						<tr th:each="item ,stat: ${vill}">
+							<td align="center" th:text="${stat.index + 1}">1</td>
+							<td align="left" th:text="${item.wbdname}"></td>
+							<td align="left" th:text="${item.wbmname}"></td>
+							<td align="left" th:text="${item.wbvname}"></td>
+<!--							<td align="right" th:text="${item.sc_conventional_farmers_total}"></td>-->
+<!--							<td align="right" th:text="${#numbers.formatDecimal(item.sc_conventional_ext_total, 1, 4)}"></td>-->
+<!--							<td align="right" th:text="${item.st_conventional_farmers_total}"></td>-->
+<!--							<td align="right" th:text="${#numbers.formatDecimal(item.st_conventional_ext_total, 1, 4)}"></td>-->
+<!--							<td align="right" th:text="${item.bc_conventional_farmers_total}"></td>-->
+<!--							<td align="right" th:text="${#numbers.formatDecimal(item.bc_conventional_ext_total, 1, 4)}"></td>-->
+<!--							<td align="right" th:text="${item.gen_conventional_farmers_total}"></td>-->
+<!--							<td align="right" th:text="${#numbers.formatDecimal(item.gen_conventional_ext_total, 1, 4)}"></td>-->
+							
+							<td align="right" th:text="${item.sc_dripirr_farmers_total}"></td>
+							<td align="right" th:text="${#numbers.formatDecimal(item.sc_dripirr_ext_total, 1, 4)}"></td>
+							<td align="right" th:text="${item.st_dripirr_farmers_total}"></td>
+							<td align="right" th:text="${#numbers.formatDecimal(item.st_dripirr_ext_total, 1, 4)}"></td>
+							<td align="right" th:text="${item.bc_dripirr_farmers_total}"></td>
+							<td align="right" th:text="${#numbers.formatDecimal(item.bc_dripirr_ext_total, 1, 4)}"></td>
+							<td align="right" th:text="${item.gen_dripirr_farmers_total}"></td>
+							<td align="right" th:text="${#numbers.formatDecimal(item.gen_dripirr_ext_total, 1, 4)}"></td>
+							
+							<td align="right" th:text="${item.sc_sprinkler_farmers_total}"></td>
+							<td align="right" th:text="${#numbers.formatDecimal(item.sc_sprinkler_ext_total, 1, 4)}"></td>
+							<td align="right" th:text="${item.st_sprinkler_farmers_total}"></td>
+							<td align="right" th:text="${#numbers.formatDecimal(item.st_sprinkler_ext_total, 1, 4)}"></td>
+							<td align="right" th:text="${item.bc_sprinkler_farmers_total}"></td>
+							<td align="right" th:text="${#numbers.formatDecimal(item.bc_sprinkler_ext_total, 1, 4)}"></td>
+							<td align="right" th:text="${item.gen_sprinkler_farmers_total}"></td>
+							<td align="right" th:text="${#numbers.formatDecimal(item.gen_sprinkler_ext_total, 1, 4)}"></td>
+							
+						</tr>
+					</tbody>
+<!--					<tfoot>-->
+<!--    <tr>-->
+<!--        <td style="font-size: 18px;"> <b>Total</b> </td>-->
+<!--        <td colspan="3" style="text-align: right;"></td>-->
+<!--        <td style="text-align: right;font-weight: bold;" id="totalscfarcon"></td>-->
+<!--        <td style="text-align: right;font-weight: bold;" id="totalscextcon"></td>-->
+<!--        <td style="text-align: right;font-weight: bold;" id="totalstfarcon"></td>-->
+<!--        <td style="text-align: right;font-weight: bold;" id="totalstextcon"></td>-->
+<!--        <td style="text-align: right;font-weight: bold;" id="totalbcfarcon"></td>-->
+<!--        <td style="text-align: right;font-weight: bold;" id="totalbcextcon"></td>-->
+<!--        <td style="text-align: right;font-weight: bold;" id="totalgenfarcon"></td>-->
+<!--        <td style="text-align: right;font-weight: bold;" id="totalgenextcon"></td>-->
+        
+<!--        <td style="text-align: right;font-weight: bold;" id="totalscfardrip"></td>-->
+<!--        <td style="text-align: right;font-weight: bold;" id="totalscextdrip"></td>-->
+<!--        <td style="text-align: right;font-weight: bold;" id="totalstfardrip"></td>-->
+<!--        <td style="text-align: right;font-weight: bold;" id="totalstextdrip"></td>-->
+<!--        <td style="text-align: right;font-weight: bold;" id="totalbcfardrip"></td>-->
+<!--        <td style="text-align: right;font-weight: bold;" id="totalbcextdrip"></td>-->
+<!--        <td style="text-align: right;font-weight: bold;" id="totalgenfardrip"></td>-->
+<!--        <td style="text-align: right;font-weight: bold;" id="totalgenextdrip"></td>-->
+        
+<!--        <td style="text-align: right;font-weight: bold;" id="totalscfarsprink"></td>-->
+<!--        <td style="text-align: right;font-weight: bold;" id="totalscextsprink"></td>-->
+<!--        <td style="text-align: right;font-weight: bold;" id="totalstfarsprink"></td>-->
+<!--        <td style="text-align: right;font-weight: bold;" id="totalstextsprink"></td>-->
+<!--        <td style="text-align: right;font-weight: bold;" id="totalbcfarsprink"></td>-->
+<!--        <td style="text-align: right;font-weight: bold;" id="totalbcextsprink"></td>-->
+<!--        <td style="text-align: right;font-weight: bold;" id="totalgenfarsprink"></td>-->
+<!--        <td style="text-align: right;font-weight: bold;" id="totalgenextsprink"></td>-->
+<!--    </tr>-->
+<!--</tfoot>-->
+				</table>
+			</div>
+		</form>
+		<div align="center" style="color:black">
+			<input class="btn btn-primary" name="ctl00$ContentPlaceHolder1$btnPrint" type="button"
+				id="ctl00_ContentPlaceHolder1_btnPrint" onClick="javascript:CallPrint('divPrint')" value="Print">
+			<input class="btn btn-primary" type="button" onclick="tableToExcel('tableStkId', 'Abstract')" value="Excel">
+		</div>
+	</div>
+</body>
+
+</html>

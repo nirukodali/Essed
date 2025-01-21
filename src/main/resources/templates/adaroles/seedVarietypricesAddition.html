@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="header"></head>
+
+<!-- jQuery UI CSS (for datepicker style) -->
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+<!-- jQuery library -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- jQuery UI JavaScript -->
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+
+
+<style>
+	/* Remove the center alignment and position elements on the left side */
+	body {
+		margin: 0%;
+		padding: 5;
+		font-family: Arial, sans-serif;
+	}
+
+	.form-container {
+		width: 80%;
+		/* Adjust width as needed */
+		margin-left: 20%;
+		/* Center it slightly if you want some space from the left */
+		padding: 30px;
+	}
+
+	table {
+		width: 80%;
+		border-collapse: collapse;
+	}
+
+	th,
+	td {
+		padding: 25px;
+		text-align: left;
+	}
+
+	th {
+		background-color: #006400;
+		color: white;
+	}
+
+	label {
+		display: block;
+		margin-bottom: 15px;
+	}
+
+	input[type="text"],
+	select {
+		width: 200px;
+		padding: 5px;
+		font-size: 14px;
+	}
+
+	/* Flex styling for the first 6 fields */
+	/* Flex styling for the first 5 fields */
+	.form-row {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 15px;
+		margin-bottom: 1px;
+	}
+
+	/* Styling for individual form groups (fields) */
+	.form-group {
+		flex: 1;
+		min-width: 160px;
+		/* Ensures the fields don't shrink too much */
+	}
+
+	/* Ensure select and input fields have a consistent width */
+	input[type="text"],
+	select {
+		width: 100%;
+		/* Let them take full width within their container */
+		padding: 5px;
+		font-size: 14px;
+	}
+
+
+	/* Styling for the form heading */
+	.heading {
+		margin-bottom: 20px;
+		padding: 15px;
+		font-size: 18px;
+		text-align: center;
+		background-color: #006400;
+		color: white;
+	}
+
+	/* Styling for the scrollable checkboxes container */
+	#checkboxContainer {
+		max-height: 200px;
+		overflow-y: scroll;
+		padding: 10px;
+		border: 1px solid #ccc;
+		background-color: #f9f9f9;
+		margin-top: 10px;
+	}
+	
+	
+</style>
+
+<body>
+
+	<div th:insert="headerImage"></div>
+
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+
+	<div class="form-container">
+		<form name="f1" method="POST">
+			<table>
+				<tr>
+					<th class="heading" colspan="2">Seed Variety Prices Addition</th>
+				</tr>
+				<tr>
+					<td colspan="2" class="form-row">
+						
+						<!-- Season -->
+						<div class="form-group">
+							<b>Season</b>
+							<select name="season" id="season">
+								<option value="">--Select--</option>
+								<option th:each="seasonValues : ${seasonValues}" th:value="${seasonValues.season}"
+									th:text="${seasonValues.seasonname}"></option>
+							</select>
+						</div>
+
+						<!-- Crop Year -->
+						<div class="form-group">
+							<b>Crop Year</b>
+							<select name="cropYear" id="cropYear" onchange="SetDcode()">
+								<option value="">--Select--</option>
+								<option th:each="cropYear : ${cropYear}" th:value="${cropYear.cropyear}"
+									th:text="${cropYear.cropyear}"></option>
+							</select>
+						</div>
+						
+						
+						
+						<!-- Product Name -->
+						<div class="form-group">
+							<b>Product Name <font color="red">*</font></b>
+							<select name="pcode" id="pcode" onchange="getspcode()" style="width: 200px">
+								<option value="">--Select--</option>
+
+								<option th:each="productname : ${productname}" th:value="${productname.productcode}"
+									th:text="${productname.productname}">
+								</option>
+
+							</select>
+						</div>
+
+						<!-- Sub Product Name -->
+						<div class="form-group">
+							<b>Sub Product Name <font color="red">*</font></b>
+							<select name="spcode" id="spcode" onchange="VarityName()">
+								<option value="">--Select--</option>
+							</select>
+						</div>
+
+						<!-- Seed Variety Name -->
+						<div class="form-group">
+							<b>Seed Variety Name <font color="red">*</font></b>
+							<select name="seedVarity" id="seedVarity">
+								<option value="">--Select--</option>
+							</select>
+						</div>
+
+						
+						
+					</td>
+				</tr>
+
+				<!-- Remaining Fields (for dates and other values) -->
+				<tr>
+					<td colspan="2" class="form-row">
+						<!-- Allocation From Date -->
+						<div class="form-group">
+							<b>Allocation From Date</b>
+							<input type="text" name="ftime" id="ftime" readonly="readonly" />
+						</div>
+
+						<!-- Allocation To Date -->
+						<div class="form-group">
+							<b>Allocation To Date</b>
+							<input type="text" name="ttime" id="ttime" readonly="readonly" />
+						</div>
+
+						<!-- Payment Start Date -->
+						<div class="form-group">
+							<b>Payment Start Date</b>
+							<input type="text" name="pstime" id="pstime" />
+						</div>
+
+						<!-- Payment Close Date -->
+						<div class="form-group">
+							<b>Payment Close Date</b>
+							<input type="text" name="pctime" id="pctime" />
+						</div>
+
+						<!-- Distribution Start Date -->
+						<div class="form-group">
+							<b>Distribution Start Date</b>
+							<input type="text" name="dstime" id="dstime" />
+						</div>
+
+
+						<div class="form-group">
+							<b>Distribution Close Date </b>
+
+							<input type="text" name="dctime" id="dctime" />
+
+						</div>
+					</td>
+				</tr>
+
+				<tr>
+					<td colspan="2" class="form-row">
+						<!-- Quantity Per Bag -->
+						<div class="form-group">
+							<b>Quantity Per Bag</b>
+							<input type="text" id="quantityperbag" name="quantityperbag" maxlength="6"
+								onkeypress="return isNumberKey(event)" />
+						</div>
+
+						<!-- Product Price (Per Kg) -->
+						<div class="form-group">
+							<b>Product Price (Per Kg)</b>
+							<input type="text" id="product_price" name="product_price" maxlength="8"
+								onkeypress="return isNumberKey(event)" />
+						</div>
+
+						<!-- Subsidy Amount (Per Kg) -->
+						<div class="form-group">
+							<b>Subsidy Amount (Per Kg)</b>
+							<input type="text" id="subsidy_amout" name="subsidy_amout" maxlength="8"
+								onkeypress="return isNumberKey(event)" />
+						</div>
+
+						<!-- Non Subsidy Amount -->
+						<div class="form-group">
+							<b>Non Subsidy Amount</b> <br>
+							<div class="form-group">
+								<span id="nonsubsidy_amt"></span>
+							</div>
+						</div>
+						<div class="form-group">
+							<b> District <font color="red"></font></b>
+							<div id="districtsContainer"></div>
+						</div>
+					</td>
+					
+				</tr>
+
+
+
+				<tr>
+					<td colspan="2" style="display: flex; justify-content: center;">
+						<input type="button" name="Submit" value="SUBMIT" onclick="productPrices()" />
+					</td>
+				</tr>
+			</table>
+		</form>
+	</div>
+
+
+	<script type="text/javascript">
+
+		function getspcode() {
+			// Get the product code from the select input
+			var productCode = $('#pcode').val();  // Using jQuery to get the value
+
+			// Check if productCode is not empty
+			if (productCode) {
+				// Prepare the AJAX request using jQuery's $.ajax()
+				$.ajax({
+					url: './getSubProductPricesAddition',      // The URL to send the request to
+					type: 'GET',                  // HTTP method (GET)
+					data: {productCode: productCode},  // Send productCode as query parameter
+					success: function (response) {
+						// On success, update the subproduct dropdown
+						var subProductSelect = $('#spcode');
+						subProductSelect.empty();  // Clear existing options
+						subProductSelect.append('<option value="">--Select--</option>'); // Add default option
+
+						// Loop through the response (assumed to be an array of subproducts)
+						$.each(response, function (index, subProduct) {
+							// Create a new option for each subproduct
+							subProductSelect.append('<option value="' + subProduct.subproductcode + '">' + subProduct.subproductname + '</option>');
+						});
+					},
+					error: function (xhr, status, error) {
+						alert('Error: ' + error);
+					}
+				});
+			} else {
+				// If no product code selected, clear the subproduct dropdown
+				$('#spcode').empty().append('<option value="">--Select--</option>');
+			}
+		}
+
+		var varietyCode = '';
+		//VarityName
+		function VarityName() {
+			// Get the product code from the select input
+			var subproductCode = $('#spcode').val();  // Using jQuery to get the value
+
+			// Check if productCode is not empty
+			if (subproductCode) {
+				// Prepare the AJAX request using jQuery's $.ajax()
+				$.ajax({
+					url: './getVatietyName',      // The URL to send the request to
+					type: 'GET',                  // HTTP method (GET)
+					data: {subproductCode: subproductCode},  // Send productCode as query parameter
+					success: function (response) {
+						// On success, update the subproduct dropdown
+						var subProductSelect = $('#seedVarity');
+						subProductSelect.empty();  // Clear existing options
+						subProductSelect.append('<option value="">--Select--</option>'); // Add default option
+
+						// Loop through the response (assumed to be an array of subproducts)
+						$.each(response, function (index, subProduct) {
+							// Create a new option for each subproduct
+							subProductSelect.append('<option value="' + subProduct.varietycode + '">' + subProduct.varietyname + '</option>');
+						});
+						if (response.length > 0) {
+							varietyCode = response[0].varietycode;  // Set the variety code from the first response item
+							console.log('Selected variety code:', varietyCode);
+						}
+					},
+					error: function (xhr, status, error) {
+						// Handle any errors that occur during the request
+						alert('Error: ' + error);
+					}
+				});
+			} else {
+				// If no product code selected, clear the subproduct dropdown
+				$('#spcode').empty().append('<option value="">--Select--</option>');
+			}
+		}
+
+		var Dcode = '';
+
+		function SetDcode() {
+    var cropYear = document.getElementById('cropYear').value;
+    var season = document.getElementById('season').value;
+    var variety = varietyCode;
+    console.log(cropYear, season, variety);
+
+    var formData = {
+        cropYear: cropYear,
+        season: season,
+        variety: variety
+    };
+
+    // Send AJAX request to the server
+    $.ajax({
+        url: './submitVarietyDistricts',
+        type: 'POST',
+        data: formData,
+        success: function (response) {
+            $('#districtsContainer').empty(); // Clear the container
+
+            var checkboxContainer = $('<div id="checkboxContainer" style="max-height: 200px; overflow-y: scroll; padding: 10px; border: 1px solid #ccc;">');
+
+            var selectAllHtml = `
+                <label>
+                    <input type="checkbox" name="districts" id="selectAllDistricts">
+                    ----Select All----
+                </label>
+            `;
+            checkboxContainer.append(selectAllHtml);
+
+            // Loop through the response and append each district as a checkbox
+            response.forEach(function (district) {
+                var checkboxHtml = `
+                    <label>
+                        <input type="checkbox" name="districts" value="${district.dcode}">
+                        ${district.dname}
+                    </label>
+                `;
+                checkboxContainer.append(checkboxHtml);
+            });
+            
+            
+            
+
+            // Append the scrollable checkbox container to the districtsContainer
+            $('#districtsContainer').append(checkboxContainer);
+
+            // Add "Select All" functionality
+            $('#selectAllDistricts').on('change', function () {
+                var isChecked = $(this).is(':checked');
+                $('#checkboxContainer input[type="checkbox"]').not('#selectAllDistricts').prop('checked', isChecked);
+            });
+        },
+        error: function (xhr, status, error) {
+            console.error('Error:', error);
+            alert('Error: ' + error);
+        }
+    });
+}
+
+
+		//Submit into Product Prices 
+
+		function productPrices() {
+			var pcode = document.getElementById('pcode') ? document.getElementById('pcode').value : '';
+			var spcode = document.getElementById('spcode') ? document.getElementById('spcode').value : '';
+			var seedVarity = document.getElementById('seedVarity') ? document.getElementById('seedVarity').value : '';
+
+			var cropYear = document.getElementById('cropYear') ? document.getElementById('cropYear').value : '';
+			var season = document.getElementById('season') ? document.getElementById('season').value : '';
+			var variety = varietyCode;
+			var ftime = document.getElementById('ftime') ? document.getElementById('ftime').value : '';
+			var ttime = document.getElementById('ttime') ? document.getElementById('ttime').value : '';
+			var pstime = document.getElementById('pstime') ? document.getElementById('pstime').value : '';
+			var pctime = document.getElementById('pctime') ? document.getElementById('pctime').value : '';
+			var dstime = document.getElementById('dstime') ? document.getElementById('dstime').value : '';
+			var dctime = document.getElementById('dctime') ? document.getElementById('dctime').value : '';
+			var product_price = document.getElementById('product_price') ? document.getElementById('product_price').value : '';
+			var subsidy_amout = document.getElementById('subsidy_amout') ? document.getElementById('subsidy_amout').value : '';
+			var quantityperbag = document.getElementById('quantityperbag') ? document.getElementById('quantityperbag').value : '';
+			var dcode = Dcode;
+
+			if (!pcode) {
+				alert('Please select a product.');
+				return;
+			}
+			if (!spcode) {
+				alert('Please select a subproduct.');
+				return;
+			}
+			if (!seedVarity) {
+				alert('Please select a seedvarity.');
+				return;
+			}
+
+			if (!cropYear) {
+				alert('Please select a crop year.');
+				return;
+			}
+			if (!season) {
+				alert('Please select a season.');
+				return;
+			}
+			/*   if (!dist) {
+				   alert('Please select a Districts');
+				   return;
+			   }
+			   */
+			if (!variety) {
+				alert('Please select a variety.');
+				return;
+			}
+			if (!ftime || !ttime || !pstime || !pctime || !dstime || !dctime) {
+				alert('Please make sure all date and time fields are filled.');
+				return;
+			}
+			if (!product_price || isNaN(product_price) || parseFloat(product_price) <= 0) {
+				alert('Please enter a valid product price.');
+				return;
+			}
+			if (!subsidy_amout || isNaN(subsidy_amout) || parseFloat(subsidy_amout) < 0) {
+				alert('Please enter a valid subsidy amount.');
+				return;
+			}
+			if (!quantityperbag || isNaN(quantityperbag) || parseFloat(quantityperbag) <= 0) {
+				alert('Please enter a valid quantity per bag.');
+				return;
+			}
+
+
+var selectedDistricts = [];
+    $('input[name="districts"]:checked').each(function () {
+        var districtValue = $(this).val();
+        if (districtValue) {
+            selectedDistricts.push(districtValue);
+        }
+    });
+
+    if (selectedDistricts.length === 0) {
+        alert('Please select at least one district.');
+        return;
+    }
+alert(selectedDistricts);
+
+
+
+
+			var productPricesData = {
+				pcode: pcode,
+				cropYear: cropYear,
+				season: season,
+				variety: variety,
+				ftime: ftime,
+				ttime: ttime,
+				pstime: pstime,
+				pctime: pctime,
+				dstime: dstime,
+				dctime: dctime,
+				product_price: product_price,
+				subsidy_amout: subsidy_amout,
+				nonsubsidy_amt: nonsubsidyAmt,
+				quantityperbag: quantityperbag,
+				//Dcode: dcode
+				 districts: selectedDistricts
+			};
+
+			$.ajax({
+				url: './submitProductPrices',
+				type: 'POST',
+				data: productPricesData,
+				success: function (response) {
+					console.log(response);
+
+					$('#districtsContainer').empty();  // Clear the container
+
+					alert('Seed Variety Prices  added successfully');
+
+					window.location.reload();
+					console.log(response);
+					// Optionally reset the form
+					document.getElementById('yourFormID').reset();
+				},
+				error: function (xhr, status, error) {
+					console.error('Error:', error);
+					alert('Error: ' + error);
+				}
+
+			});
+
+		}
+
+
+		//
+		//Date formate   
+		$(document).ready(function () {
+			$('#ftime, #ttime, #pstime, #pctime, #dstime, #dctime').datepicker({
+        dateFormat: 'dd-mm-yy', // Format for the input field
+        changeMonth: true, // Allow navigation between months
+        changeYear: true, // Allow navigation between years
+        minDate: new Date(), // Start from today's date
+        maxDate: new Date(new Date().getFullYear() + 1, 11, 31), // End at the last day of next year
+        defaultDate: new Date() // Default to today's date
+    });
+		});
+		function onChangeCropYear(cropyear) {
+			var year = cropyear.value;
+			if (year != "") {
+				var date = new Date();
+				var month = date.getMonth() + 1;
+				var currentDate = date.getDate();
+
+
+				$('#ftime').datepicker('destroy').datepicker({
+					dateFormat: 'dd-mm-yy',
+					changeMonth: true,
+					changeYear: true,
+					defaultDate: currentDate + "-" + month + "-" + year,
+					minDate: new Date(year, 0, 1),
+					maxDate: new Date(year, 11, 31)
+				});
+
+				$('#ttime').datepicker('destroy').datepicker({
+					dateFormat: 'dd-mm-yy',
+					changeMonth: true,
+					changeYear: true,
+					minDate: new Date(year, 0, 1),
+					maxDate: new Date(year, 11, 31)
+				});
+
+				$('#pstime').datepicker('destroy').datepicker({
+					dateFormat: 'dd-mm-yy',
+					changeMonth: true,
+					changeYear: true,
+					minDate: new Date(year, 0, 1),
+					maxDate: new Date(year, 11, 31)
+				});
+
+				$('#pctime').datepicker('destroy').datepicker({
+					dateFormat: 'dd-mm-yy',
+					changeMonth: true,
+					changeYear: true,
+					minDate: new Date(year, 0, 1),
+					maxDate: new Date(year, 11, 31)
+				});
+
+				$('#dstime').datepicker('destroy').datepicker({
+					dateFormat: 'dd-mm-yy',
+					changeMonth: true,
+					changeYear: true,
+					minDate: new Date(year, 0, 1),
+					maxDate: new Date(year, 11, 31)
+				});
+
+				$('#dctime').datepicker('destroy').datepicker({
+					dateFormat: 'dd-mm-yy',
+					changeMonth: true,
+					changeYear: true,
+					minDate: new Date(year, 0, 1),
+					maxDate: new Date(year, 11, 31)
+				});
+			}
+		}
+		var nonsubsidyAmt = '';
+		// This function will be called when you want to calculate the Non Subsidy Amount
+		function calculateNonSubsidyAmount() {
+			// Get the product price and subsidy amount values from the input fields
+			var product_price1 = parseFloat(document.getElementById('product_price').value);
+			var subsidy_amout1 = parseFloat(document.getElementById('subsidy_amout').value);
+			if (product_price1 >= 10001) {
+				alert("10,000 rupess only");
+				// document.getElementById("f1").reset();
+				product_price1 = 0;
+
+			}
+			// Check if both values are valid numbers
+			if (!isNaN(product_price1) && !isNaN(subsidy_amout1)) {
+				// Calculate Non Subsidy Amount
+				nonsubsidyAmt = (product_price1 - subsidy_amout1).toFixed(2); // Format to 2 decimal places
+
+				// Update the Non Subsidy Amount field with the result
+				document.getElementById("nonsubsidy_amt").innerHTML = nonsubsidyAmt;
+			} else {
+				// If the inputs are invalid, display an error message or leave it empty
+				document.getElementById("nonsubsidy_amt").innerHTML = "Invalid input";
+			}
+		}
+
+		// Optional: Attach event listeners to the inputs to recalculate the non-subsidy amount when values change
+		document.getElementById('product_price').addEventListener('input', calculateNonSubsidyAmount);
+		document.getElementById('subsidy_amout').addEventListener('input', calculateNonSubsidyAmount);
+
+
+
+
+		function isNumberKey(evt) {
+			var charCode = (evt.which) ? evt.which : evt.keyCode;
+			if (charCode != 46 && charCode > 31
+				&& (charCode < 48 || charCode > 57))
+				return false;
+
+			return true;
+		}
+
+	</script>
+
+
+</body>
+
+</html>

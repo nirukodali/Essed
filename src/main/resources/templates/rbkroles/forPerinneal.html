@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="header">
+
+</head>
+
+<body>
+	<div th:insert="headerImage"></div>
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+	<div class="survey" align="center">
+
+		<div class="container-fluid header-design-login">
+			<div class="row justify-content-center align-items-center" style="height: 10vh;">
+				<div class="webland-container" style="padding-top:20px;">
+					<div class="card ecropCard">
+
+						<!--					<div class="card-title">-->
+						<!--						<h5 style="text-align: center;">NonwebLand Data Entry</h3>-->
+						<!--					</div>-->
+						<div class="card-body" style="padding: 10px;">
+
+							<form id="myForm" th:action="@{/perinnealview}" method="post" onsubmit="return fetchData()">
+								<div>
+									<h2>Forward Perennial/Biennial Crops</h2>
+								</div>
+								<div class="form-group row">
+									<label for="cropyear" class="col-sm-4 col-form-label">Crop Year:</label>
+									<div class="col-sm-8">
+										<select th:id="cropyear" name="cropyear" class="form-select form-control" disabled>
+											<option th:value="${cropYear}" th:text="${cropYear}"></option>
+										</select>
+									</div>
+								</div>
+								<div class="form-group row">
+									<label for="vcode" class="col-sm-4 col-form-label">Revenue Village:</label>
+									<div class="col-sm-8">
+										<select id="vcode" name="vcode" class="form-select form-control">
+											<option value="">----Select----</option>
+											<option th:each="vi : ${village}" th:value="${vi.vcode}"
+												th:text="${vi.wbvname}">
+											</option>
+										</select>
+									</div>
+								</div>
+
+								<div>
+									<input id="sub" type="button" value="Search" style="background-color: rgb(192, 192, 192);"
+										onclick="validateAndSubmit()" />
+									<input id="sub" type="reset" value="Reset"
+										style="background-color: rgb(255, 255, 128);">
+									<input id="sub" type="button" value="Back"
+										style="background-color: rgb(0, 128, 192);" onclick="goToHome()">
+								</div>
+								<div align="center" style="color:green;"><h3><span th:text="${message}"></span></h3></div>
+
+
+							</form>
+						</div>
+					</div>
+
+					<script>
+						function goToHome() {
+							window.location.href = '/home';
+						}
+						function validateAndSubmit() {
+
+							// Perform frontend validation
+							if (fetchData()) {
+								// If validation succeeds, submit the form
+								document.getElementById("myForm").submit();
+							}
+						}
+						function fetchData() {
+							var cropYear = document.getElementById('cropyear').value;
+							if (cropYear === "") {
+								alert("Please Select Crop Year");
+								return false;
+							}
+							var village = document.getElementById('vcode').value;
+							if (village === "") {
+								alert("Please Select Village");
+								return false;
+							}
+							return true;
+						}
+					</script>
+
+</body>
+
+</html>

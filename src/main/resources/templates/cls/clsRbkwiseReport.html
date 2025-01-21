@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:insert="header"></head>
+<style>
+.row {
+	display: flex;
+	flex-wrap: wrap;
+	margin-bottom: 20px;
+}
+
+.dashboard {
+	flex: 1;
+	margin-right: 20px;
+	padding: 10px;
+	background-color: #f9f9f9;
+	border: 1px solid #ccc;
+}
+
+.dashboard h2 {
+	margin-top: 0;
+}
+
+table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+table, th, td {
+	border: 1px solid black;
+}
+
+th, td {
+	padding: 8px;
+	text-align: center;
+}
+
+/* thead th {
+	position: sticky;
+	top: 0;
+	z-index: 1;
+} */
+</style>
+<body>
+	<div th:insert="headerImage"></div>
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+
+	<div style="padding-left: 5%; margin-top: 2%;">
+		<h4 style="text-align: center">RSK-Wise Report</h4>
+		<table style="width: 80%;" align="center">
+			<!-- <thead> -->
+			<tr align="center">
+				<th>S.No</th>
+				<th>District</th>
+				<th>Mandal</th>
+				<th>Village</th>
+				<th>RSK</th>
+				<th>Type of Stage</th>
+				<th>Count</th>
+			</tr>
+			<!-- </thead> -->
+			<tbody>
+				<tr
+					th:if="${cLSRskwiseImagesCountList == null || #lists.isEmpty(cLSRskwiseImagesCountList)}">
+					<td colspan="7" align="center">No data available</td>
+				</tr>
+				<tr th:each="result, iterStat : ${cLSRskwiseImagesCountList}">
+					<td align="center" th:text="${iterStat.index + 1}"></td>
+					<td align="center" th:text="${result.vsdname}"></td>
+					<td align="center" th:text="${result.vsmname}"></td>
+					<td align="center" th:text="${result.vname}"></td>
+					<td align="center" th:text="${result.userid}"></td>
+					<td align="center" th:text="${result.relatedto}"></td>
+					<td align="center" th:text="${result.count}"></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</body>
+</html>

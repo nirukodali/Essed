@@ -1,0 +1,174 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="header">
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>CropDetails</title>
+<!--	<link rel="stylesheet" href="./styles/reportstylesheet.css" />-->
+<!--	<script type="text/javascript" src="./scripts/js/epvalidations.js" />-->
+<!--	</script>-->
+<!--	<script src="./js/jquery.js"></script>-->
+<!--	<script src="./js/jquery-ui.js"></script>-->
+<!--	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>-->
+<!--	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">-->
+<!--	<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.slim.min.js"></script>-->
+<!--	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>-->
+<!--	<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>-->
+<!--	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>-->
+
+<!--	<link rel="stylesheet" href="styles/reportstylesheet.css">-->
+<!--	<script src="js/jquery.js"></script>-->
+<!--	<script src="js/jquery-ui.js"></script>-->
+<!--	<script src="scripts/datetimepicker.js"></script>-->
+
+
+	<script>
+		function submitme() {
+			var vill = document.f1.vcode.value;
+			var cpyear = document.f1.cropyear.value;
+			if (cpyear == "") {
+				alert("Select Crop Year");
+				document.f1.cropyear.focus();
+				return false;
+			}
+			if (vill == "") {
+				alert("Select Village");
+				document.f1.mcode.focus();
+				return false;
+			}
+			// else{
+			document.forms[0].action = 'Rep_cropbookingdetailsMaoIntf.jsp';
+			document.forms[0].submit();
+			return true;
+			//}
+		}
+
+
+	</script>
+
+	<script>
+
+		function CallPrint(strid) {
+			var prtContent = document.getElementById(strid);
+			var WinPrint = window.open('', '', 'letf=0,top=0,width=900,height=600,toolbar=1,scrollbars=1,status=1');
+			WinPrint.document.write(prtContent.innerHTML);
+			WinPrint.document.close();
+			WinPrint.focus();
+			WinPrint.print();
+			prtContent.innerHTML = strOldOne;
+			WinPrint.close();
+		}
+
+	</script>
+	<script language="javascript"> var tableToExcel = (function () {
+			var uri = 'data:application/vnd.ms-excel;base64,'
+				, template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table align="center">{table}</table></body></html>'
+				, base64 = function (s) {return window.btoa(unescape(encodeURIComponent(s)))}
+				, format = function (s, c) {return s.replace(/{(\w+)}/g, function (m, p) {return c[p];})}
+			return function (table, name) {
+				if (!table.nodeType) table = document.getElementById(table)
+				var ctx = {worksheet: name || 'Worksheet', table: table.innerHTML}
+				window.location.href = uri + base64(format(template, ctx))
+			}
+		})
+
+		function goBack() {
+			document.forms[0].action = "MaoRibbon.jsp";
+			document.forms[0].submit();
+			return true;
+		}
+
+	</script>
+</head>
+<style>
+
+table,tr,td {
+ padding-top: 10px !important;
+}
+</style>
+
+<body>
+	<img src="images/Header.jpg" alt="ghg"
+		style="width:85%; box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.2);margin-left:120px"><br><br>
+	<div class="heading" colspan="20" style="text-align:center;"><b> Report on Crop Booking Details</b> </div><br>
+	<form name="f1" method="post">
+		<div align="center" id="scrollbar">
+			<table align="center" id="bookedcrops" style="width:70%">
+				<tr>
+					<td style="padding-left:650px;">
+						<b>Crop Year<font color="red">*</font></b>
+					</td>
+					<td style="padding-right:700px;"><select id="cropyear" name="cropyear" onchange="getVillage()"
+							style="width: 200px">
+							<option value="">---Select---</option>
+						</select>
+					</td>
+
+				</tr>
+
+				<tr>
+					<td style="padding-left:650px;" onchange="setCrop()"> <b> Village<font color="red">*</font> </b>
+					</td>
+					<td style="padding-right:700px;"><Select id="vcode" name="vcode" style="width: 200px">
+							<option value="">----Select----</option>
+						</select>
+					</td>
+
+				</tr>
+
+				<tr>
+					<td style="padding-left:650px;"> <b> Crop Name</b></td>
+
+					<td style="padding-right:700px;"><Select id="crpid" name="crpid" style="width: 200px">
+							<option value="">----Select----</option>
+						</select>
+					</td>
+
+				</tr>
+				<tr>
+					<td style="padding-left:650px;"> <b>With Photo </b></td>
+					<td style="padding-right:500px;"><input type="checkbox" id="chkbox" name="chkbox" />
+					</td>
+
+				</tr>
+
+				<tr>
+					<td style="padding-left:650px;"> <b>FarmerType </b></td>
+
+					<td><select id="display" name="display" style="width: 200px">
+							<option value="0">----Select ALL----</option>
+							<option value="3">To Be Authenticated</option>
+						</select>
+					</td>
+				</tr>
+			</table>
+			<div align="center" class="mt-2">
+<!--				<button class="btn btn-primary" type="button" value="Submit" onclick="submitme()" />-->
+				<button type="button" class="btn btn-primary" onclick="submitme()" >Submit</button>
+				
+			</div>
+
+		</div>
+		<!--		<div align="center" id="divPrint">-->
+		<!--			<div onscroll='scroller("scrollme", "scroller")' style="overflow-x:scroll; height:500px" id=scrollme>-->
+
+		<!--				<table id="seedDistribRep" style="width: 80%;overflow-x: auto;overflow-y: auto;background-color: #e5e5e5">-->
+
+
+
+		<!--				</table>-->
+		<!--			</div>-->
+		<!--		</div>-->
+
+		<!--		<div align="center" style="color:black">-->
+		<!--			<input name="ctl00$ContentPlaceHolder1$btnPrint" type="button" id="ctl00_ContentPlaceHolder1_btnPrint"-->
+		<!--				onClick="javascript:CallPrint('divPrint')" value="Print">-->
+		<!--			<input type="button" onclick="tableToExcel('seedDistribRep', 'Abstract')" value="Excel">-->
+		<!--			<input type="button" value="Back" onclick="goBack()" />-->
+		<!--		</div>-->
+
+
+
+	</form>
+</body>
+
+</html>

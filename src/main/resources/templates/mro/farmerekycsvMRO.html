@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="header">
+    <meta charset="UTF-8">
+    <title>Supervisory Check Report</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Your custom styles -->
+<!--    <link rel="stylesheet" type="text/css" href="css/style.css">-->
+
+    <!-- Bootstrap and related scripts -->
+<!--    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">-->
+
+    <!-- AJAX/jquery -->
+<!--    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>-->
+</head>
+
+<body>
+    <div th:insert="headerImage"></div>
+    <div th:insert="navBarTop"></div>
+    <div th:insert="headerMessage"></div>
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-auto">
+                <div class="card card-body" style="background-color: #e6e2d3;">
+                    <form id="myform" th:action="@{/getSuperverifyMAO}" method="post">
+                        <div class="card-title">
+                            <h4 style="background-color: darkgreen; color: white; text-align: center; padding: 7px; border-radius: 5px;">
+                                Supervisory Verification List
+                            </h4>
+                            <br />
+                        </div>
+                        <div class="mb-3 text-center">
+                            <label for="cropyear" class="form-label"><b>Crop Year <span class="text-danger">*</span>:</b></label>
+                            <select name="cropyear" id="cropyear" class="form-select" style="width: 200px;" onchange="submitForm()">
+                                <option value='' th:selected="0">------Select Crop Year--------</option>
+                                <option th:each="cropyr : ${cropyears}" th:value="${cropyr.seasonvalue}" th:text="${cropyr.cropyear}"></option>
+                            </select>
+                        </div>
+                        <div class="text-center">
+                            <b>Supervisory Check Records Allotted</b>
+                        </div>
+                        
+                       
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-center w-100 mt-4">
+        <div>
+            <table id="customers" >
+                <thead>
+                    <tr style="background-color: #04AA6D;">
+                        <th style="padding: 12px 15px; text-align: center; border: 1px solid #ddd;"><b>S.No.</b></th>
+                        <th style="padding: 12px 15px; text-align: center; border: 1px solid #ddd;"><b>Mandal</b></th>
+                        <th style="padding: 12px 15px; text-align: center; border: 1px solid #ddd;"><b>Village</b></th>
+                        <th style="padding: 12px 15px; text-align: center; border: 1px solid #ddd;"><b>Booking ID</b></th>
+                        <th style="padding: 12px 15px; text-align: center; border: 1px solid #ddd;"><b>Khata No</b></th>
+                        <th style="padding: 12px 15px; text-align: center; border: 1px solid #ddd;"><b>Survey No</b></th>
+                        <th style="padding: 12px 15px; text-align: center; border: 1px solid #ddd;"><b>Cultivator Name/<br>e-Kyc Name</b></th>
+                        <th style="padding: 12px 15px; text-align: center; border: 1px solid #ddd;"><b>Cultivator <br>Father <br>Name</b></th>
+                        <th style="padding: 12px 15px; text-align: center; border: 1px solid #ddd;"><b>Cultivator Extent</b></th>
+                        <th style="padding: 12px 15px; text-align: center; border: 1px solid #ddd;"><b>Crop Sown/Variety</b></th>
+                        <th style="padding: 12px 15px; text-align: center; border: 1px solid #ddd;"><b>Sown Date</b></th>
+                        <th style="padding: 12px 15px; text-align: center; border: 1px solid #ddd;"><b>Source Of<br>Irrigation</b></th>
+                        <th style="padding: 12px 15px; text-align: center; border: 1px solid #ddd;"><b>Exception <br>Category</b></th>
+                        <th style="padding: 12px 15px; text-align: center; border: 1px solid #ddd;"><b>Mobile No</b></th>
+                        <th style="padding: 12px 15px; text-align: center; border: 1px solid #ddd;"><b>Supercheck with Geo Fencing</b></th>
+<!--                        <th style="padding: 12px 15px; text-align: center; border: 1px solid #ddd;"><b>Rejected</b></th>-->
+<!--                        <th style="padding: 12px 15px; text-align: center; border: 1px solid #ddd;"><b>Found In Correct and Edited</b></th>-->
+<!--                        <th style="padding: 12px 15px; text-align: center; border: 1px solid #ddd;"><b>Remarks</b></th>-->
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr th:each="crpreport, iterStat : ${cropreport}">
+                        <td align="right" style="border:1px solid black; padding:7px" th:text="${iterStat.count}"></td>
+                        <td align="right" style="border:1px solid black; padding:7px" th:text="${crpreport.mname}" class="text-left"></td>
+                        <td align="right" style="border:1px solid black; padding:7px" th:text="${crpreport.vname}" class="text-left"></td>
+                        <td align="right" style="border:1px solid black; padding:7px" th:text="${crpreport.bookingid}" class="text-right"></td>
+                        <td align="right" style="border:1px solid black; padding:7px" th:text="${crpreport.kh_no}" class="text-right"></td>
+                        <td align="right" style="border:1px solid black; padding:7px" th:text="${crpreport.cr_sno}" class="text-right"></td>
+                        <td align="right" style="border:1px solid black; padding:7px" th:text="${crpreport.oc_name}" class="text-left"></td>
+                        <td align="right" style="border:1px solid black; padding:7px" th:text="${crpreport.oc_fname}" class="text-left"></td>
+                         <td th:text="${#numbers.formatDecimal(crpreport.occupant_extent, 1, 2)}" style="border:1px solid black; padding:7px" class="text-right"></td>
+                        <td align="right" style="border:1px solid black; padding:7px" th:text="${crpreport.varietyname}" class="text-left"></td>
+                        <td align="right" style="border:1px solid black; padding:7px" th:text="${crpreport.cr_sow_date}" class="text-center"></td>
+                        <td align="right" style="border:1px solid black; padding:7px" th:text="${crpreport.wsrcdesc}" class="text-left"></td>
+                        <td align="right" style="border:1px solid black; padding:7px" th:text="${crpreport.exception_type}" class="text-right"></td>
+                        <td align="right" style="border:1px solid black; padding:7px" th:text="${crpreport.mobileno}" class="text-center"></td>
+                        <td align="right" style="border:1px solid black; padding:7px" th:text="${crpreport.superchkwithgeo}" class="text-center"></td>
+                        <!-- Additional Fields Re-added -->
+<!--                         <td align="right" style="border:1px solid black; padding:7px" th:text="${crpreport.kh_no}"></td> -->
+<!--                         <td align="right" style="border:1px solid black; padding:7px" th:text="${crpreport.cr_no}"></td> -->
+<!--                         <td align="right" style="border:1px solid black; padding:7px" th:text="${crpreport.reason}"></td> -->
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div>
+        <span th:text="${bind}" class="text-danger d-flex justify-content-center w-100"></span>
+    </div>
+
+    <script>
+    function submitForm() {
+        document.getElementById('myform').submit();
+    }
+    </script>
+</body>
+
+</html>

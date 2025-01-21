@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="header">
+	<link rel="stylesheet" type="text/css" href="css/style.css" />
+
+	<meta charset="UTF-8">
+	<title>Mandal Wise Indents Entry</title>
+
+</head>
+
+<body>
+	<div th:insert="headerImage"></div>
+
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+
+
+	<div
+		style="background-color: green; text-align: center;font-size: large;font-weight: bolder;width: 50%;margin-left: 25%;color: white;">
+		Mandal Wise Indents Entry
+	</div>
+	<br>
+	<div style="background-color: floralwhite; height: 150px; text-align: center;width: 50%;margin-left: 25%;">
+		<pre style="font-size: large; font-family: sans-serif">
+	  Target Indent Seed Variety: <span style="color: green;font-weight: bold;"
+					th:text="${seed}"></span> 
+					<br>Crop Year: <span  style="color: green;font-weight: bold;"
+					th:text="${cropYear}"></span> , Season: <span  style="color: green;font-weight: bold;" 
+					th:text="${season} == 'K' ? 'Kharif' : (${season} == 'R' ? 'Rabi' : 'Summer')"></span>
+					<br> District Maximum Target: <span  style="color: green;font-weight: bold;"
+					th:text="${quant}"></span>  &nbsp; &nbsp; &nbsp;  Already Entered Target <span  style="color: green;font-weight: bold;"
+					th:text="${upTotal}"></span> &nbsp; &nbsp; &nbsp; Remaining Target <span  style="color: green;font-weight: bold;"
+					th:text="${quant} - ${upTotal}"></span> 
+					
+	</pre>
+
+	</div>
+
+	<br>
+	<form id="updationForm">
+
+
+		<div style="background-color: ghostwhite; margin-left: auto; margin-right: auto; width: 60%;">
+
+			<table style="width: 100%; border-collapse: collapse;">
+				<thead style="background-color: darkgray; color: white; width: 100%;">
+
+					<tr>
+						<!--						<span th:utext="${msg}"></span>-->
+						<th style="padding: 10px; padding-left: 50px; text-align: left;"><input id="main"
+								type="checkbox"></th>
+						<th style="padding: 10px; text-align: right">SNO</th>
+						<th style="padding: 10px; padding-left: 50px; text-align: center">Mandal Name</th>
+						<th style="padding: 10px; padding-left: 50px; text-align: center">Target Quantity (In Quintals)
+						</th>
+					</tr>
+				</thead>
+				<h2 style="text-align: center;">
+					<span th:text="${empty}"></span>
+					<tbody style="width: max-content;">
+
+						<tr th:each="item : ${list}">
+							<td style="padding: 10px; padding-left: 50px;"><input type="checkbox" class="sub-checkbox"
+									name="sub-checkbox" style="padding: 10px; padding-left: 50px;"></td>
+							<td style="padding: 10px; text-align: right;" th:text="${itemStat.index + 1}"></td>
+							<td style="padding: 10px; padding-left: 100px;" th:text="${item.getDname()}"> </td>
+							<input type="hidden" th:value="${item.getDcode()}" th:id="dcode" th:name="dcode">
+							<input type="hidden" th:value="${varietycode}" th:id="varietycode" th:name="varietycode">
+							<input type="hidden" th:value="${item.getDname()}" th:id="dname" th:name="dname">
+							<td><input style="padding: 10px; padding-left: 100px; height: 30px;" class="input-field"
+									name="quantity" disabled
+									onkeypress="return ( event.charCode == 8 || event.charCode == 0) || event.charCode == 46 ? null : event.charCode >= 48 && event.charCode <= 57 "
+									pattern="^\d{1,6}(\.\d{0,2})?$" required maxlength="8">
+									<input type="hidden" th:id="maxQuantity" th:value="${quant}" th:name="maxQuantity">
+									<input type="hidden" th:id="upTotal" th:value="${upTotal}" th:name="upTotal">
+									<input type="hidden" th:id="remain" th:value="${quant} - ${upTotal}" th:name="remain">
+							</td>
+						</tr>
+
+					</tbody>
+					<tfoot>
+						<br>
+
+						<tr>
+							<td colspan="3" style="padding-left: 65%; font-size: large; font-weight: bold;">Total&nbsp;:
+							</td>
+							<td colspan="4" style="padding-left: 15%; font-size: large; font-weight: bold;"><span
+									id="total"></span></td>
+						</tr>
+						<tr>
+							<td style="padding-left: 40%;"><input type="submit" class="btn btn-primary" value="Submit"
+									onclick="submitData()"></td>
+							<td style="padding-left: 45%;"><input type="button" class="btn btn-primary" value="Go Back"
+									onclick="goBack()"></td>
+						</tr>
+
+					</tfoot>
+			</table>
+		</div>
+	</form>
+
+	<script type="text/javascript">
+
+		$(document).ready(function () {
+			// Set CSRF token in AJAX requests
+			var token = $("meta[name='_csrf']").attr("content");
+			var header = $("meta[name='_csrf_header']").attr("content");
+
+			$(document).ajaxSend(function (e, xhr, options) {
+				xhr.setRequestHeader(header, token);
+			});
+		});
+
+	</script>
+	<script>
+
+		function goBack() {
+			window.location.href = "./indentsEntryMandal";
+			window.history.back();
+		}
+		function submitData() {
+			var rows = document.querySelectorAll('tbody tr');
+			var isValid = true;
+			let checkboxes = document.querySelectorAll('.sub-checkbox:checked');
+			let records = document.querySelectorAll('.sub-checkbox');
+			if (checkboxes.length === 0) {
+				//		alert('No Data is Being Updated');
+				isValid = false;
+				return false;
+			}
+			if (records.length === 0) {
+				//	alert('No Data is Being Updated');
+				isValid = false;
+			}
+
+			rows.forEach(function (row) {
+				var inputField = row.querySelector('[name="quantity"]');
+				var checkbox = row.querySelector('[name="sub-checkbox"]');
+				var pattern = /^\d{1,7}(\.\d{1,2})?$/;
+
+				if (checkbox.checked) {
+					if (inputField.value === '' || inputField.value === null || !pattern.test(inputField.value)) {
+						alert('Please enter a valid Quantity for the Mandal : ' + row.querySelector('[name="dname"]').value);
+						isValid = false;
+					}
+				}
+			});
+			var maxQuant =  parseFloat(document.getElementById("remain").value) || 0;
+var totalQuant =  parseFloat(document.getElementById("total").value) || 0;
+if(maxQuant >=  totalQuant){
+				}
+			else{
+				alert("entered quantity more than the  District Maximum Target")
+				isValid = false;
+			}
+
+			if (isValid) {
+				alert('Data is submitted Successfully');
+			}
+		}
+
+    document.getElementById('main').addEventListener('change', function () {
+        var checkboxes = document.querySelectorAll('.sub-checkbox');
+        checkboxes.forEach(function (checkbox) {
+            checkbox.checked = document.getElementById('main').checked;
+            updateInputState(checkbox);
+        });
+        updateTotal(); 
+    });
+
+    var checkboxes = document.querySelectorAll('.sub-checkbox');
+    checkboxes.forEach(function (checkbox) {
+        checkbox.addEventListener('change', function () {
+            updateInputState(checkbox);
+            updateTotal(); 
+        });
+    });
+
+    var inputFields = document.querySelectorAll('.input-field');
+    inputFields.forEach(function (input) {
+        input.addEventListener('input', function () {
+			 restrictInput(input);
+            updateTotal();
+        });
+    });
+
+    function updateInputState(checkbox) {
+        var inputBox = checkbox.closest('tr').querySelector('.input-field');
+        inputBox.disabled = !checkbox.checked; 
+    }
+
+var maxQuantity =  parseFloat(document.getElementById("remain").value) || 0;
+    function updateTotal() {
+        var total = 0;
+        var inputFields = document.querySelectorAll('.input-field'); 
+
+        inputFields.forEach(function (input) {
+            if (!input.disabled) { 
+                var value = parseFloat(input.value) || 0;
+                total += value;
+            }
+        });
+          if (eval(total) > eval(maxQuantity)) {
+            document.getElementById('total').textContent = maxQuantity.toFixed(2);
+            alert("Entered Total exceeds the maximum allowed target of " + maxQuantity.toFixed(2) + " Quintals.");
+            return false;
+        } else {
+            document.getElementById('total').textContent = total.toFixed(2);
+        }
+    }
+    
+     function restrictInput(input) {
+        var totalBefore = 0;
+        var inputFields = document.querySelectorAll('.input-field');
+
+        inputFields.forEach(function (inputField) {
+            if (!inputField.disabled) {
+                var value = parseFloat(inputField.value) || 0;
+                if (inputField !== input) { 
+                    totalBefore += value;
+                }
+            }
+        });
+
+        var currentInputValue = parseFloat(input.value) || 0;
+        var remainingSpace = maxQuantity - totalBefore;
+
+        if (currentInputValue > remainingSpace) {
+            input.value = remainingSpace.toFixed(2); 
+            alert("You cannot enter more than " + remainingSpace.toFixed(2) + " for this Mandal.");
+        }
+    }
+
+		document.getElementById('updationForm').addEventListener('submit', function (event) {
+			var formDataArray = [];
+
+
+			document.querySelectorAll('tbody tr').forEach(function (row) {
+				let checkboxes = document.querySelectorAll('.sub-checkbox:checked');
+				var checkbox = row.querySelector('.sub-checkbox');
+				var inputField = row.querySelector('.input-field');
+				if (checkbox.checked) {
+
+					var dcode = row.querySelector('[name="dcode"]');
+					var varietycode = row.querySelector('[name="varietycode"]');
+					formDataArray.push({
+						mcode: dcode.value,
+						varietycode: varietycode.value,
+						quantity: parseFloat(inputField.value) || 0,
+					});
+
+				}
+			});
+			goBack();
+		
+			console.log('FormDataArray:', formDataArray);
+			$.ajax({
+				url: './indentsEntryDataSubmitMandal',
+				type: 'POST',
+				contentType: 'application/json;',
+				data: JSON.stringify(formDataArray),
+				success: function (data) {
+					console.log('Success:', data);
+				},
+				error: function (error) {
+					console.error('Error during fetch operation:', error);
+				}
+			});
+		});
+
+
+	</script>
+</body>
+
+</html>

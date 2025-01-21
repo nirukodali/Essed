@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"> -->
+	<link rel="stylesheet"  type="text/css" href="css/bootstrap.min.css">
+	<link rel="stylesheet"  type="text/css" href="css/dataTables.bootstrap5.min.css">
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+	<title>e-Crop</title>
+	<style>
+		.containernew {
+			max-width: 400px;
+			margin: auto;
+			padding: 20px;
+			border: 1px solid #ccc;
+			border-radius: 10px;
+			background-color: #f9f9f9;
+		}
+
+		h2 {
+			color: #333;
+			text-align: center;
+			margin-bottom: 30px;
+		}
+
+		.row {
+			margin-bottom: 20px;
+		}
+
+		label {
+			font-weight: bold;
+			margin-right: 10px;
+		}
+
+		.btn-primary {
+			width: 100%;
+		}
+	</style>
+</head>
+
+<body>
+	<div th:insert="headerImage"></div>
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+	<div th:insert="header"></div>
+	
+
+
+	<div class="containernew">
+		<form name="f2" method="POST">
+			<h2 class="text-center mb-4">Add Additional VRO's</h2>
+			<div class="row mb-3">
+				<div class="col">
+					<label for="village">Village (<span style="color: red">*</span>):</label>
+					<select id="vcode" name="vcode" class="form-select" aria-label="Select Village">
+						<option value="" disabled selected>----Select Village----</option>
+					</select>
+				</div>
+			</div>
+			<div class="row mb-3">
+				<div class="col">
+					<label for="nameInput">Name (<span style="color: red">*</span>):</label>
+					<input type="text" id="nameInput" name="name" class="form-control"
+						oninput="validateAlphabets(this, 'nameError')" pattern="[a-zA-Z]+">
+					<span id="nameError" style="color: red;"></span>
+				</div>
+			</div>
+			<div class="row mb-3">
+				<div class="col">
+					<label for="mobile">Mobile (<span style="color: red">*</span>):</label>
+					<input type="text" id="mobile_phone" name="mobile_phone" maxlength="10" required
+						onkeypress="return isNumberKey(event)" class="form-control">
+				</div>
+			</div>
+			<div class="row mb-3">
+				<div class="col">
+					<label for="email">Email (<span style="color: red">*</span>):</label>
+					<input type="email" id="emailid" name="emailid" required class="form-control">
+				</div>
+			</div>
+			<div class="row mb-3">
+				<div class="col">
+					<label for="aadhaar">Aadhaar (<span style="color: red">*</span>):</label>
+					<input type="text" id="aadhaar_id" name="aadhaar_id" maxlength="12" minlength="12" required
+						onkeypress="return isNumberKey(event)" oninput="validateAadhaarInput(this.value)"
+						class="form-control">
+					<div id="aadhaarValidationMessage" style="color: red;"></div>
+				</div>
+			</div>
+			<div class="row mb-3">
+				<div class="col text-center">
+					<button type="button" onclick="confirmForm()" class="btn btn-primary">Confirm</button>
+				</div>
+			</div>
+
+			<input type="hidden" id="reqVcode" name="reqVcode" th:value="${vcode}">
+	</div>
+	</form>
+	<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script> -->
+
+    <!-- <script type="text/javascript" th:src="@{/js/jquery.js}"></script> -->
+    
+    	<link rel="stylesheet"  type="text/css" href="css/dataTables.bootstrap5.min.css">
+    	<link rel="stylesheet"  type="text/css" href="css/bootstrap.min.css">
+	<script src="./js/jquery-3.7.0.js"></script>
+	<script th:inline="javascript">
+
+
+		function validateAadhaar(aadhaarNumber) {
+			if (aadhaarNumber.length !== 12 || isNaN(aadhaarNumber)) return false; // Check if Aadhaar number is not 12 digits or contains non-numeric characters
+
+			// Check if Aadhaar number has repeating digits consecutively more than three times
+			var hasRepeatingDigits = /(\d)\1{3}/.test(aadhaarNumber);
+			if (hasRepeatingDigits) return false;
+
+			// Check if the first digit of Aadhaar number is not 0
+			if (aadhaarNumber.charAt(0) === '0') return false;
+
+			if (/1234567|9876543/.test(aadhaarNumber)) return false;
+
+
+
+
+			var d = [
+				[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+				[1, 2, 3, 4, 0, 6, 7, 8, 9, 5],
+				[2, 3, 4, 0, 1, 7, 8, 9, 5, 6],
+				[3, 4, 0, 1, 2, 8, 9, 5, 6, 7],
+				[4, 0, 1, 2, 3, 9, 5, 6, 7, 8],
+				[5, 9, 8, 7, 6, 0, 4, 3, 2, 1],
+				[6, 5, 9, 8, 7, 1, 0, 4, 3, 2],
+				[7, 6, 5, 9, 8, 2, 1, 0, 4, 3],
+				[8, 7, 6, 5, 9, 3, 2, 1, 0, 4],
+				[9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
+			];
+
+			var p = [
+				[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+				[1, 5, 7, 6, 2, 8, 3, 0, 9, 4],
+				[5, 8, 0, 3, 7, 9, 6, 1, 4, 2],
+				[8, 9, 1, 6, 0, 4, 3, 5, 2, 7],
+				[9, 4, 5, 3, 1, 2, 6, 8, 7, 0],
+				[4, 2, 8, 6, 5, 7, 3, 9, 0, 1],
+				[2, 7, 9, 3, 8, 0, 6, 4, 1, 5],
+				[7, 0, 4, 6, 9, 1, 3, 2, 5, 8]
+			];
+
+			var c = 0;
+			var myArray = StringToReversedIntArray(aadhaarNumber);
+
+			for (var i = 0; i < myArray.length; i++) {
+				c = d[c][p[i % 8][myArray[i]]];
+			}
+
+			return c === 0;
+		}
+
+		function StringToReversedIntArray(aadhaarNumber) {
+			var myArray = [];
+			for (var i = 0; i < aadhaarNumber.length; i++) {
+				myArray[i] = parseInt(aadhaarNumber.substring(i, i + 1));
+			}
+			myArray = Reverse(myArray);
+			return myArray;
+		}
+
+		function Reverse(myArray) {
+			var reversed = [];
+			for (var i = 0; i < myArray.length; i++) {
+				reversed[i] = myArray[myArray.length - (i + 1)];
+			}
+			return reversed;
+		}
+
+		function isNumberKey(evt) {
+			var charCode = (evt.which) ? evt.which : evt.keyCode;
+			if (charCode != 46 && charCode > 31 && (charCode < 48 || charCode > 57))
+				return false;
+			return true;
+		}
+
+		function validateAadhaarInput(aadhaarNumber) {
+			var aadhaarValidationMessage = document.getElementById("aadhaarValidationMessage");
+			if (aadhaarNumber.length !== 12 || isNaN(aadhaarNumber)) {
+				aadhaarValidationMessage.innerText = "Please enter a valid 12-digit Aadhaar number.";
+			} else if (!validateAadhaar(aadhaarNumber)) {
+				aadhaarValidationMessage.innerText = "Invalid Aadhaar number.";
+			} else {
+				aadhaarValidationMessage.innerText = ""; // Clear validation message if Aadhaar number is valid
+			}
+		}
+
+		function confirmForm() {
+			var form = document.forms["f2"];
+			var vill = form.vcode.value.trim();
+			//alert("vill-->" + vill)
+
+			var name = form.nameInput.value.trim();
+			//alert("name-->" + name)
+
+			var mobile = form.mobile_phone.value.trim();
+			//alert("mobile-->" + mobile)
+
+			var email = form.emailid.value.trim();
+			//alert("email-->" + email)
+
+			var aadhaar = form.aadhaar_id.value.trim();
+
+
+
+			if (vill === "") {
+				alert("Please select a village.");
+				form.vcode.focus();
+				return false;
+			}
+
+			if (name === "") {
+				alert("Please Enter a Name.");
+				form.nameInput.focus();
+				return false;
+			}
+
+			if (!validateAlphabets(nameInput, 'nameError')) {
+				alert("Name should only contain capital and lowercase letters");
+				nameInput.focus();
+				return false;
+			}
+
+			if (mobile.length !== 10 || isNaN(mobile)) {
+				alert("Please enter a valid mobile number.");
+				form.mobile_phone.focus();
+				return false;
+			}
+			if (!validateEmail(email)) {
+				alert("Please enter a valid email address.");
+				form.emailid.focus();
+				return false;
+			}
+			if (aadhaar === "") {
+				alert("Aadhaar number must be filled out.");
+				form.aadhaar_id.focus();
+				return false;
+			}
+			if (!validateAadhaar(aadhaar)) {
+				alert("Invalid Aadhaar number.");
+				form.aadhaar_id.focus();
+				return false;
+			}
+
+			// Prepare data to send via AJAX
+			var formData = {
+				vill: vill,
+				name: name,
+				mobile: mobile,
+				email: email,
+				aadhaar: aadhaar
+			};
+
+			// Send AJAX request
+			$.ajax({
+				url: './rest/api/saveuserdata',
+				type: 'POST',
+				contentType: 'application/json',
+				data: JSON.stringify(formData),
+				success: function (response) {
+					console.log("Response from server:", response);
+					alert(response);
+					location.reload();
+				},
+				error: function (xhr, status, error) {
+					// Handle errors
+					alert("An error occurred while submitting the form: " + error);
+					console.error(error);
+				}
+			});
+			return false;
+		}
+
+
+
+
+		function validateAlphabets(input, errorSpanId) {
+			var inputValue = input.value;
+
+			// Check if the input contains non-alphabetic characters
+			if (/[^a-zA-Z .]/.test(inputValue)) {
+				document.getElementById(errorSpanId).innerText = "Please enter only alphabetic characters.";
+				input.value = inputValue.replace(/[^a-zA-Z]/g, ''); // Remove non-alphabetic characters
+				return false; // Return false to indicate validation failure
+			} else {
+				document.getElementById(errorSpanId).innerText = "";
+				return true; // Return true to indicate validation success
+			}
+		}
+
+
+
+		function validateEmail(email) {
+			var filter = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+			return filter.test(email);
+		}
+
+		function fetchVillageList() {
+			const vcodeSelect = $('#vcode');
+			const reqVcodeInput = $('#reqVcode');
+			const loadingMessage = '<option value="" disabled selected>Loading...</option>';
+
+			vcodeSelect.html(loadingMessage);
+
+			$.ajax({
+				url: './rest/api/AddAdditionalVro/getVillages',
+				method: 'GET',
+				dataType: 'json',
+				beforeSend: function () { },
+				success: function (response) {
+					const data = response;
+					if (data.length === 0) {
+						vcodeSelect.html('<option value="" disabled selected>No villages available</option>');
+						return;
+					}
+
+					let str = '<option value="" disabled selected>Select Village</option>';
+					$.each(data, function (index, obj) {
+						str += '<option value="' + obj.wbvcode + '">' + obj.wbvname + '</option>';
+					});
+					vcodeSelect.html(str);
+
+					vcodeSelect.change(function () {
+						reqVcodeInput.val($(this).val());
+					});
+				},
+				error: function (xhr, status, error) {
+					console.error('Error fetching village list: ' + error);
+					vcodeSelect.html('<option value="" disabled selected>Error fetching villages</option>');
+				},
+			});
+		}
+
+		$(document).ready(function () {
+			fetchVillageList();
+		});
+
+	</script>
+</body>
+
+</html>

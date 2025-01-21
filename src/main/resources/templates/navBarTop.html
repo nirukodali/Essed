@@ -1,0 +1,249 @@
+<nav class="navbar navbar-expand-sm bg-dark-green navbar-dark container-fluid">
+	<div class="container">
+		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="collapse navbar-collapse" id="collapsibleNavbar">
+			<ul class="navbar-nav">
+				<li class="nav-item" style="margin-left: 85px;"></li>
+				<li class="nav-item dropdown"><a class="nav-link text-white" href="home"> HOME </a></li>
+				<li class="nav-item" style="margin-left: 85px;"></li>
+				
+				
+<!--				<li class="nav-item dropdown"><a class="nav-link dropdown-toggle text-white" href="#"-->
+<!--						id="agreementDropdown" data-bs-toggle="dropdown" th:unless="${session.role} ==25"> USER-->
+<!--						MANAGEMENT </a>  							 th:if="${session.}" -->
+<!--					<ul class="dropdown-menu" aria-labelledby="agreementDropdown">-->
+<!--					</ul>  												 MAO dataDownload -->
+<!--				<li class="nav-item" style="margin-left: 85px;"></li>-->
+				
+<!--				<li sec:authorize="hasAuthority('17')"><a class="dropdown-item btn btn-primary"-->
+<!--								href="updateProfile">Update Profile</a></li>-->
+
+<!--				</li>-->
+				
+				<li sec:authorize="hasAuthority('11')" class="nav-item dropdown">
+					<a class="nav-link dropdown-toggle text-white" href="#" id="dataDownload" data-bs-toggle="dropdown">
+						USER MANAGEMENT </a>
+					<ul class="dropdown-menu" aria-labelledby="reportsDropdown">
+						<li sec:authorize="hasAuthority('11')"><a class="dropdown-item btn btn-primary"
+								href="updateProfile">Update Profile</a></li>
+								<li sec:authorize="hasAuthority('11')"><a class="dropdown-item" href="horesetpwdDao">change
+								Password For below logins </a></li>
+								
+								<li sec:authorize="hasAuthority('11')"><a class="dropdown-item" href="horesetpwd">Reset
+								Password</a></li>
+								<li sec:authorize="hasAuthority('11')"><a class="dropdown-item" href="getuserRegestrationreport">User Registration Details
+								</a></li>
+								<li sec:authorize="hasAuthority('11')"><a class="dropdown-item" href="farmerecrop">User Activation DeActivation
+								</a></li>
+						 
+					</ul>
+				</li>
+				
+<li class="nav-item" style="margin-left: 85px;"></li>
+				<li sec:authorize="hasAuthority('25')" class="nav-item dropdown">
+					<a class="nav-link dropdown-toggle text-white" href="#" id="dataDownload" data-bs-toggle="dropdown">
+						Transactions </a>
+					<ul class="dropdown-menu" aria-labelledby="reportsDropdown">
+						<li sec:authorize="hasAuthority('25')"><a class="dropdown-item" href="FarmerDetailsEntry">Farmer Details Entry</a></li>
+					</ul>
+				</li>
+				
+				<li sec:authorize="hasAuthority('17') || hasAuthority('11') " class="nav-item dropdown">
+					<a class="nav-link dropdown-toggle text-white" href="#" id="dataDownload" data-bs-toggle="dropdown">
+						Updates </a>
+					<ul class="dropdown-menu" aria-labelledby="reportsDropdown">
+						<li sec:authorize="hasAuthority('11')"><a class="dropdown-item btn btn-primary"
+								href="updateAgencyName">Update Agency Name</a></li>
+						
+					</ul>
+				</li>
+				
+				
+				<li sec:authorize="hasAuthority('17') || hasAuthority('11') " class="nav-item dropdown">
+					<a class="nav-link dropdown-toggle text-white" href="#" id="dataDownload" data-bs-toggle="dropdown">
+						MASTERS ADDITION </a>
+					<ul class="dropdown-menu" aria-labelledby="reportsDropdown">
+						
+						<li sec:authorize="hasAuthority('17') || hasAuthority('11') "><a class="dropdown-item" href="addseedvariety">Seed
+								Varieties Addition</a></li>
+						<li sec:authorize="hasAuthority('17') || hasAuthority('11') "><a class="dropdown-item" href="indentsEntry">District
+								Wise Indents Entry</a></li>
+						<li sec:authorize="hasAuthority('17') || hasAuthority('11')"><a class="dropdown-item" href="indentsupdation">District
+								Wise Indents Updation</a></li>
+					</ul>
+				</li>
+				
+				
+
+
+				<li class="nav-item" style="margin-left: 85px;"></li>
+				<li class="nav-item dropdown"
+					th:if=" ${session.role} ==5 or ${session.role} ==2 or ${session.role} ==17
+		or ${session.role} ==48	 or ${session.role} ==22 or ${session.role} ==19 or ${session.role} ==31 or ${session.role} ==30 or ${session.role} ==9
+		 or ${session.role} ==44 or ${session.role} ==55 or ${session.role} ==51 or ${session.role} ==15">
+					<a class="nav-link dropdown-toggle text-white" href="#" id="transactionDropdown"
+						data-bs-toggle="dropdown">
+						MASTERS ADDITION </a>
+					<ul class="dropdown-menu" aria-labelledby="transactionDropdown">
+
+
+						<li sec:authorize="hasAuthority('17') || hasAuthority('11') "><a class="dropdown-item" href="addseedvariety">Seed
+								Varieties Addition</a></li>
+						<li sec:authorize="hasAuthority('17') || hasAuthority('11')"><a class="dropdown-item" href="indentsEntry">District
+								Wise Indents Entry</a></li>
+						<li sec:authorize="hasAuthority('17') || hasAuthority('11')"><a class="dropdown-item" href="indentsupdation">District
+								Wise Indents Updation</a></li>
+						<li sec:authorize="hasAuthority('9')"><a class="dropdown-item" href="indentsEntryMandal">Mandal
+								Wise Indents Entry</a></li>
+						<li sec:authorize="hasAuthority('9')"><a class="dropdown-item"
+								href="indentsupdationMandal">Mandal Wise Indents Updation</a></li>
+						<li sec:authorize="hasAuthority('5')"><a class="dropdown-item" href="indentsEntryRsk">RSK Wise
+								Indents Entry</a></li>
+						<li sec:authorize="hasAuthority('5')"><a class="dropdown-item" href="indentsupdationRsk">RSK
+								Wise Indents Updation</a></li>
+
+					
+						<!--agencyLogin-->
+
+						<li sec:authorize="hasAuthority('15')">
+							<a class="dropdown-item" href="getstock">Stock</a>
+						</li>
+							<li sec:authorize="hasAuthority('15')"><a class="dropdown-item" href="UpLoadCertIntf">Seed
+								Upload Certificate </a></li>
+
+					</ul>
+				</li>
+
+
+				<li class="nav-item" style="margin-left: 85px;"></li>
+				<li sec:authorize="hasAuthority('17') || hasAuthority('11')" class="nav-item dropdown"><a class="nav-link dropdown-toggle text-white" href="#" id="reports"
+						data-bs-toggle="dropdown"> Price And seed EntityElemants </a>
+					<ul class="dropdown-menu" aria-labelledby="reportsDropdown">
+
+						<li sec:authorize="hasAuthority('17') || hasAuthority('11')"><a class="dropdown-item"
+								href="seedVarietyPricesAdditions">Seed Variety Prices Addition </a></li>
+						<li sec:authorize="hasAuthority('17') || hasAuthority('11') "><a class="dropdown-item" href="ProductPriceReport">Seed
+								Variety Prices View/ Update/ Activate </a></li>
+						<li sec:authorize="hasAuthority('17') || hasAuthority('11')"><a class="dropdown-item" href="pricePeriodNew">Add New
+								Prices and Period </a></li>
+						<li sec:authorize="hasAuthority('17') || hasAuthority('11')"><a class="dropdown-item"
+								href="updateSeedEntitlements">Update Seed Entitlements</a></li>
+								<li sec:authorize="hasAuthority('17') || hasAuthority('11')"><a class="dropdown-item"
+								href="replication">Replication Seed Entitlements for Other Districts</a></li>
+		
+					</ul>
+
+				</li>
+
+
+
+				<!--				<li sec:authorize="hasAuthority('25')">-->
+				<!--					<a class="dropdown-item" href="#" id="transactionDropdown" data-bs-toggle="dropdown">-->
+				<!--						<b>MIS Reports </b> &raquo;-->
+				<!--					</a>-->
+				<!--					<ul class="dropdown-menu dropdown-submenu" aria-labelledby="transactionDropdown">-->
+				<!--					</ul>-->
+				<!--				</li>-->
+
+
+
+				<li sec:authorize="hasAuthority('22')">
+					<a class="dropdown-item" href="#" id="transactionDropdown" data-bs-toggle="dropdown">
+						<b>Abstract Reports </b> &raquo;
+					</a>
+					<ul class="dropdown-menu dropdown-submenu" aria-labelledby="transactionDropdown">
+					</ul>
+				</li>
+				<li sec:authorize="hasAuthority('22')">
+					<a class="dropdown-item" href="#" id="transactionDropdown" data-bs-toggle="dropdown">
+						<b>Detailed Reports </b> &raquo;
+					</a>
+					<ul class="dropdown-menu dropdown-submenu" aria-labelledby="transactionDropdown">
+					</ul>
+				</li>
+
+
+
+				<li sec:authorize="hasAuthority('2')">
+					<a class="dropdown-item" href="#" id="transactionDropdown" data-bs-toggle="dropdown">
+						<b>Registration </b> &raquo;
+					</a>
+					<ul class="dropdown-menu dropdown-submenu" aria-labelledby="transactionDropdown">
+					</ul>
+				</li>
+
+				<li sec:authorize="hasAuthority('2')">
+					<a class="dropdown-item" href="#" id="transactionDropdown" data-bs-toggle="dropdown">
+						<b>Abstract Reports </b> &raquo;
+					</a>
+					<ul class="dropdown-menu dropdown-submenu" aria-labelledby="transactionDropdown">
+					</ul>
+				</li>
+
+				<li sec:authorize="hasAuthority('2')">
+					<a class="dropdown-item" href="#" id="transactionDropdown" data-bs-toggle="dropdown">
+						<b>Detailed Reports </b> &raquo;
+					</a>
+					<ul class="dropdown-menu dropdown-submenu" aria-labelledby="transactionDropdown">
+					</ul>
+				</li>
+
+				<!-- Reports -->
+
+				<li sec:authorize="hasAuthority('15') || hasAuthority('17') || hasAuthority('11')" class="nav-item dropdown">
+					<a class="nav-link dropdown-toggle text-white" href="#" id="dataDownload" data-bs-toggle="dropdown">
+						REPORTS</a>
+					<ul class="dropdown-menu" aria-labelledby="reportsDropdown">
+						<li sec:authorize="hasAuthority('15')"><a class="dropdown-item btn btn-primary"
+								href="uploadedcertificates">Upload Certificates</a></li>
+								
+<!--						===================  SWETHA  ========================-->
+								<li sec:authorize="hasAuthority('17') || hasAuthority('11')"><a class="dropdown-item" href="vsdistrict">Report on District Wise Targets
+								</a></li>
+<!--						<li sec:authorize="hasAuthority('17')"><a class="dropdown-item" href="userreg">User Registration-->
+<!--								Details</a></li>-->
+						<li sec:authorize="hasAuthority('17') || hasAuthority('11')"><a class="dropdown-item" href="distmandal">Mandals List with
+								Codes</a></li>
+						<li sec:authorize="hasAuthority('17') || hasAuthority('11')"><a class="dropdown-item" href="subproduct">Seed Varieties List
+								with codes</a></li>
+						<li sec:authorize="hasAuthority('17') || hasAuthority('11')"><a class="dropdown-item" href="seednames">Seed Varieties List</a></li>
+						
+						<li sec:authorize="hasAuthority('17') || hasAuthority('11')"><a class="dropdown-item" href="prices">Seed Price and Eligibility Report</a></li>
+
+						<li sec:authorize="hasAuthority('17') || hasAuthority('11')"><a class="dropdown-item" href="otp">District Wise OTP Details</a></li>
+
+						<li sec:authorize="hasAuthority('11')"><a class="dropdown-item" href="stateindent">District Wise Indent Abstract On Seed Distribution</a></li>
+						
+						<li sec:authorize="hasAuthority('11')"><a class="dropdown-item" href="benf">Beneficiary Details</a></li>
+						
+						
+						<li sec:authorize="hasAuthority('11')"><a class="dropdown-item" href="extenter">Report On contingency extent entered</a></li>
+
+<!--						===================  Nireesha  ========================-->
+						<li sec:authorize="hasAuthority('17') || hasAuthority('11') "><a class="dropdown-item" href="aadharcnt">District Wise Village Secretariat VAA Authentication Count</a></li>
+						<li sec:authorize="hasAuthority('17') || hasAuthority('11')"><a class="dropdown-item" href="AuthenticatedFarmerlist">Officer Authenticated Farmers List</a></li>
+						<li sec:authorize="hasAuthority('17') || hasAuthority('11')"><a class="dropdown-item" href="authentication">District wise Authentication Type Abstract Report</a></li>
+						
+<!-- 			<li sec:authorize="hasAuthority('17') || hasAuthority('11') "><a class="dropdown-item" href="Rep_SeedVarietyDetails">Seed Variety Details Report(Active/Inactive) </a></li> -->
+<!-- 			<li sec:authorize="hasAuthority('17') || hasAuthority('11')"><a class="dropdown-item" href="Rep_UserRegDetailsIntf">User Registration Details </a></li> -->
+<!--          	 <li sec:authorize="hasAuthority('17') || hasAuthority('11')"><a class="dropdown-item" href="VSDistrictCDRepIntf">Village Secretariat Details </a></li> -->
+
+					</ul>
+				</li>
+
+
+
+			</ul>
+			</li>
+
+			</li>
+
+			</ul>
+			</li>
+			<a class="nav-link text-white" style="margin-left: 85px;margin-top: 0%;" href="logout">LOGOUT</a>
+		</div>
+	</div>
+</nav>
+</form>

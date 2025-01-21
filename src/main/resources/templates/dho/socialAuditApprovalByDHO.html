@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="header"></head>
+
+<body>
+	<div th:insert="headerImage"></div>
+
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+
+<title>socialAuditByDHO</title>
+
+<style>
+    .table-heading {
+        background-color: rgb(0, 113, 0);
+        text-align: center;
+        width: 100%;
+        margin: 0 auto;
+        padding: 5px;
+        color: white;
+        font-weight: bold;
+    }
+
+    label,
+    input,
+    select,
+    textarea {
+        text-align: left;
+    }
+
+    label:after {
+        content: '*\00a0\00a0\00a0\00a0'; 
+        color: red;
+    }
+
+    select.form-select option[value="0"] {
+        text-align: left;
+    }
+
+    .webland-container {
+        width: 460px;
+        height: 40px;    
+    }
+
+    .form-container {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        margin-bottom: 15px;
+        position: relative;
+    }
+
+    .form-container label {
+        width: 250px;
+        margin-right: 10px;
+        text-align: right;
+    }
+
+    .form-container input,
+    .form-container select {
+        width: 270px;
+    }
+
+    .error-message {
+        position: absolute;
+        left: 250px; 
+        bottom: -17px; 
+        color: red;
+        font-size: 13px;
+        margin-top: 5px;
+        white-space: nowrap; 
+    }
+</style>
+
+
+
+<body style="background-color: #e8e8e8;">
+    <p class="table-heading">Approve / Reject Social Audit Greviences By DHO</p>
+            <div class="row justify-content-center align-items-center" style="height: 10vh;">
+            <div class="webland-container">
+				<div class="card ecropCardAudit">
+
+					<div class="card-body" style="padding: 10px;">
+                <form th:object="${mrosocialAudit}" th:action="@{/viewSocialAuditByDHO}" method="get">
+
+<div class="form-container">
+    <label for="name">Crop Year </label>
+    <select name="crYear" class="form-select" aria-label="Crop Year" onchange="validateSelection(this)">
+        <option value="0">---Select---</option>
+        <option th:each="emp : ${activeseason}" th:value="${emp.seasonvalue}" th:text="${emp.cropyear}"></option>
+    </select>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var selectElement = document.querySelector('select[name="crYear"]');
+        validateSelection(selectElement);
+
+        selectElement.addEventListener('change', function () {
+            validateSelection(this);
+        });
+    });
+
+    function validateSelection(selectElement) {
+        var selectedOption = selectElement.options[selectElement.selectedIndex];
+
+        if (selectedOption.value === '0' || selectedOption.text === '--Select Crop Year--') {
+            
+            selectElement.setCustomValidity('Please select a valid Crop Year');
+        } else {
+            selectElement.setCustomValidity('');
+        }
+    }
+</script>
+
+<div class="form-container">
+    <label for="name">Mandal </label>
+    <select th:id="mandCode" name="crYear" class="form-select" aria-label="Crop Year" th:onchange="'getVilages(this.value)'">
+        <option value="0">---Select---</option>
+        <option th:each="mand : ${mandals}" th:value="${mand.getMcode}" th:text="${mand.getMname}"></option>
+    </select>
+</div>
+
+<script>
+	function getVilages(a) {
+				var dropdownselect = '<option value="">-----select------</option>';
+				$
+					.ajax({
+						type: "get",
+						url: "./getVillages?mandCode=" + a,
+						cache: false,
+						success: function (data) {
+							jQuery
+								.each(
+									data,
+									function (index, item) {
+										dropdownselect += "<option value='" + item.wbvcode + " '>"
+											+ item.wbevname + "";
+									});
+							document.getElementById("rbkVillage").innerHTML = dropdownselect
+						},
+						error: function (e) {
+						}
+
+					});
+
+			}
+</script>
+	
+
+<div class="form-container">
+    <label for="name">Select Village </label>
+    <select th:id="rbkVillage" th:name="rbkVillage" class="form-select" aria-label="Select Village">
+        <option value="0">---Select---</option>
+<!--        <option th:each="emp : ${villages}" th:value="${emp.wbvcode}" th:text="${emp.wbevname}"></option>-->
+    </select>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var selectElement = document.querySelector('select[name="rbk"]');
+        validateVillage(selectElement);
+
+        selectElement.addEventListener('change', function () {
+            validateVillage(this);
+        });
+    });
+
+    function validateVillage(selectElement) {
+        var selectedOption = selectElement.options[selectElement.selectedIndex];
+
+        if (selectedOption.value === '0' || selectedOption.text === '---Select Village---') {
+            selectElement.setCustomValidity('Please select a valid Village');
+        } else {
+            selectElement.setCustomValidity('');
+        }
+    }
+</script>
+
+<div class="mb-3" style="display: flex; flex-direction: column; align-items: center;">
+    <div style="display: flex; justify-content: center; margin-bottom: 10px;">
+        <button type="submit" class="btn btn-primary" onclick="fetchData()">Search</button>
+        <button type="button" class="btn btn-primary" th:onclick="window.location.href='/home'" style="margin-left: 10px;">Back</button>
+    </div>
+
+    <div>
+        <span th:utext="${msg}"></span>
+    </div>
+</div>
+
+
+                </form>
+            </div>
+        </div>
+</body>
+
+</html>

@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>Supercheck Revenue</title>
+
+	<head th:insert="header"></head>
+	<div th:insert="headerImage"></div>
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+<!--	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>-->
+	<script>
+		function CallPrint(strid) {
+			var prtContent = document.getElementById(strid);
+			var mywindow = window.open('', '', 'left=0,top=0,width=950,height=600,toolbar=1,scrollbars=1,status=1,addressbar=0');
+			var is_chrome = Boolean(mywindow.chrome);
+			var title = document.getElementById('printTitle').innerText;
+			var reportTime = document.getElementById('theDate').innerText;
+			var headingContent = document.getElementById('heading').innerText;
+
+			mywindow.document.write('<html><head><title>Print</title>');
+			mywindow.document.write('<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">');
+			mywindow.document.write('<style>');
+			mywindow.document.write('th, td { font-size: 10px; border: 1px solid black; }');
+			mywindow.document.write('@page { size: landscape; }');
+			mywindow.document.write('table { width: 100%; }');
+			mywindow.document.write('th, td { font-size: 10px; }');
+			//mywindow.document.write('h5 { text-align: center; }');
+			mywindow.document.write('</style>');
+			mywindow.document.write('</head><body>');
+			//mywindow.document.write('<div style="text-align: center; margin-bottom: 20px;">');
+			mywindow.document.write('<h1>' + title + '</h1>');
+			mywindow.document.write('<p><b>Report Time:</b> ' + reportTime + '</p>');
+			mywindow.document.write('<h5>' + headingContent + '</h5>');
+			mywindow.document.write('</div>');
+			mywindow.document.write(prtContent.innerHTML);
+			mywindow.document.write('</body></html>');
+			mywindow.document.close();
+			if (is_chrome) {
+				mywindow.onload = function () {
+					mywindow.focus();
+					mywindow.print();
+					mywindow.close();
+				};
+			} else {
+				mywindow.onload = function () {
+					mywindow.focus();
+					mywindow.print();
+					mywindow.close();
+				};
+			}
+			return true;
+		}
+	</script>
+
+	<script language="javascript">
+		var tableToExcel = (function () {
+			var uri = 'data:application/vnd.ms-excel;base64,',
+				template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table >{table}</table></body></html>',
+				base64 = function (s) {
+					return window.btoa(unescape(encodeURIComponent(s)));
+				},
+				format = function (s, c) {
+					return s.replace(/{(\w+)}/g, function (m, p) {
+						return c[p];
+					});
+				},
+				sanitizeText = function (text) {
+					return text.replace(/[\u00A0-\u9999<>\&]/g, function (i) {
+						return '&#' + i.charCodeAt(0) + ';';
+					}).replace(/\s+/g, ' ').trim();
+				};
+			return function (table, name) {
+				if (!table.nodeType)
+					table = document.getElementById(table);
+
+				var title = sanitizeText(document.getElementById('printTitle').innerText);
+				var reportTime = sanitizeText(document.querySelector('span#theDate').innerText);
+				var headingContent = sanitizeText(document.querySelector('h5#heading').innerText);
+
+				var additionalHeading = `
+					            <tr><th colspan="32" style="text-align: center; font-size: 20px; font-weight: bold;">${title}</th></tr>
+					            <tr><th colspan="32" style="text-align: center; font-size: 15px; font-weight: bold;">Report Time: ${reportTime}</th></tr>
+					            <tr><th colspan="32" style="text-align: center; font-size: 15px; font-weight: bold;">${headingContent}</th></tr>
+					        `;
+				var tableHTML = additionalHeading + table.innerHTML;
+				var ctx = {worksheet: name || 'Worksheet', table: tableHTML};
+				window.location.href = uri + base64(format(template, ctx));
+			}
+		})();
+	</script>
+	<style>
+		#ObjEntryTable {
+			border-collapse: separate;
+			border-spacing: 0 0.5em;
+		}
+	</style>
+</head>
+<script>
+	$(document).ready(function () {
+		var currentDate = new Date();
+		var formattedDate = currentDate.toLocaleString();
+		$("#theDate").text(formattedDate); $("#loadingsign").hide();
+		$("#loadingsign").hide();
+		$.ajax({
+			type: "get",
+			url: "./util/getAllSeason",
+			cache: false,
+			timeout: 600000,
+			success: function (resp) {
+				for (var j = 0; j < resp.length; j++) {
+					var bean = resp[j];
+					$("#cropyear").append(
+						'<option value="' + bean.col1 + '">'
+						+ bean.col2 + '</option>');
+				}
+			}
+		});
+	});
+	
+	function calculatePercentage1(part, total) {
+									return total > 0 ? ((part / total) * 100).toFixed(2) : 0;
+								}
+								
+								
+	function getData() {
+		$("#databody").empty();
+		var cropyear = $("#cropyear").val();
+		if (!cropyear) {
+			alert("Please select a Crop Year.");
+			return false;
+		}
+		var wbdcode = $("#wbdcodee").val();
+		var cropYear = $("#cropyear").val();
+		var data = {};
+		data['wbdcode'] = wbdcode;
+		data['cropyear'] = cropYear;
+		var [season, year] = cropyear.split('@');
+		var inputwbedname = $("#inputwbedname").val().replace(/Â/g, ' ').trim();
+		$.ajax({
+			type: "post",
+			url: "./util/supercheckrevenue",
+			contentType: 'application/json',
+			data: JSON.stringify(data),
+			cache: false,
+			timeout: 600000,
+			success: function (resp) {
+				
+				var hod_alloted = 0, hod_approved = 0, hod_rejected = 0,hod_updated = 0,
+				
+					dao_alloted = 0, dao_approved = 0, dao_rejected = 0,dao_updated = 0,
+					
+					ada_alloted = 0, ada_approved = 0, ada_rejected = 0,ada_updated = 0,
+					
+					mao_alloted = 0, mao_approved = 0, mao_rejected = 0,mao_updated = 0,
+					
+					dho_alloted = 0, dho_approved = 0, dho_rejected = 0,dho_updated = 0,
+					
+					ho_alloted = 0, ho_approved = 0, ho_rejected = 0,ho_updated = 0,
+					
+					rdo_alloted = 0, rdo_approved = 0, rdo_rejected = 0,rdo_updated = 0,
+					
+					tah_alloted = 0, tah_approved = 0, tah_rejected = 0,tah_updated = 0,
+					
+					dc_alloted = 0, dc_approved = 0, dc_rejected = 0,dc_updated = 0,
+					
+					jc_alloted = 0, jc_approved = 0, jc_rejected = 0,jc_updated = 0;
+					
+						var granddho = 0,grandho = 0;
+				var percentagedao1 = 0, percentageada1 = 0, percentagemao1 = 0, percentagedho1 = 0,
+							percentageho1 = 0, percentagerdo1 = 0, percentagetah1 = 0, percentagejc1 = 0,
+							percentagedc1 = 0, percentagehod1 = 0;
+				
+				
+				$("#heading").empty();
+				$("#heading").append('<tr style="font-size:22px;">'
+					+ '<td style="font-weight: 100">District: <b>' + inputwbedname + '&nbsp;&nbsp;&nbsp;</b></td>'
+					+ '<td style="font-weight: 100">Year: <b>' + year + '</b>&nbsp;&nbsp;&nbsp;</td>'
+					+ '<td style="font-weight: 100">Season: <b>' +
+					(season === 'k' || season === 'K' ? 'Kharif' : season === 'r' || season === 'R' ? 'Rabi' :
+						season === 's' || season === 'S' ? 'Summer' : season) + '&nbsp &nbsp &nbsp</b></td></tr>');
+				var sno = 0;
+					
+				for (var j = 0; j < resp.length; j++) {
+					sno = sno + 1;
+					var bean = resp[j];
+
+					
+				
+								
+					dho_alloted += parseInt(bean.dho_alloted);
+					dho_approved += parseInt(bean.dho_approved);
+					dho_rejected += parseInt(bean.dho_rejected);
+					dho_updated += parseInt (bean.dho_updated);
+					
+					ho_alloted += parseInt(bean.ho_alloted);
+					ho_approved += parseInt(bean.ho_approved);
+					ho_rejected += parseInt(bean.ho_rejected);
+					ho_updated += parseInt(bean.ho_updated);
+					
+				
+							var dho = parseInt(bean.dho_approved) + parseInt(bean.dho_rejected) + parseInt(bean.dho_updated);
+							var ho = parseInt(bean.ho_approved) + parseInt(bean.ho_rejected) + parseInt(bean.ho_updated);
+							
+							
+							 granddho = (parseInt(granddho) + parseInt(dho)).toFixed(2);
+							 grandho = (parseInt(grandho) + parseInt(ho)).toFixed(2);
+
+					
+					$("#databody").append('<tr>'
+						+ '<td>' + sno + '</td>'
+						+ '<td style="align:left">' + bean.mname + '</td>'
+						
+						 + '<td>' + bean.dho_alloted + '</td>'
+						+ '<td>' + bean.dho_approved + '</td>'
+						+ '<td>' + bean.dho_rejected + '</td>'
+						+ '<td>' + bean.dho_updated + '</td>'
+						+ '<td>' + dho + '</td>'
+					//	+ '<td>' + calculatePercentage1(dho,bean.dho_alloted) + '%</td>'
+						
+						+ '<td>' + bean.ho_alloted + '</td>'
+						+ '<td>' + bean.ho_approved + '</td>'
+						+ '<td>' + bean.ho_rejected + '</td>'
+						+ '<td>' + bean.ho_updated + '</td>'
+						+ '<td>' + ho + '</td>'
+					//	+ '<td>' + calculatePercentage1(ho,bean.ho_alloted) + '%</td>'
+						+ '</tr>');
+				}
+				$("#databody").append('<tr style="font-weight: bold;">'
+					+ '<td colspan = "2" align="center"><b>TOTAL</b></td>'
+					
+					 + '<td>' + dho_alloted + '</td>'
+					+ '<td>' + dho_approved + '</td>'
+					+ '<td>' + dho_rejected + '</td>'
+					+ '<td>' + dho_updated + '</td>'
+					+ '<td>' + granddho + '</td>'
+				//	+ '<td>' + calculatePercentage1(granddho , dho_alloted)+ '%' + '</td>'
+					
+					+ '<td>' + ho_alloted + '</td>'
+					+ '<td>' + ho_approved + '</td>'
+					+ '<td>' + ho_rejected + '</td>'
+					+ '<td>' + ho_updated + '</td>'
+					+ '<td>' + grandho + '</td>'
+				//	+ '<td>' + calculatePercentage1(grandho , ho_alloted) + '%' + '</td>'
+					
+					+ '</tr>')
+			}
+		});
+	}
+</script>
+
+<body>
+	<div class="heading" colspan="20" style="text-align:center;">
+		<h3 id="printTitle"> Mandal-Wise Report On Progress in Supervisory Check- Horti Departments</h3>
+	</div>
+	<p th:text="${msg}"></p>
+	<input type="hidden" id="wbdcodee" th:value="${#session.getAttribute('wbdcode')}" />
+	<input type="hidden" id="inputuserid" th:value="${#session.getAttribute('userid')}" />
+	<input type="hidden" id="inputwbedname" th:value="${#session.getAttribute('wbedname')}" />
+	<div id="loadingsign">
+		<div class="d-flex justify-content-center">
+			<div class="spinner-border" role="status">
+				<span class="sr-only">Loading...</span>
+			</div>
+		</div>
+	</div>
+	<div class="scrollable-container">
+		<div align="center">
+			<form>
+				<table id="ObjEntryTable" style="font-size: inherit !important; border-radius: 10px;">
+					<tr style="padding-left:450px;">
+						<td align="right" width="30%"><b>Crop Year <font color="red">*</font></b></td>
+
+						<td align="left"><select id="cropyear" name="cropyear" style="width: 200px">
+								<option value="">-------Select-------</option>
+							</select></td>
+					</tr>
+				</table>
+				<div colspan="3" align="center" style="padding-top: 10px; padding-bottom: 10px;">
+					<button type="button" id="btnSubmit" class="btn btn-primary" value="Submit"
+						onclick="return getData();">Submit</button>
+				</div>
+			</form>
+		</div>
+		<div
+			style="position: relative; width: 100%; height: 50px; display: flex; align-items: center; justify-content: center;">
+			<h5 id="heading" style="margin: 0;"></h5>
+			<div style="margin-left: 10px;">
+				<b>Report Time:</b> <span id="theDate"></span>
+			</div>
+		</div>
+		<form id="unlockreport" name="unlockreport" method="post">
+			<div align="center" id="divPrint" class="table table-hover table table-striped"
+				style="overflow-x: scroll; overflow-y: scroll; max-width: 100%; max-height: 70vh;padding-left: 10%;">
+				<table id="tableStkId" class="table table-bordered table-striped dataTable">
+					<thead>
+						<tr>
+							<th colspan="2" ></th>
+<!--							<th colspan="24" style="background-color: #d5ffd5;padding-left: 18%;">-->
+<!--								<font color="#145A32" size="6pt">AGRICULTURE</font>-->
+<!--							</th>-->
+							<th colspan="12" style="background-color: #c4def1;padding-left: 7%;">
+								<font color="blue" size="6pt">HORTICULTURE</font>
+							</th>
+<!--							<th colspan="18" style="background-color: #F5CBA7;padding-left: 18%;">-->
+<!--								<font color="#BA4A00" size="6pt">REVENUE</font>-->
+<!--							</th>-->
+<!--							<th colspan="3" style="background-color: #F5CBA7; ">-->
+<!--								<font color="#BA4A00" size="6pt">&nbsp;</font>-->
+<!--							</th>-->
+<!--							<th colspan="3" style="background-color: #F5CBA7; ">-->
+<!--								<font color="#BA4A00" size="6pt">&nbsp;</font>-->
+<!--							</th>-->
+						</tr>
+						<tr>
+							<th colspan="2"><b>Supervisory
+									Officer</b></th>
+<!--							<th colspan="6" style="background-color: #d5ffd5;color: black;padding-left: 5%;"><b>HOD</b></th>-->
+<!--							<th colspan="6" style="background-color: #d5ffd5;color: black;padding-left: 5%;"><b>DAO</b></th>-->
+<!--							<th colspan="6" style="background-color: #d5ffd5;color: black;padding-left: 5%;"><b>ADA</b></th>-->
+<!--							<th colspan="6" style="background-color: #d5ffd5;color: black;padding-left: 5%;"><b>MAO</b></th>-->
+							<th colspan="6" style="background-color: #c4def1;color: black;padding-left: 5%;"><b>DHO</b></th>
+							<th colspan="6" style="background-color: #c4def1;color: black;padding-left: 5%;"><b>HO</b></th>
+<!--							<th colspan="6" style="background-color: #F5CBA7;color: black;padding-left: 5%;"><b>RDO</b></th>-->
+<!--							<th colspan="6" style="background-color: #F5CBA7;color: black;padding-left: 5%;"><b>TAH</b></th>-->
+<!--							<th colspan="6" style="background-color: #F5CBA7;color: black;padding-left: 5%;"><b>DC</font></b> </th>-->
+<!--							<th colspan="6" style="background-color: #F5CBA7;color: black;padding-left: 5%;"> <b>JC</b></font>-->
+							</th>
+						</tr>
+						<tr>
+							<th><b>S.No.</b></th>
+							<th><b>Mandal</b></th>
+<!--							<th style="background-color: #d5ffd5;	color: black;  "><b>Allotted</b></th>-->
+<!--							<th style="background-color: #d5ffd5; color: black; "><b>Accepted</b> </th>-->
+<!--							<th style="background-color: #d5ffd5; color: black; "><b>Rejected</b> </th>-->
+<!--							<th style="background-color: #d5ffd5; color: black; "><b>Updated</b> </th>-->
+<!--							<th style="background-color: #d5ffd5; color: black; "><b>Total</b> </th>-->
+<!--							<th style="background-color: #d5ffd5; color: black; "><b>%</b> </th>-->
+							
+<!--							<th style="background-color: #d5ffd5; color: black; "><b>Allotted</b></th>-->
+<!--							<th style="background-color: #d5ffd5; color: black; "><b>Accepted</b> </th>-->
+<!--							<th style="background-color: #d5ffd5; color: black; "><b>Rejected</b> </th>-->
+<!--							<th style="background-color: #d5ffd5; color: black; "><b>Updated</b> </th>-->
+<!--							<th style="background-color: #d5ffd5; color: black; "><b>Total</b> </th>-->
+<!--							<th style="background-color: #d5ffd5; color: black; "><b>%</b> </th>-->
+							
+<!--							<th style="background-color: #d5ffd5; color: black; "><b>Allotted</b></th>-->
+<!--							<th style="background-color: #d5ffd5; color: black; "><b>Accepted</b> </th>-->
+<!--							<th style="background-color: #d5ffd5; color: black; "><b>Rejected</b> </th>-->
+<!--							<th style="background-color: #d5ffd5; color: black; "><b>Updated</b> </th>-->
+<!--							<th style="background-color: #d5ffd5; color: black; "><b>Total</b> </th>-->
+<!--							<th style="background-color: #d5ffd5; color: black; "><b>%</b> </th>-->
+							
+<!--							<th style="background-color: #d5ffd5; color: black; "><b>Allotted</b></th>-->
+<!--							<th style="background-color: #d5ffd5; color: black; "><b>Accepted</b> </th>-->
+<!--							<th style="background-color: #d5ffd5; color: black; "><b>Rejected</b> </th>-->
+<!--							<th style="background-color: #d5ffd5; color: black; "><b>Updated</b> </th>-->
+<!--							<th style="background-color: #d5ffd5; color: black; "><b>Total</b> </th>-->
+<!--							<th style="background-color: #d5ffd5; color: black; "><b>%</b> </th>-->
+							
+							<th style="background-color: #c4def1; color: black; "><b>Allotted</b></th>
+							<th style="background-color: #c4def1; color: black; "><b>Accepted</b> </th>
+							<th style="background-color: #c4def1; color: black; "><b>Rejected</b> </th>
+							<th style="background-color: #c4def1; color: black; "><b>Updated</b> </th>
+							<th style="background-color: #c4def1; color: black; "><b>Total</b> </th>
+<!--							<th style="background-color: #c4def1; color: black; "><b>%</b> </th>-->
+							
+							<th style="background-color: #c4def1; color: black; "><b>Allotted</b></th>
+							<th style="background-color: #c4def1; color: black;"><b>Accepted</b> </th>
+							<th style="background-color: #c4def1; color: black; "><b>Rejected</b> </th>
+							<th style="background-color: #c4def1; color: black; "><b>Updated</b> </th>
+							<th style="background-color: #c4def1; color: black; "><b>Total</b> </th>
+<!--							<th style="background-color: #c4def1; color: black; "><b>%</b> </th>-->
+							
+<!--							<th style="background-color: #F5CBA7; color: black; "><b>Allotted</b></th>-->
+<!--							<th style="background-color: #F5CBA7; color: black; "><b>Accepted</b> </th>-->
+<!--							<th style="background-color: #F5CBA7; color: black; "><b>Rejected</b> </th>-->
+<!--							<th style="background-color: #F5CBA7; color: black; "><b>Updated</b> </th>-->
+<!--							<th style="background-color: #F5CBA7; color: black; "><b>Total</b> </th>-->
+<!--							<th style="background-color: #F5CBA7; color: black; "><b>%</b> </th>-->
+							
+<!--							<th style="background-color: #F5CBA7; color: black; "><b>Allotted</b></th>-->
+<!--							<th style="background-color: #F5CBA7; color: black; "><b>Accepted</b> </th>-->
+<!--							<th style="background-color: #F5CBA7; color: black; "><b>Rejected</b> </th>-->
+<!--							<th style="background-color: #F5CBA7; color: black; "><b>Updated</b> </th>-->
+<!--							<th style="background-color: #F5CBA7; color: black; "><b>Total</b> </th>-->
+<!--							<th style="background-color: #F5CBA7; color: black; "><b>%</b> </th>-->
+							
+<!--							<th style="background-color: #F5CBA7; color: black; "><b>Allotted</b></th>-->
+<!--							<th style="background-color: #F5CBA7; color: black; "><b>Accepted</b> </th>-->
+<!--							<th style="background-color: #F5CBA7; color: black; "><b>Rejected</b> </th>-->
+<!--							<th style="background-color: #F5CBA7; color: black; "><b>Updated</b> </th>-->
+<!--							<th style="background-color: #F5CBA7; color: black; "><b>Total</b> </th>-->
+<!--							<th style="background-color: #F5CBA7; color: black; "><b>%</b> </th>-->
+							
+<!--							<th style="background-color: #F5CBA7; color: black; "><b>Allotted</b></th>-->
+<!--							<th style="background-color: #F5CBA7; color: black; "><b>Accepted</b> </th>-->
+<!--							<th style="background-color: #F5CBA7; color: black; "><b>Rejected</b> </th>-->
+<!--							<th style="background-color: #F5CBA7;; color: black; "><b>Updated</b> </th>-->
+<!--							<th style="background-color: #F5CBA7; color: black; "><b>Total</b> </th>-->
+<!--							<th style="background-color: #F5CBA7; color: black; "><b>%</b> </th>-->
+						</tr>
+					</thead>
+					<tbody id="databody">
+					</tbody>
+				</table>
+			</div>
+		</form>
+		<div align="center" style="color: black; margin-top: 20px;">
+			<input class="btn btn-primary" name="ctl00$ContentPlaceHolder1$btnPrint" type="button"
+				id="ctl00_ContentPlaceHolder1_btnPrint" onClick="javascript:CallPrint('divPrint')" value="Print"> <input
+				class="btn btn-primary" type="button" onclick="tableToExcel('tableStkId', 'Abstract')" value="Excel">
+
+		</div>
+	</div>
+</body>
+
+</html>

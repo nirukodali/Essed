@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="header">
+
+<meta charset="UTF-8">
+<title>Crop Wise Report on VAA/VRO Authentication And Farmer eKyc</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!--	 Your custom styles -->
+<!--<link rel="stylesheet" type="text/css" href="css/style.css">-->
+
+<!--		Bootstrap and related scripts-->
+<!--<link-->
+<!--	href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"-->
+<!--	rel="stylesheet">-->
+
+<!--	 ajax/jquery -->
+<!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>-->
+
+</head>
+
+<body>
+    <div th:insert="header"></div>
+    <div th:insert="headerImage"></div>
+    <div th:insert="navBarTop"></div>
+    <div th:insert="headerMessage"></div>
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-auto">
+                <div class="card card-body" style="background-color: #e6e2d3;">
+                    <form action="#" th:action="@{/crp-report}" method="post">
+                        <div class="card-title">
+                            <h4 style="background-color: darkgreen; color: white; width: auto; text-align: center; padding: 7px; border: none; border-radius: 5px;">
+                                Crop wise district report on VAA/VRO Authentication and farmer ekyc
+                            </h4>
+                            <br />
+                        </div>
+                        <div align="center" id="divPrint">
+                            <table align="center" style="width:60%; background-color: #e6e2d3">
+                                <tr>
+                                    <td class="tdnum" colspan="2" style="width:50%"> <b>Crop Year <font color="red">*</font></b> </td>
+                                    <td>
+                                        <select name="cropyear" id="cropyear" style="width: 200px">
+                                            <option value='' th:selected="0">------Select Crop Year--------</option>
+                                            <option th:each="cropyr: ${cropyears}" th:value="${cropyr.seasonvalue}" th:text="${cropyr.cropyear}"></option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="tdnum" colspan="2" style="width:50%"><b>Crop Name <font color="red">*</font></b></td>
+                                    <td>
+                                        <select name="cropname" id="cropname" style="width: 200px">
+                                            <option value='0' th:selected="0">------Select Crop Name--------</option>
+                                            <option th:each="cropnme: ${cropnames}" th:value="${cropnme.cropid}" th:text="${cropnme.cropname}"></option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="center" colspan="3"> <input type="submit" value="Submit" onclick="submitForm()" class="btn btn-success mt-3"></td>
+                                </tr>
+                            </table>
+                            <th class="heading" colspan="3"><b> Abstract On Extent Booked &nbsp;&nbsp; &nbsp;&nbsp;</b></th>
+                            <tr>
+                                <td class="heading tdnum" colspan="10">
+                                    <b>Report Time : <span th:text="${theDate}"></span></b>
+                                </td>
+                            </tr>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <p id="displayText"></p>
+
+  <div style="display: flex; justify-content: center; width: 100%; margin-top: 20px;">
+    <div style=" padding: 25px; border-radius: 12px;">
+        <table id="customers" style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif; box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);">
+            <thead>
+                <tr style="background-color: #04AA6D; color: white; font-size: 16px;">
+                    <th style="border: 1px solid #ddd; padding: 12px; text-align: center;"><b>Sl.No</b></th>
+                    <th style="border: 1px solid #ddd; padding: 12px; text-align: center;"><b>Mandal Name</b></th>
+                    <th style="border: 1px solid #ddd; padding: 12px; text-align: center;"><b>No. of Farmers</b></th>
+                    <th style="border: 1px solid #ddd; padding: 12px; text-align: center;"><b>Total Bookings</b></th>
+                    <th style="border: 1px solid #ddd; padding: 12px; text-align: center;"><b>Total Extent (acres)</b></th>
+                    <th style="border: 1px solid #ddd; padding: 12px; text-align: center;"><b>VAA Authentication Completed: Bookings</b></th>
+                    <th style="border: 1px solid #ddd; padding: 12px; text-align: center;"><b>VAA Authentication Completed: Acres</b></th>
+                    <th style="border: 1px solid #ddd; padding: 12px; text-align: center;"><b>VRO Authentication Completed: Bookings</b></th>
+                    <th style="border: 1px solid #ddd; padding: 12px; text-align: center;"><b>VRO Authentication Completed: Acres</b></th>
+                    <th style="border: 1px solid #ddd; padding: 12px; text-align: center;"><b>e-KYC Done Bookings</b></th>
+                    <th style="border: 1px solid #ddd; padding: 12px; text-align: center;"><b>e-KYC Done Farmers</b></th>
+                    <th style="border: 1px solid #ddd; padding: 12px; text-align: center;"><b>e-KYC Done Acres</b></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="crpreport, iterStat : ${cropreport}" style="font-size: 14px;">
+                    <td style="border: 1px solid #ddd; padding: 10px; text-align: right;" th:text="${iterStat.count}"></td>
+                    <td style="border: 1px solid #ddd; padding: 10px; text-align: left;" th:text="${crpreport.wbmname}"></td>
+                    <td style="border: 1px solid #ddd; padding: 10px; text-align: right;" th:text="${crpreport.totfarmercount}"></td>
+                    <td style="border: 1px solid #ddd; padding: 10px; text-align: right;" th:text="${crpreport.totalbookings}"></td>
+                     <td th:text="${#numbers.formatDecimal(crpreport.totextent, 1, 2)}" style="padding: 10px; border: 1px solid #ddd; text-align: right"></td>
+                    <td style="border: 1px solid #ddd; padding: 10px; text-align: right;" th:text="${crpreport.vaaauthcount}"></td>
+                     <td th:text="${#numbers.formatDecimal(crpreport.vaaauthextent, 1, 2)}" style="padding: 10px; border: 1px solid #ddd; text-align: right"></td>
+                    <td style="border: 1px solid #ddd; padding: 10px; text-align: right;" th:text="${crpreport.vroauthcount}"></td>
+                     <td th:text="${#numbers.formatDecimal(crpreport.vroauthextent, 1, 2)}" style="padding: 10px; border: 1px solid #ddd; text-align: right"></td>
+                    <td style="border: 1px solid #ddd; padding: 10px; text-align: right;" th:text="${crpreport.totekycbookings}"></td>
+                    <td style="border: 1px solid #ddd; padding: 10px; text-align: right;" th:text="${crpreport.ekycfarmercount}"></td>
+                     <td th:text="${#numbers.formatDecimal(crpreport.ekycbookedext, 1, 2)}" style="padding: 10px; border: 1px solid #ddd; text-align: right"></td>
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr style="background-color: #f9f9f9; font-size: 14px;">
+                    <td colspan="2" style="border: 1px solid #ddd; padding: 10px; text-align: center;"><strong>Total</strong></td>
+                    <td id="totalFarmerCount" style="border: 1px solid #ddd; padding: 10px; text-align: center;"></td>
+                    <td id="totalBookings" style="border: 1px solid #ddd; padding: 10px; text-align: center;"></td>
+                    <td id="totalExtent" style="border: 1px solid #ddd; padding: 10px; text-align: center;"></td>
+                    <td id="totalVAAAuthBookings" style="border: 1px solid #ddd; padding: 10px; text-align: center;"></td>
+                    <td id="totalVAAAuthExtent" style="border: 1px solid #ddd; padding: 10px; text-align: center;"></td>
+                    <td id="totalVROAuthBookings" style="border: 1px solid #ddd; padding: 10px; text-align: center;"></td>
+                    <td id="totalVROAuthExtent" style="border: 1px solid #ddd; padding: 10px; text-align: center;"></td>
+                    <td id="totalEkycBookings" style="border: 1px solid #ddd; padding: 10px; text-align: center;"></td>
+                    <td id="totalEkycFarmers" style="border: 1px solid #ddd; padding: 10px; text-align: center;"></td>
+                    <td id="totalEkycExtent" style="border: 1px solid #ddd; padding: 10px; text-align: center;"></td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+
+   <span th:if="${bind == 'No Records Found' || bind == 'Database relation not found' || bind == 'An unexpected error occurred'}" 
+      th:text="${bind}" 
+      class="text-danger" 
+      style="display: block; text-align: center; margin: 20px 0;">
+</span>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            function calculateTotal() {
+                let totalFarmerCount = 0;
+                let totalBookings = 0;
+                let totalExtent = 0;
+                let totalVAAAuthBookings = 0;
+                let totalVAAAuthExtent = 0;
+                let totalVROAuthBookings = 0;
+                let totalVROAuthExtent = 0;
+                let totalEkycBookings = 0;
+                let totalEkycFarmers = 0;
+                let totalEkycExtent = 0;
+
+                const rows = document.querySelectorAll("#customers tbody tr");
+
+                rows.forEach(row => {
+                    const columns = row.querySelectorAll("td");
+                    totalFarmerCount += parseInt(columns[2].textContent.trim(), 10) || 0;
+                    totalBookings += parseInt(columns[3].textContent.trim(), 10) || 0;
+                    totalExtent += parseFloat(columns[4].textContent.trim()) || 0;
+                    totalVAAAuthBookings += parseInt(columns[5].textContent.trim(), 10) || 0;
+                    totalVAAAuthExtent += parseFloat(columns[6].textContent.trim()) || 0;
+                    totalVROAuthBookings += parseInt(columns[7].textContent.trim(), 10) || 0;
+                    totalVROAuthExtent += parseFloat(columns[8].textContent.trim()) || 0;
+                    totalEkycBookings += parseInt(columns[9].textContent.trim(), 10) || 0;
+                    totalEkycFarmers += parseInt(columns[10].textContent.trim(), 10) || 0;
+                    totalEkycExtent += parseFloat(columns[11].textContent.trim()) || 0;
+                });
+
+                document.getElementById("totalFarmerCount").textContent = totalFarmerCount;
+                document.getElementById("totalBookings").textContent = totalBookings;
+                document.getElementById("totalExtent").textContent = totalExtent.toFixed(2);
+                document.getElementById("totalVAAAuthBookings").textContent = totalVAAAuthBookings;
+                document.getElementById("totalVAAAuthExtent").textContent = totalVAAAuthExtent.toFixed(2);
+                document.getElementById("totalVROAuthBookings").textContent = totalVROAuthBookings;
+                document.getElementById("totalVROAuthExtent").textContent = totalVROAuthExtent.toFixed(2);
+                document.getElementById("totalEkycBookings").textContent = totalEkycBookings;
+                document.getElementById("totalEkycFarmers").textContent = totalEkycFarmers;
+                document.getElementById("totalEkycExtent").textContent = totalEkycExtent.toFixed(2);
+            }
+
+            calculateTotal();
+        });
+        
+        
+    </script>
+    
+     <script>
+        function submitForm() {
+            var cropyear = $('#cropyear').val();
+            var cropname = $('#cropname').val();
+            if (cropyear == '') {
+                alert('Please select an option from the crop year.');
+                return false;
+            }
+            if (cropname == '0') {
+                alert('Please select an option from the crop name.');
+                return false;
+            }
+            $('#myform').submit();
+        }
+    </script>
+</body>
+</html>

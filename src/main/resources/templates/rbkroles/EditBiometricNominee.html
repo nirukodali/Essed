@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="header">
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Edit Biometric Nominee Search</title>
+</head>
+
+<body>
+	<div th:insert="headerImage"></div>
+
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+
+	<div class="container-fluid header-design-login" style=" width: 40%; height:38vh;">
+		<div class="row justify-content-center align-items-center">
+		<div class="card ecropCard">
+			<form th:action="@{/biometricNominee}" method="post" style="width: 100%;padding-right: 0%;margin-left: 0%;">
+				<div class="card-title">
+				<h4 style="background-color: darkgreen; color: white; width:auto;text-align: center;">Edit Biometric
+					Nominee </h4>
+				<br />
+					</div>
+				<div class="mb-3 form-group">
+					<label for="cropyear" style="padding-left: 10%;text-align: center;">Select Crop Year :</label>
+					<select id="cropyear" name="cropyear" class="form-control custom-select"
+						style="width: 40%;margin-left: 19%;" required>
+						<option value="" disabled selected>Select Crop Year</option>
+						<option th:each="season : ${cropYear}" th:value="${season.seasonvalue}"
+							th:text="${season.seasonvalue}"></option>
+					</select>
+				</div>
+				<div class="mb-3 form-group">
+					<label for="villageNames" style="padding-left: 10%;text-align: center;">Select Village :</label>
+					<select id="villageNames" name="villageNames" class="form-control custom-select"
+						style="width: 40%; margin-left: 23%;" required>
+						<option value="" disabled selected>Select Village</option>
+						<option th:each="list : ${list}" th:value="${list.getVcode()}" th:text="${list.getWbvname()}">
+						</option>
+					</select>
+				</div>
+				<label for="selectedValue" style="padding-left: 10%;text-align: center;">SearchBy :</label>
+				<select id="selectedValue" name="selectedValue" class="form-control custom-select"
+					style="width: 40%; margin-left: 28%;" required>
+					<option value="" disabled selected>----Select----</option>
+					<option name="surveyNo" value="Survey No">Survey No/LP No</option>
+					<option name="khataNo" value="Khata No">Khata No</option>
+					<option name="aadhaarNo" value="Aadhaar No">Aadhaar No</option>
+				</select><br>
+				<span id="selectedValueDisplay" style="text-align: center; padding-left: 10%;"> Enter <span
+					id="display"></span> :
+				</span> <input name="value"
+					style="margin-top: 2%; margin-bottom: 2%; width: 40%; margin-left: 17%;"
+					maxlength="12" required>
+
+
+<!--				<span th:value="${msg}" th:text="${msg}">hiiiiiiiii</span>-->
+				<button type="submit" class="btn btn-primary"
+					style="margin-right: 30px; margin-left: 40%;">Submit</button>
+				<!--					<button type="button" onclick="goBack()" class="btn btn-primary" style="margin-right: 30px;">Go-->
+				<!--						Back</button>-->
+			</form>
+			</div>
+		</div>
+	</div>
+
+
+<!--	<table>-->
+<!--		<thead></thead>-->
+<!--		<tbody>-->
+<!--			<tr>-->
+<!--				<td th:value="${msg}" th:text="${msg}">-->
+<!--					<input>-->
+<!--				</td>-->
+<!--			</tr>-->
+<!--		</tbody>-->
+<!--	</table>-->
+
+</body>
+<script>
+document.getElementById('selectedValue').addEventListener('change',function(){
+	document.getElementById('display').textContent = this.value;
+});
+	function goBack() {
+		window.location.href = './home.html';
+	}
+	window.onload = function () {
+		if (window.performance && window.performance.navigation.type === window.performance.navigation.TYPE_BACK_FORWARD) {
+			location.reload();
+		}
+	}
+
+	$(document).ready(function () {
+		$('#selectedValue').change(function () {
+			var selectedValue = $(this).val();
+
+			$('#selectedValueDisplay').text('Enter ' + selectedValue + ' :');
+
+		});
+	});
+</script>
+
+</html>

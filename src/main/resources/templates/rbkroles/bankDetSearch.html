@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="header"></head>
+
+<body>
+	<div th:insert="headerImage"></div>
+
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+
+	<div class="container">
+		<section class="content" style="padding-top: 1px;">
+			<div class="row topformcontent">
+				<div class="col-md-12">
+					<div class="box box-solid box-patent" style="margin-top: 5px;margin-bottom: 10px;">
+						<div class="box-header">
+							<div class="row">
+								<div class="col-md-12" style="padding-left: 40%;">
+									<div class="col-md-6">
+										<label class="box-title">
+											<span
+												style="font-size: 16px; color:white;font-weight: bold;padding-top:5px;">Aadhaar
+												Search for Bank Details Updation</span>
+										</label>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="box-body" style="padding-left: 10px; height: auto;">
+							<div class="row">
+								<div class="col-md-3">
+									<label><b>Select Village:</b></label>
+									<div class="form-group" style="margin-bottom: 5px;">
+										<div class="input-group">
+											<select class="form-control" id="village" name="village" required>
+												<option value="" disabled selected>Select Village</option>
+												<option th:each="vill : ${vill}" th:value="${vill.vcode}"
+													th:text="${vill.wbvname}">
+												</option>
+											</select>
+											<span id="dropdownError" style="color: red;"></span>
+										</div>
+									</div>
+								</div>
+
+
+
+								<div class="col-md-6">
+									<div class="form-group" style="margin-bottom: 5px;">
+
+
+										<div class="input-group" id="LPSearch" style="margin-top: 4%; display: none;">
+
+											<label><b>Select Aadhaar No</b></label>
+											<div class="form-group" style="margin-bottom: 5px;">
+												<div class="input-group">
+													<select class="form-control" id="surveyNo" name="surveyNo" required>
+														<option value="" disabled selected>Select Aadhaar No</option>
+													</select>
+												</div>
+											</div>
+											<button style="margin-left: 50px" type="button" class="btn btn-primary"
+												id="searchLPId" onclick="return getBankDet()"
+												title="Search Opposition Details">Search</button>
+										</div>
+									</div>
+									<p th:text="${msg}"></p>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+	</div>
+	
+	<div id="contentDivId"></div>
+
+	<br><br><br><br>
+	<div class="panel panel-primary">
+		<div class="panel-heading"
+			style="text-align: center; background-color: honeydew; padding: 8px; margin: 0 auto; display: table;margin-left: 50%;">
+			<b>Updated Bank Details</b>
+		</div>
+		<div class="panel-body">
+
+			<input type="hidden" th:value="${type}" id="type" name="type">
+			<table id="ownerGrid" class="table table-bordered table-striped dataTable">
+				<thead class="color-palette" style="background-color: #9494b8;">
+					<tr>
+						<th style="color: white; width: 7%; background-color: #9494b8;"><b>District Name</b></th>
+						<th style="color: white; width: 7%; background-color: #9494b8;"><b>Mandal Name</b></th>
+						<th style="color: white; width: 7%; background-color: #9494b8;"><b>Village Name</b></th>
+						<th style="color: white; width: 8%; background-color: #9494b8;"><b>Aadhaar</b></th>
+						<th style="color: white; width: 25%; background-color: #9494b8;"><b>Farmer Name</b></th>
+						<th style="color: white; width: 25%; background-color: #9494b8;"><b>Father/husband Name</b></th>
+						<th style="color: white; width: 8%; background-color: #9494b8;"><b>Bank account</b></th>
+						<th style="color: white; width: 15%; background-color: #9494b8;"><b>Bank name</b></th>
+						<th style="color: white; width: 15%; background-color: #9494b8;"><b>Bank branch</b></th>
+						<th style="color: white; width: 8%; background-color: #9494b8;"><b>Type of bank</b></th>
+					</tr>
+				</thead>
+				<tbody th:id="databody">
+
+				</tbody>
+			</table>
+		</div>
+	</div>
+</body>
+
+	<form action="/cultivator" method="GET">
+		<input type=hidden th:value="${session.wbdcode}" th:id="wbdcode" />
+		<input type="hidden" th:value="${session.wbmcode}" th:id="wbmcode" />
+		<input type="hidden" th:value="${session.wbvcode}" th:id="wbvcode" />
+		<input type="hidden" th:value="${session.userid}" th:id="userid" />
+		<input type="hidden" th:value="${session.dcode}" th:id="dcode" />
+		<input type="hidden" th:value="${session.mcode}" th:id="mcode" />
+
+	</form>
+
+	
+
+	<!--	<div th:insert="rbkroles/allotExt"></div>-->
+
+	<script>
+		$(document).ready(function () {
+			$('#village').change(function () {
+				var selectedVillage = $(this).val();
+				$.ajax({
+					url: './getAadhaar',
+					method: 'GET',
+					data: {villageCode: selectedVillage},
+					success: function (response) {
+						$("#databody").empty();
+						$("#contentDivId").empty();
+						var cr_sno = response.cr_sno;
+						var detailList = response.detailList;
+						$('#surveyNo').empty();
+						$('#surveyNo').append($('<option>').text('Select Aadhaar No').attr('value', ''));
+
+						for (var j = 0; j < cr_sno.length; j++) {
+							var bean = cr_sno[j];
+							$('#surveyNo').append($('<option>').val(bean.cr_farmeruid).text(bean.cr_farmeruid));
+						}
+						for (var j = 0; j < detailList.length; j++) {
+							 var accountTypeText = '';
+   
+
+							var bean = detailList[j];
+							 if (bean.bnk_actype === 'C') {
+        accountTypeText = 'Current';
+    } else if (bean.bnk_actype === 'S') {
+        accountTypeText = 'Savings';
+    }
+							$("#databody").append('<tr style="fontsize:200px; ">'
+								+ '<td align="left">' + bean.wbedname + '</td>'
+								+ '<td align="left">' + bean.wbemname + '</td>'
+								+ '<td align="left">' + bean.wbevname + '</td>'
+								+ '<td align="left">' + bean.cr_farmeruid + '</td>'
+								+ '<td align="left">' + bean.occupname + '</td>'
+								+ '<td align="left">' + bean.occupfname + '</td>'
+								+ '<td align="left">' + bean.bnk_acno + '</td>'
+								+ '<td align="left">' + bean.bnk_name + '</td>'
+								+ '<td align="left">' + bean.bnk_brnch_name + '</td>'
+								+ '<td align="left">' + accountTypeText+ '</td>'
+								+ '</tr>');
+						}
+						$('#LPSearch').show();
+					},
+					error: function (xhr, status, error) {
+						console.error('Error fetching survey numbers:', error);
+
+					}
+				});
+			});
+		});
+
+
+
+		function getBankDet() {
+			var crSno = $('#surveyNo').val();
+			$.ajax({
+				type: "GET",
+				url: './getBankDet',
+				data: {
+					"aadhaar": crSno,
+					"village": $("#village").val(),
+				},
+				success: function (data) {
+					$("#contentDivId").html(data)
+				}
+			});
+		}
+
+
+		function getBranch(index, value) {
+			$("#ifscCode" + index).val(' ');
+			$("#bankbranch" + index).empty().append('<option value="">----Select----</option>');
+			document.getElementById("bankbranch" + index).disabled = false;
+			$.ajax({
+				type: "GET",
+				url: './getBranch',
+				data: {
+					"bankname": value,
+				},
+				success: function (resp) {
+					for (var j = 0; j < resp.length; j++) {
+						var bean = resp[j];
+						$("#bankbranch" + index).append('<option value="' + bean.bnk_brnch_cod + '">' + bean.bnk_brnch_name + '</option>');
+						//	$("#bankbranch"+index).disabled= 'false';
+
+					}
+				}
+			});
+
+
+		}
+
+
+
+
+		function getIfsc(index, value) {
+			$("#ifscCode" + index).empty();
+			$.ajax({
+				type: "GET",
+				url: './getIfsc',
+				data: {
+					"branchname": value,
+				},
+				success: function (resp) {
+					$("#ifscCode" + index).val(resp);
+				}
+			});
+
+
+		}
+
+
+
+		function getIfsc(index, value) {
+			$("#ifscCode" + index).empty();
+			$.ajax({
+				type: "GET",
+				url: './getIfsc',
+				data: {
+					"branchname": value,
+				},
+				success: function (resp) {
+					$("#ifscCode" + index).val(resp);
+				}
+			});
+
+
+		}
+
+
+
+		function saveBankDet() {
+			const table = document.getElementById("ownerGrid");
+			const rows = table.getElementsByTagName("tbody")[0].getElementsByTagName("tr");
+			const selectedData = [];
+			var count = 0;
+
+			for (let i = 0; i < rows.length; i++) {
+				const row = rows[i];
+				const checkbox = row.querySelector('input[type="checkbox"]');
+				if ((checkbox && checkbox.checked)) {
+					count++;
+				}
+
+			}
+
+
+
+
+			if (count === 0) {
+				alert('Please Select Atleast One Record');
+				return false;
+			}
+
+			for (let i = 0; i < rows.length; i++) {
+				const row = rows[i];
+				const checkbox = row.querySelector('input[type="checkbox"]');
+				if (checkbox && checkbox.checked) {
+					const bankAccount = document.getElementById('bankaccount' + i).value.trim();
+					const bankName = document.getElementById('bankname' + i).value.trim();
+					const bankBranch = document.getElementById('bankbranch' + i).value.trim();
+					const bankType = document.getElementById('banktype' + i).value.trim();
+
+					if (bankAccount === '' || bankName === '' || bankBranch === '' || bankType === '') {
+						alert('Please Fill All The Details');
+						return false;
+					}
+
+					const rowData = {
+						districtName: document.getElementById('wbdcode' + i).value,
+						mandalName: document.getElementById('wbmcode' + i).value,
+						cr_vcode: document.getElementById('wbvcode' + i).value,
+						aadhaar: document.getElementById('aadhaar' + i).value,
+						bankAccount: bankAccount,
+						bankname: bankName,
+						branchname: bankBranch,
+						bankType: bankType,
+						ifscCode: document.getElementById('ifscCode' + i).value,
+					};
+
+					selectedData.push(rowData);
+				}
+			}
+
+			$.ajax({
+				url: './saveBankDet',
+				method: 'POST',
+				contentType: 'application/json',
+				data: JSON.stringify(selectedData),
+				success: function (response) {
+					alert('Data saved successfully');
+					window.location.reload();
+				},
+				error: function (error) {
+					alert('Error saving data');
+				}
+			});
+		}
+	</script>
+
+</body>
+
+</html>

@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="header">
+</head>
+
+<body>
+	<div th:insert="headerImage"></div>
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+</body>
+<scripthead>
+
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+<!--	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">-->
+<!--	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>-->
+<!--	<link rel="stylesheet" type="text/css" href="css/style.css">-->
+<!--	<script type="text/javascript" th:src="@{/js/jquery.js}"></script>-->
+
+	<title>Forward Perennial Details</title>
+	<script>
+		$(document).ready(function () {
+			$("#checkedAll").change(function () {
+				if (this.checked) {
+					$(".forwarded").attr('disabled', false);
+					$(".forwarded").attr('readonly', false);
+					$(".checkSingle").each(function () {
+						this.checked = true;
+					})
+				} else {
+					$(".forwarded").attr('disabled', true);
+					$(".forwarded").attr('readonly', true);
+					$(".checkSingle").each(function () {
+						this.checked = false;
+					})
+				}
+			});
+
+			$(".checkSingle").click(function () {
+				if ($(this).is(":checked")) {
+					var isAllChecked = 0;
+					$(".checkSingle").each(function () {
+						if (!this.checked)
+							isAllChecked = 1;
+					})
+					if (isAllChecked == 0) {
+						$("#checkedAll").prop("checked", true);
+					}
+				} else {
+					$("#checkedAll").prop("checked", false);
+				}
+			});
+		});
+
+		function getForwarded(a) {
+			var check = document.getElementById("checkBoxId" + a).value;
+			if ((document.getElementById("checkBoxId" + a).checked) === true) {
+				$('#forwarded' + a).attr('disabled', false);
+				$('#forwarded' + a).attr('readonly', false);
+			} else {
+				$('#forwarded' + a).attr('disabled', true);
+				$('#forwarded' + a).attr('readonly', true);
+				$('#forwarded' + a).val('----select---');
+			}
+		}
+
+		function getRemarks(a) {
+			$('#irrgsrcormethod' + a).val('----Select----');
+			$('#reason' + a).val('----Select----');
+			var extentId = document.getElementById("extent" + a).value;
+			var reasonId = document.getElementById("reason" + a).value;
+			var remarks = document.getElementById("forwarded" + a).value;
+			var extent = document.getElementById("prevExtId" + a).value;
+			if (remarks === "1") {
+				$('#extent' + a).val(extent);
+				$('#extent' + a).attr('disabled', true);
+				$('#extent' + a).attr('readonly', true);
+			} else {
+				$('#extent' + a).val('');
+				$('#extent' + a).attr('disabled', false);
+				$('#extent' + a).attr('readonly', false);
+			}
+			if (remarks === "1" || remarks === "2") {
+				$('#reason' + a).attr('disabled', true);
+				$('#reason' + a).attr('readonly', true);
+
+				$('#irrgsrcormethod' + a).attr('disabled', false);
+				$('#irrgsrcormethod' + a).attr('readonly', false);
+			} else {
+				$('#reason' + a).attr('disabled', false);
+				$('#reason' + a).attr('readonly', false);
+				$('#extent' + a).attr('disabled', true);
+				$('#extent' + a).attr('readonly', true);
+
+				$('#irrgsrcormethod' + a).attr('disabled', true);
+				$('#irrgsrcormethod' + a).attr('readonly', true);
+			}
+		}
+
+		function checkVal() {
+			var selopt = document.getElementsByName("checkClosureAlloc");
+			var flag = false;
+			for (var i = 0; i < selopt.length; i++) {
+				if (selopt[i].checked) {
+					flag = true;
+				}
+			}
+			if (flag) {
+				var checkboxes = document
+					.querySelectorAll('input[type="checkbox"][name="checkClosureAlloc"]')
+				var totCheckBoxCnt = checkboxes.length;
+				for (var i = 0; i < totCheckBoxCnt; i++) {
+					if ((document.getElementById("checkBoxId" + i).checked) === true) {
+						if ($("#forwarded" + i).val() === "2") {
+							if ($("#extent" + i).val() === ""
+								|| $("#extent" + i).val() === null) {
+								alert('Please enter Extent' + i);
+								$("#extent" + i).focus();
+								return false;
+							}
+						}
+						if ($("#forwarded" + i).val() === "1" || $("#forwarded" + i).val() === "2") {
+							if ($("#irrgsrcormethod" + i).val() === "----Select----" || $("#irrgsrcormethod" + i).val() === "" || $("#irrgsrcormethod" + i).val() === null) {
+								alert('Please select change irrigation details yes/no to proceed.' + i);
+								$("#irrgsrcormethod" + i).focus();
+								return false;
+							}
+						}
+						if (eval($("#extent" + i).val()) > eval($("#prevExtId" + i)
+							.val())) {
+							alert('Partial extent should not exceed Available Extent of the survey/LP number.'
+								+ i);
+							$("#extent" + i).focus();
+							return false;
+						}
+						if ($("#forwarded" + i).val() === "----Select----") {
+							alert('Please select any Forwarded option to proceed :'
+								+ i);
+							$("#forwarded" + i).focus();
+							return false;
+						}
+						if ($("#forwarded" + i).val() === "3") {
+							if ($("#reason" + i).val() === "----Select----") {
+								alert('Select Reasons To Submit' + i);
+								$("#forwarded" + i).focus();
+								return false;
+							}
+						}
+					}
+				}
+				if (confirm("PLease Ensure That All the Details are Entered Correctly.") === true) {
+					return submitClosure();
+				} else {
+					return false;
+				}
+				return true;
+			} else {
+				alert("please select atleast one record to submit");
+				return false;
+			}
+
+		}
+		function submitClosure() {
+			var currBookIdList = "", currKhnoList = "", currsurnoList = "", currtotextList = "", curruidList = "",
+				currocnameList = "", prevBookIdList = "", prevKhnoList = "", prevsurnoList = "", prevtotextList = "",
+				prevuidList = "", prevocnameList = "", cropList = "", prevcropcodeList = "", prevVarietyList = "",
+				prevsowdateList = "", dcodeList = "", cropyearList = "", seasonList = "", villcodeList = "",
+				previousbookedextList = "", sowtypeList = "", enterExtentList = "", remarksList = "", FarwardedList = "",
+				irrgSrcList = "", irrgMethodList = "";
+
+			var checkboxes = document
+				.querySelectorAll('input[type="checkbox"][name="checkClosureAlloc"]')
+			var totCheckBoxCnt = checkboxes.length;
+
+			for (var i = 0; i < totCheckBoxCnt; i++) {
+				if ((document.getElementById("checkBoxId" + i).checked) === true) {
+
+					currBookIdList = currBookIdList
+						+ document.getElementById("currBookId" + i).value + ",";
+					currKhnoList = currKhnoList
+						+ document.getElementById("currKhno" + i).value + ",";
+
+					currsurnoList = currsurnoList
+						+ document.getElementById("currsurno" + i).value + ",";
+
+					currtotextList = currtotextList
+						+ document.getElementById("extent" + i).value + ",";
+					curruidList = curruidList
+						+ document.getElementById("curruid" + i).value + ",";
+
+					currocnameList = currocnameList
+						+ document.getElementById("currocname" + i).value + ",";
+
+					prevBookIdList = prevBookIdList
+						+ document.getElementById("prevBookId" + i).value + ",";
+
+					prevKhnoList = prevKhnoList
+						+ document.getElementById("prevKhno" + i).value + ",";
+
+					prevsurnoList = prevsurnoList
+						+ document.getElementById("prevsurno" + i).value + ",";
+
+					prevtotextList = prevtotextList
+						+ document.getElementById("prevtotext" + i).value + ",";
+
+					prevuidList = prevuidList
+						+ document.getElementById("prevuid" + i).value + ",";
+
+					prevocnameList = prevocnameList
+						+ document.getElementById("prevocname" + i).value + ",";
+
+					cropList = cropList + document.getElementById("crop" + i).value
+						+ ",";
+
+					prevcropcodeList = prevcropcodeList
+						+ document.getElementById("prevcropcode" + i).value
+						+ ",";
+
+					prevVarietyList = prevVarietyList
+						+ document.getElementById("prevVariety" + i).value
+						+ ",";
+
+					prevsowdateList = prevsowdateList
+						+ document.getElementById("prevsowdate" + i).value
+						+ ",";
+
+					cropyearList = cropyearList
+						+ document.getElementById("cropyear" + i).value + ",";
+
+					seasonList = seasonList
+						+ document.getElementById("season" + i).value + ",";
+
+					previousbookedextList = previousbookedextList
+						+ document.getElementById("previousbookedext" + i).value
+						+ ",";
+
+					sowtypeList = sowtypeList
+						+ document.getElementById("sowtype" + i).value + ",";
+
+					FarwardedList = FarwardedList
+						+ document.getElementById("forwarded" + i).value + ",";
+
+					var extentList = document.getElementById("prevExtId" + i).value
+						+ ",";
+
+					if (extentList === "" || extentList === null) {
+						enterExtentList = enterExtentList + 0 + ",";
+					} else {
+						enterExtentList = enterExtentList
+							+ document.getElementById("prevExtId" + i).value
+							+ ",";
+					}
+
+					var remarLst = document.getElementById("reason" + i).value;
+					if (remarLst === "" || remarLst === null) {
+						remarksList = remarksList + 0 + ",";
+					} else {
+						remarksList = remarksList
+							+ document.getElementById("reason" + i).value + ",";
+					}
+					
+					irrgSrcList = irrgSrcList + document.getElementById("irsource" + i).value + ",";
+
+				    irrgMethodList = irrgMethodList + document.getElementById("irmehtod" + i).value + ",";
+				}
+
+				
+
+			}
+
+			document.getElementById("currBookIdLst").value = currBookIdList;
+
+			document.getElementById("currKhnoLst").value = currKhnoList;
+
+			document.getElementById("currsurnoLst").value = currsurnoList;
+
+			document.getElementById("currtotextLst").value = currtotextList;
+
+			document.getElementById("curruidLst").value = curruidList;
+
+			document.getElementById("currocnameLst").value = currocnameList;
+
+			document.getElementById("prevBookIdLst").value = prevBookIdList;
+
+			document.getElementById("prevKhnoLst").value = prevKhnoList;
+
+			document.getElementById("prevsurnoLst").value = prevsurnoList;
+
+			document.getElementById("prevtotextLst").value = prevtotextList;
+
+			document.getElementById("prevuidLst").value = prevuidList;
+
+			document.getElementById("prevocnameLst").value = prevocnameList;
+
+			document.getElementById("cropLst").value = cropList;
+
+			document.getElementById("prevcropcodeLst").value = prevcropcodeList;
+
+			document.getElementById("prevVarietyLst").value = prevVarietyList;
+
+			document.getElementById("prevsowdateLst").value = prevsowdateList;
+
+			document.getElementById("cropyearLst").value = cropyearList;
+
+			document.getElementById("seasonLst").value = seasonList;
+
+			document.getElementById("previousbookedextLst").value = previousbookedextList;
+
+			document.getElementById("sowtypeLst").value = sowtypeList;
+
+			document.getElementById("preExtId").value = enterExtentList;
+
+			document.getElementById("reasonLst").value = remarksList;
+
+			document.getElementById("forwardLst").value = FarwardedList;
+
+			document.getElementById("irrgSrcLst").value = irrgSrcList;
+
+			document.getElementById("irrMethodLst").value = irrgMethodList;
+		}
+
+		function populateIrrigationMethod(index, selectedValue) {
+			var irrgmethod = document.getElementById("irsource" + index).value;
+			$('#irmehtod' + index).attr('disabled', false);
+			$('#irmehtod' + index).attr('readonly', false);
+			$('#irmehtod' + index).empty();
+			if (irrgmethod) {
+				$.ajax({
+					url: './getIrrigationMethods/' + irrgmethod,
+					type: 'GET',
+					success: function (data) {
+						data.forEach(function (method) {
+							$('#irmehtod' + index).append('<option value="' + method.irgcode + '">' + method.irgdesc + '</option>');
+						});
+						$('#irmehtod' + index).prop('disabled', false);
+					},
+					error: function (xhr, status, error) {
+						console.error('Error fetching irrigation methods:', error);
+						alert('Error fetching irrigation methods: ' + error); // Debugging alert for errors
+					}
+				});
+			} else {
+				alert('Irrigation method is empty or not valid.');
+			}
+		}
+
+		function populateIrgSource(index, selectedValue) {
+			var irgSources = document.getElementById("oldIrgSource" + index).value;
+			var irgMethods = document.getElementById("oldIrgMethod" + index).value;
+
+			if (selectedValue === "1") {
+				$('#irsource' + index).attr('disabled', false);
+				$('#irsource' + index).attr('readonly', false);
+				$('#irmehtod' + index).attr('disabled', true);
+				$('#irmehtod' + index).attr('readonly', true);
+
+			} else if (selectedValue === "2") {
+				$('#irsource' + index).attr('disabled', true);
+				$('#irsource' + index).attr('readonly', true);
+
+				$('#irmehtod' + index).attr('disabled', true);
+				$('#irmehtod' + index).attr('readonly', true);
+
+				$('#irsource' + index).val(irgSources);
+				$('#irmehtod' + index).val(irgMethods);
+
+				var dropdown = document.getElementById("irsource" + index);
+				if (dropdown) {
+					for (let option of dropdown.options) {
+						if (option.value === irgSources) {
+							option.setAttribute('selected', 'selected');
+						} else {
+							option.removeAttribute('selected');
+						}
+					}
+				}
+			}
+
+		}
+	</script>
+	<style>
+		.selectedRow {
+			background-color: lightblue;
+		}
+
+		table {
+			width: 100%;
+			border-collapse: collapse;
+		}
+
+		table,
+		th,
+		td {
+			border: 1px solid black;
+		}
+
+		th {
+			background-color: #e8e8e8;
+			color: black;
+			text-align: center;
+			font-weight: bold;
+		}
+
+		td {
+			text-align: center;
+		}
+
+		.table-heading {
+			background-color: #3498db;
+			text-align: center;
+			width: 90%;
+			margin: 0 auto;
+			padding: 10px;
+			color: white;
+			font-weight: bold;
+		}
+	</style>
+	</head>
+
+	<body>
+		<div class="heading" colspan="20" align="center">
+			<h1>Forward Perennial/Biennial Crops</h1>
+		</div>
+		<div>
+			<div  style="height: 10vh;">
+				<div>
+					<form th:action="@{/saveperinneal}" method="post" onsubmit="return checkVal1();">
+						<div th:if="${bookingDataList != null and not #lists.isEmpty(bookingDataList)}">
+							<table id="tableStkId" style="width: 50%; margin: 0 auto;">
+								<thead>
+									<tr>
+										<td></td>
+										<td colspan="8" align="center" style="background-color:#a2d9ce"><b>Current
+												Season Webland
+												Details</b></td>
+										<td colspan="8" align="center" style="background-color:rgb(255, 128, 64)">
+											<b>Previous
+												Season Booked/Forwarded
+												Details</b></td>
+									</tr>
+									<tr>
+										<th><input type="checkbox" th:id="checkedAll" /></th>
+										<th style="text-align: center; background-color: #a2d9ce"><b>S.No.</b>
+										</th>
+										<th style="text-align: center; background-color: #a2d9ce">Booking
+											Id</th>
+										<th style="text-align: center; background-color: #a2d9ce">Khatha
+											No</th>
+										<th style="text-align: center; background-color: #a2d9ce">Survey
+											No/LP No</th>
+										<th style="text-align: center; background-color: #a2d9ce">Occupant
+											Extent</th>
+										<th></th>
+										<th style="text-align: center; background-color: #a2d9ce">AadharNo</th>
+										<th style="text-align: center; background-color: #a2d9ce">Occupant
+											Farmer Name</th>
+										<!--									<th-->
+										<!--										style="text-align: center; background-color: rgb(0, 128, 255)">Kharif/-->
+										<!--										Rabi Details</th>-->
+										<th style="text-align: center;background-color: #f6ddcc">Booking Id
+										</th>
+										<th style="text-align: center;background-color: #f6ddcc">Khatha No</th>
+										<th style="text-align: center;background-color: #f6ddcc">Survey No/LP No</th>
+										<th style="text-align: center;background-color: #f6ddcc">Booked
+											Extent</th>
+										<th></th>
+										<th style="text-align: center;background-color: #f6ddcc">AadharNo</th>
+										<th style="text-align: center;background-color: #f6ddcc">Occupant
+											Farmer Name</th>
+										<th style="text-align: center;background-color: #f6ddcc">Crop </th>
+										<th style="text-align: center; background-color: rgb(133, 193, 233)">forward
+										</th>
+										<th style="text-align: center; background-color: rgb(133, 193, 233)">Change
+											Irrigation Details
+										</th>
+										<th style="text-align: center; background-color: rgb(133, 193, 233)">Irrigation
+											Source</th>
+										<th style="text-align: center; background-color: rgb(133, 193, 233)">Irrigation
+											Method</th>
+										<th style="text-align: center; background-color: rgb(133, 193, 233)">Extent</th>
+										<th style="text-align: center; background-color: rgb(133, 193, 233)">Reasons
+										</th>
+									</tr>
+								</thead>
+								<tr th:each="pattadhar, rowStat : ${bookingDataList}">
+									<td><input type="checkbox" class="checkSingle" name="checkClosureAlloc"
+											th:id="'checkBoxId' + ${rowStat.index}"
+											th:onclick="'return getForwarded('+${rowStat.index}+')'" /></td>
+									<td th:text="${rowStat.index + 1}"></td>
+									<td th:text="${pattadhar.currBookId}"></td>
+									<td th:text="${pattadhar.currKhno}"></td>
+									<td th:text="${pattadhar.currsurno}"></td>
+									<td th:text="${pattadhar.currtotext}"></td>
+									<td><input type="hidden" name="curExtId" th:id="'curExtId'+ ${rowStat.index}"
+											th:value="${pattadhar.currtotext}" /></td>
+									<td th:text="${pattadhar.curruid}"></td>
+									<td th:text="${pattadhar.currocname}"></td>
+									<!--								<td th:text="${pattadhar.peri_status}"></td>-->
+									<td th:text="${pattadhar.prevBookId}"></td>
+									<td th:text="${pattadhar.prevKhno}"></td>
+									<td th:text="${pattadhar.prevsurno}"></td>
+									<td th:text="${pattadhar.prevtotext}"></td>
+									<td><input type="hidden" name="prevExtId" th:id="'prevExtId'+ ${rowStat.index}"
+											th:value="${pattadhar.prevtotext}" /></td>
+									<td th:text="${pattadhar.prevuid}"></td>
+									<td th:text="${pattadhar.prevocname}"></td>
+									<td th:text="${pattadhar.crop}"></td>
+									<td><select th:id="'forwarded'+${rowStat.index}" name="forwarded" class="forwarded"
+											style="width: 200px" readonly disabled="true"
+											th:onchange="'return getRemarks('+${rowStat.index}+')'">
+											<option>----Select----</option>
+											<option value="1">Forward with Full Extent</option>
+											<option value="2">Forward with Partial Extent</option>
+											<option value="3">Not to Forward</option>
+										</select>
+									</td>
+									<td>
+										<select th:id="'irrgsrcormethod'+${rowStat.index}"
+											th:name="'irrgsrcormethod'+${rowStat.index}" class="irrgsrcormethod"
+											style="width: 200px" readonly disabled
+											th:onchange="'return populateIrgSource('+${rowStat.index}+',this.value)'">
+											<option>----Select----</option>
+											<option value="1">Yes</option>
+											<option value="2">No</option>
+										</select>
+									</td>
+									<td>
+										<select th:id="'irsource' + ${rowStat.index}"
+											th:name="'irsource' + ${rowStat.index}" class="irsource"
+											style="width: 200px" readonly disabled
+											th:onchange="'return populateIrrigationMethod('+${rowStat.index}+',this.value)'">
+											<option>----Select----</option>
+											<option th:each="vi : ${waterResources}" th:value="${vi.wsrcid}"
+												th:text="${vi.wsrcdesc}"
+												th:selected="${vi.wsrcdesc == pattadhar.wsrcdesc}">
+											</option>
+										</select>
+									</td>
+
+									<td>
+										<select th:id="'irmehtod' + ${rowStat.index}"
+											th:name="'irmehtod' + ${rowStat.index}" class="irmehtod"
+											style="width: 200px" readonly disabled>
+											<option th:value="${pattadhar.irrMethodCode}"
+												th:text="${pattadhar.irgdesc}">
+											</option>
+										</select>
+									</td>
+									<td><input type="text" th:id="'extent'+${rowStat.index}" name="extent" readonly
+											disabled="true" />
+									</td>
+									<td><select th:id="'reason'+${rowStat.index}" name="reason" style="width: 200px;"
+											readonly disabled="true">
+											<option>----Select----</option>
+											<option th:each="reason : ${reasons}" th:value="${reason.code}"
+												th:text="${reason.reason}"></option>
+										</select>
+									</td>
+
+									<input type="hidden" name="oldIrgSource" th:id="'oldIrgSource'+ ${rowStat.index}"
+										th:value="${pattadhar.wsrcId}" />
+									<input type="hidden" name="oldIrgMethod" th:id="'oldIrgMethod'+ ${rowStat.index}"
+										th:value="${pattadhar.irrMethodCode}" />
+									<input type="hidden" name="currBookId" th:id="'currBookId'+ ${rowStat.index}"
+										th:value="${pattadhar.currBookId}" />
+									<input type="hidden" name="currKhno" th:id="'currKhno' + ${rowStat.index}"
+										th:value="${pattadhar.currKhno}" />
+									<input type="hidden" name="currsurno" th:id="'currsurno'+ ${rowStat.index}"
+										th:value="${pattadhar.currsurno}" />
+									<input type="hidden" name="currtotext" th:id="'currtotext'+ ${rowStat.index}"
+										th:value="${pattadhar.currtotext}" />
+									<input type="hidden" name="curruid" th:id="'curruid'+ ${rowStat.index}"
+										th:value="${pattadhar.curruid}" />
+									<input type="hidden" name="currocname" th:id="'currocname'+${rowStat.index}"
+										th:value="${pattadhar.currocname}" />
+									<input type="hidden" name="prevBookId" th:id="'prevBookId'+${rowStat.index}"
+										th:value="${pattadhar.prevBookId}" />
+									<input type="hidden" name="prevKhno" th:id="'prevKhno'+${rowStat.index}"
+										th:value="${pattadhar.prevKhno}" />
+									<input type="hidden" name="prevsurno" th:id="'prevsurno'+${rowStat.index}"
+										th:value="${pattadhar.prevsurno}" />
+									<input type="hidden" name="prevtotext" th:id="'prevtotext'+${rowStat.index}"
+										th:value="${pattadhar.prevtotext}" />
+									<input type="hidden" name="prevuid" th:id="'prevuid'+${rowStat.index}"
+										th:value="${pattadhar.prevuid}" />
+									<input type="hidden" name="prevocname" th:id="'prevocname'+${rowStat.index}"
+										th:value="${pattadhar.prevocname}" />
+									<input type="hidden" name="crop" th:id="'crop'+${rowStat.index}"
+										th:value="${pattadhar.crop}" />
+									<input type="hidden" name="prevcropcode" th:id="'prevcropcode'+ ${rowStat.index}"
+										th:value="${pattadhar.prevcropcode}" />
+									<input type="hidden" th:id="'prevVariety' + ${rowStat.index}" name="prevVariety"
+										th:value="${pattadhar.prevVariety}" />
+									<input type="hidden" name="prevsowdate" th:id="'prevsowdate'+ ${rowStat.index}"
+										th:value="${pattadhar.prevsowdate}" />
+									<input type="hidden" name="dcode" th:id="'dcode'+ ${rowStat.index}"
+										th:value="${pattadhar.dcode}" />
+									<input type="hidden" name="cropyear" th:id="'cropyear'+ ${rowStat.index}"
+										th:value="${pattadhar.cropyear}" />
+									<input type="hidden" name="season" th:id="'season'+${rowStat.index}"
+										th:value="${pattadhar.season}" />
+									<input type="hidden" name="villcode" th:id="'villcode'+${rowStat.index}"
+										th:value="${pattadhar.villcode}" />
+									<input type="hidden" name="previousbookedext"
+										th:id="'previousbookedext'+${rowStat.index}"
+										th:value="${pattadhar.previousbookedext}" />
+									<input type="hidden" name="sowtype" th:id="'sowtype'+${rowStat.index}"
+										th:value="${pattadhar.sowtype}" />
+
+
+
+									<input type="hidden" th:id="currBookIdLst" name="currBookIdLst" />
+									<input type="hidden" th:id="currKhnoLst" name="currKhnoLst" /> <input type="hidden"
+										th:id="currsurnoLst" name="currsurnoLst" /> <input type="hidden"
+										th:id="currtotextLst" name="currtotextLst" /> <input type="hidden"
+										th:id="curruidLst" name="curruidLst" /> <input type="hidden"
+										th:id="currocnameLst" name="currocnameLst" /> <input type="hidden"
+										th:id="prevBookIdLst" name="prevBookIdLst" /> <input type="hidden"
+										th:id="prevKhnoLst" name="prevKhnoLst" /> <input type="hidden"
+										th:id="prevsurnoLst" name="prevsurnoLst" />
+									<input type="hidden" th:id="prevtotextLst" name="prevtotextLst" /> <input
+										type="hidden" th:id="prevuidLst" name="prevuidLst" /> <input type="hidden"
+										th:id="prevocnameLst" name="prevocnameLst" /> <input type="hidden"
+										th:id="cropLst" name="cropLst" /> <input type="hidden" th:id="prevcropcodeLst"
+										name="prevcropcodeLst" /> <input type="hidden" th:id="prevVarietyLst"
+										name="prevVarietyLst" /> <input type="hidden" th:id="prevsowdateLst"
+										name="prevsowdateLst" /> <input type="hidden" th:id="cropyearLst"
+										name="cropyearLst" />
+									<input type="hidden" th:id="seasonLst" name="seasonLst" /> <input type="hidden"
+										th:id="previousbookedextLst" name="previousbookedextLst" /> <input type="hidden"
+										th:id="sowtypeLst" name="sowtypeLst" /> <input type="hidden" th:id="preExtId"
+										name="preExtId"> <input type="hidden" id="forwardLst" name="forwardLst"> <input
+										type="hidden" id="reasonLst" name="reasonLst">
+									<input type="hidden" id="irrgSrcLst" name="irrgSrcLst"> <input type="hidden"
+										id="irrMethodLst" name="irrMethodLst">
+							</table>
+							<br>
+
+
+							<div align="center">
+								<input type="submit" value="submit" style="background-color: rgb(218, 247, 166);"
+									th:onclick="return checkVal();">
+								<button type="button" th:onclick="window.location.href='/forwardPerinneal'"
+									style="background-color: rgb(218, 247, 166);">Back</button>
+							</div>
+						</div>
+						<div th:if="${bookingDataList == null or #lists.isEmpty(bookingDataList)}"
+							style="text-align: center;font-size: large;font-weight: bold;">
+							<h1>- - - No records found - - -</h1>
+						</div>
+
+
+					</form>
+				</div>
+			</div>
+		</div>
+	</body>
+
+</html>

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="header">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Cropbooking details Report</title>
+
+    <!-- Your custom styles -->
+<!--    <link rel="stylesheet" type="text/css" href="css/style.css">-->
+
+<style>
+   thead{
+      position:sticky;
+      top:0%;
+   }
+</style>
+</head>
+
+<body>
+    <div th:insert="headerImage"></div>
+    <div th:insert="navBarTop"></div>
+    <div th:insert="headerMessage"></div>
+
+    <form name="form1" method="post" th:action="@{/cropbookingdetails-report}">
+        <div style="width: 30%; max-width: 800px; margin: 0 auto; padding: 20px;">
+            <div style="background-color: #e6e2d3; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); padding: 20px;">
+                <div style="text-align: center;">
+                    <h4 style="background-color: green; color: white; display: inline-block; padding: 10px 15px; border-radius: 5px;">
+                        Crop Booking Details
+                    </h4>
+                </div>
+
+                <table style="width: 100%; border-collapse: collapse; margin: 0 auto;">
+                    <tr>
+                        <th colspan="2" style="padding: 10px;"></th>
+                    </tr>
+                    <tr>
+                        <td style="width: 50%; font-weight: bold; padding: 10px;">Crop Year <span style="color: red;">*</span> :</td>
+                        <td style="padding: 1px;">
+                            <select name="cropyear" id="cropyearid" style="width: 100%; max-width: 200px; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                                <option value="0" th:selected="0">------Select CropYear--------</option>
+                                <option th:each="cropyear: ${cropyears}" th:value="${cropyear.seasonvalue}" th:text="${cropyear.cropyear}"></option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="width: 50%; font-weight: bold; padding: 10px;">Crop <span style="color: red;">*</span> :</td>
+                        <td style="padding: 1px;">
+                            <select name="cropname" id="cropnameid" style="width: 100%; max-width: 200px; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                                <option value="0" th:selected="0">------Select Crop--------</option>
+                                <option th:each="cropnme: ${cropnames}" th:value="${cropnme.cropid}" th:text="${cropnme.cropname}"></option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="width: 50%; font-weight: bold; padding: 10px;">Farmer Type :</td>
+                        <td style="padding: 1px;">
+                            <select name="farmertypename" id="farmertypeid" style="width: 100%; max-width: 200px; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                                <option value="0" th:selected="0">------Select Farmer Type--------</option>
+                                <option value="1">To Be Authenticated</option>
+                            </select>
+                        </td>
+                    </tr>
+                   
+                    <tr>
+                        <td colspan="3" style="text-align: center; padding: 0px;">
+                            <div style="margin-top: 20px;">
+                                <input type="submit" value="Submit" name="Submit" style="background-color: #28a745; color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; font-size: 16px;" />
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </form>
+
+    <p id="displayText" style="text-align: center; color: red; font-weight: bold;"></p>
+
+   <table id="customers" style="width: 100%; border-collapse: collapse; margin-top: 20px; font-family: Arial, sans-serif;">
+    <thead style="position:sticky;top:0%">
+        <tr style="background-color: green ; color: white;">
+            <th style="padding: 12px 15px; text-align: center; border: 1px solid #ddd; font-weight: bold;">Sl.No</th>
+            <th style="padding: 12px 15px; text-align: center; border: 1px solid #ddd; font-weight: bold;">Booking-id</th>
+            <th style="padding: 12px 15px; text-align: center; border: 1px solid #ddd; font-weight: bold;">Mandal</th>
+            <th style="padding: 12px 15px; text-align: center; border: 1px solid #ddd; font-weight: bold;">Village</th>
+            <th style="padding: 12px 15px; text-align: center; border: 1px solid #ddd; font-weight: bold;">RBK Name</th>
+            <th style="padding: 12px 15px; text-align: center; border: 1px solid #ddd; font-weight: bold;">Farmer Name</th>
+            <th style="padding: 12px 15px; text-align: center; border: 1px solid #ddd; font-weight: bold;">Aadhaar Number</th>
+            <th style="padding: 12px 15px; text-align: center; border: 1px solid #ddd; font-weight: bold;">Father Name</th>
+            <th style="padding: 12px 15px; text-align: center; border: 1px solid #ddd; font-weight: bold;">Khatha Number</th>
+            <th style="padding: 12px 15px; text-align: center; border: 1px solid #ddd; font-weight: bold;">Survey Number</th>
+            <th style="padding: 12px 15px; text-align: center; border: 1px solid #ddd; font-weight: bold;">Crop Name</th>
+            <th style="padding: 12px 15px; text-align: center; border: 1px solid #ddd; font-weight: bold;">Variety Name</th>
+            <th style="padding: 12px 15px; text-align: center; border: 1px solid #ddd; font-weight: bold;">Area Sown</th>
+            <th style="padding: 12px 15px; text-align: center; border: 1px solid #ddd; font-weight: bold;">Date of Sowing</th>
+            <th style="padding: 12px 15px; text-align: center; border: 1px solid #ddd; font-weight: bold;">Crop Nature</th>
+            <th style="padding: 12px 15px; text-align: center; border: 1px solid #ddd; font-weight: bold;">Water Source</th>
+            <th style="padding: 12px 15px; text-align: center; border: 1px solid #ddd; font-weight: bold;">Method of Irrigation</th>
+            <th style="padding: 12px 15px; text-align: center; border: 1px solid #ddd; font-weight: bold;">Farming Type</th>
+            <th style="padding: 12px 15px; text-align: center; border: 1px solid #ddd; font-weight: bold;">Updated By</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr th:each="crpreprt, iterStat : ${crpreprt}" style="border-bottom: 1px solid #ddd;">
+            <td th:text="${iterStat.count}" style="padding: 10px; border: 1px solid #ddd; text-align: right;"></td>
+            <td th:text="${crpreprt.bookingid}" style="padding: 10px; border: 1px solid #ddd; text-align: right;"></td>
+            <td th:text="${crpreprt.mname}" style="padding: 10px; border: 1px solid #ddd; text-align: left;"></td>
+            <td th:text="${crpreprt.vname}" style="padding: 10px; border: 1px solid #ddd;text-align: left"></td>
+            <td th:text="${crpreprt.rbkname}" style="padding: 10px; border: 1px solid #ddd;text-align: left"></td>
+            <td th:text="${crpreprt.oc_name}" style="padding: 10px; border: 1px solid #ddd;text-align: left"></td>
+            <td th:text="${crpreprt.cr_farmeruid}" style="padding: 10px; border: 1px solid #ddd;text-align: right"></td>
+            <td th:text="${crpreprt.oc_fname}" style="padding: 10px; border: 1px solid #ddd;text-align: left"></td>
+            <td th:text="${crpreprt.kh_no}" style="padding: 10px; border: 1px solid #ddd;text-align: right"></td>
+            <td th:text="${crpreprt.cr_sno}" style="padding: 10px; border: 1px solid #ddd;text-align: right"></td>
+            <td th:text="${crpreprt.cropname}" style="padding: 10px; border: 1px solid #ddd;text-align: left"></td>
+            <td th:text="${crpreprt.varietyname}" style="padding: 10px; border: 1px solid #ddd;text-align: left"></td>
+        	<td th:text="${#numbers.formatDecimal(crpreprt.cultivable_land, 1, 2)}" style="padding: 10px; border: 1px solid #ddd; text-align: right"></td>
+            <td th:text="${crpreprt.cr_sow_date}" style="padding: 10px; border: 1px solid #ddd;text-align: center"></td>
+            <td th:text="${crpreprt.cropnature}" style="padding: 10px; border: 1px solid #ddd;text-align: left"></td>
+            <td th:text="${crpreprt.watersource}" style="padding: 10px; border: 1px solid #ddd;text-align: left"></td>
+            <td th:text="${crpreprt.irrmethoddesc}" style="padding: 10px; border: 1px solid #ddd;text-align: left"></td>
+            <td th:text="${crpreprt.farmingtype}" style="padding: 10px; border: 1px solid #ddd;text-align: left"></td>
+            <td th:text="${crpreprt.updatedby}" style="padding: 10px; border: 1px solid #ddd;text-align: left"></td>
+        </tr>
+    </tbody>
+</table>
+
+    <div style="text-align: center; margin-top: 20px;">
+        <span th:text="${bind}" style="color: red; font-weight: bold;"></span>
+    </div>
+</body>
+
+</html>

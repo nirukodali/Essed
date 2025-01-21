@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="header">
+	
+</head>
+<script>
+		function CallPrint(strid) {
+			var prtContent = document.getElementById(strid);
+			var mywindow = window.open('', '', 'left=0,top=0,width=950,height=600,toolbar=1,scrollbars=1,status=1,addressbar=0');
+			var is_chrome = Boolean(mywindow.chrome);
+			mywindow.document.write(prtContent.innerHTML);
+			mywindow.document.close(); // necessary for IE >= 10 and necessary before onload for chrome
+
+			if (is_chrome) {
+				mywindow.onload = function () { // wait until all resources loaded 
+					mywindow.focus(); // necessary for IE >= 10
+					mywindow.print(); // change window to mywindow
+					mywindow.close(); // change window to mywindow
+				};
+			} else {
+				mywindow.document.close(); // necessary for IE >= 10
+				mywindow.focus(); // necessary for IE >= 10
+				mywindow.print();
+				mywindow.close();
+			}
+
+			return true;
+		}
+
+	</script>
+	<script language="javascript">
+		var tableToExcel = (function () {
+			var uri = 'data:application/vnd.ms-excel;base64,'
+				, template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table align="center">{table}</table></body></html>'
+				, base64 = function (s) {
+					return window.btoa(unescape(encodeURIComponent(s)))
+				}
+				, format = function (s, c) {
+					return s.replace(/{(\w+)}/g, function (m, p) {
+						return c[p];
+					})
+				}
+			return function (table, name) {
+				if (!table.nodeType)
+					table = document.getElementById(table)
+				var ctx = {worksheet: name || 'Worksheet', table: table.innerHTML}
+				window.location.href = uri + base64(format(template, ctx))
+			}
+		})()
+		
+	    
+	    function calculateTotals() {
+           let totalSFMFFarmers = 0;
+        let totalSFMFExt = 0;
+        let totalSFMFIpsamt = 0;
+        let totalOFFarmers = 0;
+        let totalOFExt = 0;
+        let totalOFIpsamt = 0;
+
+        // Loop through the rows of the table (excluding header and footer)
+        document.querySelectorAll('tbody tr').forEach((row) => {
+            totalSFMFFarmers += parseFloat(row.cells[2].innerText) || 0;
+            totalSFMFExt += parseFloat(row.cells[3].innerText.replace(/,/g, '')) || 0;
+            totalSFMFIpsamt += parseFloat(row.cells[4].innerText) || 0;
+            totalOFFarmers += parseFloat(row.cells[5].innerText) || 0;
+            totalOFExt += parseFloat(row.cells[6].innerText.replace(/,/g, '')) || 0;
+            totalOFIpsamt += parseFloat(row.cells[7].innerText) || 0;
+        });
+        // Set the total values in the footer
+        document.getElementById('totalSFMFFarmers').innerText = totalSFMFFarmers.toFixed(2);
+        document.getElementById('totalSFMFExt').innerText = totalSFMFExt.toLocaleString(undefined, {minimumFractionDigits: 2});
+        document.getElementById('totalSFMFIpsamt').innerText = totalSFMFIpsamt.toFixed(2);
+        document.getElementById('totalOFFarmers').innerText = totalOFFarmers.toFixed(2);
+        document.getElementById('totalOFExt').innerText = totalOFExt.toLocaleString(undefined, {minimumFractionDigits: 2});
+        document.getElementById('totalOFIpsamt').innerText = totalOFIpsamt.toFixed(2);
+
+        // Calculate and display the total Farmers, Ext, and Ipsamt (SFMF + OF)
+        document.getElementById('totalFarmers').innerText = (totalSFMFFarmers + totalOFFarmers).toFixed(2);
+        document.getElementById('totalExt').innerText = (totalSFMFExt + totalOFExt).toLocaleString(undefined, {minimumFractionDigits: 2});
+        document.getElementById('totalIpsamt').innerText = (totalSFMFIpsamt + totalOFIpsamt).toFixed(2);
+    }
+
+    // Call the function after the page loads
+    window.onload = calculateTotals;
+    
+
+		function goBack(){
+			window.location.href="./home";
+			}
+		</script>
+<body>
+	<div th:insert="headerImage"></div>
+
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+
+	
+
+	<body>
+		<div class="heading" style="text-align:center;font-size: 25px;"><b>Abstract Report On Crop Wise SDRF 
+			</b></div>
+
+		<form action="#" method="POST">
+			<div align="center" id="divPrint" class="table table-hover">
+				<table style="width: 90%;" id="tableStkId">
+					<thead align="center">
+						<tr>
+							<th rowspan="2" style="text-align:center"> <b> S.No. </b> </th>
+							<th rowspan="2" style="text-align:center"> <b> Crop Name</b> </th>
+							<th colspan="3" style="text-align:center"> <b> SF/MF</b> </th>
+							<th colspan="3" style="text-align:center"> <b> OF</b> </th>
+							<th colspan="3" style="text-align:center"> <b> Total </b> </th>
+						</tr>
+						<tr >
+							<th> No.Of SF/MF</th>
+							<th>Area Damaged </th>
+							<th> Input Subsidy  </th>
+
+							<th> No.Of SF/MF</th>
+							<th>Area Damaged </th>
+							<th> Input Subsidy  </th>
+
+							<th> No.Of SF/MF</th>
+							<th>Area Damaged </th>
+							<th> Input Subsidy  </th>
+
+						</tr>
+					</thead>
+
+					<tbody>
+						<tr th:each="landdet ,stat: ${sdrf}">
+							<td align="center" th:text="${stat.index + 1}">1</td>
+							<td align="left" th:text="${landdet.cropnameeng}"></td>
+							<td align="right" th:text="${landdet.sfmf_farmers}"></td>
+<!-- 							<td align="right" th:text="${landdet.sfmf_ext}"></td> -->
+							<td align="right" th:text="${#numbers.formatDecimal(landdet.sfmf_ext, 1, 'COMMA', 2, 'POINT')}"></td>
+
+							<td align="right" th:text="${landdet.sfmf_ipsamt}"></td>
+							<td align="right" th:text="${landdet.of_farmers}"></td>
+<!-- 							<td align="right" th:text="${landdet.of_ext}"></td> -->
+							<td align="right" th:text="${#numbers.formatDecimal(landdet.of_ext, 1, 'COMMA', 2, 'POINT')}"></td>
+							
+							<td align="right" th:text="${landdet.of_ipsamt}"></td>
+							<td align="right" th:text="${landdet.sfmf_farmers + landdet.of_farmers}"></td>
+<!--         					<td align="right" th:text="${landdet.sfmf_ext + landdet.of_ext}"></td> -->
+							<td align="right" th:text="${#numbers.formatDecimal(landdet.sfmf_ext + landdet.of_ext, 1, 'COMMA', 2, 'POINT')}"></td>
+
+        					<td align="right" th:text="${landdet.sfmf_ipsamt + landdet.of_ipsamt}"></td>
+						</tr>
+					</tbody>
+					<tfoot>
+    					<tr>
+        					<td colspan="2" align="center"><b>Total</b></td>
+        					<td align="right" style="font-weight: bold;" id="totalSFMFFarmers"></td>
+        					<td align="right" style="font-weight: bold;" id="totalSFMFExt"></td>
+        					<td align="right" style="font-weight: bold;" id="totalSFMFIpsamt"></td>
+        					<td align="right" style="font-weight: bold;" id="totalOFFarmers"></td>
+        					<td align="right" style="font-weight: bold;" id="totalOFExt"></td>
+        					<td align="right" style="font-weight: bold;" id="totalOFIpsamt"></td>
+        					<td align="right" style="font-weight: bold;" id="totalFarmers"></td>
+        					<td align="right" style="font-weight: bold;" id="totalExt"></td>
+        					<td align="right" style="font-weight: bold;" id="totalIpsamt"></td>
+    					</tr>
+					</tfoot>
+				</table>
+			</div>
+		</form>
+
+<div align="center" style="color: black">
+		<input class="btn btn-success"
+				name="ctl00$ContentPlaceHolder1$btnPrint" type="button"
+				id="ctl00_ContentPlaceHolder1_btnPrint"
+				onClick="javascript:CallPrint('divPrint')" value="Print"> <input
+				class="btn btn-success" type="button"
+				onclick="tableToExcel('tableStkId', 'Abstract')" value="Excel">
+											<input  class="btn btn-success" type="button" value="Back" onclick="goBack()" />
+				</div>
+	</body>
+
+</html>

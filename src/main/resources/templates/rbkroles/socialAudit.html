@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="header"></head>
+
+<body>
+	<div th:insert="headerImage"></div>
+
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+</body>
+
+<style>
+.table-heading {
+	background-color: rgb(0, 151, 0);
+	text-align: center;
+	width: 100%;
+	margin: 0 auto;
+	padding: 5px;
+	color: white;
+	font-weight: bold;
+}
+
+/* Align text right for labels and inputs */
+label, input, select, textarea {
+	text-align: left;
+}
+
+/* Add red asterisk to required fields */
+/* Using two Unicode non-breaking spaces */
+label:after {
+	content: '*\00a0\00a0\00a0\00a0';
+	color: red;
+}
+
+/* Center placeholder text in the select dropdown */
+select.form-select option[value="0"] {
+	text-align: left;
+}
+
+.webland-container {
+	width: 460px;
+	height: 40px;
+	/* Any other styles you want to add */
+	/* This is used to distance between Updation Of Social Audit Grievances Received and Crop Year  */
+}
+
+.form-container {
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	margin-bottom: 15px;
+	position: relative;
+}
+
+.form-container label {
+	width: 250px;
+	margin-right: 10px;
+	text-align: right;
+}
+
+.form-container input, .form-container select {
+	width: 270px;
+}
+
+.error-message {
+	position: absolute;
+	left: 250px; /* Adjust this value based on your label width */
+	bottom: -17px;
+	/* Adjust this value to position the error message below the input field */
+	color: red;
+	font-size: 13px;
+	margin-top: 5px;
+	white-space: nowrap; /* Prevent the error message from wrapping */
+}
+</style>
+
+<div align="center" style="color: red;">
+	<h2>
+		<span th:text="${message}"></span>
+	</h2>
+</div>
+
+<body style="background-color: #e8e8e8;">
+	<!--     <div th:replace="home :: content"></div> -->
+	<p class="table-heading">Updation Of Social Audit Grievances
+		Received</p>
+	<div class="row justify-content-center align-items-center"
+		style="height: 10vh;">
+		<div class="webland-container">
+			<form th:action="@{/cropBookedDetails}" th:object="${socialAudit}"
+				method="post">
+
+				<div class="form-container">
+					<label for="name">Crop Year </label> <select name="crYear"
+						class="form-select" aria-label="Crop Year"
+						onchange="validateSelection(this)">
+						<option value="0">--Select Crop Year--</option>
+						<option th:each="emp : ${activeseason}"
+							th:value="${emp.seasonvalue}" th:text="${emp.cropyear}"></option>
+					</select>
+					<!--     <span th:if="${#fields.hasErrors('cropyear')}" th:errors="*{cropyear}" style="color: red;"></span> -->
+				</div>
+				<script>
+					document.addEventListener('DOMContentLoaded', function() {
+						var selectElement = document
+								.querySelector('select[name="crYear"]');
+						validateSelection(selectElement);
+
+						selectElement.addEventListener('change', function() {
+							validateSelection(this);
+						});
+					});
+
+					function validateSelection(selectElement) {
+						var selectedOption = selectElement.options[selectElement.selectedIndex];
+
+						if (selectedOption.value === '0'
+								|| selectedOption.text === '--Select Crop Year--') {
+
+							selectElement
+									.setCustomValidity('Please select a valid Crop Year');
+						} else {
+							selectElement.setCustomValidity('');
+						}
+					}
+				</script>
+
+				<div class="form-container">
+					<label for="name">Village </label> <select name="rbk"
+						class="form-select" aria-label="Select Village"
+						onchange="validateVillage(this)">
+						<option value="0">---Select Village---</option>
+						<option th:each="emp : ${rbk}" th:value="${emp.vcode}"
+							th:text="${emp.wbvname}"></option>
+					</select>
+				</div>
+				<script>
+					document.addEventListener('DOMContentLoaded', function() {
+						var selectElement = document
+								.querySelector('select[name="rbk"]');
+						validateVillage(selectElement);
+
+						selectElement.addEventListener('change', function() {
+							validateVillage(this);
+						});
+					});
+
+					function validateVillage(selectElement) {
+						var selectedOption = selectElement.options[selectElement.selectedIndex];
+
+						if (selectedOption.value === '0'
+								|| selectedOption.text === '---Select Village---') {
+							selectElement
+									.setCustomValidity('Please select a valid Village');
+						} else {
+							selectElement.setCustomValidity('');
+						}
+					}
+				</script>
+
+				<div class="form-container">
+					<label for="applicantName">Applicant Name </label> <input
+						type="text" id="applicantName" name="applicantName"
+						th:value="${applicantName}" required pattern="[A-Za-z]+"
+						title="Please enter only alphabetic characters">
+					<div class="error-message" id="name-error-message"></div>
+				</div>
+
+				<script>
+					var inputElement = document.getElementById('applicantName');
+					var errorMessage = document
+							.getElementById('name-error-message');
+
+					inputElement
+							.addEventListener(
+									'input',
+									function(event) {
+										var input = this.value;
+										var sanitizedInput = input.replace(
+												/[^A-Za-z]/g, '');
+
+										if (input !== sanitizedInput) {
+											// If the input contains non-alphabetic characters, prevent their entry and show error
+											this.value = sanitizedInput;
+											errorMessage.textContent = 'Please enter only alphabetic characters';
+										} else {
+											errorMessage.textContent = '';
+										}
+									});
+				</script>
+
+
+
+				<div class="form-container">
+					<label for="applicantNumber">Application Mobile No </label> <input
+						type="text" id="applicantNumber" name="applicantNumber"
+						th:value="${applicantNumber}" maxlength="10" required
+						pattern="[0-9]{10}"
+						title="Please enter exactly 10 numeric characters">
+					<div class="error-message" id="number-error-message"></div>
+				</div>
+
+				<script>
+					var inputElementNumber = document
+							.getElementById('applicantNumber');
+					var errorMessageNumber = document
+							.getElementById('number-error-message');
+
+					inputElementNumber
+							.addEventListener(
+									'input',
+									function(event) {
+										var inputNumber = this.value;
+										var sanitizedInputNumber = inputNumber
+												.replace(/[^0-9]/g, '');
+
+										if (inputNumber !== sanitizedInputNumber) {
+											// If the input contains non-numeric characters, prevent their entry and show error
+											this.value = sanitizedInputNumber;
+											errorMessageNumber.textContent = 'Please enter exactly 10 numeric digit';
+										} else {
+											errorMessageNumber.textContent = '';
+										}
+									});
+				</script>
+
+
+
+				<div class="form-container">
+					<label for="applicantSerialNo">Application Serial No </label> <input
+						type="text" id="applicantSerialNo" name="applicantSerialNo"
+						th:value="${applicantSerialNo}" required pattern="[0-9]+"
+						title="Please enter only numeric characters">
+					<div class="error-message" id="serial-error-message"></div>
+				</div>
+
+				<script>
+					var inputElementSerial = document
+							.getElementById('applicantSerialNo');
+					var errorMessageSerial = document
+							.getElementById('serial-error-message');
+
+					inputElementSerial
+							.addEventListener(
+									'input',
+									function() {
+										var inputSerial = this.value;
+										var sanitizedInputSerial = inputSerial
+												.replace(/[^0-9]/g, '');
+
+										if (inputSerial !== sanitizedInputSerial) {
+											// If the input contains non-numeric characters, prevent their entry and show error
+											this.value = sanitizedInputSerial;
+											errorMessageSerial.textContent = 'Please enter only numeric characters';
+										} else {
+											errorMessageSerial.textContent = '';
+										}
+									});
+				</script>
+
+
+
+
+				<div class="form-container">
+					<label for="applicantBookingId">Enter Booking Id </label> <input
+						type="text" id="applicantBookingId" name="applicantBookingId"
+						th:value="${applicantBookingId}" maxlength="9" required
+						pattern="[0-9]{9}"
+						title="Please enter exactly 9 numeric characters">
+					<div class="error-message" id="bookingId-error-message"></div>
+				</div>
+
+				<script>
+					var inputElementBookingId = document
+							.getElementById('applicantBookingId');
+					var errorMessageBookingId = document
+							.getElementById('bookingId-error-message');
+
+					inputElementBookingId
+							.addEventListener(
+									'input',
+									function() {
+										var inputBookingId = this.value;
+										var sanitizedInputBookingId = inputBookingId
+												.replace(/[^0-9]/g, '');
+
+										if (inputBookingId !== sanitizedInputBookingId) {
+											// If the input contains non-numeric characters, prevent their entry and show error
+											this.value = sanitizedInputBookingId;
+											errorMessageBookingId.textContent = 'Please enter exactly 9 numeric characters only';
+										} else {
+											errorMessageBookingId.textContent = '';
+										}
+									});
+				</script>
+<script>
+		$(document).ready(function () {
+			  var reloadPage = localStorage.getItem('reloadPage');
+
+    if (reloadPage === null || reloadPage === 'true') {
+        localStorage.setItem('reloadPage', 'false');
+        location.reload();
+    } else {
+        localStorage.removeItem('reloadPage');
+    }
+		});
+		
+</script>
+
+
+				<div class="mb-3"
+					style="display: flex; flex-direction: column; align-items: center;">
+					<div
+						style="display: flex; justify-content: center; margin-bottom: 10px;">
+						<button type="submit" class="btn btn-primary"
+							>Search</button>
+						<button type="button" class="btn btn-primary"
+							th:onclick="window.location.href='home'"
+							style="margin-left: 10px;">Back</button>
+					</div>
+
+				</div>
+
+			</form>
+		</div>
+	</div>
+</body>
+
+</html>

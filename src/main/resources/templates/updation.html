@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en"  xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="header">
+<link rel="stylesheet" type="text/css" href="css/style.css" />
+<!--<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" />-->
+<!--	<link href="http://cdn.jsdelivr.net/npm/sweetalert2@11.10.0/dist/sweetalert2.min.css" rel="stylesheet" />-->
+<!--	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">-->
+<meta charset="UTF-8">
+<title>Updation</title>
+
+</head>
+
+<body>
+	<div th:insert="headerImage"></div>
+
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+
+	<div
+		style="background-color: floralwhite; height: 50px; text-align: center;">
+		<pre style="font-size: large; font-family: sans-serif">
+    District: <span th:text="${wbdname}"></span> , Mandal: <span
+				th:if="${session.userType == 5}" th:text="${wbmname}"></span> <span
+				th:if="${session.userType == 22}" th:text="${selectedMand}"></span> , Crop Name: <span
+				th:text="${selectedCrop}"></span> ,  Crop Year: <span
+				th:text="${cropYear}"></span> , Season: <span
+				th:text="${season} == 'K' ? 'Kharif' : (${season} == 'R' ? 'Rabi' : 'Summer')"></span>
+</pre>
+	</div>
+
+	<br>
+	<form id="updationForm" th:action="@{/updateVillageNormalArea}"
+		method="post">
+
+
+		<div
+			style="background-color: ghostwhite; margin-left: auto; margin-right: auto; width: 60%;">
+
+			<table style="width: 100%; border-collapse: collapse;">
+				<thead
+					style="background-color: darkgray; color: white; width: 100%;">
+
+					<tr>
+						<!--						<span th:utext="${msg}"></span>-->
+						<th style="padding: 10px; padding-left: 50px; text-align: left;"><input
+							id="main" type="checkbox"></th>
+						<th style="padding: 10px; text-align: right">SNO</th>
+						<th style="padding: 10px; padding-left: 50px; text-align: center">Village</th>
+						<!--						<th style="padding: 10px;padding-left: 50px;text-align: left">Target Areas (In Acres)</th>-->
+						<th style="padding: 10px; padding-left: 50px; text-align: center">Normal
+							Areas (In Acres)</th>
+					</tr>
+				</thead>
+				<h2 style="text-align: center;">
+						<span th:text="${empty}"></span>
+				<tbody style="width: max-content;">
+					
+					<tr th:each="item : ${update}">
+						<td style="padding: 10px; padding-left: 50px;"><input
+							type="checkbox" class="sub-checkbox"
+							style="padding: 10px; padding-left: 50px;"></td>
+						<td style="padding: 10px; text-align: right;"
+							th:text="${itemStat.index + 1}"></td>
+						<td style="padding: 10px; padding-left: 100px;"
+							th:text="${item.getWbvname()}"></td>
+						<!--						<td style="padding: 10px;padding-left: 100px;" th:text="${item.gettargetarea()}">-->
+						<!--							<input style=" padding: 10px;padding-left: 100px;height: 30px;" class="input-field" name="target" id="target" th:value="${item.gettargetarea()}"-->
+						<!--							disabled required>-->
+						<!--						</td>-->
+						<!--		 					<input type="text" name="wbdcode" th:value="${item.getdcode()}">-->
+						<!--							<input type="text" name="wbmcode" th:value="${item.getmcode()}">-->
+						<input type="hidden" name="vcode" th:value="${item.getvcode()}">
+						<!--							<input  th:if="${session.userType == 22}"  type="hidden" id="selected" name="selected"  th:value="${selectedMand}">-->
+						<td><input
+							style="padding: 10px; padding-left: 100px; height: 30px;"
+							class="input-field" name="normalarea" disabled
+							th:value="${item.getnormalarea()}" onkeypress="return ( event.charCode == 8 || event.charCode == 0) || event.charCode == 46 ? null : event.charCode >= 48 && event.charCode <= 57 "  
+								pattern="^\d{1,6}(\.\d{0,2})?$"  required  maxlength="8">
+						</td>
+						<input type="hidden" id="wbvname" name="wbvname"
+							th:value="${item.getWbvname()}">
+						<input type="hidden" id="selectedCrop" name="selectedCrop"
+							th:value="${selectedCrop}">
+						<input type="hidden" id="target" name="target"
+							th:value="${item.gettargetarea()}">
+					</tr>
+
+				</tbody>
+				<tfoot>
+					<br>
+
+					<tr>
+						<td colspan="3"
+							style="padding-left: 65%; font-size: large; font-weight: bold;">Total&nbsp;:</td>
+						<td colspan="4"
+							style="padding-left: 15%; font-size: large; font-weight: bold;"><span
+							id="total"></span></td>
+					</tr>
+					<tr>
+						<td style="padding-left: 40%;"><input type="submit"
+							class="btn btn-primary" value="Submit" onclick="submitData()"></td>
+						<td style="padding-left: 45%;"><input type="button"
+							class="btn btn-primary" value="Go Back" onclick="goBack()"></td>
+					</tr>
+
+				</tfoot>
+			</table>
+		</div>
+	</form>
+
+
+	<script>
+
+		function goBack() {
+			window.history.back();
+		}
+		function submitData() {
+			var rows = document.querySelectorAll('tbody tr');
+			var isValid = true;
+
+			rows.forEach(function (row) {
+				var inputField = row.querySelector('[name="normalarea"]');
+				var pattern = /^\d{1,7}(\.\d{1,2})?$/;
+
+				if (!pattern.test(inputField.value)) {
+					alert('Please enter a valid extent for the Village: ' + row.querySelector('[name="wbvname"]').value);
+					isValid = false;
+				}
+			});
+
+			if (isValid) {
+				alert('Data is Updated Successfully');
+			}
+		}
+		document.getElementById('main').addEventListener('change', function () {
+			var checkboxes = document.querySelectorAll('.sub-checkbox');
+			checkboxes.forEach(function (checkbox) {
+				checkbox.checked = document.getElementById('main').checked;
+				updateInputState(checkbox);
+			});
+			updateTotal();
+		});
+
+		var checkboxes = document.querySelectorAll('.sub-checkbox');
+		checkboxes.forEach(function (checkbox) {
+			checkbox.addEventListener('change', function () {
+				updateInputState(checkbox);
+				updateTotal();
+			});
+		});
+
+		var inputFields = document.querySelectorAll('.input-field');
+		inputFields.forEach(function (input) {
+			input.addEventListener('input', function () {
+				updateTotal();
+			});
+		});
+
+		function updateInputState(checkbox) {
+			var inputBox = checkbox.closest('tr').querySelector('.input-field');
+			inputBox.disabled = !checkbox.checked;
+		}
+
+		function updateTotal() {
+			var total = 0;
+			inputFields.forEach(function (input) {
+				var value = parseFloat(input.value) || 0;
+				total += value;
+			});
+			document.getElementById('total').textContent = total.toFixed(2);
+		}
+
+		document.getElementById('updationForm').addEventListener('submit', function (event) {
+
+			var formDataArray = [];
+
+			document.querySelectorAll('tbody tr').forEach(function (row) {
+				var checkbox = row.querySelector('.sub-checkbox');
+				var inputField = row.querySelector('.input-field');
+
+				if (checkbox.checked) {
+					
+					var wbvname = row.querySelector('[name="wbvname"]');
+					var vcode = row.querySelector('[name="vcode"]');
+					var selectedCrop = row.querySelector('[name="selectedCrop"]');
+
+
+					formDataArray.push({
+						vcode: vcode.value,
+						wbvname: wbvname.value,
+						selectedCrop: selectedCrop.value,
+						normalarea: parseFloat(inputField.value) || 0,
+					});
+
+				}
+			});
+
+			console.log('FormDataArray:', formDataArray);
+
+			fetch('/updateVillageNormalArea', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify(formDataArray),
+			})
+				.then(response => response.json())
+				.then(data => {
+					console.log('Success:', data);
+				})
+				.catch(error => {
+					console.error('Error during fetch operation:', error);
+				});
+		});
+
+
+	</script>
+</body>
+
+</html>

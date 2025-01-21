@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<meta charset="UTF-8" />
+<!--<meta name="viewport" content="width=device-width, initial-scale=1">-->
+<!--<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">-->
+<!--<link rel="stylesheet" type="text/css" href="css/style.css">-->
+<!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css">-->
+<title>Edit Crop Details</title>
+<!--<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>-->
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>-->
+<!--<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>-->
+
+<script th:inline="javascript">
+	//This is for the submit button
+	function checkVal() {
+		var selopt = document.getElementsByName("checkClosureAlloc");
+		var flag = false;
+
+		for (var i = 0; i < selopt.length; i++) {
+			var newoccupName = document.getElementById("newoccupName" + i).value;
+			var newoccupFatherName = document.getElementById("newoccupFatherName" + i).value;
+			if (selopt[i].checked) {
+				if (newoccupName === "" && newoccupFatherName === "") {
+					alert("Please enter the Cultivator Name and Cultivator Father Name");
+					return false; // Prevent form submission if both names are not entered
+				} else if (newoccupName === "") {
+					alert("Please enter the Cultivator Name");
+					return false; // Prevent form submission if Farmer Name is not entered
+				} else if (newoccupFatherName === "") {
+					alert("Please enter the Cultivator Father Name");
+					return false; // Prevent form submission if Farmer Father Name is not entered
+				} else {
+					flag = true; // At least one record has valid input
+				}
+			}
+		}
+		if (flag) {
+			var savecheck = document.getElementsByName("checkClosureAlloc");
+			var atLeastOneChecked = false;
+
+			if (confirm("Please Ensure That All The Details Are Entered Correctly. Once Submitted Cannot Be Edited") === true) {
+			//	event.preventDefault();
+				return submitClosure();
+			//	location.reload();
+			} else {
+				return false;
+			}
+		} else {
+			alert('Select at least one Record to Submit');
+			return false;
+		}
+
+	}
+	function submitClosure() {
+		var bkIdsList = "",
+			farmingTypeList = "",
+			cropCodeList = "",
+			varietyCodeList = "",
+			sowDateList = "",
+			wsrcdecodeList = "",
+			irgDescCodeList = "",
+			oldoccupNameList = "",
+			oldoccupFatherNameList = "",
+			newoccupNameList = "",
+			newoccupFatherNameList = "",
+			khNoList = "",
+			crSnoList = "",
+			crMixUnmixExtList = "",
+			cr_noList = "";
+
+		var savecheck = document.getElementsByName("checkClosureAlloc");
+		var atLeastOneChecked = false;
+		var numRecord = 0;
+		for (i = 0; i < savecheck.length; i++) {
+			if (document.getElementById("checkboxId" + i).checked === true) {
+
+				bkIdsList += document.getElementById("bookingId" + i).value + ",";
+				farmingTypeList += document.getElementById("cropSchDesc" + i).value + ",";
+				cropCodeList += document.getElementById("cropId" + i).value + ",";
+				varietyCodeList += document.getElementById("varietyId" + i).value + ",";
+				sowDateList += document.getElementById("crSowDate" + i).value + ",";
+				wsrcdecodeList += document.getElementById("irrScrId" + i).value + ",";
+				irgDescCodeList += document.getElementById("irrMethod" + i).value + ",";
+				oldoccupNameList += document.getElementById("oldoccupName" + i).value + ",";
+				oldoccupFatherNameList += document.getElementById("oldoccupFatherName" + i).value + ",";
+				newoccupNameList += document.getElementById("newoccupName" + i).value + ",";
+				newoccupFatherNameList += document.getElementById("newoccupFatherName" + i).value + ",";
+				khNoList += document.getElementById("khNo" + i).value + ",";
+				crSnoList += document.getElementById("crSno" + i).value + ",";
+				crMixUnmixExtList += document.getElementById("crMixUnmixExt" + i).value + ",";
+				cr_noList += document.getElementById("cr_no" + i).value + ",";
+				numRecord = numRecord + 1;
+			}
+		}
+		if (numRecord === 1) {
+			alert('You are about to submit ' + numRecord + ' record')
+			alert('Data Is Updated Successsfully');
+		}
+		if (numRecord > 1) {
+			alert('You are about to submit ' + numRecord + ' records')
+			alert('Data Is Updated Successsfully');
+		}
+		var cropYear = document.getElementById("cropYear").value;
+		var season = document.getElementById("season").value;
+		var surveyno = document.getElementById("surveyno").value;
+		var khno_bkid = document.getElementById("khno_bkid").value;
+		var uid = document.getElementById("uid").value;
+		var vcode = document.getElementById("vcode").value;
+
+		$.ajax({
+			url: "./cultRejByVro?bookingId=" + bkIdsList +
+				"&cropSchDesc=" + farmingTypeList +
+				"&cropId=" + cropCodeList +
+				"&varietyId=" + varietyCodeList +
+				"&crSowDate=" + sowDateList +
+				"&irrScrId=" + wsrcdecodeList +
+				"&irgDesc=" + irgDescCodeList + // Corrected parameter name
+				"&oldoccupName=" + oldoccupNameList +
+				"&oldoccupFatherName=" + oldoccupFatherNameList +
+				"&newoccupName=" + newoccupNameList +
+				"&newoccupFatherName=" + newoccupFatherNameList + // Corrected parameter name
+				"&khNo=" + khNoList +
+				"&crSno=" + crSnoList +
+				"&crMixUnmixExt=" + crMixUnmixExtList +
+				"&cr_no=" + cr_noList +
+				"&cropYear=" + cropYear +
+				"&season=" + season +
+				"&surveyno=" + surveyno +
+				"&khno_bkid=" + khno_bkid +
+				"&uid=" + uid +
+				"&vcode=" + vcode,
+			type: "GET",
+			contentType: "application/json",
+			success: function (response) {
+				
+			//	window.location.reload();
+			},
+			error: function (xhr, status, error) {
+				console.error("An error occurred:", error);
+				alert("An error occurred while submitting the form: " + error);
+			}
+		});
+	}
+
+</script>
+
+<script th:inline="javascript">  //This is for automatic generated serial number
+	$(document).ready(function () {updateSerialNumbers();});
+	function toggleSelectAll(checkbox) {$(".checkSingle").prop('checked', checkbox.checked);}
+	function updateSerialNumbers() {
+		var serialNumberCells = document.querySelectorAll('.tdnum.serial-number');
+		serialNumberCells.forEach(function (cell, index) {cell.textContent = index + 1;});
+	}
+</script>
+
+<style>
+	body {
+		background-color: #e8e8e8;
+	}
+
+	.heading {
+		color: rgb(0, 0, 0);
+		font-size: 30px;
+		font-weight: bold;
+	}
+
+	.table-container {
+		width: 100%;
+		text-align: center;
+		overflow-x: auto;
+	}
+
+	table {
+		width: 100%;
+		border-collapse: collapse;
+	}
+
+	th,
+	td {
+		border: 1px solid #dddddd;
+		text-align: left;
+		padding: 1px;
+	}
+
+	th {
+		background-color: #006400;
+	}
+
+	#checkedAll {
+		margin-bottom: -3px;
+	}
+
+	.checkSingle {
+		margin-bottom: -2px;
+	}
+
+	.tdnum {
+		text-align: center;
+	}
+
+	.button-container {
+		text-align: center;
+	}
+
+	.btn-block-inline {
+		width: calc(10% - 5px);
+		margin-right: 5px;
+	}
+
+	.disabled-input:disabled {
+		border: none;
+		background-color: transparent;
+	}
+</style>
+
+<script>
+	function validateAlphabets(input, errorSpanId) {
+		var inputValue = input.value;
+		// Check if the input contains characters other than letters and spaces
+		if (/[^a-zA-Z\s\u00C0-\u017F\u0C00-\u0C7F]/.test(inputValue)) {
+			document.getElementById(errorSpanId).innerText = "Please enter only letters and spaces.";
+			input.value = inputValue.replace(/[^a-zA-Z\s\u00C0-\u017F\u0C00-\u0C7F]/g, ''); // Remove characters other than letters and spaces
+		} else {
+			document.getElementById(errorSpanId).innerText = "";
+		}
+	}
+</script>
+
+
+<script>
+	// Function to handle header checkbox change
+	function handleMasterCheckboxChange() {
+		var masterCheckbox = document.getElementById("checkedAll");
+		var singleCheckboxes = document.getElementsByClassName("checkSingle");
+
+		// Loop through individual checkboxes
+		for (var i = 0; i < singleCheckboxes.length; i++) {
+			// Update the state of the individual checkboxes based on the master checkbox
+			singleCheckboxes[i].checked = masterCheckbox.checked;
+
+			// Check the state of the master checkbox
+			if (masterCheckbox.checked) {
+				// If master checkbox is checked, show elements
+				$("#newoccupName" + i).show();
+				$("#newoccupFatherName" + i).show();
+			} else {
+				// If master checkbox is unchecked, hide elements
+				$("#newoccupName" + i).hide();
+				$("#newoccupFatherName" + i).hide();
+			}
+		}
+	}
+
+	// Function to handle individual column checkbox change
+	function handleSingleCheckboxChange() {
+		var masterCheckbox = document.getElementById("checkedAll");
+		var singleCheckboxes = document.getElementsByClassName("checkSingle");
+
+		// Check if all individual checkboxes are checked
+		var allChecked = true;
+		for (var i = 0; i < singleCheckboxes.length; i++) {
+			if (!singleCheckboxes[i].checked) {
+				allChecked = false;
+				break;
+			}
+		}
+		// Update the state of the master checkbox based on individual checkboxes
+		masterCheckbox.checked = allChecked;
+	}
+</script>
+
+<script>
+	function handleSingleCheckboxClick(checkbox) {
+		if (document.getElementById("checkboxId" + checkbox).checked == true) {
+			$("#newoccupName" + checkbox).show();
+			$("#newoccupFatherName" + checkbox).show();
+		}
+		else {
+			$("#newoccupName" + checkbox).hide();
+			$("#newoccupFatherName" + checkbox).hide();
+		}
+	}
+</script>
+
+</head>
+
+<body>
+	<div th:insert="header"></div>
+	<div th:insert="headerImage"></div>
+	<div th:insert="navBarTop"></div>
+	<div th:insert="headerMessage"></div>
+	<form id="editCrBookingForm" name="editCrBookingForm" method="get" th:action="@{/crbkFormEntry}">
+<!--		<form id="editCrBookingForm" name="editCrBookingForm" method="post" th:action="@{/cultRejByVro}">-->
+		<div class="table-container">
+			<div class="heading" colspan="20">Edit Cultivator Name Rejected By VRO </div>
+		</div>
+		<div style="overflow-x: auto;">
+			<table id="tableStkId">
+				<thead>
+					<tr style="background-color: #006400;">
+						<th><input type="checkbox" id="checkedAll" onchange="handleMasterCheckboxChange()" /></th>
+						<th> S.No. </th>
+						<th> Booking Id </th>
+						<th> Farming Type </th>
+						<th> Crop Name </th>
+						<th> Variety Name </th>
+						<th> Sown Date </th>
+						<th> Irrigation Source </th>
+						<th> Irrigation Method </th>
+						<th> Cultivator Name </th>
+						<th> Cultivator Father Name </th>
+						<th> Changed Cultivator Name </th>
+						<th> Changed Cultivator Father Name </th>
+						<th> Khata No </th>
+						<th> Survey No/LP No </th>
+						<th> Booked Extent </th>
+
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="tdnum" th:each="cropDetail, status : ${cropDetails}"
+						th:if="${not #lists.isEmpty(cropDetails)}">
+
+						<td><input type="checkbox" class="checkSingle" th:name="checkClosureAlloc"
+								th:value="${status.index}" th:id="'checkboxId'+ ${status.index}"
+								onchange="handleSingleCheckboxChange()"
+								th:onclick="handleSingleCheckboxClick(this.value)"></td>
+
+						<td class="tdnum serial-number"></td>
+
+						<td><input type="text" th:id="'bookingId2' + ${status.index}" th:value="${cropDetail.bookingId}"
+								class="disabled-input" disabled>
+							<input type="hidden" name="bookingId" th:id="'bookingId' + ${status.index}"
+								th:value="${cropDetail.bookingId}" />
+						</td>
+
+						<td><input type="text" th:id="'cropSchDesc' + ${status.index}"
+								th:value="${cropDetail.cropSchDesc}" class="disabled-input" disabled>
+							<input type="hidden" name="cropSchDesc4" th:id="'cropSchDesc' + ${status.index}"
+								th:value="${cropDetail.cropSchDesc}" />
+						</td>
+
+						<td><input type="text" th:id="'cropName' + ${status.index}" th:name="cropName15"
+								th:text="${cropDetail.cropName}" class="disabled-input" disabled>
+							<input type="hidden" th:id="'cropId' + ${status.index}" th:name="CropId"
+								th:value="${cropDetail.crCrop}">
+						</td>
+
+						<td><input type="text" th:id="'varietyNmae' + ${status.index}"
+								th:value="${cropDetail.varietyName}" th:name="varietyNmae" class="disabled-input"
+								disabled>
+							<input type="hidden" th:id="'varietyId' + ${status.index}" th:name="varietyId"
+								th:value="${cropDetail.variety}">
+						</td>
+
+						<td><input type="text" th:id="'crSowDate' + ${status.index}" th:value="${cropDetail.crSowDate}"
+								class="disabled-input" disabled>
+							<input type="hidden" name="crSowDate" th:id="'crSowDate'+${status.index}"
+								th:value="${cropDetail.crSowDate}" />
+						</td>
+
+						<td><input type="text" th:id="'wsrcdec' + ${status.index}" name="wsrcdec"
+								th:value="${cropDetail.wsrcDesc}" class="disabled-input" disabled>
+							<input type="hidden" name="wsrcdec" th:id="'irrScrId'+${status.index}"
+								th:value="${cropDetail.crWDraw}" />
+
+						<td><input type="text" th:id="'irgDesc' + ${status.index}" th:value="${cropDetail.irgDesc}"
+								class="disabled-input" disabled>
+							<input type="hidden" name="irrMethod" th:id="'irrMethod'+${status.index}"
+								th:value="${cropDetail.irrMethod}" />
+						</td>
+
+						<td><input type="text" th:id="'oldoccupName' + ${status.index}"
+								th:value="${cropDetail.occupName}" class="disabled-input" disabled></td>
+						<td><input type="text" th:id="'oldoccupFatherName' + ${status.index}"
+								th:value="${cropDetail.occupFname}" class="disabled-input" disabled></td>
+
+						<td>
+							<input type="text" th:id="'newoccupName' + ${status.index}" name="newoccupName"
+								class="disabled-input" style="display: none;"
+								oninput="validateAlphabets(this, 'nameError')"
+								>
+							<span id="nameError" style="color: red;"></span>
+							<input type="hidden" name="oldoccupName" th:id="'oldoccupName' + ${status.index}"
+								th:value="${cropDetail.occupName}" />
+						</td>
+						<td>
+							<input type="text" th:id="'newoccupFatherName' + ${status.index}" name="newoccupFatherName"
+								class="disabled-input" style="display: none;"
+								oninput="validateAlphabets(this, 'fatherNameError')"
+								>
+							<span id="fatherNameError" style="color: red;"></span>
+							<input type="hidden" name="oldoccupFatherName"
+								th:id="'oldoccupFatherName' + ${status.index}" th:value="${cropDetail.occupFname}" />
+						</td>
+
+						<td><input type="text" th:id="'khNo' + ${status.index}" th:value="${cropDetail.khNo}"
+								class="disabled-input" disabled>
+							<input type="hidden" name="khNo" th:id="'khNo' + ${status.index}"
+								th:value="${cropDetail.khNo}" />
+						</td>
+
+						<td><input type="text" th:id="'crSno' + ${status.index}" th:value="${cropDetail.crSno}"
+								class="disabled-input" disabled>
+							<input type="hidden" name="crSno" th:id="'crSno' + ${status.index}"
+								th:value="${cropDetail.crSno}" />
+						</td>
+
+						<td><input type="text" th:id="'crMixUnmixExt' + ${status.index}"
+								th:value="${cropDetail.crMixUnmixExt}" class="disabled-input" disabled>
+							<input type="hidden" name="crMixUnmixExt" th:id="'crMixUnmixExt' + ${status.index}"
+								th:value="${cropDetail.crMixUnmixExt}" />
+
+
+							<input type="hidden" name="cropYear" th:id="cropYear" th:value="${cropYear}" />
+							<input type="hidden" name="season" th:id="season" th:value="${season}" />
+							<input type="hidden" name="surveyno" th:id="surveyno" th:value="${surveyno}" />
+							<input type="hidden" name="khno_bkid" th:id="khno_bkid" th:value="${khno_bkid}" />
+							<input type="hidden" name="uid" th:id="uid" th:value="${uid}" />
+							<input type="hidden" name="vcode" th:id="vcode" th:value="${vcode}" />
+
+							<input type="hidden" name="crCrop" th:id="crCrop" th:value="${cropDetail.crCrop}" />
+							<input type="hidden" name="oldVarietyCode" th:id="'oldVarietyCode' + ${status.index}"
+								th:value="${cropDetail.variety}" />
+							<input type="hidden" name="crFarmerUid" th:id="crFarmerUid"
+								th:value="${cropDetail.crFarmerUid}" />
+							<input type="hidden" name="oldCropCode" th:id="'oldCropCode' + ${status.index}"
+								th:value="${cropDetail.crCrop}" />
+							<input type="hidden" name="cr_no" th:id="cr_no + ${status.index}"
+								th:value="${cropDetail.crNo}" />
+
+							<input type="hidden" name="villageCode" th:id="'villageCode' + ${status.index}"
+								th:value="${cropDetail.cr_vcode}" />
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<br><br>
+		<div class="button-container" align="center">
+			<button type="submit" onclick="return checkVal();"
+				class="btn btn-success btn-block btn-block-inline"  style="width: fit-content;margin-left: 50%;">Submit</button>
+			<button type="button" class="btn btn-secondary btn-block go-back-button btn-block-inline"
+				onclick="goBack()"  style="width: fit-content;margin-left: 50.5%;"> Back</button>
+		</div>
+<!--		<input th:text="${msg}" th:value="${msg}">-->
+<!--		<span th:text="${msg}" th:value="${msg}"></span>-->
+	</form>
+</body>
+</html>
